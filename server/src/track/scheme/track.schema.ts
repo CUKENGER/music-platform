@@ -1,17 +1,31 @@
 
+import { Document } from 'mongoose';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {Comment} from '../scheme/comment.schema';
 
-export type CatDocument = Cat & Document;
+@Entity()
+export class Track {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-@Schema()
-export class Cat {
-	@Prop()
-	name: string
+  @Column()
+  name: string;
 
-	@Prop()
-	age: number
+  @Column()
+  artist: string;
 
-	@Prop()
-	breed: string
+  @Column()
+  listens: number;
+
+  @Column({nullable: true})
+  picture: string;
+
+  @Column({nullable: true})
+  audio: string;
+
+  @Column()
+  text: string;
+
+  @OneToMany(() => Comment, comment => comment.track)
+  comments: Comment[];
 }
-
-export const CatSchema = SchemaFactory.createForClass(Cat) 
