@@ -1,5 +1,5 @@
 
-import { Document } from 'mongoose';
+
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import {Comment} from '../scheme/comment.schema';
 
