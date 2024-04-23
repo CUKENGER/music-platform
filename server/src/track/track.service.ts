@@ -6,6 +6,8 @@ import { Comment } from './scheme/comment.schema';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { FileService, FileType } from 'src/file/file.service';
+import * as fs from 'fs'
+import * as path from 'path'
 
 @Injectable()
 export class TrackService {
@@ -20,19 +22,29 @@ export class TrackService {
 	}
 
 	async create(createTrackDto: CreateTrackDto, picture, audio): Promise<Track> {
-		const audioPath = this.fileService.createFile(FileType.AUDIO, audio)
-		const imagePath = this.fileService.createFile(FileType.IMAGE, picture)
-		const newTrack = await this.trackRepository.create(createTrackDto);
-    	newTrack.listens = 0;
-		newTrack.audio = audioPath
-		newTrack.picture = imagePath
-    	return this.trackRepository.save(newTrack);
+
+		if (picture && audio) {
+			const audioPath = this.fileService.createFile(FileType.AUDIO, audio)
+			const imagePath = this.fileService.createFile(FileType.IMAGE, picture)
+			console.log('audioPath',audioPath)
+			console.log('imagePath',imagePath)
+			const newTrack = await this.trackRepository.create(createTrackDto);
+			newTrack.listens = 0;
+			newTrack.audio = audioPath
+			newTrack.picture = imagePath
+			return this.trackRepository.save(newTrack);
+		} else {
+			// throw new Error('нихуя не загрузилось блять')
+			console.log('нихуя не загрузилось блять')
+		}
+
 	}
 
 	async getAll(count = 10 , offset = 0): Promise<Track[]> {
 		const tracks = await this.trackRepository.find({
 			skip: offset,
-			take: count
+			take: count,
+			relations: ['comments']
 		});
 		return tracks
 	}
@@ -44,10 +56,20 @@ export class TrackService {
 
 	async delete(id: number): Promise<Track> {
 		const track = await this.trackRepository.findOne({ where: { id } });
+		console.log(track)
 		if (!track) {
 			throw new Error(`Track with id ${id} not found`);
 		}
+		if (track.picture) {
+			const picturePath = path.resolve('static/', track.picture); // Путь к файлу изображения
+			fs.unlinkSync(picturePath); 
+		}
+		if (track.audio) {
+			const audioPath = path.resolve('static/', track.audio); // Путь к аудиофайлу
+			fs.unlinkSync(audioPath); 
+		}
 		const deleteTrack = await this.trackRepository.delete(id)
+
 		return track 
 	}
 
@@ -76,9 +98,19 @@ export class TrackService {
 	}
 
 	async listen(id) {
-		const track = await this.trackRepository.findOne({where:{ id: id}})
-		track.listens += 1
-		await this.trackRepository.save(track);
+		try {
+			const track = await this.trackRepository.findOne({ where: { id: id } });
+			if (track) {
+				track.listens += 1;
+				await this.trackRepository.save(track);
+				return track.id; // Возвращаем обновленный объект трека
+			} else {
+				throw new Error(`Track with id ${id} not found`);
+			}
+		} catch (e) {
+			console.log(e);
+			throw e; // Пробрасываем исключение дальше, чтобы его можно было обработать в вызывающем коде
+		}
 	}
 
 	async search(query): Promise<Track[]> {

@@ -5,9 +5,10 @@ import { Track } from './scheme/track.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {Comment} from './scheme/comment.schema';
 import { FileService } from 'src/file/file.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Track, Comment])],
+  imports: [TypeOrmModule.forFeature([Track, Comment]), ConfigModule],
   controllers: [TrackController],
   providers: [TrackService, FileService],
 })

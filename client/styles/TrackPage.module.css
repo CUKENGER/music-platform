@@ -1,0 +1,77 @@
+
+
+.container{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.main_info_container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    row-gap: 30px;
+}
+
+.main_info_wrapper{
+    display: flex;
+    align-items: center;
+    column-gap: 50px;
+}
+
+.cover_container{
+    width: 300px;
+    height: 300px;
+}
+
+.cover{
+    width: 100%;
+    border-radius: 10px;
+}
+
+.info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 30px;
+}
+
+.info_item_container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    row-gap: 10px;
+    font-size: 18px;
+}
+
+.category{
+    color: var(--textgray);
+}
+
+
+.lyrics_container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    row-gap: 15px;
+    width:50%;
+    padding-right: 40px;
+}
+
+.title_lyrics{
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.lyrics{
+    font-size: 16px;
+    line-height: 0.7;
+}
+
+.lyrics_old{
+    line-height: 1.7;
+}

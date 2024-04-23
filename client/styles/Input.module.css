@@ -1,0 +1,19 @@
+
+
+.input{
+    background-color: var(--pmr);
+    padding: 15px 20px;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    color: var(--text);
+    outline: none;
+}
+
+.input::placeholder{
+    color: var(--text);
+}
+
+.input:hover{
+    outline: none
+}

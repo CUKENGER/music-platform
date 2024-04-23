@@ -1,0 +1,15 @@
+
+
+.header__container{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.btn{
+    padding: 14px 30px;
+    background-color: var(--pmr);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 18px;
+}

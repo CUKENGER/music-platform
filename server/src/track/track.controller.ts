@@ -2,7 +2,9 @@ import {Controller, Get, Post, Body, Param, Delete, UseInterceptors, UploadedFil
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express/multer';
+import * as fs from 'fs'
+import * as path from 'path'
 
 @Controller('/tracks')
 export class TrackController {
@@ -10,23 +12,23 @@ export class TrackController {
 	constructor(private readonly trackService: TrackService) {
 
 	}
-
+	
 
 	@Post()
-	@UseInterceptors(FileFieldsInterceptor([
-		{name: 'picture', maxCount: 1},
-		{name: 'audio', maxCount: 1},
+  	@UseInterceptors(FileFieldsInterceptor([
+		{ name: 'picture', maxCount: 1 },
+		{ name: 'audio', maxCount: 1 },
+  	]))
+  	async create(@UploadedFiles() files, @Body() createTrackDto: CreateTrackDto) {
+		const { picture, audio } = files;
 
-	]))
-	create(@UploadedFiles() files ,@Body() createTrackDto: CreateTrackDto) {
-		const {picture, audio} = files
-		
-		if (!picture || !audio) {
-			throw new Error('Picture and audio files are required');
-			console.log('Файлы не загружены')
+		if (!audio || !picture) {
+			throw new Error('files are required');
 		}
-		return this.trackService.create(createTrackDto, picture[0], audio[0])
-	}
+
+		console.log('Track created successfully');
+        return this.trackService.create(createTrackDto, picture, audio)
+  	}	
 
 	@Get()
 	getAll(@Query('count') count: number,
