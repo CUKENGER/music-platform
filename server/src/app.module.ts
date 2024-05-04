@@ -7,6 +7,9 @@ import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
 import { MulterModule } from '@nestjs/platform-express/multer';
+import { Album } from './album/album.schema';
+import { AlbumModule } from './album/album.module';
+import { AlbumComment } from './album/commentAlbum/albumComment.schema';
 
 @Module({
   imports: [
@@ -14,20 +17,25 @@ import { MulterModule } from '@nestjs/platform-express/multer';
       rootPath: path.resolve(__dirname, '..','static'),
     }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: './db/music.db',
-      entities: [Track, Comment],
+      type: 'postgres',
+      host: 'localhost',
+      port: 5001,
+      username: 'postgres',
+      password: '1234',
+      database: 'music_platform',
+      entities: [Track, Album, Comment, AlbumComment],
       synchronize: true,
     }),
     MulterModule.register({
-      dest: './upload', // Папка, куда будут сохраняться загруженные файлы
+      dest: './upload',
       limits: {
-        fileSize: Infinity, // Максимальный размер файла (в байтах). Например, здесь установлен лимит в 10 МБ
-        fieldSize: 10000 * 1024 * 1024,
+        fileSize: Infinity,
+        fieldSize: Infinity,
       }
     }),
     TrackModule,
-    FileModule
+    FileModule,
+    AlbumModule,
   ],
   controllers: [],
   providers: [],

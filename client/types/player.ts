@@ -7,5 +7,6 @@ export interface PlayerState {
     currentTime: number;
     pause: boolean;     
     active: boolean;
-    openedTrack: null | ITrack
+    openedTrack: null | ITrack;
+    activeTrackList: ITrack[]
 }

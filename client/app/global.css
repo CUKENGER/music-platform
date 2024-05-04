@@ -4,6 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    background-repeat: no-repeat;
 }
 
 :root{
@@ -13,19 +14,27 @@
     --text: #ffffff;
     --bg-lt: #949494;
     --textgray: #A5A5A5;
+    --black: black;
+    --black-lt: #141414;
 }
 
-html {
+html, button {
     font-family: 'Roboto';
     font-weight: 500;
     font-size: 16px;
     color: var(--text);
 }
 
+html {
+    scroll-behavior: smooth;
+    font-size: calc(100vw / 1920 * 10);
+}
+
 button{
-    background-color: transparent;
     border: none;
     cursor: pointer;
+    background-color: var(--pmr);
+    color: var(--text);
 }
 
 ::selection{
@@ -45,9 +54,9 @@ textarea:focus-visible{
 }
 
 textarea::placeholder{
-    font-family: 'Roboto';
+    font-family: 'Arial';
     color: var(--text);
-    font-size: 16px;
+    font-size: 14px;
     font-style: normal;
     line-height: normal;
     font-variant: normal;
@@ -68,4 +77,59 @@ textarea{
     line-height: normal;
     font-variant: normal;
     font-weight: normal;
+}
+input:hover,
+input{
+    outline: none;
+    border: none;
+    font-family: 'Roboto';
+    color: var(--text);
+}
+
+ul, li {
+    list-style: none;
+}
+
+@media(max-width: 800px) {
+    body{ font-size: 12px;
+    }
+}
+
+@media(max-width: 600px) {
+    body{ font-size: 10px;
+    }
+}
+
+body {
+    min-height: 100vh;
+    font-size: 16px;
+}
+
+ul,
+ol,
+li,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+input:invalid{
+    background-color: #ce0404;
+}
+
+
+@media(max-width:420px){
+    textarea::placeholder{
+        font-size: 12px
+    }
 }

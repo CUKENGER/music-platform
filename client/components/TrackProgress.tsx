@@ -1,55 +1,75 @@
 import { ChangeEvent, FC } from "react";
 import styles from '@/styles/TrackProgress.module.css'
-
+import volumeIcon from '@/assets/volume.svg'
+import Image from 'next/image'
+import { useTypedSelector } from "@/hooks/useTypedSelector";
+import useActions from "@/hooks/useActions";
+import audioManager from "@/services/AudioManager";
 
 interface TrackProgressProps {
-    left: number;
-    right: number;
-    onChange: (e:ChangeEvent<HTMLInputElement>)=> void;
-    isVolume: boolean;
+    isVolume?: boolean;
 }
 
-const TrackProgress:FC<TrackProgressProps> = ({left, right, onChange, isVolume}) => {
+const TrackProgress:FC<TrackProgressProps> = ({isVolume = true}) => {
 
-    const formatTime = (time: number): string => {
-        const minutes = Math.floor(time / 60);
-        const seconds = Math.floor(time % 60);
-        const secondsStr = seconds < 10 ? `0${seconds}` : `${seconds}`;
-        return `${minutes}:${secondsStr}`;
+    const audio = audioManager.audio
+
+    const {volume, duration, currentTime} = useTypedSelector(state => state.playerReducer)
+    const {playerSetVolume, playerSetCurrentTime} = useActions()
+
+    const changeVolume = (e: ChangeEvent<HTMLInputElement>) => {
+        if (audio) {
+            audio.volume = Number(e.target.value) / 100;
+            playerSetVolume(Number(e.target.value));
+        }
     };
 
-    return (
-        <div className={isVolume ? styles.container : styles.duration_container}>   
-        {isVolume 
-        ? (
-            <input 
-            min={0}
-            max={right}
-            value={left}
-            onChange={onChange}
-            className={styles.input} 
-            type="range" 
-            style={{ '--value': `${(left / right) * 100}%` } as any}
-            />
-        )
-        : (
-            <>
-                <p className={styles.time}>{formatTime(left)}</p>
-                <input 
-                min={0}
-                max={right}
-                value={left}
-                onChange={onChange}
-                className={styles.input} 
-                type="range" 
-                style={{ '--value': `${(left / right) * 100}%` } as any}
-                />
-                <p className={styles.time}>{formatTime(right)}</p>
-            </>
-        )
+    const changeCurrentTime = (e: ChangeEvent<HTMLInputElement>) => {
+        if (audio) {
+            audio.currentTime = Number(e.target.value);
+            playerSetCurrentTime(Number(e.target.value));
         }
-              
-        </div>
+    };
+
+
+    return (
+        <>
+            {isVolume 
+            ? (
+                <div className={styles.input_volume_container}>
+                    <Image 
+                        className={styles.volume_icon} 
+                        src={volumeIcon} 
+                        alt='volume Icon'
+                    />
+                    <input 
+                        type="range" 
+                        min={0}
+                        max={100}
+                        value={volume}
+                        onChange={changeVolume}
+                        className={styles.input_volume} 
+                        style={{ '--value': `${(volume / 100) * 100}%` } as any}
+                    />
+                </div>
+            )
+            : (
+            <div className={styles.input_duration_container}>
+                <input 
+                    type="range" 
+                    min={0}
+                    max={duration}
+                    value={currentTime}
+                    onChange={changeCurrentTime}
+                    className={styles.input_duration} 
+                    style={{ '--value': `${(currentTime / duration) * 100}%` } as any}
+                />
+            </div>
+            )}
+            
+    
+            
+        </>
     )
 }
 

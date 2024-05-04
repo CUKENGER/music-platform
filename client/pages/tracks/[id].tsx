@@ -5,17 +5,48 @@ import { useTypedSelector } from "@/hooks/useTypedSelector";
 import MainLayout from "@/layouts/MainLayout";
 import { baseUrl } from "@/services/baseUrl";
 import styles from '@/styles/TrackPage.module.css';
+import { useRouter } from "next/router";
+import fullPageBtn from '@/assets/fullPageBtn.svg'
 import Image from 'next/image'
+import { useEffect, useState } from "react";
+import closeModalIcon from '@/assets/galochka.svg'
+import useActions from "@/hooks/useActions";
+import CommentsMobile from "@/components/CommentsMobile";
 
 
 const TrackPage = () => {
 
     const {openedTrack} = useTypedSelector(state => state.playerReducer)
+    const {windowWidth} = useTypedSelector(state => state.windowReducer)
+    const {setWindowWidth} = useActions()
+
+    const router = useRouter()
+    const [isModal, setIsModal] = useState(false)
+
+    useEffect(()=>{
+        const handleResize = () =>{
+            setWindowWidth(window.innerWidth)
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
+    const handleOpenModal = () =>{
+        setIsModal(!isModal)
+    }
 
     return (
         <MainLayout title_text={openedTrack?.name}>
             <div className={styles.container}>
                 <div className={styles.main_info_container}>
+
+                    <button 
+                        className={styles.btn}
+                        onClick={() => router.push('/tracks')}
+                    >
+                        Назад
+                    </button>
 
                     <div className={styles.main_info_wrapper}>
                         <div className={styles.cover_container}>
@@ -41,45 +72,58 @@ const TrackPage = () => {
                             </div>
                         </div>
                     </div>
-
-                    <Comments openedTrack={openedTrack}/>
+                    <div className={styles.comments_container}>
+                        {windowWidth < 500 
+                        ? (
+                            <div className={styles.comments_btn_container}>
+                                <button 
+                                    onClick={handleOpenModal}
+                                    className={styles.comments_btn}
+                                >
+                                    Комментарии
+                                </button>
+                                
+                            </div>
+                        )
+                        : (
+                            <Comments openedTrack={openedTrack}/>
+                        )
+                        }
+                        
+                        
+                    </div>
 
                 </div>
 
                 <div className={styles.lyrics_container}>
-
-                    <p className={styles.title_lyrics}>
-                        Текст песни
-                    </p>
+                    <div className={styles.title_lyrics_container + ' ' + styles.title_lyrics_container_mobile}>
+                        <p className={styles.title_lyrics}>
+                            Текст песни
+                        </p>
+                        
+                    </div>
+                    
                     {openedTrack?.text
-                    ? openedTrack.text.split('\n').map((line, index) => (
-                        <p className={styles.lyrics} key={index}>{line}</p>
-                    ))
-                    : (
-                        <p className={styles.lyrics_old}>
-                        Я ебался лишь единожды<br/>
-                        Зачем где как что вы<br/>
-                        Я помню день и я отважный<br/>
-                        Будто переколень парадень<br/>
-                        <br/>
-                        А ты все ждешь и ждешь<br/>
-                        Когда приду я голый в школу<br/>
-                        Но я не приду я не хочу<br/>
-                        <br/>
-                        Я ебался лишь единожды<br/>
-                        Зачем где как что вы<br/>
-                        Я помню день и я отважный<br/>
-                        Будто переколень парадень<br/>
-                        <br/>
-                        А ты все ждешь и ждешь<br/>
-                        Когда приду я голый в школу<br/>
-                        Но я не приду я не хочу<br/>
-                    </p>
-                    )
+                    ? (
+                        <p className={styles.lyrics + ' ' + styles.lyrics_hide}>{openedTrack.text}</p>
+                        // openedTrack.text.split('\n').map((line, index) => (
+                        //     <p className={styles.lyrics} key={index}>{line}<br/></p>
+                        // ))
+                    ) : ('')
                     }
                     
 
                 </div>
+
+                {isModal 
+                ? (
+                    <CommentsMobile 
+                        openedTrack={openedTrack}
+                        handleOpenModal={handleOpenModal}
+                    />
+                )
+                : ('')
+                }
             </div>
         </MainLayout>
     )

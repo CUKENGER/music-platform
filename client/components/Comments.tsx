@@ -5,6 +5,8 @@ import Textarea from './Textarea';
 import { useCreateCommentMutation } from '@/services/CommentService';
 import { IComment, ITrack } from '@/types/track';
 import { useRouter } from 'next/router';
+import { useGetOneTrackQuery } from '@/services/TrackService';
+import Loader from './Loader';
 
 
 interface CommentsProps {
@@ -14,11 +16,7 @@ interface CommentsProps {
 const Comments:FC<CommentsProps> = ({openedTrack}) => {
 
     const [comment, setComment] = useState<string>('')
-    const [commentSend, setCommentSend] = useState<IComment>({
-        trackId: 0,
-        username: 'Ванька Дурка',
-        text: ''
-    })
+    const [comments, setComments] = useState<IComment[]>([]); 
 
     const router = useRouter()
 
@@ -26,27 +24,36 @@ const Comments:FC<CommentsProps> = ({openedTrack}) => {
         if (!openedTrack) {
             router.push('/tracks');
         }
-        
     }, [openedTrack, router])
 
-    const [createCommentMutation] = useCreateCommentMutation()
+    const { data: track, error, isLoading } = useGetOneTrackQuery(openedTrack?.id as number);
+    const [createCommentMutation, { isError }] = useCreateCommentMutation();
 
     const sendComment = async () => {
         try {
-            const response = await createCommentMutation({
-                trackId: openedTrack?.id, 
+            const newComment: IComment = {
+                trackId: openedTrack?.id,
+                username: 'Ванька Дурка',
                 text: comment,
-                username: ''
-            })
-            setComment('')
-            console.log('Comment send')
-        } catch (e) {
-            console.error(e)
+            };
+        
+            await createCommentMutation({
+                trackId: openedTrack?.id,
+                text: comment,
+                username: 'Ванька Дурка',
+            });
+        
+            setComments([...comments, 
+                newComment
+            ]);
+            setComment('');
+            console.log('Comment sent');
+        } catch (error) {
+            console.error('Error sending comment:', error);
         }
     }
 
     const handleSendComment = async () => {
-        setCommentSend({ ...commentSend, text: comment })
         await sendComment()
     }
 
@@ -77,9 +84,11 @@ const Comments:FC<CommentsProps> = ({openedTrack}) => {
                 <p className={styles.comment_text}>Люблю такие песни, забавные. Сразу хочется смеятся всем в лицо и заплевать своими слюнками. А потом тебя пиздят на мусорке и отбирают деньгиЛюблю такие песни, забавные. Сразу хочется смеятся всем в лицо и заплевать своими слюнками. А потом тебя пиздят на мусорке и отбирают деньги</p>
 
             </div>
-        {openedTrack &&
-        openedTrack?.comments.map((comment) => (
-            <div key={comment?.trackId} className={styles.comment}>
+            {isLoading && <Loader/>}
+            {error && <p>Error: Error in get query</p>}
+        {track &&
+        comments.map((comment: IComment, index) => (
+            <div key={index} className={styles.comment}>
                 <div className={styles.username_container}>
                     <p className={styles.username}>{comment?.username}</p>
                     <div className={styles.line}></div>

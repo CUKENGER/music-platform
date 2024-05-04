@@ -2,6 +2,63 @@
 .wrapper{
     padding: 40px 40px;
     background-color: var(--bg);
-    min-height: calc(100vh - 90px);
-    padding-bottom: 100px;
+    min-height: calc(100vh - 80px);
+    /* min-height: 100vh; */
+    padding-bottom: 110px;
+}
+
+.scrollButton {
+    position: fixed;
+    bottom: 125px;
+    right: 40px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: opacity 0.3s;
+    width: 55px;
+    height: 55px;
+}
+
+.arrowUp{
+    width: 100%;
+}
+
+.scrollButton:hover {
+    opacity: 0.8;
+}
+
+@media(max-width: 900px) {
+    .wrapper{
+        padding: 30px;
+        padding-bottom: 110px;
+    }
+}
+
+@media(max-width: 800px) {
+    .wrapper{
+        padding: 25px;
+        padding-bottom: 110px;
+    }
+}
+
+@media(max-width: 700px) {
+    .wrapper{
+        padding: 20px;
+        padding-bottom: 110px;
+    }
+}
+
+@media(max-width: 600px) {
+    .wrapper{
+        padding: 15px;
+        padding-bottom: 110px;
+    }
+}
+
+@media(max-width: 500px) {
+    .wrapper{
+        padding: 10px;
+        padding-bottom: 110px;
+    }
 }

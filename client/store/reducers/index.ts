@@ -5,6 +5,9 @@ import { tracksApi } from "@/services/TrackService";
 import { uploadPictureReducer } from "./uploadPictureSlice";
 import { audioReducer } from "./audioSlice";
 import { commentApi } from "@/services/CommentService";
+import { dropdownReducer } from "./dropdownSlice";
+import { windowReducer } from "./windowSlice";
+import { searchInputReducer } from "./searchInputSlice";
 
 
 
@@ -12,6 +15,9 @@ export const rootReducer = combineReducers({
     playerReducer,
     audioReducer,
     uploadPictureReducer,
+    dropdownReducer,
+    windowReducer,
+    searchInputReducer,
     [commentApi.reducerPath]: commentApi.reducer,
     [tracksApi.reducerPath]: tracksApi.reducer
 })

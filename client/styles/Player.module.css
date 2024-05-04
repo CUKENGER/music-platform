@@ -13,7 +13,6 @@
     column-gap: 100px;
 }
 
-
 .pause_btn{
     cursor: pointer;
 }
@@ -40,6 +39,11 @@
     display: flex;
     align-items: center;
     column-gap: 25px;
+    width: calc(100% - 152rem);
+}
+
+.duration_container{
+    width: calc(100% - 110rem);
 }
 
 .name{
@@ -63,4 +67,49 @@
 
 .name:hover::after {
     transform: scaleX(1);
+}
+
+.track_progress_container{
+    width: 50px;
+    height: 100%;
+    position: absolute;
+    bottom: 100px;
+    right: 100px;
+}
+
+.btns_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 15px;
+}
+
+@media (max-width: 1400px) {
+
+    .container{
+        column-gap: 50px;
+        padding: 0 30px;
+    }
+
+    .name, .artist{
+        font-size: 14px;
+    }
+
+    .duration_container{
+        width: calc(100% - 110rem);
+    }
+
+    .volume_container{
+        width: calc(100% - 152rem);
+    }
+}
+
+@media (max-width: 1125px) {
+    .pause_btn{
+        width: 30px;
+    }
+
+    .name,.artist{
+        font-size: 12px;
+    }
 }

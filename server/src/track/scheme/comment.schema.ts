@@ -13,6 +13,9 @@ export class Comment {
     @Column()
     text: string
 
+    @Column()
+    trackId: number
+
     @ManyToOne(() => Track, (track) => track.comments)
     track: Track;
 }

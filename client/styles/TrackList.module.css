@@ -8,3 +8,22 @@
     justify-content: center;
     row-gap: 25px;
 }
+
+.dropdown_container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+
+@media(max-width:600px) {
+    .container{
+        row-gap: 15px;
+    }
+}
+
+@media(max-width:600px) {
+    .container{
+        row-gap: 10px;
+    }
+}

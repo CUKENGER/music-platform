@@ -8,7 +8,7 @@
     height: 100vh;
     background-color: var(--pmr);
     transform: translateX(-100%);
-    z-index: 2;
+    z-index: 20;
     display: flex;
     flex-direction: column;
     align-items: center;

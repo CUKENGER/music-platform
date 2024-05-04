@@ -3,7 +3,6 @@
     font-size: 20px;
 }
 
-
 .comment_text{
     font-size: 16px;
     line-height: 1.5;
@@ -17,10 +16,9 @@
     row-gap: 30px;
 }
 
-
 .comment{
     padding: 15px;
-    width: 50%;
+    width: 600px;
     background-color: var(--gray);
     border-radius: 10px;
     display: flex;
@@ -46,7 +44,7 @@
 
 
 .input_container{
-    width: 50%;
+    width: 600px;
 }
 
 .add_comment_container{
@@ -63,4 +61,27 @@
 
 .btn:hover{
     cursor: pointer;
+}
+
+@media(max-width: 1200px){
+    .input_container{
+        width: 100%;
+    }
+
+    .comment{
+        width: 100%;
+    }
+}
+
+
+@media(max-width:630px){
+    .btn,
+    .comment_text{
+        font-size: 14px;
+    }
+
+    .title_comment_container{
+        font-size: 16px;
+    }
+
 }

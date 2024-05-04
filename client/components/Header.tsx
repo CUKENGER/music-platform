@@ -20,9 +20,9 @@ const Header:FC<HeaderProps> = ({title}) => {
 
     return (
         <header className={styles.container}>
-            <button className={styles.menu__btn_container}>
-                <Image onClick={toggleMenu} width={40} height={40} className={styles.image} src={burger} alt='burger menu icon'/>
-            </button>
+            
+            <Image onClick={toggleMenu} className={styles.image} src={burger} alt='burger menu icon'/>
+            
             <p className={styles.title}>{title}</p>
             <NavBar isOpen={isOpen} toggleMenu={toggleMenu}/>
             

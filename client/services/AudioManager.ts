@@ -45,3 +45,4 @@ class AudioManager {
   Object.freeze(audioManager);
   
   export default audioManager;
+

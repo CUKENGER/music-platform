@@ -1,0 +1,46 @@
+
+
+
+.input{
+    font-size: 16px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: var(--gray);
+    width: 100%;
+    padding: 15px;
+    color: var(--text);
+}
+
+.input_container{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    position: relative;
+}
+
+.input::placeholder{
+    font-size: 16px;
+    color: var(--text);
+}
+
+.loader {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+    right: 10px;
+    border: 6px solid;
+    border-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.35) rgba(255, 255, 255, 0.5);
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+  
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  } 

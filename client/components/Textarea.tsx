@@ -13,7 +13,7 @@ const Textarea:FC<TextareaProps> = ({placeholder, value, setValue})=>{
 
     useEffect(() => {
         if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.height = '100%';
             textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
         }
     }, []);
@@ -33,12 +33,15 @@ const Textarea:FC<TextareaProps> = ({placeholder, value, setValue})=>{
 
     return (
         <textarea 
-        onChange={onChange}
-        value={value}
-        ref={textareaRef}
-        onInput={handleInput}
-        className={styles.textarea} 
-        placeholder={placeholder}></textarea>
+            onChange={onChange}
+            value={value}
+            ref={textareaRef}
+            onInput={handleInput}
+            className={styles.textarea} 
+            placeholder={placeholder}
+        >
+
+        </textarea>
     )
 }   
 

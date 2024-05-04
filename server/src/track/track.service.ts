@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, getConnection } from 'typeorm';
 import { Track } from './scheme/track.schema';
 import { Comment } from './scheme/comment.schema';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -50,27 +50,40 @@ export class TrackService {
 	}
 
 	async getOne(id: number): Promise<Track> {
-		const track = await this.trackRepository.findOne({ where: { id } , relations: ['comments'] });
+		const track = await this.trackRepository.findOne({ where: { id } , relations: ['comments', 'album'] });
 		return track
 	}
 
 	async delete(id: number): Promise<Track> {
 		const track = await this.trackRepository.findOne({ where: { id } });
-		console.log(track)
 		if (!track) {
 			throw new Error(`Track with id ${id} not found`);
 		}
+		// Удаление связанных файлов
 		if (track.picture) {
-			const picturePath = path.resolve('static/', track.picture); // Путь к файлу изображения
-			fs.unlinkSync(picturePath); 
-		}
+			try {
+				const picturePath = path.resolve('static/', track.picture); // Путь к файлу изображения
+				fs.unlinkSync(picturePath); 
+			} catch(e) {
+				console.log(e)
+			}
+		} 
 		if (track.audio) {
-			const audioPath = path.resolve('static/', track.audio); // Путь к аудиофайлу
-			fs.unlinkSync(audioPath); 
+			try{
+				const audioPath = path.resolve('static/', track.audio); // Путь к аудиофайлу
+				fs.unlinkSync(audioPath);
+			} catch(e) {
+				console.log(e)
+			}
 		}
+
+		// Удаление связанных комментариев
+		await this.commentRepository.delete({ trackId: id });
+
+		// Удаление трека
 		const deleteTrack = await this.trackRepository.delete(id)
 
-		return track 
+		return track;
 	}
 
 	async addComment(dto: CreateCommentDto): Promise<Comment> {
@@ -113,12 +126,15 @@ export class TrackService {
 		}
 	}
 
-	async search(query): Promise<Track[]> {
+	async searchByName(query: string, count: number, offset: number): Promise<Track[]> {
 		const tracks = await this.trackRepository
-        .createQueryBuilder("track")
-        .where("track.name LIKE :name", { name: `%${query}%` })
+        .createQueryBuilder('track')
+        .where('LOWER(track.name) LIKE LOWER(:name)', { name: `%${query}%` })
+		.skip(offset)
+		.take(count)
         .getMany();
-    return tracks;
+
+    	return tracks;
 	}
 
 }

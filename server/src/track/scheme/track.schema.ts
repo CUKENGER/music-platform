@@ -1,7 +1,8 @@
 
 
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import {Comment} from '../scheme/comment.schema';
+import { Album } from 'src/album/album.schema';
 
 @Entity()
 export class Track {
@@ -28,4 +29,7 @@ export class Track {
 
   @OneToMany(() => Comment, comment => comment.track)
   comments: Comment[];
+
+  @ManyToOne(() => Album, album => album.tracks, { nullable: true })
+  album: Album | null;
 }

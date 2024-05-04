@@ -37,8 +37,10 @@ export class TrackController {
 	}
 
 	@Get('/search')
-	search(@Query('query') query: string) {
-		return this.trackService.search(query)
+	searchByName(@Query('query') query: string,
+				@Query('count') count: number,
+				@Query('offset') offset: number) {
+		return this.trackService.searchByName(query, count, offset)
 	}
 
 	@Get(':id')
@@ -60,6 +62,5 @@ export class TrackController {
 	addListen(@Param('id') id: number) {
 		return this.trackService.listen(id)
 	}
-	
 
 }

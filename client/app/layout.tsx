@@ -1,3 +1,4 @@
+import { useTypedSelector } from "@/hooks/useTypedSelector";
 import { Providers } from "@/store/provider";
 import type { Metadata } from "next";
 
@@ -15,9 +16,11 @@ export default function RootLayout({
   return (
     <Providers>
       <html lang="ru-RU">
+        
         <body >
             {children}
         </body>
+        
       </html>
     </Providers>
   );

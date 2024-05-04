@@ -1,9 +1,11 @@
 
 import { Document } from 'mongoose';
+import { Track } from 'src/track/scheme/track.schema';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { AlbumComment } from './commentAlbum/albumComment.schema';
 
 @Entity()
-export class Track {
+export class Album {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,15 +15,21 @@ export class Track {
   @Column()
   artist: string;
 
-  @Column()
-  tracks: Track[];
-
-  @Column()
+  @Column({nullable: true})
   listens: number;
 
-  @Column()
+  @Column({nullable: true})
   picture: string;
 
+  @Column({nullable: true})
+  description: string;
+
   @Column()
-  audio: string;
+  releaseDate: string;
+
+  @OneToMany(() => AlbumComment, albumComment => albumComment.album, {nullable: true})
+  comments: AlbumComment[];
+
+  @OneToMany(() => Track, track => track.album, {nullable: true})
+  tracks: Track[];
 }

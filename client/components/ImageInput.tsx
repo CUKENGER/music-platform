@@ -30,8 +30,19 @@ const ImageInput:FC<ImageInputProps> = ({setPicture}) => {
 
     return (
         <div className={styles.container}>  
-            <input id='file' className={styles.input} type="file" onChange={handleImageChange} accept='image/*'  />
-            <label htmlFor="file" className={styles.label}>Выберите файл</label>
+            <input 
+                id='file' 
+                className={styles.input} 
+                type="file" 
+                onChange={handleImageChange} 
+                accept='image/*'  
+            />
+            <label 
+                htmlFor="file" 
+                className={styles.label}
+            >
+                Выберите файл
+            </label>
             {uploadPicture &&
                 <img className={styles.img} src={uploadPicture} alt="uploaded"/>
             }

@@ -14,6 +14,7 @@ import { useInput } from "@/hooks/useInput"
 import cover from '@/assets/iscover.jpg'
 import { StaticImageData } from "next/image"
 import useActions from "@/hooks/useActions"
+import { baseUrl } from "@/services/baseUrl"
 
 const Create = () => {
 
@@ -36,7 +37,7 @@ const Create = () => {
 
     const toFile = async () => {
         try {
-            const response = await fetch('http://localhost:5000/image/iscover.jpg');
+            const response = await fetch(baseUrl + 'image/iscover.jpg');
             const blob = await response.blob();
             file = new File([blob], 'cover.jpg', {type: blob.type, lastModified: Date.now()});
         } catch (error) {
@@ -100,14 +101,14 @@ const Create = () => {
                 {activeStep === 1 && (
                     <div className={styles.container}>
 
-                        <div>
+                        <div className={styles.name_input_container}>
                             {isInputEmpty 
                             ? <div>пошел на хуй</div>
                             : ''
                             }
                             <Input placeholder="Введите название трека" {...name} isRequired={true}/>
                         </div>
-                        <div>
+                        <div className={styles.artist_input_container}>
                             {isInputEmpty 
                             ? <div>пошел на хуй</div>
                             : ''

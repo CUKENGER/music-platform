@@ -8,6 +8,7 @@
     border-radius: 10px;
     padding: 15px 30px;
     background-color: var(--gray);
+    box-shadow: rgb(153 0 0 / 20%) 0px 5px 5px 0px;
 }
 
 .main__info_container{
@@ -25,6 +26,7 @@
     flex-direction: column;
     height: 50px;
     justify-content: space-between;
+    align-items: flex-start;
     font-size: 16px;
 }
 
@@ -62,8 +64,6 @@
     cursor: pointer;
 }
 
-
-
 /* .name:hover{
     text-decoration: underline;
     cursor: pointer;
@@ -90,8 +90,127 @@
     transform: scaleX(0);
     transform-origin: left;
     transition: transform .3s ease-in-out;
+    z-index: 10;
 }
 
 .name:hover::after {
     transform: scaleX(1);
+}
+
+@media(max-width: 1124px){
+    .name{
+        /* text-decoration: underline #422525; */
+    }
+}
+
+@media(max-width: 790px) {
+    .playBtn,
+    .cover,
+    .delete_icon{
+        width: 35px;
+        height: 35px;
+    }
+    .name,
+    .artist{
+        font-size: 14px;
+    }
+
+    .listens,
+    .time{
+        font-size: 12px;
+    }
+
+    .info__track_container,
+    .time__container{
+        height: 50px;
+    }
+
+}
+
+@media(max-width: 690px) {
+    .listens{
+        display: none;
+    }
+
+    .time{
+        margin-right: 0;
+    }
+}
+
+@media(max-width: 650px) {
+    .main__info_container{
+        column-gap: 20px;
+    }
+
+    .playBtn{
+        width: 45px;
+    }
+    
+    .cover{
+        width: 45px;
+        height: 45px;
+    }
+}
+
+@media(max-width: 520px) {
+    .name,
+    .artist{
+        font-size: 12px;
+    }
+
+    .listens,
+    .time{
+        font-size: 10px;
+    }
+
+    .info__track_container,
+    .time__container{
+        height: 35px;
+    }
+
+    .delete_icon{
+        display: none;
+    }
+
+    .time__container{
+        width: 100%;
+    }
+
+    .track__container{
+        padding: 10px 10px;
+    }
+}
+
+@keyframes marquee {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+}
+
+ 
+@media(max-width: 420px){
+
+    .info__track_container{
+        width: 125px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .name,
+    .artist{
+        animation: marquee 5s linear infinite;
+        overflow:hidden;
+        white-space: nowrap;
+        width: 100%;
+    }
+}
+
+
+@media(max-width: 365px) {
+    .time_desktop{
+        display: none;
+    }
 }

@@ -40,3 +40,25 @@
     font-size: 25px;
     cursor: pointer;
 }
+
+
+@media(max-width:750px){
+    .steper{
+        column-gap: 60px;
+    }
+}
+
+@media(max-width:450px){
+    .steper{
+        column-gap: 20px;
+    }
+}
+
+@media(max-width:380px){
+    .step,
+    .step_inactive{
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+    }
+}

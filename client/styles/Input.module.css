@@ -17,3 +17,9 @@
 .input:hover{
     outline: none
 }
+
+@media(max-width:420px){
+    .input{
+        font-size: 12px;
+    }
+}

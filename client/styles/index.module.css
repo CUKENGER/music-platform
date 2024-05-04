@@ -41,10 +41,44 @@
     border-radius: 10px;
 }
 
-.navBar_item:hover{
+.navBar_item{
     border: 2px solid var(--pmr)
 }
 
 .navBar_item:hover{
     cursor: pointer;
+}
+
+@media(max-width: 525px){
+    .navBar{
+        width: 400px;
+        height: 300px;
+        row-gap: 20px;
+    }
+
+    .navBar_item{
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .title{
+        font-size: 24px;
+    }
+}
+
+@media(max-width: 340px){
+    .navBar{
+        width: 200px;
+        height: 200px;
+        row-gap: 10px;
+    }
+
+    .navBar_item{
+        height: 20px;
+        font-size: 12px;
+    }
+
+    .title{
+        font-size: 18px;
+    }
 }
