@@ -7,11 +7,15 @@ import { AlbumComment } from "./commentAlbum/albumComment.schema";
 import { ConfigModule } from "@nestjs/config";
 import { AlbumFileService } from "./albumFile/albumFile.service";
 import { Track } from "src/track/scheme/track.schema";
+import { Artist } from "src/artist/scheme/artist.schema";
+import { ArtistService } from "src/artist/artist.service";
+import { ArtistComment } from "src/artist/artistComment/artistComment.schema";
+import { ArtistFileService } from "src/artist/artistFile/artistFile.service";
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Album, AlbumComment, Track]), ConfigModule],
+    imports: [TypeOrmModule.forFeature([Album, AlbumComment, Track, Artist, ArtistComment]), ConfigModule],
     controllers: [AlbumController],
-    providers: [AlbumService, AlbumFileService]
+    providers: [AlbumService, AlbumFileService, ArtistService, ArtistFileService]
 })
 export class AlbumModule {}

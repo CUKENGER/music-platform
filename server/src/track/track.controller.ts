@@ -63,4 +63,9 @@ export class TrackController {
 		return this.trackService.listen(id)
 	}
 
+	@Post('/likes/:id')
+	addLikes(@Param('id') id: number) {
+		return this.trackService.addLikes(id)
+	}
+
 }

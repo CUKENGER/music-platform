@@ -1,4 +1,9 @@
 
+.noscroll{
+    overflow: hidden;
+}
+
+
 .wrapper{
     padding: 40px 40px;
     background-color: var(--bg);
@@ -22,6 +27,7 @@
 
 .arrowUp{
     width: 100%;
+    height: auto;
 }
 
 .scrollButton:hover {

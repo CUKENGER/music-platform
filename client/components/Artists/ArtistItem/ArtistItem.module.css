@@ -1,0 +1,98 @@
+
+
+.container{
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--gray);
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    /* width: 22.8rem; */
+    width: 100%;
+    /* height: 250px; */
+    align-items: center;
+}
+
+.info_container{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.name_container{
+    display: flex;
+    width: 133px;
+    justify-content: center;
+    height: 20px;
+    text-align: start;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.cover_container{
+    width: 100%;
+    height: auto;
+}
+
+.cover{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.like_container{
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+}
+
+.name{
+    text-align: center;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.name::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: #a40101;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s ease-in-out;
+    z-index: 10;
+}
+
+.name:hover::after {
+    transform: scaleX(1);
+}
+
+.cover,
+.name,
+.like{
+    cursor: pointer;
+}
+
+.cover:hover {
+    filter: brightness(70%);
+    transition: filter 0.5s ease;
+}
+
+.delete_container{
+    width: 30px;
+    height: 30px;
+}
+.delete_icon{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}

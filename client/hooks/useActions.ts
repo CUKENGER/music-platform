@@ -9,6 +9,9 @@ import { audioActions } from "@/store/reducers/audioSlice";
 import { dropdownActions } from "@/store/reducers/dropdownSlice";
 import { windowActions } from "@/store/reducers/windowSlice";
 import { searchInputActions } from "@/store/reducers/searchInputSlice";
+import { addTrackActions } from "@/store/reducers/addTrackSlice";
+import { searchAlbumsActions } from "@/store/reducers/searchAlbumsSlice";
+import { searchArtistsActions } from "@/store/reducers/searchArtistsSlice";
 
 const AllActions = {
 	...playerActions,
@@ -17,6 +20,9 @@ const AllActions = {
 	...dropdownActions,
 	...windowActions,
 	...searchInputActions,
+	...addTrackActions,
+	...searchAlbumsActions,
+	...searchArtistsActions
 }
 
 const useActions = () => {

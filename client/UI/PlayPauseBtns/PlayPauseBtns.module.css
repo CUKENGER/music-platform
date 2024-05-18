@@ -1,0 +1,49 @@
+
+.circle{
+    width: 40px;
+    height: 40px;
+    background: var(--bg);
+    border-radius: 50%;
+    overflow: hidden;
+    transition: all .5s ease;
+    cursor: pointer;
+}
+
+.shape{
+    background: #FFFFFF;
+    width: 50%;
+    height: 50%;
+    position: relative;
+    top: 25%;
+    left: 26%;
+}
+
+.stop {
+    position: relative;
+    width: 50%;
+    height: 50%;
+    background-color: var(--bg);
+}
+
+.stop::before, .stop::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 25%;
+    height: 100%;
+    background-color: var(--text);
+}
+
+.stop::before {
+    /*left: 10%;*/
+}
+
+.stop::after {
+    right: 10%;
+}
+
+.play{
+    -webkit-clip-path: polygon(15% 0, 100% 50%, 100% 50%, 15% 100%);
+    clip-path: polygon(15% 0, 100% 50%, 100% 50%, 15% 100%);
+    transition: all .2s ease;
+}

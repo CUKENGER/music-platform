@@ -8,6 +8,8 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { FileService, FileType } from 'src/file/file.service';
 import * as fs from 'fs'
 import * as path from 'path'
+import { Artist } from 'src/artist/scheme/artist.schema';
+import { ArtistService } from 'src/artist/artist.service';
 
 @Injectable()
 export class TrackService {
@@ -17,11 +19,15 @@ export class TrackService {
 		private trackRepository: Repository<Track>,
 		@InjectRepository(Comment) 
 		private commentRepository: Repository<Comment>,
-		private fileService: FileService) {
+		private fileService: FileService,
+		@InjectRepository(Artist)
+		private artistRepository: Repository<Artist>,
+		private artistService: ArtistService
+	) {
 
 	}
 
-	async create(createTrackDto: CreateTrackDto, picture, audio): Promise<Track> {
+	async create(createTrackDto: CreateTrackDto, picture, audio): Promise<string> {
 
 		if (picture && audio) {
 			const audioPath = this.fileService.createFile(FileType.AUDIO, audio)
@@ -30,9 +36,18 @@ export class TrackService {
 			console.log('imagePath',imagePath)
 			const newTrack = await this.trackRepository.create(createTrackDto);
 			newTrack.listens = 0;
+			newTrack.likes = 0
+			newTrack.genre = createTrackDto.genre
 			newTrack.audio = audioPath
 			newTrack.picture = imagePath
-			return this.trackRepository.save(newTrack);
+			const artistDto = {
+				name: newTrack.artist,
+				genre: '',
+				description: '',
+			}
+			await this.artistService.create(artistDto, picture)
+			await this.trackRepository.save(newTrack);
+			return JSON.stringify({ id: newTrack.id, name: newTrack.name });
 		} else {
 			// throw new Error('нихуя не загрузилось блять')
 			console.log('нихуя не загрузилось блять')
@@ -44,13 +59,13 @@ export class TrackService {
 		const tracks = await this.trackRepository.find({
 			skip: offset,
 			take: count,
-			relations: ['comments']
+			relations: ['comments', 'album', 'artistEntity']
 		});
 		return tracks
 	}
 
 	async getOne(id: number): Promise<Track> {
-		const track = await this.trackRepository.findOne({ where: { id } , relations: ['comments', 'album'] });
+		const track = await this.trackRepository.findOne({ where: { id } , relations: ['comments', 'album', 'artistEntity'] });
 		return track
 	}
 
@@ -99,7 +114,7 @@ export class TrackService {
 		}
 	
 		// Загружаем комментарии для этого трека
-		// await this.trackRepository.findOne({ where: { id: dto.trackId }, relations: ['comments'] });
+		await this.trackRepository.findOne({ where: { id: dto.trackId }, relations: ['comments'] });
 	
 		// Добавляем идентификатор комментария в массив комментариев трека
 		track.comments.push(comment);
@@ -135,6 +150,22 @@ export class TrackService {
         .getMany();
 
     	return tracks;
+	}
+
+	async addLikes(id) {
+		try {
+			const track = await this.trackRepository.findOne({ where: { id: id } });
+			if (track) {
+				track.likes += 1;
+				await this.trackRepository.save(track);
+				return track.id; // Возвращаем обновленный объект трека
+			} else {
+				throw new Error(`Track with id ${id} not found`);
+			}
+		} catch (e) {
+			console.log(e);
+			throw e; // Пробрасываем исключение дальше, чтобы его можно было обработать в вызывающем коде
+		}
 	}
 
 }

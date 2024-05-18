@@ -1,13 +1,17 @@
 import {combineReducers} from "redux";
-import {HYDRATE} from "next-redux-wrapper";
 import playerReducer from "./playerReducer";
-import { tracksApi } from "@/services/TrackService";
 import { uploadPictureReducer } from "./uploadPictureSlice";
 import { audioReducer } from "./audioSlice";
-import { commentApi } from "@/services/CommentService";
 import { dropdownReducer } from "./dropdownSlice";
 import { windowReducer } from "./windowSlice";
 import { searchInputReducer } from "./searchInputSlice";
+import { commentApi } from "@/api/CommentService";
+import { tracksApi } from "@/api/TrackService";
+import { addTrackReducer } from "./addTrackSlice";
+import { albumsApi } from "@/api/AlbumService";
+import { searchAlbumsReducer } from "./searchAlbumsSlice";
+import { searchArtistsReducer } from "./searchArtistsSlice";
+import { artistsApi } from "@/api/ArtistService";
 
 
 
@@ -18,8 +22,13 @@ export const rootReducer = combineReducers({
     dropdownReducer,
     windowReducer,
     searchInputReducer,
+    addTrackReducer,
+    searchAlbumsReducer,
+    searchArtistsReducer,
     [commentApi.reducerPath]: commentApi.reducer,
-    [tracksApi.reducerPath]: tracksApi.reducer
+    [tracksApi.reducerPath]: tracksApi.reducer,
+    [albumsApi.reducerPath]: albumsApi.reducer,
+    [artistsApi.reducerPath]: artistsApi.reducer,
 })
 
 // export const reducer = (state, action) => {

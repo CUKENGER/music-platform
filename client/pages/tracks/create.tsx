@@ -1,24 +1,23 @@
 'use client'
 
-import Input from "@/components/Input"
-import StepWrapper from "@/components/StepWrapper"
 import MainLayout from "@/layouts/MainLayout"
-import { useState } from "react"
-import styles from '@/styles/Create.module.css'
-import Textarea from "@/components/Textarea"
-import ImageUpload from "@/components/ImageUpload"
-import AudioUpload from "@/components/AudioUpload"
+import { memo, useState } from "react"
+import styles from '@/styles/CreateTrack.module.css'
 import { useRouter } from "next/router"
-import { useCreateTrackMutation } from "@/services/TrackService"
 import { useInput } from "@/hooks/useInput"
-import cover from '@/assets/iscover.jpg'
 import { StaticImageData } from "next/image"
 import useActions from "@/hooks/useActions"
 import { baseUrl } from "@/services/baseUrl"
+import { useCreateTrackMutation } from "@/api/TrackService"
+import StepWrapper from "@/components/Tracks/Create/StepWrapper/StepWrapper"
+import Textarea from "@/UI/Textarea/Textarea"
+import TrackCoverUpload from "@/components/Tracks/Create/TrackCoverUpload/TrackCoverUpload/TrackCoverUpload"
+import InputString from "@/UI/InputString/InputString"
+import TrackFileUpload from "@/components/Tracks/Create/TrackFileUpload/TrackFileUpload"
 
-const Create = () => {
+const Create = memo(() => {
 
-    const [activeStep, setActiveStep] = useState(1)
+    const [activeStep, setActiveStep] = useState<number>(1)
     const [picture, setPicture] = useState<File | null | StaticImageData>(null)
     const [audio, setAudio] = useState<File | null>(null)
     const [isInputEmpty, setIsInputEmpty] = useState<boolean>(false)
@@ -65,7 +64,8 @@ const Create = () => {
     
             try {
                 const response = await createTrackMutation(formData);
-                router.push('/tracks');
+                await router.push('/tracks');
+                console.log(response)
                 setUploadPicture('')
             } catch (error) {
                 console.error('Error creating track:', error);
@@ -75,7 +75,7 @@ const Create = () => {
         }
     }
 
-    const next = () => {
+    const next = async () => {
         if(activeStep < 3) {
             if (name.value.trim() !== '' && artist.value.trim() !== '') {
                 setActiveStep(prev => prev + 1);
@@ -84,7 +84,7 @@ const Create = () => {
             }
         } else{
             const formData = new FormData();
-            handleCreate(formData)
+            await handleCreate(formData)
         }
     }
 
@@ -106,17 +106,23 @@ const Create = () => {
                             ? <div>пошел на хуй</div>
                             : ''
                             }
-                            <Input placeholder="Введите название трека" {...name} isRequired={true}/>
+                            <InputString placeholder="Введите название трека" {...name} isRequired={true}/>
                         </div>
                         <div className={styles.artist_input_container}>
                             {isInputEmpty 
                             ? <div>пошел на хуй</div>
                             : ''
                             }
-                            <Input placeholder="Введите исполнителя трека" {...artist} isRequired={true}/>
+                            <InputString placeholder="Введите исполнителя трека" {...artist} isRequired={true}/>
                         </div>
                         <div className={styles.textarea_container}>
-                            <Textarea placeholder="Введите текст песни" {...text}/>
+                            <Textarea
+                                placeholder="Введите текст песни"
+                                value={text.value}
+                                setValue={text.setValue}
+                                onChangeNeed={true}
+                                isRequired={true}
+                            />
                         </div>
                         <div className={styles.btn__container}>
                             <button className={styles.btn} onClick={next}>Вперед</button>
@@ -124,10 +130,10 @@ const Create = () => {
                     </div>
                 )}
                 {activeStep === 2 && (
-                    <ImageUpload next={next} back={back} setPicture={setPicture}/>
+                    <TrackCoverUpload next={next} back={back} setPicture={setPicture}/>
                 )}
                 {activeStep === 3 && (
-                    <AudioUpload next={next} back={back} audio={audio} setAudio={setAudio}/>
+                    <TrackFileUpload next={next} back={back} audio={audio} setAudio={setAudio}/>
                 )}
 
 
@@ -135,6 +141,7 @@ const Create = () => {
         
         </MainLayout>
     )
-}
+})
 
+Create.displayName = 'CreateTracks';
 export default Create

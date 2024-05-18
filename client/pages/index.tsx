@@ -1,5 +1,5 @@
 import MainLayout from '@/layouts/MainLayout';
-import styles from '../styles/index.module.css'
+import styles from '@/styles/index.module.css'
 import { useRouter } from 'next/router';
 
 const Index = () => {
@@ -8,6 +8,7 @@ const Index = () => {
         {text: "Главная", href: '/'},
         {text: "Список треков", href: '/tracks'},
         {text: "Список альбомов", href: '/albums'},
+        {text: "Список артистов", href: '/artists'},
     ]
 
     const router = useRouter()

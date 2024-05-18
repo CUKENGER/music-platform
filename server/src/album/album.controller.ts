@@ -19,14 +19,9 @@ export class AlbumController {
     ]))
     async create(@UploadedFiles() files , @Body() dto: CreateAlbumDto) {
 
-        const {picture, tracks} = files
+        console.log('files',files);
 
-        if (!tracks || !picture) {
-			throw new Error('files are required');
-		}
-
-
-        return this.albumService.create(dto, picture, tracks)
+        return this.albumService.create(dto, files)
     }
 
     @Get()
@@ -35,10 +30,12 @@ export class AlbumController {
             return this.albumService.getAll(count, offset)
     }
 
-    @Get()
-    search(@Query('query') query: string) {
-        return this.albumService.search(query)
-    }
+    @Get('/search')
+	searchByName(@Query('query') query: string,
+				@Query('count') count: number,
+				@Query('offset') offset: number) {
+		return this.albumService.searchByName(query, count, offset)
+	}
 
     @Get(':id')
     getOne(@Param('id') id: number) {

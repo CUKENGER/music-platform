@@ -1,11 +1,13 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
 interface dropdownState {
-    selectedSort: string
+    selectedSort: string;
+    isNavbarOpen: boolean
 }
 
 const initialState: dropdownState = {
-    selectedSort: 'Все'
+    selectedSort: 'Все',
+    isNavbarOpen: false
 }
 
 export const dropdownSlice = createSlice({
@@ -14,6 +16,9 @@ export const dropdownSlice = createSlice({
     reducers: {
         setSelectedSort(state, action: PayloadAction<string>) {
             state.selectedSort = action.payload
+        },
+        setIsNavbarOpen(state, action: PayloadAction<boolean>) {
+            state.isNavbarOpen = action.payload
         }
     }
 })

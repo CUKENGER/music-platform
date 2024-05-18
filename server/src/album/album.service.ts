@@ -1,14 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Album } from "./album.schema";
-import { DeepPartial, Repository } from "typeorm";
+import {Repository } from "typeorm";
 import { CreateAlbumDto } from "./dto/create-album.dto";
 import { CreateAlbumCommentDto } from "./dto/create-albumComment.dto";
 import { AlbumComment } from "./commentAlbum/albumComment.schema";
 import { AlbumFileService, AlbumFileType } from "./albumFile/albumFile.service";
-import * as uuid from 'uuid'
 import { Track } from "src/track/scheme/track.schema";
-import { FileService } from "src/file/file.service";
+import * as path from 'path'
+import * as fs from 'fs/promises';
+import { Artist } from "src/artist/scheme/artist.schema";
+import { ArtistService } from "src/artist/artist.service";
 
 @Injectable()
 export class AlbumService {
@@ -21,41 +23,55 @@ export class AlbumService {
         private albumFileService: AlbumFileService,
         @InjectRepository(Track)
         private trackRepository: Repository<Track>,
+        @InjectRepository(Artist)
+        private artistService: ArtistService
     ) {
     }
 
-    async create(dto: CreateAlbumDto, picture, tracks): Promise<string> {
-        if (picture && tracks) {
-			const tracksPath = this.albumFileService.createTracks(AlbumFileType.AUDIO, tracks)
-			const imagePath = this.albumFileService.createCover(AlbumFileType.IMAGE, picture)
-			console.log('audioPath',tracksPath)
-			console.log('imagePath',imagePath)
+    async create(dto: CreateAlbumDto, files): Promise<string> {
+        if (files) {
+
+			const tracksPath = this.albumFileService.createTracks(AlbumFileType.AUDIO, files.tracks)
+			const imagePath = this.albumFileService.createCover(AlbumFileType.IMAGE, files.picture)
+
             const newAlbum = await this.albumRepository.create(dto)
             newAlbum.listens = 0
+            newAlbum.likes = 0
+            newAlbum.genre = dto.genre
             newAlbum.picture = imagePath
-            newAlbum.tracks = tracks
+            newAlbum.tracks = files.tracks
+            console.log('trackPath',tracksPath)
+            console.log('Tracks:', files.tracks);
             await this.albumRepository.save(newAlbum)
-            const trackDtos = tracks.map((track, index) => ({
-                name: track.originalname.split('.')[1].trim(),
+
+            const trackDtos = files.tracks.map((track, index) => ({
+                name: dto.track_names[index],
                 artist: dto.artist,
-                text: '',
+                text: dto.track_texts[index],
                 audio: tracksPath[index],
                 album: newAlbum,
-                listens: 0,
-                picture: imagePath
+                picture: imagePath,
+                genre: dto.genre
             }));
+            const artistDto = {
+				name: dto.artist,
+				genre: dto.genre,
+				description: ''
+			}
+			await this.artistService.create(artistDto, files.picture)
 			await this.trackRepository.save(trackDtos);
-			return newAlbum.id + ' ' + newAlbum.name;
+			return JSON.stringify({ id: newAlbum.id, name: newAlbum.name });
 		} else {
 			console.log('нихуя не загрузилось блять')
+            return 'ничего не загружено';
 		}
     }
     
-
-    async getAll(count=10, offset=0): Promise<Album[]>{
+    async getAll(count=50, offset=0): Promise<Album[]>{
         const albums = await this.albumRepository.find({
             skip: offset,
-            take: count
+            take: count,
+            relations: ['tracks', 'comments', 'artistEntity']
         })
         return albums
     }
@@ -96,20 +112,57 @@ export class AlbumService {
     }
 
     async delete(id: number):Promise<Album> {
-        const album = await this.albumRepository.findOne({where: {id}})
+        const album = await this.albumRepository.findOne({ where: { id } , relations: ['tracks', 'comments'] });
         if (!album) {
-            throw new Error(`Album with ${id} id not found`)
+            throw new Error(`Album with ${id} id not found`);
         }
-        const deleteAlbum = await this.albumRepository.delete(id)
-        return album
+        // Удаление изображения, если оно существует
+        if (album.picture) {
+            try {
+                console.log('album.picture', album.picture);
+                const picturePath = path.resolve('static/', album.picture);
+                await fs.unlink(picturePath);
+            } catch (error) {
+                console.error(`Error deleting picture for album ${id}:`, error);
+            }
+        } else{
+            console.log('album.picture not found')
+        }
+        // Удаление аудиофайлов, если они существуют
+        if (Array.isArray(album.tracks) && album.tracks.length > 0) {
+            try {
+                await Promise.all(album.tracks.map(async (track) => {
+                    if (track.audio) {
+                        console.log('track.audio', track.audio);
+                        await this.trackRepository.delete(track.id)
+                        // const audioPath = path.resolve('static/', track.audio);
+                        // await fs.unlink(audioPath);
+                    }
+                }));
+            } catch (error) {
+                console.error(`Error deleting audio files for album ${id}:`, error);
+            }
+        } else{
+            console.log(`album.tracks not found`)
+        }
+        // Удаление связанных комментариев
+        await this.commentRepository.delete({ albumId: id });
+        // Удаление альбома из базы данных
+        await this.albumRepository.delete(id);
+        return album; // Возвращаем удаленный альбом
     }
 
-    async search(query):Promise<Album[]> {
-        const albums = await this.albumRepository
-            .createQueryBuilder("album")
-            .where("album.name LIKE :name", {name: `%${query}%`})
-            .getMany()
-        return albums
-    }
+    async searchByName(query: string, count: number, offset: number): Promise<Album[]> {
+		const albums = await this.albumRepository
+        .createQueryBuilder('album')
+        .leftJoinAndSelect('album.tracks', 'tracks')
+        .leftJoinAndSelect('album.comments', 'comments')
+        .where('LOWER(album.name) LIKE LOWER(:name)', { name: `%${query}%` })
+		.skip(offset)
+		.take(count)
+        .getMany();
+
+    	return albums;
+	}
 
 }

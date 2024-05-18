@@ -1,16 +1,15 @@
 'use client'
 
 import MainLayout from "@/layouts/MainLayout";
-import styles from '../../styles/tracks.module.css'
+import styles from '@/styles/tracks.module.css'
 import { useRouter } from "next/router";
-import TrackList from "@/components/TrackList";
-import {useSearchByNameQuery } from "@/services/TrackService";
-import DropDownMenu from "@/components/DropDownMenu";
-import Loader from "@/components/Loader";
-import MainInput from "@/components/MainInput";
 import { useTypedSelector } from "@/hooks/useTypedSelector";
-import {useState } from "react";
-import { ITrack } from "@/types/track";
+import { useSearchByNameQuery } from "@/api/TrackService";
+import MainInput from "@/UI/MainInput/MainInput";
+import DropDownMenu from "@/UI/DropdownMenu/DropDownMenu";
+import Loader from "@/components/Loader/Loader";
+import TrackList from "@/components/Tracks/TrackList/TrackList";
+import Btn from "@/UI/Btn/Btn";
 
 const Index = ()=> {
 
@@ -41,12 +40,11 @@ const Index = ()=> {
                     </div>
                 </div>
                 <div className={styles.header__container}>
-                    <button 
+                    <Btn 
                         onClick={()=> router.push('/tracks/create')}
-                        className={styles.btn}
                     >
                         Загрузить
-                    </button>
+                    </Btn>
                     
                     <DropDownMenu/>
                     

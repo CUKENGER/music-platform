@@ -1,8 +1,9 @@
 
 
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import {Comment} from '../scheme/comment.schema';
 import { Album } from 'src/album/album.schema';
+import { Artist } from 'src/artist/scheme/artist.schema';
 
 @Entity()
 export class Track {
@@ -15,8 +16,14 @@ export class Track {
   @Column()
   artist: string;
 
-  @Column()
+  @Column({default: 0, nullable: true})
   listens: number;
+
+  @Column({default: 0, nullable: true})
+  likes: number;
+
+  @Column({nullable: true})
+  genre: string;
 
   @Column({nullable: true})
   picture: string;
@@ -24,12 +31,19 @@ export class Track {
   @Column({nullable: true})
   audio: string;
 
-  @Column()
+  @Column({nullable: true})
   text: string;
 
-  @OneToMany(() => Comment, comment => comment.track)
+  @Column({nullable: true})
+  artistId: number;
+
+  @ManyToOne(() => Artist, artist => artist.tracks)
+  @JoinColumn({ name: 'artistEntity' })
+  artistEntity: Artist;
+
+  @OneToMany(() => Comment, comment => comment.track, { nullable: true })
   comments: Comment[];
 
   @ManyToOne(() => Album, album => album.tracks, { nullable: true })
-  album: Album | null;
+  album: Album;
 }

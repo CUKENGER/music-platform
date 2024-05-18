@@ -1,18 +1,14 @@
 'use client'
 
-import Comments from "@/components/Comments";
 import { useTypedSelector } from "@/hooks/useTypedSelector";
 import MainLayout from "@/layouts/MainLayout";
 import { baseUrl } from "@/services/baseUrl";
 import styles from '@/styles/TrackPage.module.css';
 import { useRouter } from "next/router";
-import fullPageBtn from '@/assets/fullPageBtn.svg'
-import Image from 'next/image'
 import { useEffect, useState } from "react";
-import closeModalIcon from '@/assets/galochka.svg'
 import useActions from "@/hooks/useActions";
-import CommentsMobile from "@/components/CommentsMobile";
-
+import Comments from "@/components/Tracks/TrackPage/Comments/Comments";
+import CommentsMobile from "@/components/Tracks/TrackPage/CommentsMobile/CommentsMobile";
 
 const TrackPage = () => {
 
@@ -30,7 +26,7 @@ const TrackPage = () => {
 
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
-    }, [])
+    }, [windowWidth])
 
     const handleOpenModal = () =>{
         setIsModal(!isModal)

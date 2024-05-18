@@ -9,9 +9,9 @@ const initialState: PlayerState = {
     duration: 0,
     pause: true,
     volume: 50,
-    active: false,
     openedTrack: null,
-    activeTrackList: []
+    activeTrackList: [],
+    isOpenPlayerDetailed: false
 }
 
 export const playerSlice = createSlice({
@@ -20,12 +20,10 @@ export const playerSlice = createSlice({
     reducers: {
         playerPlay(state) {
             state.pause = false
-            state.active = false
         },
 
         playerPause(state) {
             state.pause = true
-            state.active = true
         },
 
         playerSetActiveTrack(state, action: PayloadAction<ITrack> ) {
@@ -50,6 +48,9 @@ export const playerSlice = createSlice({
         },
         setActiveTrackList(state, action: PayloadAction<ITrack[]>) {
             state.activeTrackList = action.payload
+        },
+        setIsOpenPlayerDetailed(state, action: PayloadAction<boolean>) {
+            state.isOpenPlayerDetailed = action.payload
         }
     }
 })

@@ -1,0 +1,43 @@
+
+
+.checkInput{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    row-gap: 15px;
+    height: 100px;
+}
+
+.selectedOptions{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    column-gap: 5px;
+    row-gap: 5px;
+}
+
+.selectedOption{
+    padding: 5px;
+    border-radius: 10px;
+    background-color: var(--pmr);
+    cursor: pointer;
+}
+
+.options{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    column-gap: 5px;
+    row-gap: 5px;
+}
+
+.option{
+    padding: 5px;
+    border-radius: 10px;
+    background-color: var(--gray);
+    cursor: pointer;
+}
+
+
+
+

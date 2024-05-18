@@ -1,7 +1,8 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
-import * as https from 'https'
-import * as fs from 'fs'
+import * as compression from 'compression'
+import * as express from 'express';
+import * as timeout from 'connect-timeout';
 
 const start = async () => {
 	try {
@@ -10,6 +11,10 @@ const start = async () => {
 		
 		// чтобы отправлять запросы с браузера
 		app.enableCors()
+
+		app.use(compression())
+
+		app.use(timeout('60s'))
 
  		await app.listen(PORT, '0.0.0.0')
 		console.log(`server started at ${PORT}`)

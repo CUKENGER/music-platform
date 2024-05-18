@@ -54,7 +54,7 @@ textarea:focus-visible{
 }
 
 textarea::placeholder{
-    font-family: 'Arial';
+    font-family: 'Roboto';
     color: var(--text);
     font-size: 14px;
     font-style: normal;
@@ -72,18 +72,39 @@ textarea{
     resize: none;
     font-family: 'Roboto';
     color: var(--text);
-    font-size: 16px;
+    font-size: 14px;
     font-style: normal;
     line-height: normal;
     font-variant: normal;
     font-weight: normal;
 }
-input:hover,
+
+input::placeholder{
+    font-family: 'Roboto';
+    color: var(--text);
+    font-size: 14px;
+}
+
+label{
+    font-size: 14px;
+}
+
 input{
     outline: none;
     border: none;
     font-family: 'Roboto';
     color: var(--text);
+    font-size: 14px;
+    padding: 13px 15px;
+}
+
+input{
+    background-color: var(--pmr);
+}
+
+input:invalid,
+textarea:invalid{
+    background-color: #570000;
 }
 
 ul, li {
@@ -121,10 +142,6 @@ h6 {
 a {
     text-decoration: none;
     color: inherit;
-}
-
-input:invalid{
-    background-color: #ce0404;
 }
 
 

@@ -1,0 +1,83 @@
+.addTracks_container{
+    row-gap: 20px;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+.label{
+    margin-left: 5px;
+}
+
+.addTracks_title{
+    font-size: 20px;
+}
+
+.addTracks_list{
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+.input_name,
+.input_text{
+    border-radius: 10px;
+    width: 100%;
+}
+
+.main_input_container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+    width: 40%;
+}
+
+.addTrack_item_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: var(--gray);
+    border-radius: 10px;
+}
+
+.input_audio{
+    display: none;
+}
+
+.label_audio{
+    cursor: pointer;
+    border-radius: 10px;
+    border: 1px solid var(--pmr);
+    padding: 10px 35px;
+}
+
+.addTrack_right_container{
+    display: flex;
+    align-items: center;
+    column-gap: 50px;
+}
+
+.input_audio_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height:91px;
+}
+
+.delete_btn,
+.plus_btn{
+    background-color: transparent;
+}
+
+.plus_btn{
+    object-fit: cover;
+}
+
+.nextBtn {
+    border-radius: 10px;
+    height: 45px;
+}
+
+
+

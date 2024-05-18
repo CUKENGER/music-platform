@@ -1,12 +1,15 @@
+'use client'
+
 import React, { ReactNode, useEffect, useState } from 'react';
 import Head from "next/head";
-import Header from '@/components/Header';
-import styles from '../styles/Layout.module.css'
-import Loader from '@/components/Loader';
-import PlayerMobile from '@/components/PlayerMobile';
+import styles from '@/styles/Layout.module.css'
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 import Image from 'next/image'
-import arrowUp from '@/assets/arrowUp.svg'
+import arrowUp from '@/assets/arrowUp.png'
+import Loader from '@/components/Loader/Loader';
+import Header from '@/components/Header/Header';
+import PlayerMobile from '@/components/Player/PlayerMobile/PlayerMobile';
+import PlayerDetailed from "@/components/Player/PlayerDetailed/PlayerDetailed";
 
 interface MainLayoutProps {
     title_text?: string
@@ -28,7 +31,7 @@ const MainLayout: React.FC<MainLayoutProps>
     const [isLoading, setIsLoading] = useState(true);
     const [showScrollButton, setShowScrollButton] = useState<boolean>(false)
 
-    const {pause, activeTrack} = useTypedSelector(state=> state.playerReducer)
+    const {pause, isOpenPlayerDetailed} = useTypedSelector(state=> state.playerReducer)
 
     useEffect(() => {
         const handleScroll = () => {
@@ -52,6 +55,20 @@ const MainLayout: React.FC<MainLayoutProps>
         return () => clearTimeout(timer);
     }, []);
 
+    useEffect(() => {
+        const body = document.body;
+        if (isOpenPlayerDetailed) {
+            body.classList.add(styles.noscroll);
+        } else {
+            body.classList.remove(styles.noscroll);
+        }
+
+        // Очистка эффекта при размонтировании компонента
+        return () => {
+            body.classList.remove(styles.noscroll);
+        };
+    }, [isOpenPlayerDetailed]);
+
     const scrollToTop = () => {
         window.scrollTo({top: 0, behavior: 'smooth'})
     }
@@ -66,27 +83,30 @@ const MainLayout: React.FC<MainLayoutProps>
                 <meta name="robots" content="index, follow"/>
                 <meta name="keywords" content={keywords || "Музыка, треки, артисты"}/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <link rel="shortcut icon" href="/favicon.ico" />
-                {pause 
-                ? <link rel="shortcut icon" href="/pause.ico" />
-                : <link rel="shortcut icon" href="/play.ico" />
+                {pause
+                ? <link rel="shortcut icon" href="pause.ico" />
+                : <link rel="shortcut icon" href="play.ico" />
                 }
                 
             </Head>
             <Header title={title_text}/>
-            <div className={styles.wrapper}>
-                {children}
-            </div>
+                <div className={styles.wrapper}>
+                    {children}
+                </div>
             <PlayerMobile/>
-            {showScrollButton && (
+            {isOpenPlayerDetailed && (
+                <PlayerDetailed/>
+            )}
+            {showScrollButton && !isOpenPlayerDetailed && (
                 <button 
                     className={styles.scrollButton}
                     onClick={scrollToTop}
                 >
-                    <Image 
+                    <Image
                         className={styles.arrowUp}
                         src={arrowUp} 
                         alt="button up icon"
+                        loading='eager'
                     />
                 </button>
             )}

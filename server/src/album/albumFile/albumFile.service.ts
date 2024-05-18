@@ -9,7 +9,6 @@ export enum AlbumFileType {
     IMAGE = "image"
 }
 
-
 @Injectable()
 export class AlbumFileService{
 
@@ -39,6 +38,7 @@ export class AlbumFileService{
                 if (!track || !track.originalname) {
                     throw new Error('File or file.originalname is undefined');
                 }
+                
                 const trackExtension = track.originalname.split('.').pop();
                 const trackName = uuid.v4() + '.' + trackExtension;
 

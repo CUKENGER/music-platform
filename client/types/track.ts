@@ -5,19 +5,46 @@ export interface IComment {
 }
 
 export interface ITrack {
-    id: number,
+    id?:number;
     name: string,
     artist: string,
     text: string,
     listens: number;
-    picture: string;
-    audio: string;
+    likes?: number;
+    picture: string | null | File;
+    audio: string | null | File;
     active?: boolean;
     comments: IComment[]; 
 }
 
-
-export interface TrackState {
-    tracks: ITrack[];
-    error: string;
+export interface AudioFile {
+    name?: string;
+    text?: string;
 }
+
+export interface IAlbum {
+    id?:number;
+    name: string;
+    artist: string;
+    description: string;
+    releaseDate: string;
+    listens?: number;
+    picture: File;
+    likes?: number;
+    tracks: ITrack[];
+    comments?: IComment[]
+}
+
+export interface IArtist {
+    id:number;
+    name: string;
+    description: string;
+    genre: string;
+    likes?: number;
+    listens?: number;
+    picture?: File;
+    tracks?: ITrack[];
+    comments?: IComment[];
+    albums?: IAlbum[]
+}
+
