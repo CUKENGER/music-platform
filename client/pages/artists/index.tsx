@@ -11,7 +11,6 @@ import { useTypedSelector } from "@/hooks/useTypedSelector"
 import { useSearchByNameArtistsQuery } from "@/api/ArtistService"
 import ArtistList from "@/components/Artists/ArtistList/ArtistList"
 
-
 const IndexArtists = memo(() => {
 
     const router = useRouter()

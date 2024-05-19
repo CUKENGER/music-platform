@@ -10,6 +10,9 @@ import { useCreateAlbumMutation } from '@/api/AlbumService'
 import {ITrack } from '@/types/track'
 import ModalContainer from '@/UI/ModalContainer/ModalContainer'
 import { useRouter } from 'next/router'
+import CheckInput from '@/UI/CheckInput/CheckInput'
+import SearchInput from '@/UI/SearchInput/SearchInput'
+import Btn from '@/UI/Btn/Btn'
 
 const CreateAlbum = () => {
     const router = useRouter()
@@ -18,7 +21,11 @@ const CreateAlbum = () => {
     const releaseDate = useInput('')
     const description = useInput('')
     const [isErrorModal, setIsErrorModal] = useState(false)
+    const [isNeedInput, setIsNeedInput] = useState(false)
 
+    const [artists, setArtists] = useState<string[] | null>(null)
+
+    // const [] = useGetA
     const [createAlbumMutation, {isError, isLoading}] = useCreateAlbumMutation()
 
     const [tracks, setTracks] = useState<ITrack[]>([{
@@ -67,6 +74,10 @@ const CreateAlbum = () => {
         releaseDate.setValue(e.target.value)
     }, [] )
 
+    const handleAddInput = () => {
+        setIsNeedInput(!isNeedInput)
+    }
+
     return (
         <MainLayout title_text='Загрузка альбома'>
             <div className={styles.container}>
@@ -79,12 +90,25 @@ const CreateAlbum = () => {
                             placeholder='Введите название альбома'
                             isRequired={true}
                         />
-                        <InputString
-                            value={artist.value}
-                            setValue={artist.setValue} 
-                            placeholder='Введите исполнителя'
-                            isRequired={true}
-                        />
+                        {!isNeedInput && (
+                            <>
+                                <label htmlFor="dsad">Найти и выбрать исполнителя</label>
+                                <SearchInput
+                                    value={artist.value}
+                                    setValue={artist.setValue}
+                                />
+                                <Btn onClick={handleAddInput}>Не нашли исполнителя?</Btn>
+                            </>
+                        )}
+                        
+                        {isNeedInput && (
+                            <InputString
+                                value={artist.value}
+                                setValue={artist.setValue} 
+                                placeholder='Добавить исполнителя'
+                                isRequired={true}
+                            />
+                        )}
                         <label id='label_input_date' htmlFor="input_date">Введите дату выхода</label>
                         <input
                             value={releaseDate.value}

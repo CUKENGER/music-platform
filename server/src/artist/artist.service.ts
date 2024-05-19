@@ -25,7 +25,7 @@ export class ArtistService {
 
     }
 
-    async create(dto: CreateArtistDto, picture): Promise<string> {
+    async create(dto: CreateArtistDto, picture): Promise<Artist> {
 
         const imagePath = this.artistFileService.createCover(ArtistFileType.IMAGE, picture)
 
@@ -33,9 +33,7 @@ export class ArtistService {
         newArtist.listens = 0
         newArtist.likes = 0
         newArtist.picture = imagePath
-        await this.artistRepository.save(newArtist)
-
-        return JSON.stringify({ id: newArtist.id, name: newArtist.name });
+        return await this.artistRepository.save(newArtist);
     }
 
     async getAll(count=50, offset=0): Promise<Artist[]>{

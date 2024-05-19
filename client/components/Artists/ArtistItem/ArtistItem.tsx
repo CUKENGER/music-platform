@@ -10,6 +10,7 @@ import { useAddLikeArtistMutation, useDeleteArtistMutation, useDeleteLikeArtistM
 import { useRouter } from "next/router";
 import { isAdmin } from "@/services/isAdmin";
 import delete_icon from '@/assets/delete.svg'
+import useActions from "@/hooks/useActions";
 
 interface ArtistItemProps{
     artist: IArtist;
@@ -19,6 +20,8 @@ interface ArtistItemProps{
 const ArtistItem:FC<ArtistItemProps> = memo(({artist, onDelete}) => {
 
     const router = useRouter()
+
+    const {SetOpenedArtist} = useActions()
 
     const [isLike, setIsLike] = useState(false)
     const [likes, setLikes] = useState<number>(0)
@@ -50,6 +53,7 @@ const ArtistItem:FC<ArtistItemProps> = memo(({artist, onDelete}) => {
 
     const handleRedirect = () => {
         router.push('artists/' + artist.id)
+        SetOpenedArtist(artist)
     }
 
     const handleDelete = useCallback(async () => {

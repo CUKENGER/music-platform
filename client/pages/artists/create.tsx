@@ -13,6 +13,8 @@ import CheckInput from "@/UI/CheckInput/CheckInput";
 
 const CreateArtist = memo(() => {
 
+    const [options, setOptions] = newFunction();
+
     const router = useRouter()
     
     const name = useInput('')
@@ -73,7 +75,11 @@ const CreateArtist = memo(() => {
                             isRequired={true}
                         />
                         <div className={styles.SelectInput_container}>
-                            <CheckInput setValue={genre.setValue}/>
+                            <CheckInput 
+                                options={options}
+                                setOptions={setOptions}
+                                setValue={genre.setValue}
+                            />
                         </div>
                         <Textarea
                             value={description.value}
@@ -107,6 +113,12 @@ const CreateArtist = memo(() => {
             </div>
         </MainLayout>
     )
+
+    function newFunction(): [any, any] {
+        return useState<string[]>([
+            "Pop", "Rock", "Indie", "Folk", "Country", "Punk", "Alternative", "Dance / Electronic", "Classic"
+        ]);
+    }
 })
 
 export default CreateArtist

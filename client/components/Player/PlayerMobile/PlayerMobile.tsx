@@ -12,23 +12,29 @@ import PlayPauseBtns from "@/UI/PlayPauseBtns/PlayPauseBtns";
 import openPlayer_icon from '@/assets/openMusicPlayer_icon.png'
 import like from '@/assets/like.png'
 import like_fill from '@/assets/like_fill.png'
+import Btn from '@/UI/Btn/Btn';
+import { mixTracks } from '@/services/MixPlaylist';
+
+
 const PlayerMobile = () => {
 
     const router = useRouter()
 
     const [isLike, setIsLike] = useState(false)
-    const [likes, setLikes] = useState(5)
+    const [likes, setLikes] = useState(0)
     const audio = audioManager.audio
     const [hasListen, setHasListen] = useState(false);
 
     const {activeTrack,
         pause,
         currentTime,
-        isOpenPlayerDetailed} = useTypedSelector(state => state.playerReducer)
+        isOpenPlayerDetailed,
+        activeTrackList} = useTypedSelector(state => state.playerReducer)
     const {setOpenedTrack,
         playerPlay,
         playerPause,
-        setIsOpenPlayerDetailed} = useActions()
+        setIsOpenPlayerDetailed,
+        setActiveTrackList} = useActions()
 
     const [addListenMutation] = useAddListenMutation()
 
@@ -74,6 +80,10 @@ const PlayerMobile = () => {
         }
     }
 
+    const handleMix = () => {
+        setActiveTrackList(mixTracks(activeTrackList))
+    }
+
     return (
         <div className={styles.main_container}>
             <TrackProgress isVolume={false}/>
@@ -98,6 +108,9 @@ const PlayerMobile = () => {
                     <SwitchTracksBtn isNextBtn={false}/>
                     <PlayPauseBtns onClick={playBtn} pause={pause}/>
                     <SwitchTracksBtn/>
+                </div>
+                <div className={styles.mixBtn_container}>
+                    <Btn onClick={handleMix}>Перемешать</Btn>
                 </div>
                 <TrackProgress/>
                 <div onClick={handleOpenPlayer} className={styles.openPlayer_icon_container}>

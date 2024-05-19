@@ -24,6 +24,7 @@ export class AlbumService {
         @InjectRepository(Track)
         private trackRepository: Repository<Track>,
         @InjectRepository(Artist)
+        private artistRepository: Repository<Artist>,
         private artistService: ArtistService
     ) {
     }
@@ -34,15 +35,27 @@ export class AlbumService {
 			const tracksPath = this.albumFileService.createTracks(AlbumFileType.AUDIO, files.tracks)
 			const imagePath = this.albumFileService.createCover(AlbumFileType.IMAGE, files.picture)
 
-            const newAlbum = await this.albumRepository.create(dto)
-            newAlbum.listens = 0
-            newAlbum.likes = 0
-            newAlbum.genre = dto.genre
-            newAlbum.picture = imagePath
-            newAlbum.tracks = files.tracks
-            console.log('trackPath',tracksPath)
-            console.log('Tracks:', files.tracks);
-            await this.albumRepository.save(newAlbum)
+            let artist = await this.artistRepository.findOne({ where: { name: dto.artist } });
+
+            if(!artist) {
+                const artistDto = {
+                    name: dto.artist,
+                    genre: dto.genre,
+                    description: ''
+                };
+                artist = await this.artistService.create(artistDto, files.picture);
+            }
+
+            // Создание нового альбома
+            const newAlbum = await this.albumRepository.create(dto);
+            newAlbum.listens = 0;
+            newAlbum.likes = 0;
+            newAlbum.genre = dto.genre;
+            newAlbum.picture = imagePath;
+            newAlbum.tracks = files.tracks;
+            newAlbum.artistEntity = artist;
+
+            await this.albumRepository.save(newAlbum);
 
             const trackDtos = files.tracks.map((track, index) => ({
                 name: dto.track_names[index],
@@ -53,14 +66,10 @@ export class AlbumService {
                 picture: imagePath,
                 genre: dto.genre
             }));
-            const artistDto = {
-				name: dto.artist,
-				genre: dto.genre,
-				description: ''
-			}
-			await this.artistService.create(artistDto, files.picture)
-			await this.trackRepository.save(trackDtos);
-			return JSON.stringify({ id: newAlbum.id, name: newAlbum.name });
+
+            await this.trackRepository.save(trackDtos);
+
+            return JSON.stringify({ id: newAlbum.id, name: newAlbum.name });
 		} else {
 			console.log('нихуя не загрузилось блять')
             return 'ничего не загружено';

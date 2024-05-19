@@ -3,7 +3,6 @@ import {FC, useEffect, useState} from "react";
 import {ITrack} from "@/types/track";
 import AlbumTrackItem from "@/components/Albums/AlbumPage/AlbumTrackList/AlbumTrackItem/AlbumTrackItem";
 import useActions from '@/hooks/useActions';
-import { useTypedSelector } from '@/hooks/useTypedSelector';
 
 interface AlbumTrackListProps {
     tracks: ITrack[]
