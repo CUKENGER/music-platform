@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Album } from "./album.schema";
 import {Repository } from "typeorm";
@@ -30,50 +30,53 @@ export class AlbumService {
     }
 
     async create(dto: CreateAlbumDto, files): Promise<string> {
-        if (files) {
-
-			const tracksPath = this.albumFileService.createTracks(AlbumFileType.AUDIO, files.tracks)
-			const imagePath = this.albumFileService.createCover(AlbumFileType.IMAGE, files.picture)
-
-            let artist = await this.artistRepository.findOne({ where: { name: dto.artist } });
-
-            if(!artist) {
-                const artistDto = {
-                    name: dto.artist,
-                    genre: dto.genre,
-                    description: ''
-                };
-                artist = await this.artistService.create(artistDto, files.picture);
-            }
-
-            // Создание нового альбома
-            const newAlbum = await this.albumRepository.create(dto);
-            newAlbum.listens = 0;
-            newAlbum.likes = 0;
-            newAlbum.genre = dto.genre;
-            newAlbum.picture = imagePath;
-            newAlbum.tracks = files.tracks;
-            newAlbum.artistEntity = artist;
-
-            await this.albumRepository.save(newAlbum);
-
-            const trackDtos = files.tracks.map((track, index) => ({
-                name: dto.track_names[index],
-                artist: dto.artist,
-                text: dto.track_texts[index],
-                audio: tracksPath[index],
-                album: newAlbum,
-                picture: imagePath,
-                genre: dto.genre
-            }));
-
-            await this.trackRepository.save(trackDtos);
-
-            return JSON.stringify({ id: newAlbum.id, name: newAlbum.name });
-		} else {
-			console.log('нихуя не загрузилось блять')
+        if (!files) {
+            console.log('Файлы не загружены');
             return 'ничего не загружено';
-		}
+        }
+    
+        const tracksPath = this.albumFileService.createTracks(AlbumFileType.AUDIO, files.tracks);
+        const imagePath = this.albumFileService.createCover(AlbumFileType.IMAGE, files.picture);
+    
+        // Проверка на существование артиста
+        let artist = await this.artistRepository.findOne({ where: { name: dto.artist } });
+    
+        if (!artist) {
+            const artistDto = {
+                name: dto.artist,
+                genre: dto.genre,
+                description: '',
+            };
+            artist = await this.artistService.create(artistDto, files.picture);
+        }
+    
+        // Создание нового альбома
+        const newAlbum = this.albumRepository.create({
+            ...dto,
+            listens: 0,
+            likes: 0,
+            genre: dto.genre,
+            picture: imagePath,
+            tracks: files.tracks,
+            artistEntity: artist,
+        });
+    
+        await this.albumRepository.save(newAlbum);
+    
+        // Создание и сохранение треков
+        const trackDtos = files.tracks.map((track, index) => ({
+            name: dto.track_names[index],
+            artist: dto.artist,
+            text: dto.track_texts[index],
+            audio: tracksPath[index],
+            album: newAlbum,
+            picture: imagePath,
+            genre: dto.genre,
+        }));
+    
+        await this.trackRepository.save(trackDtos);
+    
+        return JSON.stringify({ id: newAlbum.id, name: newAlbum.name });
     }
     
     async getAll(count=50, offset=0): Promise<Album[]>{

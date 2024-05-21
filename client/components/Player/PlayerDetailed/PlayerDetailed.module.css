@@ -25,14 +25,33 @@
 }
 
 .navBar_container{
-    width: 460px;
-    text-align: center;
+    width: 500px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    /* padding-left: 50px; */
+    /* padding-right: 50px; */
     border-bottom: 1px solid var(--pmr);
 }
 
+.active{
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid var(--text);
+    background-color: var(--gray);
+}
+
 .navBar_item{
+    text-align: center;
     cursor: pointer;
     margin-bottom: 5px;
+}
+
+.navBar_item:hover{
+    background-color: var(--gray);
+    padding: 10px;
+    border-bottom: 1px solid var(--gray);
 }
 
 .right_container{
@@ -48,7 +67,8 @@
     word-wrap: break-word;
 }
 
-.text_container {
+.text_container,
+.nextTracks_container {
     max-height: calc(100vh - 210px);
     overflow-y: auto;
     scroll-behavior: smooth;
@@ -56,18 +76,30 @@
     scrollbar-color: #999 transparent; /* Цвет скроллбара и его фона */
 }
 
-.text_container::-webkit-scrollbar {
+.text_container::-webkit-scrollbar,
+.nextTracks_container::-webkit-scrollbar {
     width: 6px; /* Ширина скроллбара для WebKit браузеров */
 }
 
-.text_container::-webkit-scrollbar-thumb {
+.text_container::-webkit-scrollbar-thumb,
+.nextTracks_container::-webkit-scrollbar-thumb {
     background-color: #999; /* Цвет ползунка скроллбара */
     border-radius: 3px; /* Скругление углов ползунка */
 }
 
-.text_container::-webkit-scrollbar-track {
+.text_container::-webkit-scrollbar-track,
+.nextTracks_container::-webkit-scrollbar-track {
     background-color: transparent; /* Цвет фона скроллбара */
 }
+
+.nextTracks_container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    row-gap: 10px;
+}
+
+
 
 
 

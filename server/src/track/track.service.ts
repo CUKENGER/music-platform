@@ -28,31 +28,40 @@ export class TrackService {
 	}
 
 	async create(createTrackDto: CreateTrackDto, picture, audio): Promise<string> {
-
 		if (picture && audio) {
-			const audioPath = this.fileService.createFile(FileType.AUDIO, audio)
-			const imagePath = this.fileService.createFile(FileType.IMAGE, picture)
-			console.log('audioPath',audioPath)
-			console.log('imagePath',imagePath)
-			const newTrack = await this.trackRepository.create(createTrackDto);
+			const audioPath = this.fileService.createFile(FileType.AUDIO, audio);
+			const imagePath = this.fileService.createFile(FileType.IMAGE, picture);
+	
+			console.log('audioPath', audioPath);
+			console.log('imagePath', imagePath);
+	
+			const newTrack = this.trackRepository.create(createTrackDto);
 			newTrack.listens = 0;
-			newTrack.likes = 0
-			newTrack.genre = createTrackDto.genre
-			newTrack.audio = audioPath
-			newTrack.picture = imagePath
-			const artistDto = {
-				name: newTrack.artist,
-				genre: '',
-				description: '',
+			newTrack.likes = 0;
+			newTrack.genre = createTrackDto.genre;
+			newTrack.audio = audioPath;
+			newTrack.picture = imagePath;
+	
+			// Проверка на существование артиста
+			let artist = await this.artistRepository.findOne({ where: { name: createTrackDto.artist } });
+	
+			if (!artist) {
+				const artistDto = {
+					name: createTrackDto.artist,
+					genre: '',
+					description: '',
+				};
+				artist = await this.artistService.create(artistDto, picture);
 			}
-			await this.artistService.create(artistDto, picture)
+	
+			newTrack.artistEntity = artist; // Привязка артиста к треку
+	
 			await this.trackRepository.save(newTrack);
 			return JSON.stringify({ id: newTrack.id, name: newTrack.name });
 		} else {
-			// throw new Error('нихуя не загрузилось блять')
-			console.log('нихуя не загрузилось блять')
+			console.log('Файлы не загружены');
+			return 'ничего не загружено';
 		}
-
 	}
 
 	async getAll(count = 10 , offset = 0): Promise<Track[]> {

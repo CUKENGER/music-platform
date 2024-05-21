@@ -32,8 +32,6 @@ const SwitchTracksBtn:FC<SwitchTracksBtnProps> = ({isNextBtn=true}) => {
         }
     }
 
-    console.log(activeTrackList)
-
     return(
         <>
             {isNextBtn 

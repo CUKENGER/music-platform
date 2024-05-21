@@ -13,8 +13,6 @@ const AlbumItem:FC<AlbumItemProps> = ({album}) => {
 
     const router = useRouter()
 
-    console.log(album.id);
-
     const {SetOpenedAlbum} = useActions()
 
     const handleClick = () => {

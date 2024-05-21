@@ -29,8 +29,8 @@ const TrackItem:FC<TrackItemProps> = ({track, trackList}) => {
         playerSetActiveTrack,
         playerSetDuration,
         playerSetCurrentTime,
-        setOpenedTrack} = useActions()
-
+        setOpenedTrack,
+        setDefaultTrackList} = useActions()
 
     const [deleteTrackMutation] = useDeleteTrackMutation()
 
@@ -74,6 +74,7 @@ const TrackItem:FC<TrackItemProps> = ({track, trackList}) => {
     }
 
     const playBtn = async () => {
+        setDefaultTrackList(trackList)
         playerSetActiveTrack(track)
         if (pause) {
             await audio?.play();

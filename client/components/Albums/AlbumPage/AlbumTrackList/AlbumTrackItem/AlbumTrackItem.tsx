@@ -25,7 +25,8 @@ const AlbumTrackItem:FC<AlbumTrackItemProps> = ({track, trackIndex, trackList}) 
         playerPause,
         playerSetActiveTrack,
         playerSetDuration,
-        playerSetCurrentTime
+        playerSetCurrentTime,
+        setDefaultTrackList
     } = useActions()
 
     const audio = audioManager.audio
@@ -57,6 +58,7 @@ const AlbumTrackItem:FC<AlbumTrackItemProps> = ({track, trackIndex, trackList}) 
     }, [activeTrack]); 
 
     const handlePlay = async () => {
+        setDefaultTrackList(trackList)
         playerSetActiveTrack(track)
         if (pause) {
             await audio?.play();

@@ -8,5 +8,6 @@ export interface PlayerState {
     pause: boolean;
     openedTrack: null | ITrack;
     activeTrackList: ITrack[];
-    isOpenPlayerDetailed: boolean
+    isOpenPlayerDetailed: boolean;
+    defaultTrackList: ITrack[]
 }

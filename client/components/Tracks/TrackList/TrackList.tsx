@@ -5,6 +5,7 @@ import useActions from "@/hooks/useActions";
 import { useTypedSelector } from "@/hooks/useTypedSelector";
 import useScroll from "@/hooks/useScroll";
 import TrackItem from "../TrackItem/TrackItem";
+import { sortList } from "@/services/sortList";
 
 interface TrackListProps {
     tracks: ITrack[];
@@ -26,25 +27,25 @@ const TrackList: FC<TrackListProps> = ({tracks}) => {
         }
     })
 
-    const sortTracks = (tracks: ITrack[], selectedSort: string) => {
-        const sorted = [...tracks].sort((a, b) => {
-            switch (selectedSort) {
-                case 'Все':
-                    if (a.id && b.id) {
-                        return a.id - b.id;
-                    }
-                case 'По алфавиту':
-                    const nameA = a.name.toLowerCase();
-                    const nameB = b.name.toLowerCase();
-                    return nameB.localeCompare(nameA);
-                case 'Популярные':
-                    return b.listens - a.listens;
-                default:
-                    return 0;
-            }
-        });
-        setSortedTracks(sorted);
-    };
+    // const sortTracks = (tracks: ITrack[], selectedSort: string) => {
+    //     const sorted = [...tracks].sort((a, b) => {
+    //         switch (selectedSort) {
+    //             case 'Все':
+    //                 if (a.id && b.id) {
+    //                     return a.id - b.id;
+    //                 }
+    //             case 'По алфавиту':
+    //                 const nameA = a.name.toLowerCase();
+    //                 const nameB = b.name.toLowerCase();
+    //                 return nameA.localeCompare(nameB);
+    //             case 'Популярные':
+    //                 return b.listens - a.listens;
+    //             default:
+    //                 return 0;
+    //         }
+    //     });
+    //     setSortedTracks(sorted);
+    // };
 
     useEffect(() => {
         if(sortedTracks) {
@@ -54,7 +55,8 @@ const TrackList: FC<TrackListProps> = ({tracks}) => {
 
     useEffect(() => {
         if (tracks) {
-            sortTracks(tracks, selectedSort);
+            sortList(tracks, selectedSort, setSortedTracks)
+            // sortTracks(tracks, selectedSort);
         }
     }, [selectedSort, tracks]);
 

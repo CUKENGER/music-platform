@@ -6,6 +6,7 @@ import { useGetOneTrackQuery } from '@/api/TrackService';
 import { useCreateCommentMutation } from '@/api/CommentService';
 import Textarea from '@/UI/Textarea/Textarea';
 import Loader from '@/components/Loader/Loader';
+import ModalContainer from '@/UI/ModalContainer/ModalContainer';
 
 
 
@@ -16,6 +17,7 @@ interface CommentsProps {
 const Comments:FC<CommentsProps> = ({openedTrack}) => {
 
     const [comment, setComment] = useState<string>('')
+    const [isErrorModal, setIsErrorModal] = useState(false)
     const [comments, setComments] = useState<IComment[]>(openedTrack?.comments ?? []); 
 
     const router = useRouter()
@@ -31,25 +33,29 @@ const Comments:FC<CommentsProps> = ({openedTrack}) => {
 
     const sendComment = async () => {
         try {
-            const newComment: IComment = {
-                trackId: openedTrack?.id,
-                username: 'Ванька Дурка',
-                text: comment,
-            };
-        
-            await createCommentMutation({
-                trackId: openedTrack?.id,
-                text: comment,
-                username: 'Ванька Дурка',
-            });
-            if(track) {
-                setComments([...comments, 
-                    ...track?.comments,
-                    newComment,
-                ]);
+            if(comment.trim() !== '') {
+                const newComment: IComment = {
+                    trackId: openedTrack?.id,
+                    username: 'Ванька Дурка',
+                    text: comment,
+                };
+            
+                await createCommentMutation({
+                    trackId: openedTrack?.id,
+                    text: comment,
+                    username: 'Ванька Дурка',
+                });
+                if(track) {
+                    setComments([...comments, 
+                        ...track?.comments,
+                        newComment,
+                    ]);
+                }
+                setComment('');
+                console.log('Comment sent');
+            } else{
+                setIsErrorModal(true)
             }
-            setComment('');
-            console.log('Comment sent');
         } catch (error) {
             console.error('Error sending comment:', error);
         }
@@ -62,7 +68,6 @@ const Comments:FC<CommentsProps> = ({openedTrack}) => {
     useEffect(() => {
         if (track) {
             setComments([...track.comments]);
-            console.log(track.comments)
         }
     }, [track]);
 
@@ -112,6 +117,9 @@ const Comments:FC<CommentsProps> = ({openedTrack}) => {
         ) 
         : (
             <Loader/>
+        )}
+        {isErrorModal && (
+            <ModalContainer setState={setIsErrorModal} text='Напишите что-нибудь перед отправкой'/>
         )}
         </div>
             

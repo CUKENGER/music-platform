@@ -10,22 +10,23 @@ import { useCreateAlbumMutation } from '@/api/AlbumService'
 import {ITrack } from '@/types/track'
 import ModalContainer from '@/UI/ModalContainer/ModalContainer'
 import { useRouter } from 'next/router'
-import CheckInput from '@/UI/CheckInput/CheckInput'
 import SearchInput from '@/UI/SearchInput/SearchInput'
 import Btn from '@/UI/Btn/Btn'
+import CheckInput from '@/UI/CheckInput/CheckInput'
 
 const CreateAlbum = () => {
     const router = useRouter()
     const name = useInput('')
     const artist = useInput('')
+    const genre = useInput('')
     const releaseDate = useInput('')
     const description = useInput('')
     const [isErrorModal, setIsErrorModal] = useState(false)
     const [isNeedInput, setIsNeedInput] = useState(false)
+    const [options, setOptions] = useState<string[]>([
+        "Pop", "Rock", "Indie", "Folk", "Country", "Punk", "Alternative", "Dance / Electronic", "Classic"
+    ]);
 
-    const [artists, setArtists] = useState<string[] | null>(null)
-
-    // const [] = useGetA
     const [createAlbumMutation, {isError, isLoading}] = useCreateAlbumMutation()
 
     const [tracks, setTracks] = useState<ITrack[]>([{
@@ -44,6 +45,7 @@ const CreateAlbum = () => {
         if (name && artist && releaseDate && description && tracks && cover) {
             formData.append('name', name.value)
             formData.append('artist', artist.value)
+            formData.append('genre', genre.value)
             formData.append('releaseDate', releaseDate.value)
             formData.append('description', description.value)
             formData.append('picture', cover)
@@ -60,7 +62,7 @@ const CreateAlbum = () => {
                 const response = await createAlbumMutation(formData)
                 console.log('Response data:', response);
                 console.log('Отправлено');
-                router.push('/albums')
+                // router.push('/albums')
             } catch (e) {
                 console.error('Error creating album:', e);
             }
@@ -102,12 +104,15 @@ const CreateAlbum = () => {
                         )}
                         
                         {isNeedInput && (
-                            <InputString
-                                value={artist.value}
-                                setValue={artist.setValue} 
-                                placeholder='Добавить исполнителя'
-                                isRequired={true}
-                            />
+                            <>
+                                <InputString
+                                    value={artist.value}
+                                    setValue={artist.setValue} 
+                                    placeholder='Добавить исполнителя'
+                                    isRequired={true}
+                                />
+                                <Btn onClick={handleAddInput}>Назад</Btn>
+                            </>
                         )}
                         <label id='label_input_date' htmlFor="input_date">Введите дату выхода</label>
                         <input
@@ -116,7 +121,16 @@ const CreateAlbum = () => {
                             className={styles.input_date}
                             id='input_date'
                             type='date'
+                            required={true}
                         />
+                        <div className={styles.SelectInput_container}>
+                            <label htmlFor="dsadsad">Выберите жанр альбома</label>
+                            <CheckInput 
+                                options={options}
+                                setOptions={setOptions}
+                                setValue={genre.setValue}
+                            />
+                        </div>
                         <Textarea
                             value={description.value}
                             setValue={description.setValue}

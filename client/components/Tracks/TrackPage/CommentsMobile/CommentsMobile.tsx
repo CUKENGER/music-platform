@@ -8,6 +8,7 @@ import { useTypedSelector } from '@/hooks/useTypedSelector'
 import { useGetOneTrackQuery } from '@/api/TrackService'
 import { useCreateCommentMutation } from '@/api/CommentService'
 import Textarea from '@/UI/Textarea/Textarea'
+import ModalContainer from '@/UI/ModalContainer/ModalContainer'
 
 interface CommentsMobileProps {
     openedTrack: ITrack | null;
@@ -17,6 +18,7 @@ interface CommentsMobileProps {
 const CommentsMobile:FC<CommentsMobileProps> = ({openedTrack, handleOpenModal}) => {
 
     const [comment, setComment] = useState('')
+    const [isErrorModal, setIsErrorModal] = useState(false)
     const [comments, setComments] = useState<IComment[]>([]); 
     const {activeTrack} = useTypedSelector(state=> state.playerReducer)
 
@@ -25,25 +27,29 @@ const CommentsMobile:FC<CommentsMobileProps> = ({openedTrack, handleOpenModal}) 
 
     const sendComment = async () => {
         try {
-            const newComment: IComment = {
-                trackId: openedTrack?.id,
-                username: 'Ванька Дурка',
-                text: comment,
-            };
-        
-            await createCommentMutation({
-                trackId: openedTrack?.id,
-                text: comment,
-                username: 'Ванька Дурка',
-            });
-            if(track) {
-                setComments([...comments, 
-                    ...track?.comments,
-                    newComment,
-                ]);
+            if(comment.trim() !== '') {
+                const newComment: IComment = {
+                    trackId: openedTrack?.id,
+                    username: 'Ванька Дурка',
+                    text: comment,
+                };
+            
+                await createCommentMutation({
+                    trackId: openedTrack?.id,
+                    text: comment,
+                    username: 'Ванька Дурка',
+                });
+                if(track) {
+                    setComments([...comments, 
+                        ...track?.comments,
+                        newComment,
+                    ]);
+                }
+                setComment('');
+                console.log('Comment sent');
+            } else{
+                setIsErrorModal(true)
             }
-            setComment('');
-            console.log('Comment sent');
         } catch (error) {
             console.error('Error sending comment:', error);
         }
@@ -56,7 +62,6 @@ const CommentsMobile:FC<CommentsMobileProps> = ({openedTrack, handleOpenModal}) 
     useEffect(() => {
         if (track) {
             setComments([...track.comments]);
-            console.log(track.comments)
         }
     }, [track]);
 
@@ -108,6 +113,7 @@ const CommentsMobile:FC<CommentsMobileProps> = ({openedTrack, handleOpenModal}) 
                                 value={comment} 
                                 setValue={setComment} 
                                 placeholder='Ваш комментарий'
+                                onChangeNeed={true}
                             />
                         </div>
                         <div className={styles.send_icon_container}>
@@ -121,6 +127,9 @@ const CommentsMobile:FC<CommentsMobileProps> = ({openedTrack, handleOpenModal}) 
                     </div>
                 </div>
             </div>
+            {isErrorModal && (
+                <ModalContainer setState={setIsErrorModal} text='Напишите что-нибудь перед отправкой'/>
+            )}
         </div>
     )
 }

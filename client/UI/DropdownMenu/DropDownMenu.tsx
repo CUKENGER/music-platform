@@ -43,17 +43,20 @@ const DropDownMenu = () => {
                         <li
                             className={styles.list_item}
                             onClick={() => handleSort('Все')}
-                        >Все
+                        >
+                            Все
                         </li>
                         <li
                             className={styles.list_item}
                             onClick={() => handleSort('Популярные')}
-                        >Популярные
+                        >
+                            Популярные
                         </li>
                         <li
                             className={styles.list_item}
                             onClick={() => handleSort('По алфавиту')}
-                        >По алфавиту
+                        >
+                            По алфавиту
                         </li>
                     </ul>
                 </>

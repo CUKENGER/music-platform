@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Artist } from "./scheme/artist.schema";
 import { Repository } from "typeorm";
@@ -27,15 +27,26 @@ export class ArtistService {
 
     async create(dto: CreateArtistDto, picture): Promise<Artist> {
 
-        const imagePath = this.artistFileService.createCover(ArtistFileType.IMAGE, picture)
+        // Проверить, существует ли артист с таким именем
+        const existingArtist = await this.artistRepository.findOne({ where: { name: dto.name } });
+        if (existingArtist) {
+        // Если артист существует, выбросить исключение или вернуть ошибку
+        throw new ConflictException('Artist with this name already exists');
+        }
 
-        const newArtist = await this.artistRepository.create(dto)
-        newArtist.listens = 0
-        newArtist.likes = 0
-        newArtist.picture = imagePath
+        // Создать путь к изображению
+        const imagePath = this.artistFileService.createCover(ArtistFileType.IMAGE, picture);
+
+        // Создать нового артиста
+        const newArtist = this.artistRepository.create(dto);
+        newArtist.listens = 0;
+        newArtist.likes = 0;
+        newArtist.picture = imagePath;
+
+        // Сохранить нового артиста в базе данных
         return await this.artistRepository.save(newArtist);
     }
-
+    
     async getAll(count=50, offset=0): Promise<Artist[]>{
         const artists = await this.artistRepository.find({
             skip: offset,

@@ -1,7 +1,7 @@
 import styles from './PlayerMobile.module.css';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 import useActions from '@/hooks/useActions';
-import {useEffect, useState } from 'react';
+import {memo, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import audioManager from '@/services/AudioManager';
 import Image from 'next/image'
@@ -12,16 +12,16 @@ import PlayPauseBtns from "@/UI/PlayPauseBtns/PlayPauseBtns";
 import openPlayer_icon from '@/assets/openMusicPlayer_icon.png'
 import like from '@/assets/like.png'
 import like_fill from '@/assets/like_fill.png'
-import Btn from '@/UI/Btn/Btn';
 import { mixTracks } from '@/services/MixPlaylist';
-
+import mix_icon_active from '@/assets/mix_icon_active.png'
+import mix_icon_inactive from '@/assets/mix_icon_inactive.png'
 
 const PlayerMobile = () => {
 
     const router = useRouter()
-
     const [isLike, setIsLike] = useState(false)
     const [likes, setLikes] = useState(0)
+    const [isMix, setIsMix] = useState(false)
     const audio = audioManager.audio
     const [hasListen, setHasListen] = useState(false);
 
@@ -29,7 +29,8 @@ const PlayerMobile = () => {
         pause,
         currentTime,
         isOpenPlayerDetailed,
-        activeTrackList} = useTypedSelector(state => state.playerReducer)
+        activeTrackList,
+        defaultTrackList} = useTypedSelector(state => state.playerReducer)
     const {setOpenedTrack,
         playerPlay,
         playerPause,
@@ -81,7 +82,12 @@ const PlayerMobile = () => {
     }
 
     const handleMix = () => {
-        setActiveTrackList(mixTracks(activeTrackList))
+        if (isMix) {
+            setActiveTrackList(defaultTrackList);
+        } else {
+            setActiveTrackList(mixTracks(activeTrackList));
+        }
+        setIsMix(!isMix);
     }
 
     return (
@@ -109,8 +115,11 @@ const PlayerMobile = () => {
                     <PlayPauseBtns onClick={playBtn} pause={pause}/>
                     <SwitchTracksBtn/>
                 </div>
-                <div className={styles.mixBtn_container}>
-                    <Btn onClick={handleMix}>Перемешать</Btn>
+                <div onClick={handleMix} className={styles.mix_icon_container}>
+                    <Image 
+                        src={isMix ? mix_icon_active : mix_icon_inactive} 
+                        alt='mix icon'
+                    />
                 </div>
                 <TrackProgress/>
                 <div onClick={handleOpenPlayer} className={styles.openPlayer_icon_container}>
@@ -128,4 +137,4 @@ const PlayerMobile = () => {
     )
 }
 
-export default PlayerMobile
+export default memo(PlayerMobile)

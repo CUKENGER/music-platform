@@ -36,7 +36,7 @@ const ArtistList:FC<ArtistListProps> = memo(({artists}) => {
                 case 'По алфавиту':
                     const nameA = a.name.toLowerCase();
                     const nameB = b.name.toLowerCase();
-                    return nameB.localeCompare(nameA);
+                    return nameA.localeCompare(nameB);
                 case 'Популярные':
                     if (b.listens && a.listens) {
                         return b.listens - a.listens;

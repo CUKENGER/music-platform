@@ -13,7 +13,9 @@ import CheckInput from "@/UI/CheckInput/CheckInput";
 
 const CreateArtist = memo(() => {
 
-    const [options, setOptions] = newFunction();
+    const [options, setOptions] = useState<string[]>([
+        "Pop", "Rock", "Indie", "Folk", "Country", "Punk", "Alternative", "Dance / Electronic", "Classic"
+    ]);
 
     const router = useRouter()
     
@@ -113,12 +115,6 @@ const CreateArtist = memo(() => {
             </div>
         </MainLayout>
     )
-
-    function newFunction(): [any, any] {
-        return useState<string[]>([
-            "Pop", "Rock", "Indie", "Folk", "Country", "Punk", "Alternative", "Dance / Electronic", "Classic"
-        ]);
-    }
 })
 
 export default CreateArtist

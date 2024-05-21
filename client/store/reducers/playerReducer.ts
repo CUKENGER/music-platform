@@ -2,7 +2,6 @@ import { PlayerState } from "@/types/player"
 import { ITrack } from "@/types/track"
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
-
 const initialState: PlayerState = {
     activeTrack: null,
     currentTime: 0,
@@ -11,7 +10,8 @@ const initialState: PlayerState = {
     volume: 50,
     openedTrack: null,
     activeTrackList: [],
-    isOpenPlayerDetailed: false
+    isOpenPlayerDetailed: false,
+    defaultTrackList: []
 }
 
 export const playerSlice = createSlice({
@@ -51,6 +51,9 @@ export const playerSlice = createSlice({
         },
         setIsOpenPlayerDetailed(state, action: PayloadAction<boolean>) {
             state.isOpenPlayerDetailed = action.payload
+        },
+        setDefaultTrackList(state, action: PayloadAction<ITrack[]>) {
+            state.defaultTrackList = action.payload
         }
     }
 })
