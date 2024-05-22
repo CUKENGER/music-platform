@@ -13,11 +13,16 @@
 .main_container{
     display: flex;
     width: 100%;
+    padding: 20px;
     align-items: center;
     justify-content: center;
     height: 59%;
 }
 
+
+.text{
+    white-space: pre-wrap;
+}
 .x_container{
     display: flex;
     width: 100%;

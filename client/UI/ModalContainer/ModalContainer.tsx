@@ -6,10 +6,11 @@ import Image from 'next/image'
 
 interface ModalContainerProps {
     text: string;
-    setState: (e: boolean)=> void
+    setState: (e: boolean)=> void;
+    onClick?: ()=> void
 }
 
-const ModalContainer:FC<ModalContainerProps> = memo(({text, setState}) => {
+const ModalContainer:FC<ModalContainerProps> = memo(({text, setState, onClick}) => {
 
     const handleClose = () => {
         setState(false)
@@ -20,7 +21,7 @@ const ModalContainer:FC<ModalContainerProps> = memo(({text, setState}) => {
     return (
         <div className={`${styles.overlay} ${styles.visible}`}>
             <div className={styles.container}>
-                <div className={styles.x_container}>
+                <div className={styles.x_container} onClick={onClick}>
                     <Image 
                         className={styles.x_icon}
                         onClick={handleClose}
@@ -32,7 +33,7 @@ const ModalContainer:FC<ModalContainerProps> = memo(({text, setState}) => {
                 <div className={styles.main_container}>
                     <p className={styles.text}>{text}</p>
                 </div>
-                <div className={styles.btn_container}>
+                <div className={styles.btn_container} onClick={onClick}>
                     <Btn onClick={handleClose}>
                         Закрыть
                     </Btn>

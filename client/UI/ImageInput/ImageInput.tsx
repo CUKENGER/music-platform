@@ -16,7 +16,6 @@ const ImageInput:FC<FileInputProps> = memo(({placeholder, setPicture}) => {
         
         if (file) {
             setPicture(file);
-            console.log('picture', file);
             const reader = new FileReader();
             reader.onload = (e) => {
                 setUploadPicture(e.target?.result as string);

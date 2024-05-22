@@ -8,9 +8,6 @@ interface CheckInputProps {
 }
 
 const CheckInput: FC<CheckInputProps> = memo(({ setValue, options, setOptions}) => {
-    // const [options, setOptions] = useState<string[]>([
-    //     "Pop", "Rock", "Indie", "Folk", "Country", "Punk", "Alternative", "Dance / Electronic", "Classic"
-    // ]);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
     const handleOptionClick = (option: string) => {

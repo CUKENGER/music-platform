@@ -5,12 +5,12 @@ export interface IComment {
 }
 
 export interface ITrack {
-    id?:number;
+    id:number;
     name: string,
     artist: string,
     text: string,
     listens: number;
-    likes?: number;
+    likes: number;
     picture: string | null | File;
     audio: string | null | File;
     active?: boolean;
@@ -23,25 +23,26 @@ export interface AudioFile {
 }
 
 export interface IAlbum {
-    id?:number;
+    id:number;
     name: string;
     artist: string;
     description: string;
     releaseDate: string;
-    listens?: number;
+    listens: number;
     picture: File;
-    likes?: number;
+    likes: number;
     tracks: ITrack[];
     comments?: IComment[]
 }
 
 export interface IArtist {
+    data: any;
     id:number;
     name: string;
     description: string;
     genre: string;
-    likes?: number;
-    listens?: number;
+    likes: number;
+    listens: number;
     picture?: File;
     tracks?: ITrack[];
     comments?: IComment[];
