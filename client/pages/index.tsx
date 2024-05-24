@@ -22,8 +22,8 @@ const Index = () => {
                 </div>
                 <div className={styles.navBar}>
                     {menuItems.map((link, index) => (
-                        <div key={index} className={styles.navBar_item}>
-                            <p onClick={() => router.push(link.href)} className={styles.link_text}>{link.text}</p>
+                        <div key={index} className={styles.navBar_item} onClick={() => router.push(link.href)}>
+                            <p  className={styles.link_text}>{link.text}</p>
                         </div>
                     ))}
                     

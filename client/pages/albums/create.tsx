@@ -30,6 +30,7 @@ const CreateAlbum = () => {
     const [createAlbumMutation, {isError, isLoading}] = useCreateAlbumMutation()
 
     const [tracks, setTracks] = useState<ITrack[]>([{
+        id:0, likes: 0,
         name: '', audio: '',
         artist: artist.value,
         listens: 0,
@@ -59,10 +60,10 @@ const CreateAlbum = () => {
             })
 
             try {
-                const response = await createAlbumMutation(formData)
+                const response = await createAlbumMutation(formData).unwrap()
                 console.log('Response data:', response);
                 console.log('Отправлено');
-                // router.push('/albums')
+                await router.push('/albums')
             } catch (e) {
                 console.error('Error creating album:', e);
             }
@@ -74,7 +75,7 @@ const CreateAlbum = () => {
 
     const handleInputDateChange = useCallback((e:ChangeEvent<HTMLInputElement>)=> {
         releaseDate.setValue(e.target.value)
-    }, [] )
+    }, [releaseDate] )
 
     const handleAddInput = () => {
         setIsNeedInput(!isNeedInput)

@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getConnection } from 'typeorm';
+import { Repository} from 'typeorm';
 import { Track } from './scheme/track.schema';
 import { Comment } from './scheme/comment.schema';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { FileService, FileType } from 'src/file/file.service';
 import * as fs from 'fs'
-import * as path from 'path'
 import { Artist } from 'src/artist/scheme/artist.schema';
 import { ArtistService } from 'src/artist/artist.service';
+import { AudioService } from 'src/audioService/audioService.service';
+import * as ffprobeStatic from 'ffprobe-static';
+import * as path from "path";
 
 @Injectable()
 export class TrackService {
@@ -20,6 +22,7 @@ export class TrackService {
 		@InjectRepository(Comment) 
 		private commentRepository: Repository<Comment>,
 		private fileService: FileService,
+		private audioService: AudioService,
 		@InjectRepository(Artist)
 		private artistRepository: Repository<Artist>,
 		private artistService: ArtistService
@@ -29,11 +32,34 @@ export class TrackService {
 
 	async create(createTrackDto: CreateTrackDto, picture, audio): Promise<string> {
 		if (picture && audio) {
-			const audioPath = this.fileService.createFile(FileType.AUDIO, audio);
-			const imagePath = this.fileService.createFile(FileType.IMAGE, picture);
-	
+			const audioPathPromise = this.fileService.createFile(FileType.AUDIO, audio);
+            const imagePathPromise = this.fileService.createFile(FileType.IMAGE, picture);
+
+            const [audioPath, imagePath] = await Promise.all([audioPathPromise, imagePathPromise]);
 			console.log('audioPath', audioPath);
 			console.log('imagePath', imagePath);
+			const dp = path.resolve(__dirname, '../../', 'static', audioPath)
+
+			const ffprobePath = ffprobeStatic.path;
+
+            const duration = await new Promise<number>((resolve, reject) => {
+                const ffmpeg = require('fluent-ffmpeg');
+                ffmpeg.setFfprobePath(ffprobePath);
+                ffmpeg.ffprobe(dp, (err, metadata) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(metadata.format.duration);
+                    }
+                });
+            });
+
+			const minutes = Math.floor(duration / 60);
+			const seconds = Math.round(duration % 60);
+			const formattedDuration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+			console.log('Formatted Duration:', formattedDuration);
+			
+			console.log('Audio Duration:', duration);
 	
 			const newTrack = this.trackRepository.create(createTrackDto);
 			newTrack.listens = 0;
@@ -41,6 +67,7 @@ export class TrackService {
 			newTrack.genre = createTrackDto.genre;
 			newTrack.audio = audioPath;
 			newTrack.picture = imagePath;
+			newTrack.duration = formattedDuration
 	
 			// Проверка на существование артиста
 			let artist = await this.artistRepository.findOne({ where: { name: createTrackDto.artist } });

@@ -13,7 +13,10 @@ export const artistsApi = createApi({
                 method: 'GET',
                 params: {count, offset}
             }),
-            providesTags: result => ['Artist']
+            providesTags: (result) => 
+                result ? 
+                result.map(({ id }) => ({ type: 'Artist', id })) : 
+                ['Artist'],
         }),
         createArtist : builder.mutation<IArtist, FormData>({
             query: (formData) => ({
@@ -27,7 +30,11 @@ export const artistsApi = createApi({
             query: ({query, count = 30, offset = 0}) => ({
                 url: `artists/search?query=${query}&count=${count}&offset=${offset}`,
                 method: 'GET'
-            })
+            }),
+            providesTags: (result) =>
+                result ?
+                result.map(({id}) => ({type: "Artist", id})) :
+                ['Artist'],
         }),
         deleteArtist : builder.mutation<void, number>({
             query: (id) => ({

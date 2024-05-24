@@ -10,6 +10,7 @@ import Image from 'next/image'
 import MusicWaves from "@/UI/MusicWaves/MusicWaves";
 import pause_icon from '@/assets/pause_icon.png'
 import play_icon from '@/assets/play_icon.png'
+import { playerActions } from "@/store/reducers/playerReducer";
 
 interface ArtistTrackListProps {
     track: ITrack;
@@ -17,7 +18,7 @@ interface ArtistTrackListProps {
     trackList: ITrack[]
 }
 
-const ArtistTrackItem:FC<ArtistTrackListProps> = memo(({track, trackIndex, trackList})=> {
+const ArtistTrackItem:FC<ArtistTrackListProps> = ({track, trackIndex, trackList})=> {
     const audio = audioManager.audio
 
     const [showPlayIcon, setShowPlayIcon] = useState(false)
@@ -28,7 +29,7 @@ const ArtistTrackItem:FC<ArtistTrackListProps> = memo(({track, trackIndex, track
         playerSetActiveTrack,
         playerSetDuration,
         playerSetCurrentTime
-    } = useActions()
+    } = useActions(playerActions)
 
     useEffect(() => {
         const audio = new Audio(baseUrl + track?.audio);
@@ -51,7 +52,7 @@ const ArtistTrackItem:FC<ArtistTrackListProps> = memo(({track, trackIndex, track
                 setAudio(audio, activeTrack, volume, playerSetDuration, playerPlay, playerSetCurrentTime, trackList, playerSetActiveTrack);
             }
         }
-    }, [activeTrack]); 
+    }, [audio, activeTrack, volume, playerSetDuration, playerPlay, playerSetCurrentTime, trackList, playerSetActiveTrack]); 
 
     const handlePlay = async () => {
         playerSetActiveTrack(track)
@@ -104,6 +105,8 @@ const ArtistTrackItem:FC<ArtistTrackListProps> = memo(({track, trackIndex, track
             </div>
         </div>
     )
-})
+}
 
-export default ArtistTrackItem
+ArtistTrackItem.displayName = "ArtistTrackItem"
+
+export default memo(ArtistTrackItem)

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import useActions from "@/hooks/useActions";
 import Comments from "@/components/Tracks/TrackPage/Comments/Comments";
 import CommentsMobile from "@/components/Tracks/TrackPage/CommentsMobile/CommentsMobile";
+import { windowActions } from "@/store/reducers/windowSlice";
 
 const TrackPage = () => {
 
@@ -26,7 +27,7 @@ const TrackPage = () => {
 
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
-    }, [windowWidth])
+    }, [windowWidth, setWindowWidth])
 
     const handleOpenModal = () =>{
         setIsModal(!isModal)
@@ -48,8 +49,9 @@ const TrackPage = () => {
                         <div className={styles.cover_container}>
 
                             <img
-                            src={baseUrl + openedTrack?.picture} 
-                            className={styles.cover}
+                                src={baseUrl + openedTrack?.picture} 
+                                className={styles.cover}
+                                alt="cover icon"
                             />
                         </div>
 

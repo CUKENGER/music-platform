@@ -35,8 +35,8 @@
 .addTrack_item_container{
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 10px;
+    column-gap: 20px;
     background-color: var(--gray);
     border-radius: 10px;
 }
@@ -79,5 +79,23 @@
     height: 45px;
 }
 
+.track_index_container{
+    width: 50px;
+    text-align: center;
+}
+
+.main_input_container{
+    flex-grow: 1;
+}
+
+.addTrack_right_container{
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.track_index{
+    font-size: 30px;
+}
 
 

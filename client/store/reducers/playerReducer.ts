@@ -11,7 +11,7 @@ const initialState: PlayerState = {
     openedTrack: null,
     activeTrackList: [],
     isOpenPlayerDetailed: false,
-    defaultTrackList: []
+    defaultTrackList: [],
 }
 
 export const playerSlice = createSlice({

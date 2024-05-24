@@ -103,13 +103,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                 }
             </Head>
             <Header title={title_text} />
-            <PageTransition>
-                <div className={styles.wrapper}>
-                    {children}
-                </div>
-            </PageTransition>
-            <PlayerMobile />
-            {isOpenPlayerDetailed && (
+            {isOpenPlayerDetailed ? (
                 <CSSTransition
                     in={isOpenPlayerDetailed}
                     timeout={300}
@@ -123,7 +117,31 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                 >
                     <PlayerDetailed />
                 </CSSTransition>
+            )
+            : (
+                <PageTransition>
+                    <div className={styles.wrapper}>
+                        {children}
+                    </div>
+                </PageTransition>
             )}
+            
+            <PlayerMobile />
+            {/* {isOpenPlayerDetailed && (
+                <CSSTransition
+                    in={isOpenPlayerDetailed}
+                    timeout={300}
+                    classNames={{
+                        enter: styles['page-enter'],
+                        enterActive: styles['page-enter-active'],
+                        exit: styles['page-exit'],
+                        exitActive: styles['page-exit-active'],
+                    }}
+                    unmountOnExit
+                >
+                    <PlayerDetailed />
+                </CSSTransition>
+            )} */}
             <CSSTransition
                 in={showScrollButton && !isOpenPlayerDetailed}
                 timeout={300}

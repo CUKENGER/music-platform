@@ -21,7 +21,7 @@ const ModalContainer:FC<ModalContainerProps> = memo(({text, setState, onClick}) 
     return (
         <div className={`${styles.overlay} ${styles.visible}`}>
             <div className={styles.container}>
-                <div className={styles.x_container} onClick={onClick}>
+                <div className={styles.x_container}>
                     <Image 
                         className={styles.x_icon}
                         onClick={handleClose}

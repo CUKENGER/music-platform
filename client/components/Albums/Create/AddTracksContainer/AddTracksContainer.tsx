@@ -17,6 +17,7 @@ const AddTracksContainer:FC<AddTracksContainerProps> = ({tracks, setTracks}) => 
 
     const handleAddTrack = () => {
         setTracks([...tracks, {
+            id: 0, likes: 0,
             name: '', text: '', audio: null,
             artist: '',
             listens: 0,
@@ -59,6 +60,9 @@ const AddTracksContainer:FC<AddTracksContainerProps> = ({tracks, setTracks}) => 
             <div className={styles.addTracks_list}>
                 {tracks.map((track, index) => (
                     <div key={index} className={styles.addTrack_item_container}>
+                        <div className={styles.track_index_container}>
+                            <p className={styles.track_index}>{index + 1}</p>
+                        </div>                        
                         <div className={styles.main_input_container}>
                             <label className={styles.label} htmlFor="inputName">Введите название песни</label>
                             <input

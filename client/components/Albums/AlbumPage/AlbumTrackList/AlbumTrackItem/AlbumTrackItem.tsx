@@ -10,6 +10,7 @@ import { useTypedSelector } from '@/hooks/useTypedSelector';
 import { setAudio } from '@/services/setAudio';
 import pause_icon from '@/assets/pause_icon.png'
 import MusicWaves from "@/UI/MusicWaves/MusicWaves";
+import { playerActions } from '@/store/reducers/playerReducer';
 
 interface AlbumTrackItemProps{
     track: ITrack;
@@ -55,7 +56,7 @@ const AlbumTrackItem:FC<AlbumTrackItemProps> = ({track, trackIndex, trackList}) 
                 setAudio(audio, activeTrack, volume, playerSetDuration, playerPlay, playerSetCurrentTime, trackList, playerSetActiveTrack);
             }
         }
-    }, [activeTrack]); 
+    }, [activeTrack, audio, playerPlay, playerSetActiveTrack, playerSetCurrentTime, playerSetDuration, track, trackList, volume]); 
 
     const handlePlay = async () => {
         setDefaultTrackList(trackList)

@@ -11,11 +11,12 @@ import Btn from "@/UI/Btn/Btn";
 import CheckInput from "@/UI/CheckInput/CheckInput";
 import { genres } from "@/services/genres";
 import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
-import useCreateArtist from "@/hooks/useCreateArtist";
+import { useCreateArtistMutation } from "@/api/ArtistService";
 
-const CreateArtist = memo(() => {
+const CreateArtist = () => {
 
     const [options, setOptions] = useState<string[]>(genres);
+    const [modal, setModal] = useState({isOpen:false, message: ''});
     const [cover, setCover] = useState<File | null>(null)
     const router = useRouter()
     
@@ -23,7 +24,52 @@ const CreateArtist = memo(() => {
     const description = useInput('')
     const genre = useInput('')
 
-    const { handleCreate, isLoading, modal, setModal } = useCreateArtist(name.value, genre.value, description.value, cover);
+    const [createArtist, {isLoading}] = useCreateArtistMutation()
+
+    const handleCreate = useCallback(async () => {
+        console.log('name.value', name.value);
+        console.log('genre.value', genre.value);
+        console.log('description.value', description.value);
+        console.log('cover', cover);
+        if (!name.value.trim() || !description.value.trim() || !genre.value || !cover) {
+            setModal({
+                isOpen: true,
+                message: 'Заполните все данные, пожалуйста'
+            })
+            return 
+        }
+
+        const fd = new FormData()
+        fd.append('name', name.value);
+        fd.append('genre', genre.value);
+        fd.append('description', description.value);
+        fd.append('picture', cover);
+
+        try {
+            await createArtist(fd).unwrap()
+                .then((response) => {
+                    setModal({
+                        isOpen: true,
+                        message: `Artist with name ${response.name} creates successfully`
+                    })
+                })
+                .catch((error) => {
+                    setModal({
+                        isOpen: true,
+                        message: `Произошла ошибка: \n ${error.data.message}`
+                    })
+                })
+                .finally(() => {
+                    console.log('created artist vse');
+                })
+        } catch(e) {
+            setModal({
+                isOpen: true,
+                message: `Произошла неизвестная ошибка`
+            })
+        }
+
+    }, [name.value, description.value, genre.value, cover])
 
     return (
         <ErrorBoundary>
@@ -80,6 +126,8 @@ const CreateArtist = memo(() => {
             </MainLayout>
         </ErrorBoundary>
     )
-})
+}
 
-export default CreateArtist
+CreateArtist.displayName = 'CreateArtist';
+
+export default memo(CreateArtist);

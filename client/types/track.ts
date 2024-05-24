@@ -15,6 +15,7 @@ export interface ITrack {
     audio: string | null | File;
     active?: boolean;
     comments: IComment[]; 
+    duration?: string
 }
 
 export interface AudioFile {

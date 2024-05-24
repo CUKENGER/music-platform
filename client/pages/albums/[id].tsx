@@ -40,7 +40,14 @@ const AlbumPage = () => {
         if(openedAlbum?.id) {
             try{
                 await deleteAlbumMutation(openedAlbum?.id)
-                console.log('Альбом успешно удален')
+                    .then((response) => {
+                        console.log('response', response)
+                    })
+                    .catch((error) => {
+                        console.log('error', error);
+                    })
+                    
+                
                 await router.push('/albums')
             } catch(e){
                 console.log(`Альбом ${openedAlbum?.name} ${openedAlbum?.id} not found`)

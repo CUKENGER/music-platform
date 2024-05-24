@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import x from '@/assets/x.svg';
 import styles from './NavBar.module.css'
 import Image from 'next/image';
@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 interface NavBarProps {
     isOpen: boolean;
     toggleMenu: ()=> void;
+    setIsNavbarOpen: (e: boolean) =>  void;
+    setIsOpen: (e: boolean) => void
 }
 
 const menuItems = [
@@ -16,10 +18,16 @@ const menuItems = [
     {text: "Список артистов", href: '/artists'},
 ]
 
-const NavBar:FC<NavBarProps> = ({isOpen, toggleMenu}) => {
+const NavBar:FC<NavBarProps> = ({isOpen, toggleMenu, setIsNavbarOpen, setIsOpen}) => {
 
     const router = useRouter()
 
+    const handleClick = useCallback((href: string) => {
+        router.push(href)
+        setIsNavbarOpen(false)
+        setIsOpen(false)
+    }, [toggleMenu, router])
+    
     return (
         <>
             {isOpen && (
@@ -43,7 +51,7 @@ const NavBar:FC<NavBarProps> = ({isOpen, toggleMenu}) => {
                             <ul className={styles.list}>
                                 {menuItems.map( ({text, href}, index) => (
                                     <li 
-                                    onClick={() => router.push(href)}
+                                    onClick={() => handleClick(href)}
                                     key={index} 
                                     className={styles.list__item}
                                     >

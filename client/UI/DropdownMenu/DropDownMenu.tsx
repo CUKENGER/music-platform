@@ -1,12 +1,12 @@
 import styles from './DropDownMenu.module.css'
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import DropDownArrow from '@/assets/DropDownArrowActive.svg'
 import DropDownArrowActive from '@/assets/DropDownArrow.svg'
 import Image from 'next/image'
 import useActions from '@/hooks/useActions';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 
-const DropDownMenu = () => {
+const DropDownMenu = memo(() => {
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
@@ -64,6 +64,6 @@ const DropDownMenu = () => {
 
         </div>
     )
-}
+})
 
 export default DropDownMenu

@@ -119,7 +119,7 @@ const PlayerNextTrackItem: FC<PlayerNextTrackItemProps> = ({ track, onDrop, setC
                 </div>
             </div>
             <div className={styles.duration_container}>
-                <p>{durationTrack}</p>
+                <p>{track?.duration}</p>
             </div>
         </div>
     );

@@ -2,7 +2,7 @@
 import { FC } from 'react';
 import Link from 'next/link';
 import styles from '@/styles/404.module.css';
-import { Head } from 'next/document';
+import Head from 'next/head';
 
 const Custom404: FC = () => {
     return (

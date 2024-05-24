@@ -10,6 +10,7 @@ import DropDownMenu from "@/UI/DropdownMenu/DropDownMenu";
 import Loader from "@/components/Loader/Loader";
 import TrackList from "@/components/Tracks/TrackList/TrackList";
 import Btn from "@/UI/Btn/Btn";
+import { memo } from "react";
 
 const Index = ()=> {
 

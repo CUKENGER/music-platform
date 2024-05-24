@@ -30,7 +30,8 @@ const PlayerMobile = () => {
         currentTime,
         isOpenPlayerDetailed,
         activeTrackList,
-        defaultTrackList} = useTypedSelector(state => state.playerReducer)
+        defaultTrackList,
+        duration} = useTypedSelector(state => state.playerReducer)
     const {setOpenedTrack,
         playerPlay,
         playerPause,
@@ -46,7 +47,7 @@ const PlayerMobile = () => {
                 setHasListen(true)
             }
         }
-    }, [currentTime, hasListen, activeTrack])
+    }, [currentTime, hasListen, activeTrack, addListenMutation])
 
     if (!activeTrack) {
         return null
@@ -102,6 +103,9 @@ const PlayerMobile = () => {
                         <p className={styles.artist}>
                             {activeTrack?.artist}
                         </p>
+                    </div>
+                    <div className={styles.duration_container}>
+                        <p className={styles.duration_text}>1:23 / 2:33 {duration}</p>
                     </div>
                     <div className={styles.like_container} onClick={handleLike}>
                         <Image className={styles.like} src={isLike ? like_fill : like} alt='like icon'/>

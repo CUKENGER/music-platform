@@ -28,7 +28,7 @@ const Header:FC<HeaderProps> = ({title}) => {
             <Image onClick={toggleMenu} className={styles.image} src={burger} alt='burger menu icon'/>
             
             <p className={styles.title}>{title}</p>
-            <NavBar isOpen={isOpen} toggleMenu={toggleMenu}/>
+            <NavBar isOpen={isOpen} toggleMenu={toggleMenu} setIsNavbarOpen={setIsNavbarOpen} setIsOpen={setIsOpen}/>
             
         </header>
     )

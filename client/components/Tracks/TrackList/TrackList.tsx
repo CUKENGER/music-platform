@@ -6,6 +6,7 @@ import { useTypedSelector } from "@/hooks/useTypedSelector";
 import useScroll from "@/hooks/useScroll";
 import TrackItem from "../TrackItem/TrackItem";
 import { sortList } from "@/services/sortList";
+import { playerActions } from "@/store/reducers/playerReducer";
 
 interface TrackListProps {
     tracks: ITrack[];

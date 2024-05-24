@@ -16,7 +16,7 @@ const StepWrapper:FC<StepWrapperProps> = ({activeStep, children, setActiveStep, 
         if (nameInput && artistInput) {
             if (nameInput.trim() !== '' && artistInput.trim() !== '') {
                 setActiveStep(step)
-            }
+            } 
         }
     }
 

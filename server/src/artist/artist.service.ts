@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as fs from 'fs/promises'
 import { ArtistFileService, ArtistFileType } from "./artistFile/artistFile.service";
 import { Track } from "src/track/scheme/track.schema";
+import { Album } from "src/album/album.schema";
 
 @Injectable()
 export class ArtistService {
@@ -20,7 +21,9 @@ export class ArtistService {
         private commentRepository: Repository<ArtistComment>,
         private artistFileService: ArtistFileService,
         @InjectRepository(Track)
-        private trackRepository: Repository<Track>
+        private trackRepository: Repository<Track>,
+        @InjectRepository(Album)
+        private albumRepository: Repository<Album>,
     ) {
 
     }
@@ -141,8 +144,15 @@ export class ArtistService {
         } else{
             console.log('artist.picture not found')
         }
+
+        const albums = await this.albumRepository.find({ where: { artistId: id } });
+        for (const album of albums) {
+            await this.trackRepository.delete({ albumId: album.id });
+        }
+
         await this.commentRepository.delete({ artistId: id });
         await this.trackRepository.delete({ artistId: id })
+        await this.albumRepository.delete({ artistId: id });
         await this.artistRepository.delete(id);
         return artist;
     }

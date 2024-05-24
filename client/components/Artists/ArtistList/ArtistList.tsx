@@ -5,12 +5,13 @@ import useActions from '@/hooks/useActions';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 import useScroll from '@/hooks/useScroll';
 import ArtistItem from '../ArtistItem/ArtistItem';
+import { searchArtistsActions } from '@/store/reducers/searchArtistsSlice';
 
 interface ArtistListProps{
     artists: IArtist[];
 }
 
-const ArtistList:FC<ArtistListProps> = memo(({artists}) => {
+const ArtistList:FC<ArtistListProps> = ({artists}) => {
 
     const [sortedArtists, setSortedArtists] = useState<IArtist[] | null>(null)
 
@@ -69,6 +70,8 @@ const ArtistList:FC<ArtistListProps> = memo(({artists}) => {
             ))}
         </div>
     )
-})
+}
 
-export default ArtistList
+ArtistList.displayName = 'ArtistList'
+
+export default memo(ArtistList)

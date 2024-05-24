@@ -11,13 +11,14 @@ import { useRouter } from "next/router";
 import { isAdmin } from "@/services/isAdmin";
 import delete_icon from '@/assets/delete.svg'
 import useActions from "@/hooks/useActions";
+import { searchArtistsActions } from "@/store/reducers/searchArtistsSlice";
 
 interface ArtistItemProps{
     artist: IArtist;
     onDelete: (id: number) => void
 }
 
-const ArtistItem:FC<ArtistItemProps> = memo(({artist, onDelete}) => {
+const ArtistItem:FC<ArtistItemProps> = ({artist, onDelete}) => {
 
     const router = useRouter()
 
@@ -91,6 +92,8 @@ const ArtistItem:FC<ArtistItemProps> = memo(({artist, onDelete}) => {
             </div>
         </div>
     )
-})
+}
 
-export default ArtistItem
+ArtistItem.displayName = 'ArtistItem'
+
+export default memo(ArtistItem)

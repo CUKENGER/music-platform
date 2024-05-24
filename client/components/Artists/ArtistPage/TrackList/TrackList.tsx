@@ -3,20 +3,21 @@ import styles from './TrackList.module.css'
 import { ITrack } from "@/types/track";
 import useActions from "@/hooks/useActions";
 import ArtistTrackItem from "./ArtistTrackItem/ArtistTrackItem";
+import { playerActions } from "@/store/reducers/playerReducer";
 
 interface TrackListProps{
     tracks: ITrack[]
 }
 
-const TrackList:FC<TrackListProps> = memo(({tracks}) => {
+const TrackList:FC<TrackListProps> = ({tracks}) => {
 
     const [trackList, setTrackList] = useState<ITrack[] | null>(null)
-    const {setActiveTrackList} = useActions()
+    const {setActiveTrackList} = useActions(playerActions)
 
     useEffect(()=>{
         setTrackList(tracks)
         setActiveTrackList(tracks)
-    }, [tracks])
+    }, [tracks, setActiveTrackList])
 
     return (
         <div className={styles.container}>
@@ -33,6 +34,8 @@ const TrackList:FC<TrackListProps> = memo(({tracks}) => {
             ))}
         </div>
     )
-})
+}
 
-export default TrackList
+TrackList.displayName = "TrackList"
+
+export default memo(TrackList)

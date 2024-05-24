@@ -3,6 +3,7 @@ import {FC, useEffect, useState} from "react";
 import {ITrack} from "@/types/track";
 import AlbumTrackItem from "@/components/Albums/AlbumPage/AlbumTrackList/AlbumTrackItem/AlbumTrackItem";
 import useActions from '@/hooks/useActions';
+import { playerActions } from '@/store/reducers/playerReducer';
 
 interface AlbumTrackListProps {
     tracks: ITrack[]
@@ -16,7 +17,7 @@ const AlbumTrackList:FC<AlbumTrackListProps> = ({tracks}) => {
     useEffect(()=>{
         setTrackList(tracks)
         setActiveTrackList(tracks)
-    }, [tracks])
+    }, [tracks, setActiveTrackList])
 
     return (
         <div className={styles.container}>

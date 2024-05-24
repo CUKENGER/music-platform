@@ -13,14 +13,17 @@ export const tracksApi = createApi({
                 method: 'GET',
                 params: {count, offset}
             }),
-            providesTags: result => ['Track']
+            providesTags: (result) => 
+                result ? 
+                result.map(({ id }) => ({ type: 'Track', id })) : 
+                ['Track'],
         }),
         getOneTrack: builder.query<ITrack, number>({
             query: (id) => ({
                 url: `tracks/${id}`,
                 method: 'GET',
             }),
-            providesTags: result => ['Track']
+            providesTags: (result) => ['Track'],
         }),
         createTrack : builder.mutation<ITrack, ITrack>({
             query: (track) => ({
@@ -48,7 +51,11 @@ export const tracksApi = createApi({
             query: ({query, count = 30, offset = 0}) => ({
                 url: `tracks/search?query=${query}&count=${count}&offset=${offset}`,
                 method: 'GET'
-            })
+            }),
+            providesTags: (result) => 
+                result ? 
+                result.map(({ id }) => ({ type: 'Track', id })) : 
+                ['Track'],
         })
     })
 })

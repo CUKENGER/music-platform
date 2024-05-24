@@ -157,6 +157,7 @@ export class AlbumService {
         } else{
             console.log(`album.tracks not found`)
         }
+        await this.trackRepository.delete({ albumId: id });
         // Удаление связанных комментариев
         await this.commentRepository.delete({ albumId: id });
         // Удаление альбома из базы данных

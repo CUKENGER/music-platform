@@ -8,7 +8,7 @@ import { useInput } from "@/hooks/useInput";
 import { StaticImageData } from "next/image";
 import useActions from "@/hooks/useActions";
 import { baseUrl } from "@/services/baseUrl";
-import { useCreateTrackMutation } from "@/api/TrackService";
+import { useCreateTrackMutation, useSearchByNameQuery } from "@/api/TrackService";
 import StepWrapper from "@/components/Tracks/Create/StepWrapper/StepWrapper";
 import Textarea from "@/UI/Textarea/Textarea";
 import InputString from "@/UI/InputString/InputString";
@@ -19,6 +19,7 @@ import Btn from "@/UI/Btn/Btn";
 import TrackCoverUpload from "@/components/Tracks/Create/TrackCoverUpload/TrackCoverUpload/TrackCoverUpload";
 import CheckInput from "@/UI/CheckInput/CheckInput";
 import { genres } from "@/services/genres";
+import { useTypedSelector } from "@/hooks/useTypedSelector";
 
 const Create = memo(() => {
     const [activeStep, setActiveStep] = useState<number>(1);
@@ -36,8 +37,17 @@ const Create = memo(() => {
     const text = useInput('');
     const genre = useInput('');
 
-    const [createTrackMutation] = useCreateTrackMutation();
-
+    const [createTrackMutation, {}] = useCreateTrackMutation();
+    // const {
+    //     searchInput, 
+    //     countTracks,
+    //     offsetTracks
+    // } = useTypedSelector(state=> state.searchInputReducer)
+    // const {refetch} = useSearchByNameQuery({
+    //     query: searchInput,
+    //     count: countTracks,
+    //     offset: offsetTracks
+    // })
     const router = useRouter();
 
     const handleAddInput = () => {
@@ -73,7 +83,8 @@ const Create = memo(() => {
             }
 
             try {
-                const response = await createTrackMutation(formData);
+                const response = await createTrackMutation(formData).unwrap()
+                // await refetch()
                 await router.push('/tracks');
                 console.log(response);
                 setUploadPicture('');

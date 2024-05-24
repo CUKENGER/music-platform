@@ -7,14 +7,14 @@ import TrackList from "@/components/Artists/ArtistPage/TrackList/TrackList"
 import Btn from "@/UI/Btn/Btn"
 import { useRouter } from "next/router"
 
-const ArtistPage = memo(() => {
+const ArtistPage = () => {
     const router = useRouter()
 
     const {openedArtist} = useTypedSelector(state => state.searchArtistsReducer)
 
     const handleBack = useCallback(()=>{
         router.push('/artists')
-    }, [])
+    }, [router])
 
     return (
         <MainLayout title_text="dasfdsaf">
@@ -40,6 +40,8 @@ const ArtistPage = memo(() => {
             </div>
         </MainLayout>
     )
-})
+}
 
-export default ArtistPage
+ArtistPage.displayName = 'ArtistPage';
+
+export default memo(ArtistPage);

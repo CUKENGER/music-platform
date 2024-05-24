@@ -13,7 +13,10 @@ export const albumsApi = createApi({
                 method: 'GET',
                 params: {count, offset}
             }),
-            providesTags: result => ['Album']
+            providesTags: (result) => 
+                result ? 
+                result.map(({ id }) => ({ type: 'Album', id })) : 
+                ['Album'],
         }),
         createAlbum : builder.mutation<IAlbum, FormData>({
             query: (formData) => ({
@@ -27,7 +30,11 @@ export const albumsApi = createApi({
             query: ({query, count = 30, offset = 0}) => ({
                 url: `albums/search?query=${query}&count=${count}&offset=${offset}`,
                 method: 'GET'
-            })
+            }),
+            providesTags: (result) => 
+                result ? 
+                result.map(({ id }) => ({ type: 'Album', id })) : 
+                ['Album'],
         }),
         deleteAlbum : builder.mutation<void, number>({
             query: (id) => ({

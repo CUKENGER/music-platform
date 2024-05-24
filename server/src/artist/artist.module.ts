@@ -8,9 +8,10 @@ import { ArtistService } from "./artist.service";
 import { ArtistFileService } from "./artistFile/artistFile.service";
 import { Album } from "src/album/album.schema";
 import { Track } from "src/track/scheme/track.schema";
+import { AlbumComment } from "src/album/commentAlbum/albumComment.schema";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Artist, ArtistComment, Album, Track]), ConfigModule],
+    imports: [TypeOrmModule.forFeature([Artist, ArtistComment, Album, Track, AlbumComment]), ConfigModule],
     controllers: [ArtistController],
     providers: [ArtistService, ArtistFileService],
   })

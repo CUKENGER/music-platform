@@ -12,6 +12,7 @@ import React from "react";
 import { useDeleteTrackMutation } from "@/api/TrackService";
 import { setAudio } from "@/services/setAudio";
 import PlayPauseBtns from "@/UI/PlayPauseBtns/PlayPauseBtns";
+import { playerActions } from "@/store/reducers/playerReducer";
 
 interface TrackItemProps {
     track: ITrack;
@@ -30,7 +31,7 @@ const TrackItem:FC<TrackItemProps> = ({track, trackList}) => {
         playerSetDuration,
         playerSetCurrentTime,
         setOpenedTrack,
-        setDefaultTrackList} = useActions()
+        setDefaultTrackList} = useActions(playerActions)
 
     const [deleteTrackMutation] = useDeleteTrackMutation()
 
@@ -40,7 +41,7 @@ const TrackItem:FC<TrackItemProps> = ({track, trackList}) => {
                 setAudio(audio, activeTrack, volume, playerSetDuration, playerPlay, playerSetCurrentTime, trackList, playerSetActiveTrack);
             }
         }
-    }, [activeTrack]); 
+    }, [audio, activeTrack, volume, playerSetDuration, playerPlay, playerSetCurrentTime, trackList, playerSetActiveTrack, track]); 
 
     const handleDelete = async () => {
         if (track.id) {

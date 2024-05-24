@@ -11,7 +11,7 @@ import { useTypedSelector } from "@/hooks/useTypedSelector"
 import { useSearchByNameArtistsQuery } from "@/api/ArtistService"
 import ArtistList from "@/components/Artists/ArtistList/ArtistList"
 
-const IndexArtists = memo(() => {
+const IndexArtists = () => {
 
     const router = useRouter()
 
@@ -52,6 +52,8 @@ const IndexArtists = memo(() => {
             </div>
         </MainLayout>
     )
-})
+}
 
-export default IndexArtists
+IndexArtists.displayName = 'IndexArtists';
+
+export default memo(IndexArtists);
