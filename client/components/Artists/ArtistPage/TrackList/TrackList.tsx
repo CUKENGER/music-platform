@@ -12,12 +12,12 @@ interface TrackListProps{
 const TrackList:FC<TrackListProps> = ({tracks}) => {
 
     const [trackList, setTrackList] = useState<ITrack[] | null>(null)
-    const {setActiveTrackList} = useActions(playerActions)
+    const {setActiveTrackList} = useActions()
 
     useEffect(()=>{
         setTrackList(tracks)
         setActiveTrackList(tracks)
-    }, [tracks, setActiveTrackList])
+    }, [tracks])
 
     return (
         <div className={styles.container}>

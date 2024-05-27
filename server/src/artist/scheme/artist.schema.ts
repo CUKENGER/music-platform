@@ -17,21 +17,21 @@ export class Artist {
   @Column()
   description: string;
 
-  @Column({default: 0, nullable:true})
+  @Column({ default: 0})
   listens: number;
 
-  @Column({default: 0, nullable:true})
+  @Column({ default: 0})
   likes: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   picture: string;
 
-  @OneToMany(() => Track, track => track.artistEntity, {nullable: true})
+  @OneToMany(() => Track, track => track.artistEntity)
   tracks: Track[];
 
-  @OneToMany(() => ArtistComment, comment => comment.artist, {nullable: true})
+  @OneToMany(() => ArtistComment, comment => comment.artist)
   comments: ArtistComment[];
 
-  @OneToMany(() => Album, album => album.artistEntity, {nullable: true})
+  @OneToMany(() => Album, album => album.artistEntity)
   albums: Album[];
 }

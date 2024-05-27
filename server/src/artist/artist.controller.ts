@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { ArtistService } from "./artist.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { CreateArtistDto } from "./dto/create-artist.dto";
 import { CreateArtistCommentDto } from "./dto/create-artistComment.dto";
-
+import { Artist } from "./scheme/artist.schema";
 
 @Controller('/artists')
 export class ArtistController {
@@ -17,32 +17,31 @@ export class ArtistController {
     ]))
     async create(@UploadedFiles() files , @Body() dto: CreateArtistDto) {
 
-        console.log('files',files);
         const {picture} = files
 
         return this.artistService.create(dto, picture)
     }
 
     @Get()
-    getAll(@Query('count') count: number,
-        @Query('offset') offset: number) {
+    getAll(@Query('count', ParseIntPipe) count: number,
+        @Query('offset', ParseIntPipe) offset: number) {
             return this.artistService.getAll(count, offset)
     }
 
     @Get('/search')
 	searchByName(@Query('query') query: string,
-				@Query('count') count: number,
-				@Query('offset') offset: number) {
+				@Query('count', ParseIntPipe) count: number,
+				@Query('offset', ParseIntPipe) offset: number) {
 		return this.artistService.searchByName(query, count, offset)
 	}
 
     @Get(':id')
-    getOne(@Param('id') id: number) {
+    getOne(@Param('id', ParseIntPipe) id: number) {
         return this.artistService.getOne(id)
     }
 
     @Delete(':id')
-    delete(@Param('id') id: number) {
+    delete(@Param('id', ParseIntPipe) id: number) {
         return this.artistService.delete(id)
     }
 
@@ -52,16 +51,24 @@ export class ArtistController {
     }
 
     @Post('/listen/:id')
-    addListen(@Param('id') id: number) {
+    addListen(@Param('id', ParseIntPipe) id: number) {
         return this.artistService.listen(id)
     }
     @Post('/like/:id')
-    addLike(@Param('id') id: number) {
+    addLike(@Param('id', ParseIntPipe) id: number) {
         return this.artistService.addLike(id)
     }
 
     @Post('/unlike/:id')
-    deleteLike(@Param('id') id: number) {
+    deleteLike(@Param('id', ParseIntPipe) id: number) {
         return this.artistService.deleteLike(id)
+    }
+
+    @Put(':id') // Маршрут обновления сущности, например, PUT /entities/:id
+    async updateArtist(
+      @Param('id', ParseIntPipe) id: number, // Параметр ID из URL
+      @Body() newData: Partial<Artist>, // Новые данные сущности из тела запроса
+    ): Promise<Artist> {
+      return this.artistService.updateArtist(id, newData); // Вызов сервиса для обновления сущности
     }
 }

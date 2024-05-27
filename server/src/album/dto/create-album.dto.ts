@@ -1,4 +1,3 @@
-import {CreateTracksDto } from "src/album/dto/create-tracks.dto";
 
 export class CreateAlbumDto {
     artist: string

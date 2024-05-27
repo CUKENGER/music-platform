@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Album } from "./album.schema";
 import {Repository } from "typeorm";
@@ -11,6 +11,7 @@ import * as path from 'path'
 import * as fs from 'fs/promises';
 import { Artist } from "src/artist/scheme/artist.schema";
 import { ArtistService } from "src/artist/artist.service";
+import { AudioService } from "src/audioService/audioService.service";
 
 @Injectable()
 export class AlbumService {
@@ -25,7 +26,8 @@ export class AlbumService {
         private trackRepository: Repository<Track>,
         @InjectRepository(Artist)
         private artistRepository: Repository<Artist>,
-        private artistService: ArtistService
+        private artistService: ArtistService,
+        private audioService: AudioService,
     ) {
     }
 
@@ -39,13 +41,18 @@ export class AlbumService {
         const imagePath = this.albumFileService.createCover(AlbumFileType.IMAGE, files.picture);
     
         // Проверка на существование артиста
-        let artist = await this.artistRepository.findOne({ where: { name: dto.artist } });
+        let artist = await this.artistRepository.findOne({
+            where: { name: dto.artist },
+            relations: ['albums', 'tracks']
+        });
     
         if (!artist) {
             const artistDto = {
                 name: dto.artist,
                 genre: dto.genre,
                 description: '',
+                tracks: [],
+                albums: []
             };
             artist = await this.artistService.create(artistDto, files.picture);
         }
@@ -57,27 +64,68 @@ export class AlbumService {
             likes: 0,
             genre: dto.genre,
             picture: imagePath,
-            tracks: files.tracks,
             artistEntity: artist,
+            artistId: artist.id,
+            artist: dto.artist
         });
     
         await this.albumRepository.save(newAlbum);
     
         // Создание и сохранение треков
-        const trackDtos = files.tracks.map((track, index) => ({
-            name: dto.track_names[index],
-            artist: dto.artist,
-            text: dto.track_texts[index],
-            audio: tracksPath[index],
-            album: newAlbum,
-            picture: imagePath,
-            genre: dto.genre,
+        const trackDtos = await Promise.all(files.tracks.map(async (track, index) => {
+            try {
+                const duration = await this.audioService.getAudioDuration(tracksPath[index]);
+                return {
+                    name: dto.track_names[index],
+                    artist: dto.artist,
+                    artistId: artist.id,
+                    text: dto.track_texts[index],
+                    audio: tracksPath[index],
+                    album: newAlbum,
+                    picture: imagePath,
+                    genre: dto.genre,
+                    duration: duration
+                };
+            } catch (error) {
+                console.error(`Error getting duration for track ${index + 1}:`, error);
+                return {
+                    name: dto.track_names[index],
+                    artist: dto.artist,
+                    artistId: artist.id,
+                    text: dto.track_texts[index],
+                    audio: tracksPath[index],
+                    album: newAlbum,
+                    picture: imagePath,
+                    genre: dto.genre,
+                    duration: 'N/A' // Значение по умолчанию в случае ошибки
+                };
+            }
         }));
     
-        await this.trackRepository.save(trackDtos);
+        const savedTracks = await this.trackRepository.save(trackDtos);
+    
+        // Добавление треков к альбому и обновление альбома
+        newAlbum.tracks = savedTracks;
+        await this.albumRepository.save(newAlbum);
+    
+        // Инициализация массивов треков и альбомов артиста, если они не инициализированы
+        if (!artist.tracks) {
+            artist.tracks = [];
+        }
+        if (!artist.albums) {
+            artist.albums = [];
+        }
+    
+        // Добавление треков и альбомов к артисту и сохранение артиста
+        artist.tracks.push(...savedTracks);  // Используйте push(...items) вместо concat для избежания создания нового массива
+        artist.albums.push(newAlbum);
+    
+        await this.artistRepository.save(artist);
     
         return JSON.stringify({ id: newAlbum.id, name: newAlbum.name });
     }
+    
+    
     
     async getAll(count=50, offset=0): Promise<Album[]>{
         const albums = await this.albumRepository.find({
@@ -147,8 +195,6 @@ export class AlbumService {
                     if (track.audio) {
                         console.log('track.audio', track.audio);
                         await this.trackRepository.delete(track.id)
-                        // const audioPath = path.resolve('static/', track.audio);
-                        // await fs.unlink(audioPath);
                     }
                 }));
             } catch (error) {
@@ -177,5 +223,38 @@ export class AlbumService {
 
     	return albums;
 	}
+
+    async addLike(id) {
+        try {
+            const album = await this.albumRepository.findOne({where: {id: id}})
+            if(album) {
+                album.likes +=1
+                await this.artistRepository.save(album)
+                return album.id
+            } else{
+                throw new Error(`Album with ${id} id not found`)
+            }
+        } catch(e) {
+            console.log('in AddLike Servicce', e)
+            throw e
+        }
+    }
+
+    async deleteLike(id) {
+        try {
+            const album = await this.albumRepository.findOne({where: {id: id}})
+            if(album) {
+                album.likes -=1
+                await this.artistRepository.save(album)
+                return album.id
+            } else{
+                throw new Error(`Album with ${id} id not found`)
+            }
+        } catch(e) {
+            console.log('in DeleteLike Servicce', e)
+            throw e
+        }
+    }
+
 
 }

@@ -1,5 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile, UploadedFiles, UseInterceptors } from "@nestjs/common";
-import { Album } from "./album.schema";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { AlbumService } from "./album.service";
 import { CreateAlbumDto } from "./dto/create-album.dto";
 import { CreateAlbumCommentDto } from "./dto/create-albumComment.dto";
@@ -18,32 +17,29 @@ export class AlbumController {
         {name: 'tracks'}
     ]))
     async create(@UploadedFiles() files , @Body() dto: CreateAlbumDto) {
-
-        console.log('files',files);
-
         return this.albumService.create(dto, files)
     }
 
     @Get()
-    getAll(@Query('count') count: number,
-        @Query('offset') offset: number) {
+    getAll(@Query('count', ParseIntPipe) count: number,
+        @Query('offset', ParseIntPipe) offset: number) {
             return this.albumService.getAll(count, offset)
     }
 
     @Get('/search')
 	searchByName(@Query('query') query: string,
-				@Query('count') count: number,
-				@Query('offset') offset: number) {
+				@Query('count', ParseIntPipe) count: number,
+				@Query('offset', ParseIntPipe) offset: number) {
 		return this.albumService.searchByName(query, count, offset)
 	}
 
     @Get(':id')
-    getOne(@Param('id') id: number) {
+    getOne(@Param('id', ParseIntPipe) id: number) {
         return this.albumService.getOne(id)
     }
 
     @Delete(':id')
-    delete(@Param('id') id: number) {
+    delete(@Param('id', ParseIntPipe) id: number) {
         return this.albumService.delete(id)
     }
 
@@ -53,7 +49,7 @@ export class AlbumController {
     }
 
     @Post('/listen/:id')
-    addListen(@Param('id') id: number) {
+    addListen(@Param('id',ParseIntPipe) id: number) {
         return this.albumService.listen(id)
     }
 }

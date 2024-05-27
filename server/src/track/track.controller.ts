@@ -1,10 +1,9 @@
-import {Controller, Get, Post, Body, Param, Delete, UseInterceptors, UploadedFiles, Query} from '@nestjs/common';
+import {Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors} from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express/multer';
-import * as fs from 'fs'
-import * as path from 'path'
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+
 
 @Controller('/tracks')
 export class TrackController {
@@ -13,43 +12,40 @@ export class TrackController {
 
 	}
 	
-
 	@Post()
-  	@UseInterceptors(FileFieldsInterceptor([
+	@UseInterceptors(FileFieldsInterceptor([
 		{ name: 'picture', maxCount: 1 },
 		{ name: 'audio', maxCount: 1 },
-  	]))
+	  ]))
   	async create(@UploadedFiles() files, @Body() createTrackDto: CreateTrackDto) {
 		const { picture, audio } = files;
 
 		if (!audio || !picture) {
-			throw new Error('files are required');
+			throw new Error('audio and picture are required');
 		}
-
-		console.log('Track created successfully');
         return this.trackService.create(createTrackDto, picture, audio)
   	}	
 
 	@Get()
-	getAll(@Query('count') count: number,
-			@Query('offset') offset: number) {
+	getAll(@Query('count', ParseIntPipe) count: number,
+			@Query('offset', ParseIntPipe) offset: number) {
 		return this.trackService.getAll(count, offset)
 	}
 
 	@Get('/search')
 	searchByName(@Query('query') query: string,
-				@Query('count') count: number,
-				@Query('offset') offset: number) {
+				@Query('count', ParseIntPipe) count: number,
+				@Query('offset', ParseIntPipe) offset: number) {
 		return this.trackService.searchByName(query, count, offset)
 	}
 
 	@Get(':id')
-	getOne(@Param('id') id: number ) {
+	getOne(@Param('id', ParseIntPipe) id: number ) {
 		return this.trackService.getOne(id)
 	}
 
 	@Delete(':id')
-	delete(@Param('id') id: number ) {
+	delete(@Param('id', ParseIntPipe) id: number ) {
 		return this.trackService.delete(id)
 	}
 
@@ -59,12 +55,12 @@ export class TrackController {
 	}
 
 	@Post('/listen/:id')
-	addListen(@Param('id') id: number) {
+	addListen(@Param('id',ParseIntPipe) id: number) {
 		return this.trackService.listen(id)
 	}
 
 	@Post('/likes/:id')
-	addLikes(@Param('id') id: number) {
+	addLikes(@Param('id', ParseIntPipe) id: number) {
 		return this.trackService.addLikes(id)
 	}
 

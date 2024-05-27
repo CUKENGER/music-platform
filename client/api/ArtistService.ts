@@ -57,6 +57,14 @@ export const artistsApi = createApi({
             }),
             invalidatesTags: ['Artist']
         }),
+        updateArtist : builder.mutation<void, {id: number, data: any}>({
+            query: ({id, data}) => ({
+                url: `artists/${id}`,
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Artist']
+        }),
     })
 })
 
@@ -65,5 +73,6 @@ export const {
     useCreateArtistMutation,
     useDeleteArtistMutation,
     useAddLikeArtistMutation,
-    useDeleteLikeArtistMutation
+    useDeleteLikeArtistMutation,
+    useUpdateArtistMutation
 } = artistsApi

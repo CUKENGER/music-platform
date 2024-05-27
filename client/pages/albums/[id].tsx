@@ -56,7 +56,7 @@ const AlbumPage = () => {
     }
 
     const handleBackPage = () => {
-        router.push('/albums')
+        router.back()
     }
 
     return (

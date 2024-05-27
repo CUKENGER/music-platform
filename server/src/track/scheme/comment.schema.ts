@@ -1,5 +1,5 @@
 import { Track } from './track.schema';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
 
 @Entity()
 export class Comment {

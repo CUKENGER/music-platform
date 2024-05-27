@@ -3,10 +3,14 @@ import * as path from "path";
 import * as fs from "fs";
 import * as uuid from "uuid";
 
-
 export enum AlbumFileType {
     AUDIO = "audio",
     IMAGE = "image"
+}
+
+interface FileType {
+    originalname: string;
+    buffer: Buffer;
 }
 
 @Injectable()
@@ -31,7 +35,7 @@ export class AlbumFileService{
         }
     }
 
-    createTracks(type: AlbumFileType, tracks: Express.Multer.File[]){
+    createTracks(type: AlbumFileType, tracks: FileType[]){
         const tracksPaths: string[] = [];
         for (const track of tracks) {
             try {

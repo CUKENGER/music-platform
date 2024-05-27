@@ -56,7 +56,6 @@ export class ArtistService {
             take: count,
             relations: ['tracks', 'comments', 'albums']
         })
-        console.log('getAll work');
         return artists
     }
 
@@ -109,7 +108,7 @@ export class ArtistService {
     }
 
     async getOne(id: number): Promise<Artist> {
-        const artist = await this.artistRepository.findOne({where : {id} })
+        const artist = await this.artistRepository.findOne({where : {id} , relations: ['tracks', 'albums','albums.tracks']})
         return artist
     } 
 
@@ -160,9 +159,10 @@ export class ArtistService {
     async searchByName(query: string, count: number, offset: number):Promise<Artist[]> {
 		const artists = await this.artistRepository
         .createQueryBuilder('artist')
-        // .leftJoinAndSelect('artist.tracks', 'tracks')
-        // .leftJoinAndSelect('artist.comments', 'comments')
-        // .leftJoinAndSelect('artist.albums', 'albums')
+        .leftJoinAndSelect('artist.tracks', 'tracks')
+        .leftJoinAndSelect('artist.comments', 'comments')
+        .leftJoinAndSelect('artist.albums', 'albums')
+        .leftJoinAndSelect('albums.tracks', 'albumTracks')
         .where('LOWER(artist.name) LIKE LOWER(:name)', { name: `%${query}%` })
 		.skip(offset)
 		.take(count)
@@ -170,6 +170,21 @@ export class ArtistService {
 
     	return artists;
 	}
+
+    async updateArtist(id: number, newData: Partial<Artist>): Promise<Artist> {
+        // Поиск сущности по ID
+        const entityToUpdate = await this.artistRepository.findOne({ where: { id } });
+    
+        if (!entityToUpdate) {
+          throw new Error(`Сущность с ID ${id} не найдена`);
+        }
+    
+        // Обновление данных сущности
+        Object.assign(entityToUpdate, newData);
+    
+        // Сохранение обновленной сущности в базе данных
+        return await this.artistRepository.save(entityToUpdate);
+      }
 
 
 }

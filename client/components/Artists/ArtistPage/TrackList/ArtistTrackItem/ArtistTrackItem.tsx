@@ -29,7 +29,7 @@ const ArtistTrackItem:FC<ArtistTrackListProps> = ({track, trackIndex, trackList}
         playerSetActiveTrack,
         playerSetDuration,
         playerSetCurrentTime
-    } = useActions(playerActions)
+    } = useActions()
 
     useEffect(() => {
         const audio = new Audio(baseUrl + track?.audio);
@@ -101,7 +101,7 @@ const ArtistTrackItem:FC<ArtistTrackListProps> = ({track, trackIndex, trackList}
                 {track?.listens ? track?.listens : 0}
             </div>
             <div className={styles.duration_container}>
-                <p>{durationTrack}</p>
+                <p>{track?.duration}</p>
             </div>
         </div>
     )

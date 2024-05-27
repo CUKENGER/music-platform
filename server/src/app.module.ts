@@ -6,7 +6,6 @@ import { TrackModule } from './track/track.module';
 import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
-import { MulterModule } from '@nestjs/platform-express/multer';
 import { Album } from './album/album.schema';
 import { AlbumModule } from './album/album.module';
 import { AlbumComment } from './album/commentAlbum/albumComment.schema';
@@ -31,13 +30,6 @@ import { ArtistModule } from './artist/artist.module';
       database: 'music_platform',
       entities: [Track, Album, Comment, AlbumComment, Artist, ArtistComment],
       synchronize: true,
-    }),
-    MulterModule.register({
-      dest: './upload',
-      limits: {
-        fileSize: Infinity,
-        fieldSize: Infinity,
-      }
     }),
     TrackModule,
     FileModule,

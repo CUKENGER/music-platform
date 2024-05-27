@@ -11,11 +11,12 @@ import { Artist } from "src/artist/scheme/artist.schema";
 import { ArtistService } from "src/artist/artist.service";
 import { ArtistComment } from "src/artist/artistComment/artistComment.schema";
 import { ArtistFileService } from "src/artist/artistFile/artistFile.service";
+import { AudioService } from "src/audioService/audioService.service";
 
 
 @Module({
     imports: [TypeOrmModule.forFeature([Album, AlbumComment, Track, Artist, ArtistComment]), ConfigModule],
     controllers: [AlbumController],
-    providers: [AlbumService, AlbumFileService, ArtistService, ArtistFileService]
+    providers: [AlbumService, AlbumFileService, ArtistService, ArtistFileService, AudioService]
 })
 export class AlbumModule {}

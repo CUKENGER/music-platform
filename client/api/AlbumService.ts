@@ -43,11 +43,27 @@ export const albumsApi = createApi({
             }),
             invalidatesTags: ['Album']
         }),
+        addLikeAlbum : builder.mutation<void, number>({
+            query: (id) => ({
+                url: `albums/like/${id}`,
+                method: 'POST'
+            }),
+            invalidatesTags: ['Album']
+        }),
+        deleteLikeAlbum : builder.mutation<void, number>({
+            query: (id) => ({
+                url: `albums/unlike/${id}`,
+                method: 'POST'
+            }),
+            invalidatesTags: ['Album']
+        }),
     })
 })
 
 export const {
     useSearchByNameAlbumsQuery,
     useCreateAlbumMutation,
-    useDeleteAlbumMutation
+    useDeleteAlbumMutation,
+    useAddLikeAlbumMutation,
+    useDeleteLikeAlbumMutation
 } = albumsApi

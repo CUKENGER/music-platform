@@ -1,6 +1,5 @@
-
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import {Comment} from '../scheme/comment.schema';
+import { Comment } from '../scheme/comment.schema';
 import { Album } from 'src/album/album.schema';
 import { Artist } from 'src/artist/scheme/artist.schema';
 
@@ -15,41 +14,41 @@ export class Track {
   @Column()
   artist: string;
 
-  @Column({default: 0, nullable: true})
+  @Column({ default: 0})
   listens: number;
 
-  @Column({default: 0, nullable: true})
+  @Column({ default: 0})
   likes: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   genre: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   duration: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   picture: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   audio: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   text: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   artistId: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   albumId: number;
 
   @ManyToOne(() => Artist, artist => artist.tracks)
   @JoinColumn({ name: 'artistId' })
   artistEntity: Artist;
 
-  @OneToMany(() => Comment, comment => comment.track, { nullable: true })
+  @OneToMany(() => Comment, comment => comment.track)
   comments: Comment[];
 
-  @ManyToOne(() => Album, album => album.tracks, { nullable: true })
+  @ManyToOne(() => Album, album => album.tracks)
   @JoinColumn({ name: 'albumId' })
   album: Album;
 }

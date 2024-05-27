@@ -17,6 +17,6 @@ export class AlbumComment {
     @Column()
     albumId: number
 
-    @ManyToOne(() => Album, (album) => album.comments,{ nullable: true })
+    @ManyToOne(() => Album, (album) => album.comments)
     album: Album;
 }

@@ -1,7 +1,6 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
 import * as compression from 'compression'
-import * as express from 'express';
 import * as timeout from 'connect-timeout';
 
 const start = async () => {

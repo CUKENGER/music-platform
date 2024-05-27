@@ -10,7 +10,6 @@ import * as fs from 'fs'
 import { Artist } from 'src/artist/scheme/artist.schema';
 import { ArtistService } from 'src/artist/artist.service';
 import { AudioService } from 'src/audioService/audioService.service';
-import * as ffprobeStatic from 'ffprobe-static';
 import * as path from "path";
 
 @Injectable()
@@ -36,30 +35,8 @@ export class TrackService {
             const imagePathPromise = this.fileService.createFile(FileType.IMAGE, picture);
 
             const [audioPath, imagePath] = await Promise.all([audioPathPromise, imagePathPromise]);
-			console.log('audioPath', audioPath);
-			console.log('imagePath', imagePath);
-			const dp = path.resolve(__dirname, '../../', 'static', audioPath)
 
-			const ffprobePath = ffprobeStatic.path;
-
-            const duration = await new Promise<number>((resolve, reject) => {
-                const ffmpeg = require('fluent-ffmpeg');
-                ffmpeg.setFfprobePath(ffprobePath);
-                ffmpeg.ffprobe(dp, (err, metadata) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(metadata.format.duration);
-                    }
-                });
-            });
-
-			const minutes = Math.floor(duration / 60);
-			const seconds = Math.round(duration % 60);
-			const formattedDuration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-			console.log('Formatted Duration:', formattedDuration);
-			
-			console.log('Audio Duration:', duration);
+			const duration = await this.audioService.getAudioDuration(audioPath)
 	
 			const newTrack = this.trackRepository.create(createTrackDto);
 			newTrack.listens = 0;
@@ -67,7 +44,8 @@ export class TrackService {
 			newTrack.genre = createTrackDto.genre;
 			newTrack.audio = audioPath;
 			newTrack.picture = imagePath;
-			newTrack.duration = formattedDuration
+			newTrack.duration = duration;
+			newTrack.artist = createTrackDto.artist
 	
 			// Проверка на существование артиста
 			let artist = await this.artistRepository.findOne({ where: { name: createTrackDto.artist } });
@@ -86,12 +64,11 @@ export class TrackService {
 			await this.trackRepository.save(newTrack);
 			return JSON.stringify({ id: newTrack.id, name: newTrack.name });
 		} else {
-			console.log('Файлы не загружены');
-			return 'ничего не загружено';
+			return JSON.stringify('Файлы не загружены');;
 		}
 	}
 
-	async getAll(count = 10 , offset = 0): Promise<Track[]> {
+	async getAll(count:number, offset:number): Promise<Track[]> {
 		const tracks = await this.trackRepository.find({
 			skip: offset,
 			take: count,
@@ -101,7 +78,10 @@ export class TrackService {
 	}
 
 	async getOne(id: number): Promise<Track> {
-		const track = await this.trackRepository.findOne({ where: { id } , relations: ['comments', 'album', 'artistEntity'] });
+		const track = await this.trackRepository.findOne({
+			 where: { id } ,
+			 relations: ['comments', 'album', 'artistEntity'] 
+			});
 		return track
 	}
 
@@ -132,7 +112,7 @@ export class TrackService {
 		await this.commentRepository.delete({ trackId: id });
 
 		// Удаление трека
-		const deleteTrack = await this.trackRepository.delete(id)
+		await this.trackRepository.delete(id)
 
 		return track;
 	}

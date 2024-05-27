@@ -1,20 +1,36 @@
 import MainLayout from "@/layouts/MainLayout"
-import { memo, useCallback } from "react"
+import { memo, useCallback, useEffect } from "react"
 import styles from '@/styles/ArtistPage.module.css'
 import { useTypedSelector } from "@/hooks/useTypedSelector"
 import { baseUrl } from "@/services/baseUrl"
 import TrackList from "@/components/Artists/ArtistPage/TrackList/TrackList"
 import Btn from "@/UI/Btn/Btn"
 import { useRouter } from "next/router"
+import ArtistAlbumList from "@/components/Artists/ArtistPage/ArtistAlbumList/ArtistAlbumList"
+import { useUpdateArtistMutation } from "@/api/ArtistService"
 
 const ArtistPage = () => {
     const router = useRouter()
 
     const {openedArtist} = useTypedSelector(state => state.searchArtistsReducer)
 
+    const [updateArtist] = useUpdateArtistMutation()
+
     const handleBack = useCallback(()=>{
         router.push('/artists')
     }, [router])
+
+    useEffect(()=> {
+        if (!openedArtist) {
+            router.push('/artists')
+        }
+    }, [])
+
+    const handleChangeArtist = async () => {
+        router.push('/artists/change')
+    }
+
+    console.log(openedArtist);
 
     return (
         <MainLayout title_text="dasfdsaf">
@@ -31,9 +47,17 @@ const ArtistPage = () => {
                     <h3 className={styles.name}>{openedArtist?.name}</h3>
                     <p>{openedArtist?.description}</p>
                 </div>
+                <div>
+                    <Btn onClick={handleChangeArtist}>
+                        Изменить
+                    </Btn>
+                </div>
                 <div className={styles.btns_container}></div>
                 {openedArtist?.tracks && (
                     <TrackList tracks={openedArtist?.tracks}/>
+                )}
+                {openedArtist?.albums && (
+                    <ArtistAlbumList albums={openedArtist?.albums}/>
                 )}
                 
                 <div className={styles.albums}></div>
