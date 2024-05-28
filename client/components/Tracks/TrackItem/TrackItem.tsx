@@ -9,7 +9,7 @@ import { useTypedSelector } from "@/hooks/useTypedSelector"
 import { baseUrl } from "@/services/baseUrl"
 import audioManager from "@/services/AudioManager"
 import React from "react";
-import { useDeleteTrackMutation } from "@/api/TrackService";
+import { useDeleteTrackMutation } from "@/api/Track/TrackService";
 import { setAudio } from "@/services/setAudio";
 import PlayPauseBtns from "@/UI/PlayPauseBtns/PlayPauseBtns";
 import { playerActions } from "@/store/reducers/playerReducer";
@@ -31,7 +31,7 @@ const TrackItem:FC<TrackItemProps> = ({track, trackList}) => {
         playerSetDuration,
         playerSetCurrentTime,
         setOpenedTrack,
-        setDefaultTrackList} = useActions(playerActions)
+        setDefaultTrackList} = useActions()
 
     const [deleteTrackMutation] = useDeleteTrackMutation()
 

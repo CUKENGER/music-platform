@@ -1,8 +1,10 @@
 import {Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors} from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
-import { CreateCommentDto } from './dto/create-comment.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { CreateTrackCommentDto } from './dto/create-trackComment-dto';
+import { CreateReplyTrackCommentDto } from './dto/create-trackReplyComment.dto';
+
 
 
 @Controller('/tracks')
@@ -50,8 +52,13 @@ export class TrackController {
 	}
 
 	@Post('/comment')
-	addComment(@Body() dto: CreateCommentDto) {
+	addComment(@Body() dto: CreateTrackCommentDto) {
 		return this.trackService.addComment(dto)
+	}
+
+	@Post('/comment/replies')
+	addReplyToComment(@Body() dto: CreateReplyTrackCommentDto) {
+		return this.trackService.addReplyToComment(dto)
 	}
 
 	@Post('/listen/:id')
@@ -62,6 +69,26 @@ export class TrackController {
 	@Post('/likes/:id')
 	addLikes(@Param('id', ParseIntPipe) id: number) {
 		return this.trackService.addLikes(id)
+	}
+
+	@Post('/comment/like/:id')
+	addLikesComment(@Param('id', ParseIntPipe) id: number) {
+		return this.trackService.addLikesComment(id)
+	}
+
+	@Post('/comment/dislike/:id')
+	deleteLikesComment(@Param('id', ParseIntPipe) id: number) {
+		return this.trackService.deleteLikesComment(id)
+	}
+
+	@Post('/comment/reply/like/:id')
+	addLikesCommentReply(@Param('id', ParseIntPipe) id: number) {
+		return this.trackService.addLikesCommentReply(id)
+	}
+
+	@Post('/comment/reply/dislike/:id')
+	deleteLikesCommentReply(@Param('id', ParseIntPipe) id: number) {
+		return this.trackService.deleteLikesCommentReply(id)
 	}
 
 }

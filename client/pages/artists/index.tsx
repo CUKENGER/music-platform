@@ -8,8 +8,8 @@ import DropDownMenu from "@/UI/DropdownMenu/DropDownMenu"
 import { useRouter } from "next/router"
 import Loader from "@/components/Loader/Loader"
 import { useTypedSelector } from "@/hooks/useTypedSelector"
-import { useSearchByNameArtistsQuery } from "@/api/ArtistService"
 import ArtistList from "@/components/Artists/ArtistList/ArtistList"
+import { useSearchByNameArtistsQuery } from "@/api/Artist/ArtistService"
 
 const IndexArtists = () => {
 

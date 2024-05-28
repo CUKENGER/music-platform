@@ -5,19 +5,21 @@ import krest_icon from '@/assets/comments_krest.svg'
 import { FC, useEffect, useState } from 'react'
 import { IComment, ITrack } from '@/types/track'
 import { useTypedSelector } from '@/hooks/useTypedSelector'
-import { useGetOneTrackQuery } from '@/api/TrackService'
-import { useCreateCommentMutation } from '@/api/CommentService'
+import { useGetOneTrackQuery } from '@/api/Track/TrackService'
+import { useCreateCommentMutation } from '@/api/Track/CommentService'
 import Textarea from '@/UI/Textarea/Textarea'
 import ModalContainer from '@/UI/ModalContainer/ModalContainer'
+import useModal from '@/hooks/useModal'
 
-interface CommentsMobileProps {
+interface TrackCommentsMobileProps {
     openedTrack: ITrack | null;
     handleOpenModal: ()=> void;
 }
 
-const CommentsMobile:FC<CommentsMobileProps> = ({openedTrack, handleOpenModal}) => {
+const TrackCommentsMobile:FC<TrackCommentsMobileProps> = ({openedTrack, handleOpenModal}) => {
 
     const [comment, setComment] = useState('')
+    const {hideModal, showModal, modal} = useModal()
     const [isErrorModal, setIsErrorModal] = useState(false)
     const [comments, setComments] = useState<IComment[]>([]); 
     const {activeTrack} = useTypedSelector(state=> state.playerReducer)
@@ -32,12 +34,18 @@ const CommentsMobile:FC<CommentsMobileProps> = ({openedTrack, handleOpenModal}) 
                     trackId: openedTrack?.id,
                     username: 'Ванька Дурка',
                     text: comment,
+                    likes:0,
+                    id: 0,
+                    replies: []
                 };
             
                 await createCommentMutation({
                     trackId: openedTrack?.id,
                     text: comment,
                     username: 'Ванька Дурка',
+                    likes:0,
+                    id: 0, 
+                    replies: []
                 });
                 if(track) {
                     setComments([...comments, 
@@ -128,10 +136,14 @@ const CommentsMobile:FC<CommentsMobileProps> = ({openedTrack, handleOpenModal}) 
                 </div>
             </div>
             {isErrorModal && (
-                <ModalContainer setState={setIsErrorModal} text='Напишите что-нибудь перед отправкой'/>
+                <ModalContainer 
+                    hideModal={hideModal}
+                    text={modal.message}
+                    onClick={modal.onClick}
+                />
             )}
         </div>
     )
 }
 
-export default CommentsMobile
+export default TrackCommentsMobile

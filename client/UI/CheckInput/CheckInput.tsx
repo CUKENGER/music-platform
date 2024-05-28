@@ -4,11 +4,18 @@ import styles from './CheckInput.module.css';
 interface CheckInputProps {
     setValue: (e: string) => void;
     options: string[]
-    setOptions: (e: any) => void
+    setOptions: (e: any) => void;
+    value: string
 }
 
-const CheckInput: FC<CheckInputProps> = memo(({ setValue, options, setOptions}) => {
+const CheckInput: FC<CheckInputProps> = memo(({ setValue, options, setOptions, value}) => {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
+
+    useEffect(() => {
+        if(selectedOption !== value) {
+            setSelectedOption(value)
+        }
+    }, [value])
 
     const handleOptionClick = (option: string) => {
         if (selectedOption === option) {
@@ -17,6 +24,7 @@ const CheckInput: FC<CheckInputProps> = memo(({ setValue, options, setOptions}) 
         } else {
             if (selectedOption) {
                 setOptions((prevOptions: any) => [...prevOptions, selectedOption]);
+                setValue(selectedOption)
             }
             setOptions((prevOptions: any[]) => prevOptions.filter((item) => item !== option));
             setSelectedOption(option);
@@ -24,8 +32,12 @@ const CheckInput: FC<CheckInputProps> = memo(({ setValue, options, setOptions}) 
     };
 
     useEffect(() => {
-        setValue(selectedOption || '');
+        if(selectedOption) {
+            setValue(selectedOption || '');
+        }
     }, [selectedOption, setValue]);
+
+    console.log(selectedOption);
 
     return (
         <div className={styles.checkInput}>

@@ -1,7 +1,6 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { Track } from './track/scheme/track.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {Comment} from './track/scheme/comment.schema';
 import { TrackModule } from './track/track.module';
 import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -15,6 +14,9 @@ import { LoggingInterceptor } from './middleware/appInterceptor';
 import { ArtistComment } from './artist/artistComment/artistComment.schema';
 import { Artist } from './artist/scheme/artist.schema';
 import { ArtistModule } from './artist/artist.module';
+import { TrackComment } from './track/scheme/trackComment.schema';
+import { TrackReplyComment } from './track/scheme/trackReplyComment.schema';
+
 
 @Module({
   imports: [
@@ -28,7 +30,15 @@ import { ArtistModule } from './artist/artist.module';
       username: 'postgres',
       password: '1234',
       database: 'music_platform',
-      entities: [Track, Album, Comment, AlbumComment, Artist, ArtistComment],
+      entities: [
+        Track, 
+        Album, 
+        AlbumComment,
+        Artist, 
+        ArtistComment,
+        TrackComment,
+        TrackReplyComment
+      ],
       synchronize: true,
     }),
     TrackModule,

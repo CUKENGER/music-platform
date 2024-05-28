@@ -5,13 +5,13 @@ import { audioReducer } from "./audioSlice";
 import { dropdownReducer } from "./dropdownSlice";
 import { windowReducer } from "./windowSlice";
 import { searchInputReducer } from "./searchInputSlice";
-import { commentApi } from "@/api/CommentService";
-import { tracksApi } from "@/api/TrackService";
+import { commentApi } from "@/api/Track/CommentService";
+import { tracksApi } from "@/api/Track/TrackService";
 import { addTrackReducer } from "./addTrackSlice";
-import { albumsApi } from "@/api/AlbumService";
+import { albumsApi } from "@/api/Album/AlbumService";
 import { searchAlbumsReducer } from "./searchAlbumsSlice";
 import { searchArtistsReducer } from "./searchArtistsSlice";
-import { artistsApi } from "@/api/ArtistService";
+import { artistsApi } from "@/api/Artist/ArtistService";
 
 
 

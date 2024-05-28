@@ -1,4 +1,4 @@
-import { useSearchByNameArtistsQuery } from "@/api/ArtistService";
+import { useSearchByNameArtistsQuery } from "@/api/Artist/ArtistService";
 import { ChangeEvent, FC, memo,useState } from "react";
 import styles from './SearchInput.module.css'
 

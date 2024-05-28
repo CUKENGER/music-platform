@@ -1,15 +1,9 @@
 import MainLayout from '@/layouts/MainLayout';
+import { menuItems } from '@/services/menuItems';
 import styles from '@/styles/index.module.css'
 import { useRouter } from 'next/router';
 
 const Index = () => {
-
-    const menuItems = [
-        {text: "Главная", href: '/'},
-        {text: "Список треков", href: '/tracks'},
-        {text: "Список альбомов", href: '/albums'},
-        {text: "Список артистов", href: '/artists'},
-    ]
 
     const router = useRouter()
     

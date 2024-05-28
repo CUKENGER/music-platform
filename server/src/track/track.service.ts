@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository} from 'typeorm';
 import { Track } from './scheme/track.schema';
-import { Comment } from './scheme/comment.schema';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { CreateCommentDto } from './dto/create-comment.dto';
 import { FileService, FileType } from 'src/file/file.service';
 import * as fs from 'fs'
 import { Artist } from 'src/artist/scheme/artist.schema';
 import { ArtistService } from 'src/artist/artist.service';
 import { AudioService } from 'src/audioService/audioService.service';
 import * as path from "path";
+import { TrackComment } from './scheme/trackComment.schema';
+import { CreateTrackCommentDto } from './dto/create-trackComment-dto';
+import { CreateReplyTrackCommentDto } from './dto/create-trackReplyComment.dto';
+import { TrackReplyComment } from './scheme/trackReplyComment.schema';
 
 @Injectable()
 export class TrackService {
@@ -18,8 +20,10 @@ export class TrackService {
 	constructor(
 		@InjectRepository(Track) 
 		private trackRepository: Repository<Track>,
-		@InjectRepository(Comment) 
-		private commentRepository: Repository<Comment>,
+		@InjectRepository(TrackComment) 
+		private commentRepository: Repository<TrackComment>,
+		@InjectRepository(TrackReplyComment)
+		private replyCommentRepository: Repository<TrackReplyComment>,
 		private fileService: FileService,
 		private audioService: AudioService,
 		@InjectRepository(Artist)
@@ -72,7 +76,7 @@ export class TrackService {
 		const tracks = await this.trackRepository.find({
 			skip: offset,
 			take: count,
-			relations: ['comments', 'album', 'artistEntity']
+			relations: ['comments', 'album', 'artistEntity', 'comments.replies']
 		});
 		return tracks
 	}
@@ -80,7 +84,7 @@ export class TrackService {
 	async getOne(id: number): Promise<Track> {
 		const track = await this.trackRepository.findOne({
 			 where: { id } ,
-			 relations: ['comments', 'album', 'artistEntity'] 
+			 relations: ['comments', 'album', 'artistEntity', 'comments.replies'] 
 			});
 		return track
 	}
@@ -117,7 +121,7 @@ export class TrackService {
 		return track;
 	}
 
-	async addComment(dto: CreateCommentDto): Promise<Comment> {
+	async addComment(dto: CreateTrackCommentDto): Promise<TrackComment> {
 		// Создаем комментарий
 		const comment = await this.commentRepository.create({...dto});
 		await this.commentRepository.save(comment);
@@ -141,6 +145,25 @@ export class TrackService {
 		return comment;
 	}
 
+	async addReplyToComment(dto: CreateReplyTrackCommentDto): Promise<TrackReplyComment> {
+		// Создаем комментарий
+		const comment = await this.commentRepository.findOne({where: {id: dto.commentId}, relations: ['replies']})
+		if (!comment) {
+			throw new NotFoundException(`Comment with id ${dto.commentId} not found`);
+		}
+		const reply = await this.replyCommentRepository.create({
+			username: dto.username,
+			text: dto.text,
+			commentId: dto.commentId
+		})
+
+		comment.replies.push(reply)
+		await this.commentRepository.save(comment)
+		await this.replyCommentRepository.save(reply)
+	
+		return reply;
+	}
+
 	async listen(id) {
 		try {
 			const track = await this.trackRepository.findOne({ where: { id: id } });
@@ -160,6 +183,9 @@ export class TrackService {
 	async searchByName(query: string, count: number, offset: number): Promise<Track[]> {
 		const tracks = await this.trackRepository
         .createQueryBuilder('track')
+		.leftJoinAndSelect('track.comments', 'comments')
+		.leftJoinAndSelect('track.album', 'album')
+		.leftJoinAndSelect('comments.replies', 'commentReplies')
         .where('LOWER(track.name) LIKE LOWER(:name)', { name: `%${query}%` })
 		.skip(offset)
 		.take(count)
@@ -183,5 +209,71 @@ export class TrackService {
 			throw e; // Пробрасываем исключение дальше, чтобы его можно было обработать в вызывающем коде
 		}
 	}
+
+	async addLikesComment(id) {
+		try {
+			const comment = await this.commentRepository.findOne({where: {id: id}})
+			if (comment) {
+				comment.likes += 1;
+				await this.commentRepository.save(comment);
+				return comment.id; // Возвращаем обновленный объект трека
+			} else {
+				throw new Error(`Comment with id ${id} not found`);
+			}
+		} catch (e) {
+			console.log(e);
+			throw e; // Пробрасываем исключение дальше, чтобы его можно было обработать в вызывающем коде
+		}
+	}
+
+	async deleteLikesComment(id) {
+		try {
+			const comment = await this.commentRepository.findOne({where: {id: id}})
+			if (comment) {
+				comment.likes -= 1;
+				await this.commentRepository.save(comment);
+				return comment.id; // Возвращаем обновленный объект трека
+			} else {
+				throw new Error(`Comment with id ${id} not found`);
+			}
+		} catch (e) {
+			console.log(e);
+			throw e; // Пробрасываем исключение дальше, чтобы его можно было обработать в вызывающем коде
+		}
+	}
+
+	async addLikesCommentReply(id) {
+		try {
+			const reply = await this.replyCommentRepository.findOne({where: {id: id}})
+			if (reply) {
+				reply.likes += 1;
+				await this.replyCommentRepository.save(reply);
+				return reply.id; // Возвращаем обновленный объект трека
+			} else {
+				throw new Error(`Reply with id ${id} not found`);
+			}
+		} catch (e) {
+			console.log(e);
+			throw e; // Пробрасываем исключение дальше, чтобы его можно было обработать в вызывающем коде
+		}
+	}
+
+	async deleteLikesCommentReply(id) {
+		try {
+			const reply = await this.replyCommentRepository.findOne({where: {id: id}})
+			if (reply) {
+				reply.likes -= 1;
+				await this.replyCommentRepository.save(reply);
+				return reply.id; // Возвращаем обновленный объект трека
+			} else {
+				throw new Error(`Reply with id ${id} not found`);
+			}
+		} catch (e) {
+			console.log(e);
+			throw e; // Пробрасываем исключение дальше, чтобы его можно было обработать в вызывающем коде
+		}
+	}
+
+
 
 }

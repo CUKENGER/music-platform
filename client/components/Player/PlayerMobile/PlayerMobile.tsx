@@ -5,7 +5,7 @@ import {memo, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import audioManager from '@/services/AudioManager';
 import Image from 'next/image'
-import { useAddListenMutation } from '@/api/TrackService';
+import { useAddListenMutation } from '@/api/Track/TrackService';
 import TrackProgress from '../TrackProgress/TrackProgress';
 import SwitchTracksBtn from '../SwitchTracksBtn/SwitchTracksBtn';
 import PlayPauseBtns from "@/UI/PlayPauseBtns/PlayPauseBtns";

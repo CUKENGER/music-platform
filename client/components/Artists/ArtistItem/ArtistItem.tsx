@@ -6,7 +6,7 @@ import Image from 'next/image'
 import like from '@/assets/like.png'
 import like_fill from '@/assets/like_fill.png'
 import plays_icon from '@/assets/plays.png'
-import { useAddLikeArtistMutation, useDeleteArtistMutation, useDeleteLikeArtistMutation } from "@/api/ArtistService";
+import { useAddLikeArtistMutation, useDeleteArtistMutation, useDeleteLikeArtistMutation } from "@/api/Artist/ArtistService";
 import { useRouter } from "next/router";
 import { isAdmin } from "@/services/isAdmin";
 import delete_icon from '@/assets/delete.svg'

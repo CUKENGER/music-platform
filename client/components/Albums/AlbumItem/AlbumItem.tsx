@@ -7,10 +7,9 @@ import useActions from '@/hooks/useActions';
 
 interface AlbumItemProps{
     album: IAlbum;
-    type: 'artist' | 'album'
 }
 
-const AlbumItem:FC<AlbumItemProps> = ({album, type}) => {
+const AlbumItem:FC<AlbumItemProps> = ({album}) => {
 
     const router = useRouter()
 

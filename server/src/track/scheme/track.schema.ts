@@ -1,7 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Comment } from '../scheme/comment.schema';
 import { Album } from 'src/album/album.schema';
 import { Artist } from 'src/artist/scheme/artist.schema';
+import { TrackComment } from './trackComment.schema';
+
 
 @Entity()
 export class Track {
@@ -45,8 +46,8 @@ export class Track {
   @JoinColumn({ name: 'artistId' })
   artistEntity: Artist;
 
-  @OneToMany(() => Comment, comment => comment.track)
-  comments: Comment[];
+  @OneToMany(() => TrackComment, comment => comment.track)
+  comments: TrackComment[];
 
   @ManyToOne(() => Album, album => album.tracks)
   @JoinColumn({ name: 'albumId' })

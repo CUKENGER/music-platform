@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { rootReducer } from './reducers'
 import { Context, createWrapper } from 'next-redux-wrapper'
-import { tracksApi } from '@/api/TrackService'
+import { tracksApi } from '@/api/Track/TrackService'
 import { setupListeners } from '@reduxjs/toolkit/query'
-import { commentApi } from '@/api/CommentService'
-import { albumsApi } from '@/api/AlbumService'
-import { artistsApi } from '@/api/ArtistService'
+import { commentApi } from '@/api/Track/CommentService'
+import { albumsApi } from '@/api/Album/AlbumService'
+import { artistsApi } from '@/api/Artist/ArtistService'
 
 export const store = configureStore({
     reducer: rootReducer,

@@ -2,6 +2,16 @@ export interface IComment {
     trackId: number | undefined;
     username: string;
     text: string
+    id: number
+    replies: IReplyToComment[] | [];
+    likes?: number 
+}
+
+export interface IReplyToComment {
+    commentId: number;
+    username: string;
+    text: string
+    id: number
 }
 
 export interface ITrack {

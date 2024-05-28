@@ -2,19 +2,17 @@
 
 import MainLayout from "@/layouts/MainLayout";
 import styles from '@/styles/tracks.module.css'
-import { useRouter } from "next/router";
 import { useTypedSelector } from "@/hooks/useTypedSelector";
-import { useSearchByNameQuery } from "@/api/TrackService";
-import MainInput from "@/UI/MainInput/MainInput";
-import DropDownMenu from "@/UI/DropdownMenu/DropDownMenu";
+import { useSearchByNameQuery } from "@/api/Track/TrackService";
 import Loader from "@/components/Loader/Loader";
 import TrackList from "@/components/Tracks/TrackList/TrackList";
-import Btn from "@/UI/Btn/Btn";
-import { memo } from "react";
+import HeaderList from "@/components/HeaderList/HeaderList";
+import useModal from "@/hooks/useModal";
+import ModalContainer from "@/UI/ModalContainer/ModalContainer";
 
 const Index = ()=> {
 
-    const router = useRouter()
+    const {showModal, modal, hideModal} = useModal()
 
     const {
         searchInput, 
@@ -29,27 +27,16 @@ const Index = ()=> {
 
     if (isLoadingSearch) return <Loader/>;
     if (error) {
-        console.log(`error in tracks: ${error}`);
+        showModal('Произошла ошибка при загрузке треков')
     }
 
     return (
         <MainLayout title_text="Список треков">
             <div className={styles.container}>
-                <div className={styles.container_input_container}>
-                    <div className={styles.input_container}>
-                        <MainInput placeholder='Найти песню'/>
-                    </div>
-                </div>
-                <div className={styles.header__container}>
-                    <Btn 
-                        onClick={()=> router.push('/tracks/create')}
-                    >
-                        Загрузить
-                    </Btn>
-                    
-                    <DropDownMenu/>
-                    
-                </div>
+                <HeaderList
+                    placeholder="Найти песню"
+                    routerPath="/tracks/create"
+                />
                 
                 {searchTracks &&
                 searchTracks &&
@@ -59,7 +46,15 @@ const Index = ()=> {
                 }
                 
             </div>
+            {modal.isOpen && (
+            <ModalContainer
+                hideModal={hideModal}
+                text={modal.message}
+                onClick={modal.onClick}
+            />
+        )}
         </MainLayout>
+        
     )
 }
 
