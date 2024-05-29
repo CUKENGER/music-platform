@@ -33,9 +33,10 @@ const AudioUpload:FC<AudioUploadProps> = ({next, back, audio, setAudio}) => {
             
             <div className={styles.right_container}>
                 {audio ? (
-                ('')
-                )
-                : (<p className={styles.text}>Загрузите трек</p>)}
+                    ('')
+                ) : (
+                <p className={styles.text}>Загрузите трек</p>
+                )}
                 <form id='upload_form' action="/upload" method="post" encType="multipart/form-data">
                     <input id='file' className={styles.input} type="file" onChange={handleAudioChange} accept='audio/*'  />
                     <label id='label_input_file' htmlFor="file" className={styles.label}>Выберите файл</label>

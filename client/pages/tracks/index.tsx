@@ -39,7 +39,6 @@ const Index = ()=> {
                 />
                 
                 {searchTracks &&
-                searchTracks &&
                 searchTracks.length > 0 
                 ? (<TrackList tracks={searchTracks}/>) 
                 : (<div className={styles.not_found_container}>Ничего не найдено</div>)

@@ -54,14 +54,12 @@ const TrackPage = () => {
                     <TrackLyrics openedTrack={openedTrack}/>
                 )}
 
-                {isModal 
-                ? (
+                {isModal ? (
                     <TrackCommentsMobile 
                         openedTrack={openedTrack}
                         handleOpenModal={handleOpenModal}
                     />
-                )
-                : ('')
+                ) : ('')
                 }
             </div>
         </MainLayout>

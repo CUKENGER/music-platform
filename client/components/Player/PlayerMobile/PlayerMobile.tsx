@@ -1,94 +1,36 @@
 import styles from './PlayerMobile.module.css';
-import { useTypedSelector } from '@/hooks/useTypedSelector';
-import useActions from '@/hooks/useActions';
-import {memo, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import audioManager from '@/services/AudioManager';
+import {memo } from 'react';
 import Image from 'next/image'
-import { useAddListenMutation } from '@/api/Track/TrackService';
 import TrackProgress from '../TrackProgress/TrackProgress';
 import SwitchTracksBtn from '../SwitchTracksBtn/SwitchTracksBtn';
 import PlayPauseBtns from "@/UI/PlayPauseBtns/PlayPauseBtns";
 import openPlayer_icon from '@/assets/openMusicPlayer_icon.png'
 import like from '@/assets/like.png'
 import like_fill from '@/assets/like_fill.png'
-import { mixTracks } from '@/services/MixPlaylist';
 import mix_icon_active from '@/assets/mix_icon_active.png'
 import mix_icon_inactive from '@/assets/mix_icon_inactive.png'
+import { usePlayer } from '@/hooks/player/usePlayer';
 
 const PlayerMobile = () => {
 
-    const router = useRouter()
-    const [isLike, setIsLike] = useState(false)
-    const [likes, setLikes] = useState(0)
-    const [isMix, setIsMix] = useState(false)
-    const audio = audioManager.audio
-    const [hasListen, setHasListen] = useState(false);
-
-    const {activeTrack,
+    const {
+        activeTrack,
         pause,
         currentTime,
+        duration,
+        isLike,
+        likes,
+        isMix,
         isOpenPlayerDetailed,
-        activeTrackList,
-        defaultTrackList,
-        duration} = useTypedSelector(state => state.playerReducer)
-    const {setOpenedTrack,
-        playerPlay,
-        playerPause,
-        setIsOpenPlayerDetailed,
-        setActiveTrackList} = useActions()
-
-    const [addListenMutation] = useAddListenMutation()
-
-    useEffect(() => {
-        if (currentTime >= 30 && !hasListen && activeTrack) {
-            if(activeTrack?.id) {
-                addListenMutation(activeTrack?.id)
-                setHasListen(true)
-            }
-        }
-    }, [currentTime, hasListen, activeTrack, addListenMutation])
+        handleTrackClick,
+        playBtn,
+        handleOpenPlayer,
+        handleLike,
+        handleMix,
+    } = usePlayer()
 
     if (!activeTrack) {
         return null
-    }
-
-    const handleTrackClick = () => {
-        router.push('/tracks/' + activeTrack?.id)
-        setOpenedTrack(activeTrack)
-    }
-
-    const playBtn = async () => {
-        if (pause) {
-            await audio?.play();
-            playerPlay();
-        } else {
-            audio?.pause();
-            playerPause();
-        }
-    }
-
-    const handleOpenPlayer = () =>{
-        setIsOpenPlayerDetailed(!isOpenPlayerDetailed)
-    }
-
-    const handleLike = () => {
-        if(isLike) {
-            setLikes(likes - 1)
-            setIsLike(!isLike)
-        } else {
-            setLikes(likes + 1)
-            setIsLike(!isLike)
-        }
-    }
-
-    const handleMix = () => {
-        if (isMix) {
-            setActiveTrackList(defaultTrackList);
-        } else {
-            setActiveTrackList(mixTracks(activeTrackList));
-        }
-        setIsMix(!isMix);
     }
 
     return (
@@ -108,8 +50,14 @@ const PlayerMobile = () => {
                         <p className={styles.duration_text}>1:23 / 2:33 {duration}</p>
                     </div>
                     <div className={styles.like_container} onClick={handleLike}>
-                        <Image className={styles.like} src={isLike ? like_fill : like} alt='like icon'/>
-                        <p className={styles.like_count}>{likes}</p>
+                        <Image 
+                            className={styles.like} 
+                            src={isLike ? like_fill : like} 
+                            alt='like icon'
+                        />
+                        <p className={styles.like_count}>
+                            {likes}
+                        </p>
                     </div>
 
                 </div>

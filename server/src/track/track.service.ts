@@ -123,7 +123,12 @@ export class TrackService {
 
 	async addComment(dto: CreateTrackCommentDto): Promise<TrackComment> {
 		// Создаем комментарий
-		const comment = await this.commentRepository.create({...dto});
+		const comment = await this.commentRepository.create({
+			username: dto.username,
+			text: dto.text,
+			trackId: dto.trackId,
+			createDate: new Date()
+		});
 		await this.commentRepository.save(comment);
 	
 		// Получаем трек, к которому добавляем комментарий
@@ -154,7 +159,8 @@ export class TrackService {
 		const reply = await this.replyCommentRepository.create({
 			username: dto.username,
 			text: dto.text,
-			commentId: dto.commentId
+			commentId: dto.commentId,
+			createDate: new Date()
 		})
 
 		comment.replies.push(reply)

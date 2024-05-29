@@ -1,4 +1,4 @@
-import styles from './CommentsMobile.module.css'
+import styles from './TrackCommentsMobile.module.css'
 import Image from 'next/image'
 import send_icon from '@/assets/send_icon.svg'
 import krest_icon from '@/assets/comments_krest.svg'

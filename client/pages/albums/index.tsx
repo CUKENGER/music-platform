@@ -1,18 +1,17 @@
-import Btn from '@/UI/Btn/Btn'
-import DropDownMenu from '@/UI/DropdownMenu/DropDownMenu'
-import MainInput from '@/UI/MainInput/MainInput'
-import { useSearchByNameAlbumsQuery } from '@/api/AlbumService'
+import ModalContainer from '@/UI/ModalContainer/ModalContainer'
+import { useSearchByNameAlbumsQuery } from '@/api/Album/AlbumService'
 import AlbumList from '@/components/Albums/AlbumList/AlbumList'
+import HeaderList from '@/components/HeaderList/HeaderList'
 import Loader from '@/components/Loader/Loader'
+import useModal from '@/hooks/useModal'
 import { useTypedSelector } from '@/hooks/useTypedSelector'
 import MainLayout from '@/layouts/MainLayout'
 import styles from '@/styles/Albums.module.css'
-import { useRouter } from 'next/router'
 
 export default function Albums() {
 
-    const router = useRouter()
     const {countAlbums, offsetAlbums, searchAlbumsInput} = useTypedSelector(state => state.searchAlbumsReducer)
+    const {showModal, modal, hideModal} = useModal()
 
     const {data: searchAlbums, error, isLoading} = useSearchByNameAlbumsQuery({
         query: searchAlbumsInput,
@@ -22,29 +21,30 @@ export default function Albums() {
 
     if (isLoading) return <Loader/>;
     if (error) {
-        console.log(`error in tracks: ${error}`);
+        showModal(`error in tracks: ${error}`);
     }
 
     return (
         <MainLayout title_text='Список альбомов'>
             <div className={styles.container}>
-                <div className={styles.container_input_container}>
-                    <div className={styles.input_container}>
-                        <MainInput placeholder='Найти альбом'/>
-                    </div>
-                </div>
-                <div className={styles.btn_container}>
-                    <Btn onClick={()=> router.push('/albums/create')}>
-                        Загрузить
-                    </Btn>
-                    <DropDownMenu/>
-                </div>
+                
+                <HeaderList
+                    placeholder="Найти альбом"
+                    routerPath="/albums/create"
+                />
                 {searchAlbums &&
                 searchAlbums.length > 0 
                 ? (<AlbumList albums={searchAlbums}/>) 
                 : (<div className={styles.not_found_container}>Ничего не найдено</div>)
                 }
             </div>
+            {modal.isOpen && (
+                <ModalContainer
+                    hideModal={hideModal}
+                    text={modal.message}
+                    onClick={modal.onClick}
+                />
+            )}
         </MainLayout>
     )
 }

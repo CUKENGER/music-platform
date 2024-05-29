@@ -102,6 +102,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
                     : <link rel="shortcut icon" href="play.ico" />
                 }
             </Head>
+            
             <Header title={title_text} />
             {isOpenPlayerDetailed ? (
                 <CSSTransition
@@ -120,13 +121,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             )
             : (
                 <PageTransition>
-                    <div className={styles.wrapper}>
-                        {children}
-                    </div>
+                    <main>
+                        <div className={styles.wrapper}>
+                            {children}
+                        </div>
+                    </main>
                 </PageTransition>
             )}
-            
-            <PlayerMobile />
+            <footer>
+                <PlayerMobile />
+            </footer>
             {/* {isOpenPlayerDetailed && (
                 <CSSTransition
                     in={isOpenPlayerDetailed}

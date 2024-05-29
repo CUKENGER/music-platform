@@ -31,7 +31,6 @@ const TrackProgress:FC<TrackProgressProps> = ({isVolume = true}) => {
         }
     };
 
-
     return (
         <>
             {isVolume 

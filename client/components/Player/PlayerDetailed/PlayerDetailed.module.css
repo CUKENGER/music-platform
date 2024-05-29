@@ -24,36 +24,6 @@
     height: 100%;
 }
 
-.navBar_container{
-    width: 500px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    align-items: center;
-    /* padding-left: 50px; */
-    /* padding-right: 50px; */
-    border-bottom: 1px solid var(--pmr);
-}
-
-.active{
-    padding: 10px;
-    width: 100%;
-    text-align: center;
-    border-bottom: 1px solid var(--text);
-    background-color: var(--gray);
-}
-
-.navBar_item{
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: 5px;
-}
-
-.navBar_item:hover{
-    background-color: var(--gray);
-    padding: 10px;
-    border-bottom: 1px solid var(--gray);
-}
-
 .right_container{
     display: flex;
     width: 35%;

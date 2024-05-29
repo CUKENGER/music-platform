@@ -2,12 +2,13 @@ import { useState } from "react"
 
 
 export const useAddLike = (
-    addLike:(e:number) => void, 
-    deleteLike:(e:number) => void,
+        addLike:(e:number) => void, 
+        deleteLike:(e:number) => void,
+        initialLikes: number
     ) => {
 
     const [isLike, setIsLike] = useState(false)
-    const [likes, setLikes] = useState(0)
+    const [likes, setLikes] = useState(initialLikes)
 
     const handleLike = async (arg:any) => {
         try {

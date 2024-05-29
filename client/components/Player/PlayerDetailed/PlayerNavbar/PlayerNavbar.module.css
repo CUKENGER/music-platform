@@ -1,0 +1,29 @@
+
+
+.navBar_container{
+  width: 500px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  border-bottom: 1px solid var(--pmr);
+}
+
+.navBar_item{
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.navBar_item:hover{
+  background-color: var(--gray);
+  padding: 10px;
+  border-bottom: 1px solid var(--gray);
+}
+
+.active{
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid var(--text);
+  background-color: var(--gray);
+}

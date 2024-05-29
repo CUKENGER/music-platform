@@ -17,6 +17,9 @@ export class TrackReplyComment {
     @Column()
     commentId: number
 
+    @Column({nullable: true})
+    createDate: Date
+
     @Column({default: 0})
     likes: number
 

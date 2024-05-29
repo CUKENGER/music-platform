@@ -5,24 +5,15 @@ import { memo, useMemo, useState } from 'react';
 import PlayerNextTrackItem from './PlayerNextTrackItem/PlayerNextTrackItem';
 import { ITrack } from '@/types/track';
 import useActions from '@/hooks/useActions';
+import PlayerNavbar from './PlayerNavbar/PlayerNavbar';
 
 const PlayerDetailed = () => {
+    
+    const {activeTrack, activeTrackList} = useTypedSelector(state => state.playerReducer)
     const [isPressNext, setIsPressNext] = useState(false)
     const [isPressText, setIsPressText] = useState(true)
-    const {activeTrack, activeTrackList} = useTypedSelector(state => state.playerReducer)
-
     const [currentDraggedTrack, setCurrentDraggedTrack] = useState<ITrack | null>(null);
     const {setActiveTrackList} = useActions()
-
-    const handleClickNext = () => {
-        setIsPressNext(true)
-        setIsPressText(false)
-    }
-
-    const handleClickText = () => {
-        setIsPressText(true)
-        setIsPressNext(false)
-    }
 
     const reorderedTrackList = useMemo(() => {
         if (!activeTrack) return activeTrackList;
@@ -54,26 +45,12 @@ const PlayerDetailed = () => {
                 />
             </div>
             <div className={styles.right_container}>
-                <div className={styles.navBar_container}>
-                    <div 
-                        onClick={handleClickNext}
-                        className={styles.navBar_item + ' ' + (isPressNext && styles.active)}
-                    >
-                        Далее
-                    </div>
-                    <div 
-                        onClick={handleClickText}
-                        className={styles.navBar_item + ' ' + (isPressText && styles.active)}
-                    >
-                        Текст
-                    </div>
-                    <div 
-                        onClick={handleClickText}
-                        className={styles.navBar_item}
-                    >
-                        Похожие
-                    </div>
-                </div>
+                <PlayerNavbar
+                    setIsPressNext={setIsPressNext}
+                    setIsPressText={setIsPressText}
+                    isPressNext={isPressNext}
+                    isPressText={isPressText}
+                />
                 {isPressText && (
                     <div className={styles.text_container}>
                         <p className={styles.text}>{activeTrack?.text}</p>

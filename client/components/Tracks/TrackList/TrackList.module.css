@@ -6,7 +6,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    row-gap: 25px;
+    row-gap: 5px;
 }
 
 .dropdown_container{
@@ -16,7 +16,7 @@
 }
 
 
-@media(max-width:600px) {
+/* @media(max-width:600px) {
     .container{
         row-gap: 15px;
     }
@@ -26,4 +26,4 @@
     .container{
         row-gap: 10px;
     }
-}
+} */

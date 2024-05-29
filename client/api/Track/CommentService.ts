@@ -37,6 +37,20 @@ export const commentApi = createApi({
                 method: 'POST',
             }),
             invalidatesTags: ['Comment']
+        }),
+        addLikeReplyComment: builder.mutation<void, number>({
+            query: (id) => ({
+                url: `tracks/comment/reply/like/${id}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['Comment']
+        }),
+        deleteLikeReplyComment: builder.mutation<void, number>({
+            query: (id) => ({
+                url: `tracks/comment/reply/dislike/${id}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['Comment']
         })
        
     })
@@ -46,5 +60,7 @@ export const {
     useCreateCommentMutation,
     useCreateReplyToCommentMutation,
     useAddLikeCommentMutation,
-    useDeleteLikeCommentMutation
+    useDeleteLikeCommentMutation,
+    useAddLikeReplyCommentMutation,
+    useDeleteLikeReplyCommentMutation
 } = commentApi

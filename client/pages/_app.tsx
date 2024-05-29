@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {AppProps} from 'next/app';
 import '../app/global.css'
-import { store, wrapper } from '@/store';
+import { store} from '@/store';
 import { Provider } from 'react-redux';
 import PageTransition from '@/UI/PageTransition/PageTransition';
 

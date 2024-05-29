@@ -5,13 +5,15 @@ export interface IComment {
     id: number
     replies: IReplyToComment[] | [];
     likes?: number 
+    createDate?: Date
 }
 
 export interface IReplyToComment {
     commentId: number;
     username: string;
     text: string
-    id: number
+    id: number;
+    likes: number
 }
 
 export interface ITrack {

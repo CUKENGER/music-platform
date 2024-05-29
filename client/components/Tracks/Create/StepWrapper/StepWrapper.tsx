@@ -11,7 +11,6 @@ interface StepWrapperProps {
 
 const StepWrapper:FC<StepWrapperProps> = ({activeStep, children, setActiveStep, nameInput, artistInput}) => {
 
-
     const handleChangeStep = (step:number) => {
         if (nameInput && artistInput) {
             if (nameInput.trim() !== '' && artistInput.trim() !== '') {
@@ -24,8 +23,13 @@ const StepWrapper:FC<StepWrapperProps> = ({activeStep, children, setActiveStep, 
         <> 
             <div className={styles.steper}>
             
-                <div className={activeStep == 1 ? styles.step : styles.step_inactive} onClick={() => handleChangeStep(1)}>
-                    <p className={activeStep == 1 ? styles.step_name_active : styles.step__name}>1</p>
+                <div 
+                className={activeStep == 1 ? styles.step : styles.step_inactive} 
+                onClick={() => handleChangeStep(1)}>
+                    <p 
+                    className={activeStep == 1 ? styles.step_name_active : styles.step__name}>
+                        1
+                    </p>
                 </div>
 
                 <div className={activeStep == 2 ? styles.step : styles.step_inactive}  onClick={()=> handleChangeStep(2)}>
@@ -35,7 +39,6 @@ const StepWrapper:FC<StepWrapperProps> = ({activeStep, children, setActiveStep, 
                 <div className={activeStep == 3 ? styles.step : styles.step_inactive}  onClick={()=> handleChangeStep(3)}>
                     <p className={activeStep == 3 ? styles.step_name_active : styles.step__name}>3</p>
                 </div>
-               
                 
             </div>
             
