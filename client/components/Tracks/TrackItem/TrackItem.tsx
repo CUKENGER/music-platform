@@ -42,7 +42,13 @@ const TrackItem: FC<TrackItemProps> = ({ track, trackList, setAudio }) => {
 
 	const handleDelete = async () => {
 		if (track.id) {
-			await deleteTrackMutation(track?.id)
+			await deleteTrackMutation(track?.id).unwrap()
+				.then(result => {
+					console.log(`track with id${track.id} is delete`);
+				})
+				.catch(e => {
+					console.log(`При удалении трека с id ${track.id} произошла ошибка \n ${e.message}`);
+				})
 		}
 	}
 

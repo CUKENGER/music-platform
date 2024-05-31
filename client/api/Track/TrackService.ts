@@ -48,7 +48,7 @@ export const tracksApi = createApi({
             invalidatesTags: ['Track']
         }),
         searchByName : builder.query<ITrack[], {query: string, count: number, offset: number}>({
-            query: ({query, count = 30, offset = 0}) => ({
+            query: ({query, count, offset = 0}) => ({
                 url: `tracks/search?query=${query}&count=${count}&offset=${offset}`,
                 method: 'GET'
             }),

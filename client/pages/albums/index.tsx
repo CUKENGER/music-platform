@@ -7,8 +7,9 @@ import useModal from '@/hooks/useModal'
 import { useTypedSelector } from '@/hooks/useTypedSelector'
 import MainLayout from '@/layouts/MainLayout'
 import styles from '@/styles/Albums.module.css'
+import { memo } from 'react'
 
-export default function Albums() {
+const IndexAlbums = () =>{
 
     const {countAlbums, offsetAlbums, searchAlbumsInput} = useTypedSelector(state => state.searchAlbumsReducer)
     const {showModal, modal, hideModal} = useModal()
@@ -19,9 +20,8 @@ export default function Albums() {
         offset: offsetAlbums
     })
 
-    if (isLoading) return <Loader/>;
     if (error) {
-        showModal(`error in tracks: ${error}`);
+        showModal(`error in artists: ${error}`);
     }
 
     return (
@@ -37,6 +37,9 @@ export default function Albums() {
                 ? (<AlbumList albums={searchAlbums}/>) 
                 : (<div className={styles.not_found_container}>Ничего не найдено</div>)
                 }
+                {isLoading && (
+                    <Loader/>
+                )}
             </div>
             {modal.isOpen && (
                 <ModalContainer
@@ -48,3 +51,5 @@ export default function Albums() {
         </MainLayout>
     )
 }
+
+export default memo(IndexAlbums) 

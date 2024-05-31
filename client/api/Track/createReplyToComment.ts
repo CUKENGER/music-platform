@@ -20,7 +20,8 @@ export const useCreateReplyToComment = (commentId:number) => {
                 username: username.value.trim(),
                 text: text.value.trim(),
                 commentId: commentId,
-                id: 0
+                id: 0,
+                likes: 0
             }).unwrap();
 
             console.log('ОТправлено');

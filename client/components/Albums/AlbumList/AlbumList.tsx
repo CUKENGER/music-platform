@@ -1,19 +1,17 @@
 import { IAlbum } from '@/types/track'
 import AlbumItem from '../AlbumItem/AlbumItem'
 import styles from './AlbumList.module.css'
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, memo } from 'react';
 import useActions from '@/hooks/useActions';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 import useScroll from '@/hooks/useScroll';
-import { sortList } from '@/services/sortList';
+import ListWithScroll from '@/components/ListWithScroll/ListWithScroll';
 
 interface AlbumListProps{
     albums: IAlbum[];
 }
 
-const AlbumList:FC<AlbumListProps> = ({albums}) => {
-
-    const [sortedAlbums, setSortedAlbums] = useState<IAlbum[] | null>(null)
+const AlbumList:FC<AlbumListProps> = memo(({albums}) => {
 
     const {setCountAlbums} = useActions()
 
@@ -26,22 +24,17 @@ const AlbumList:FC<AlbumListProps> = ({albums}) => {
         }
     })
 
-    useEffect(() => {
-        if (albums) {
-            sortList(albums, selectedSort, setSortedAlbums)
-        }
-    }, [selectedSort, albums]);
-
     return (
-        <div className={styles.container}>
-            {sortedAlbums && sortedAlbums.map((album) => (
-                <AlbumItem
-                    key={album.id}
-                    album={album}
-                />
-            ))}
-        </div>
+        <ListWithScroll<IAlbum>
+            items={albums}
+            renderItem={(album: IAlbum) => <AlbumItem key={album.id} album={album}/>}
+            selectedSort={selectedSort}
+            setCountItems={setCountAlbums}
+            countItems={countAlbums}
+            offsetItems={offsetAlbums}
+            styles={{container: styles.container}}
+        />
     )
-}
+})
 
 export default AlbumList

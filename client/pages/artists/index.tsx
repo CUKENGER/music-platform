@@ -10,11 +10,13 @@ import Loader from "@/components/Loader/Loader"
 import { useTypedSelector } from "@/hooks/useTypedSelector"
 import ArtistList from "@/components/Artists/ArtistList/ArtistList"
 import { useSearchByNameArtistsQuery } from "@/api/Artist/ArtistService"
+import ModalContainer from "@/UI/ModalContainer/ModalContainer"
+import useModal from "@/hooks/useModal"
 
 const IndexArtists = () => {
 
     const router = useRouter()
-
+    const {showModal, modal, hideModal} = useModal()
     const {countArtists, offsetArtists,searchArtistsInput} = useTypedSelector(state => state.searchArtistsReducer)
 
     const {data: searchArtists, error, isLoading} = useSearchByNameArtistsQuery({
@@ -23,9 +25,8 @@ const IndexArtists = () => {
         offset: offsetArtists
     })
 
-    if (isLoading) return <Loader/>;
     if (error) {
-        console.log(`error in tracks: ${error}`);
+        showModal(`error in artists: ${error}`);
     }
 
     return (
@@ -49,7 +50,17 @@ const IndexArtists = () => {
                 ? (<ArtistList artists={searchArtists}/>) 
                 : (<div className={styles.not_found_container}>Ничего не найдено</div>)
                 }
+                {isLoading && (
+                    <Loader/>
+                )}
             </div>
+            {modal.isOpen && (
+                <ModalContainer
+                    hideModal={hideModal}
+                    text={modal.message}
+                    onClick={modal.onClick}
+                />
+            )}
         </MainLayout>
     )
 }
