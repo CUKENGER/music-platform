@@ -7,14 +7,11 @@ import TrackList from "@/components/Artists/ArtistPage/TrackList/TrackList"
 import Btn from "@/UI/Btn/Btn"
 import { useRouter } from "next/router"
 import ArtistAlbumList from "@/components/Artists/ArtistPage/ArtistAlbumList/ArtistAlbumList"
-import { useUpdateArtistMutation } from "@/api/ArtistService"
 
 const ArtistPage = () => {
     const router = useRouter()
 
     const {openedArtist} = useTypedSelector(state => state.searchArtistsReducer)
-
-    const [updateArtist] = useUpdateArtistMutation()
 
     const handleBack = useCallback(()=>{
         router.push('/artists')
@@ -24,13 +21,13 @@ const ArtistPage = () => {
         if (!openedArtist) {
             router.push('/artists')
         }
-    }, [])
+    }, [router,
+        openedArtist
+    ])
 
-    const handleChangeArtist = async () => {
+    const handleChangeArtist = () => {
         router.push('/artists/change')
     }
-
-    console.log(openedArtist);
 
     return (
         <MainLayout title_text="dasfdsaf">

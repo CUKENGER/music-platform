@@ -13,6 +13,7 @@ import PlayPauseBtns from "@/UI/PlayPauseBtns/PlayPauseBtns";
 import withAudioPlayer from "@/components/hocs/withAudioPlayer";
 import { formatTime, getListenWordForm } from "@/services/format";
 import { usePlayer } from "@/hooks/player/usePlayer";
+import { useRouter } from "next/router";
 
 interface TrackItemProps {
 	track: ITrack;
@@ -22,13 +23,16 @@ interface TrackItemProps {
 
 const TrackItem: FC<TrackItemProps> = ({ track, trackList, setAudio }) => {
 	const audio = audioManager.audio
+	const router = useRouter()
 
-	const {playBtn, handleTrackClick} = usePlayer()
+	const {playBtn} = usePlayer()
 
 	const { activeTrack, pause, currentTime, duration } = useTypedSelector(state => state.playerReducer)
 	const {
 		playerSetActiveTrack,
-		setDefaultTrackList } = useActions()
+		setDefaultTrackList,
+		setOpenedTrack,
+		setOpenedTrackId } = useActions()
 
 	const [deleteTrackMutation] = useDeleteTrackMutation()
 
@@ -56,6 +60,13 @@ const TrackItem: FC<TrackItemProps> = ({ track, trackList, setAudio }) => {
 		setDefaultTrackList(trackList)
 		playerSetActiveTrack(track)
 		playBtn()
+	}
+
+	const handleTrackClick = () => {
+		const ID = track.id.toString()
+		console.log('id',ID)
+		router.push('/tracks/' + ID)
+		setOpenedTrack(track)
 	}
 
 	const trackPicture = baseUrl + track.picture

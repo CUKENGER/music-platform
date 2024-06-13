@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+}
+
+:root {
+  --pmr: #880000;
+  --bg: #202020;
+  --text: #FFFFFF;
+  --textgray: #A5A5A5;
+  // --textgray: #C0C0C0;
+  --black-lt: #333333;
+}
+
+html,
+button {
+  font-family: 'Roboto';
+  font-weight: 500;
+  color: var(--text);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: calc(100vw / 1920 * 10);
+}
+
+body{
+  background-color: var(--bg);
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  background-color: var(--pmr);
+  color: var(--text);
+}
+
+::selection {
+  background-color: #b90101;
+  color: var(--text);
+}
+
+
+::-moz-selection {
+  background-color: #b90101;
+  color: rgb(197, 197, 197);
+}
+
+label {
+  font-size: 14px;
+}
+
+textarea {
+  background: var(--pmr);
+  border: none;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  resize: none;
+  font-family: 'Roboto';
+  color: var(--text);
+  font-size: 14px;
+  font-style: normal;
+  line-height: normal;
+  font-variant: normal;
+  font-weight: normal;
+
+  &:focus-visible {
+    border: none;
+    outline: none;
+  }
+
+  &::placeholder {
+    font-family: 'Roboto';
+    color: var(--text);
+    font-size: 14px;
+    font-style: normal;
+    line-height: normal;
+    font-variant: normal;
+    font-weight: normal;
+  }
+}
+
+input {
+  outline: none;
+  border: none;
+  font-family: 'Roboto';
+  color: var(--text);
+  font-size: 14px;
+  padding: 13px 15px;
+
+  &::placeholder {
+    font-family: 'Roboto';
+    color: var(--text);
+  }
+}
+
+input:invalid,
+textarea:invalid {
+  background-color: #570000;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+@media(max-width: 800px) {
+  body {
+    font-size: 12px;
+  }
+}
+
+@media(max-width: 600px) {
+  body {
+    font-size: 10px;
+  }
+}
+
+body {
+  min-height: 100vh;
+  font-size: 16px;
+}
+
+ul,
+ol,
+li,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

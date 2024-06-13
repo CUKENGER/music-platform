@@ -1,6 +1,10 @@
 import { useTypedSelector } from "@/hooks/useTypedSelector";
 import { Providers } from "@/store/provider";
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import Loading from "./loading";
+import AlbumPage from "@/pages/albums/[id]";
+import React from "react";
 
 
 export const metadata: Metadata = {
@@ -19,7 +23,12 @@ export default function RootLayout({
         <head>
         </head>
         <body >
-            {children}
+          <React.Fragment>
+            <Suspense fallback={<Loading />}>
+              {children}
+            </Suspense>
+        </React.Fragment>
+            
         </body>
         
       </html>

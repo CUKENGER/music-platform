@@ -10,9 +10,9 @@ import HeaderList from "@/components/HeaderList/HeaderList";
 import useModal from "@/hooks/useModal";
 import ModalContainer from "@/UI/ModalContainer/ModalContainer";
 import { memo } from "react";
-import IndexPage from "@/components/IndexPage/IndexPage";
 
 const IndexTracks = ()=> {
+    const {showModal, modal, hideModal} = useModal()
 
     const {
         searchInput, 
@@ -25,17 +25,30 @@ const IndexTracks = ()=> {
         offset: offsetTracks
     })
 
+    if (error) {
+        showModal(`error in tracks: ${error}`);
+    }
+
     return (
-        <IndexPage
-            title='Список треков'
-            placeholder=''
-            routerPath=''
-            data={searchTracks}
-            error={error}
-            isLoading={isLoadingSearch}
-            renderItem={<TrackList/>}
-        />
-        
+        <MainLayout title_text="Список треков">
+            <div className={styles.container}>
+                <HeaderList 
+                    placeholder="Найти трек" 
+                    routerPath="/tracks/create"
+                />
+                {searchTracks && 
+                searchTracks.length > 0 
+                ? <TrackList tracks={searchTracks}/>
+                : <div className={styles.not_found_container}>Ничего не найдено</div>}
+                {isLoadingSearch && <Loader />}
+            </div>
+            {modal.isOpen && 
+                <ModalContainer 
+                    hideModal={hideModal} 
+                    text={modal.message} 
+                    onClick={modal.onClick} 
+                />}
+        </MainLayout>
     )
 }
 

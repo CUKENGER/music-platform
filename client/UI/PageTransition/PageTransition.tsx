@@ -18,10 +18,10 @@ const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) =
         key={router.pathname}
         timeout={300}
         classNames={{
-          enter: styles['page-enter'],
-          enterActive: styles['page-enter-active'],
-          exit: styles['page-exit'],
-          exitActive: styles['page-exit-active'],
+          enter: styles.page_enter,
+          enterActive: styles.page_enter_active,
+          exit: styles.page_exit,
+          exitActive: styles.page_exit_active,
         }}
         in={inProp}
         unmountOnExit

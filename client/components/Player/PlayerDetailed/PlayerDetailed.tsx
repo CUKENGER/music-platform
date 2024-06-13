@@ -1,19 +1,23 @@
 import styles from './PlayerDetailed.module.css'
 import {useTypedSelector} from "@/hooks/useTypedSelector";
 import {baseUrl} from "@/services/baseUrl";
-import { memo, useMemo, useState } from 'react';
+import { ChangeEvent, memo, useMemo, useState } from 'react';
 import PlayerNextTrackItem from './PlayerNextTrackItem/PlayerNextTrackItem';
 import { ITrack } from '@/types/track';
 import useActions from '@/hooks/useActions';
 import PlayerNavbar from './PlayerNavbar/PlayerNavbar';
+import { Reorder } from 'framer-motion';
 
 const PlayerDetailed = () => {
     
     const {activeTrack, activeTrackList} = useTypedSelector(state => state.playerReducer)
     const [isPressNext, setIsPressNext] = useState(false)
     const [isPressText, setIsPressText] = useState(true)
-    const [currentDraggedTrack, setCurrentDraggedTrack] = useState<ITrack | null>(null);
     const {setActiveTrackList} = useActions()
+
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [pressedTrack, setPressedTrack] = useState<number | null>(null)
+    const [menuPosition, setMenuPosition] = useState<{x:number,y: number} | null>(null)
 
     const reorderedTrackList = useMemo(() => {
         if (!activeTrack) return activeTrackList;
@@ -22,19 +26,17 @@ const PlayerDetailed = () => {
         return [...activeTrackList.slice(startIndex), ...activeTrackList.slice(0, startIndex)];
     }, [activeTrack, activeTrackList]);
 
-    const handleDrop = (draggedTrack: ITrack, droppedTrack: ITrack) => {
-        const draggedIndex = activeTrackList.findIndex(track => track.id === draggedTrack.id);
-        const droppedIndex = activeTrackList.findIndex(track => track.id === droppedTrack.id);
+    const handleOpenMenu = (id: number) => {
+        if (pressedTrack === id) {
+            setIsMenuOpen(!isMenuOpen);
+            setPressedTrack(null)
+        } else {
+            setIsMenuOpen(true);
+            setPressedTrack(id);
+        }
 
-        if (draggedIndex === -1 || droppedIndex === -1) return;
-
-        const updatedTrackList = [...activeTrackList];
-        updatedTrackList.splice(draggedIndex, 1);
-        updatedTrackList.splice(droppedIndex, 0, draggedTrack);
-
-        setActiveTrackList(updatedTrackList);
     };
-
+     
     return (
         <div className={styles.container}>
             <div className={styles.cover_container}>
@@ -59,15 +61,24 @@ const PlayerDetailed = () => {
                 
                 <div className={styles.nextTracks_container}>
                     {isPressNext && (
-                        reorderedTrackList.map((track, index)=> (
-                            <PlayerNextTrackItem
-                                key={track.id}
-                                track={track}
-                                onDrop={handleDrop}
-                                setCurrentDraggedTrack={setCurrentDraggedTrack}
-                                currentDraggedTrack={currentDraggedTrack}
-                            />
-                        ))
+                        <Reorder.Group
+                            axis='y'
+                            values={reorderedTrackList}
+                            onReorder={(newValues) => setActiveTrackList(newValues)}
+                        >
+                            {
+                                reorderedTrackList.map((track, index)=> (
+                                    
+                                    <PlayerNextTrackItem
+                                        key={track.id}
+                                        track={track}
+                                        isMenuOpen={isMenuOpen}
+                                        handleOpenMenu={handleOpenMenu}
+                                        pressedTrack={pressedTrack}
+                                    />
+                                ))
+                            }
+                        </Reorder.Group>
                     )}
                 </div>
             </div>

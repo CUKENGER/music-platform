@@ -12,6 +12,8 @@ const initialState: PlayerState = {
     activeTrackList: [],
     isOpenPlayerDetailed: false,
     defaultTrackList: [],
+    openedTrackId: 0,
+    isOpenPlayerMobileDetailed:false
 }
 
 export const playerSlice = createSlice({
@@ -54,7 +56,13 @@ export const playerSlice = createSlice({
         },
         setDefaultTrackList(state, action: PayloadAction<ITrack[]>) {
             state.defaultTrackList = action.payload
-        }
+        },
+        setOpenedTrackId(state, action: PayloadAction<number>) {
+            state.openedTrackId= action.payload
+        },
+        setIsOpenPlayerMobileDetailed(state, action: PayloadAction<boolean>) {
+            state.isOpenPlayerMobileDetailed = action.payload
+        },
     }
 })
 

@@ -9,5 +9,7 @@ export interface PlayerState {
     openedTrack: null | ITrack;
     activeTrackList: ITrack[];
     isOpenPlayerDetailed: boolean;
-    defaultTrackList: ITrack[]
+    defaultTrackList: ITrack[];
+    openedTrackId: number,
+    isOpenPlayerMobileDetailed:boolean
 }

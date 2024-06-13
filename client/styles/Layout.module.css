@@ -34,47 +34,49 @@
     opacity: 0.8;
 }
 
-/* styles/PageTransition.module.css */
-.page-enter {
+.page_enter {
+    transform: translateY(100%);
     opacity: 0;
-    transform: translateY(20px);
 }
-.page-enter-active {
-    opacity: 1;
+
+.page_enter_active {
     transform: translateY(0);
-    transition: opacity 300ms, transform 300ms;
-}
-.page-exit {
     opacity: 1;
-    transform: translateY(0);
+    transition: transform 500ms ease-in-out, opacity 500ms ease-in-out;
 }
-.page-exit-active {
+
+.page_exit {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.page_exit_active {
+    transform: translateY(100%);
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 300ms, transform 300ms;
+    transition: transform 500ms ease-in-out, opacity 500ms ease-in-out;
 }
 
 .noscroll {
     overflow: hidden;
 }
 
-.scrollButton-enter {
+.scrollButton_enter {
     opacity: 0;
     transform: scale(0.9);
 }
-.scrollButton-enter-active {
+.scrollButton_enter_active {
     opacity: 1;
     transform: scale(1);
-    transition: opacity 300ms, transform 300ms;
+    transition: opacity 200ms, transform 200ms;
 }
-.scrollButton-exit {
+.scrollButton_exit {
     opacity: 1;
     transform: scale(1);
 }
-.scrollButton-exit-active {
+.scrollButton_exit_active {
     opacity: 0;
     transform: scale(0.9);
-    transition: opacity 300ms, transform 300ms;
+    transition: opacity 200ms, transform 200ms;
 }
 
 .loader-enter {
@@ -82,14 +84,14 @@
 }
 .loader-enter-active {
     opacity: 1;
-    transition: opacity 300ms;
+    transition: opacity 400ms;
 }
 .loader-exit {
     opacity: 1;
 }
 .loader-exit-active {
     opacity: 0;
-    transition: opacity 300ms;
+    transition: opacity 400ms;
 }
   
 

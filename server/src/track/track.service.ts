@@ -36,9 +36,9 @@ export class TrackService {
 	async create(createTrackDto: CreateTrackDto, picture, audio): Promise<string> {
 		if (picture && audio) {
 			const audioPathPromise = this.fileService.createFile(FileType.AUDIO, audio);
-            const imagePathPromise = this.fileService.createFile(FileType.IMAGE, picture);
+			const imagePathPromise = this.fileService.createFile(FileType.IMAGE, picture);
 
-            const [audioPath, imagePath] = await Promise.all([audioPathPromise, imagePathPromise]);
+			const [audioPath, imagePath] = await Promise.all([audioPathPromise, imagePathPromise]);
 
 			const duration = await this.audioService.getAudioDuration(audioPath)
 	
@@ -279,6 +279,45 @@ export class TrackService {
 			throw e; // Пробрасываем исключение дальше, чтобы его можно было обработать в вызывающем коде
 		}
 	}
+
+	async updateTrack(id: number, newData: Partial<Track>, picture, audio): Promise<Track> {
+		// Поиск сущности по ID
+		const entityToUpdate = await this.trackRepository.findOne({ where: { id } });
+		console.log('Entity to update:', entityToUpdate);
+		
+		if (!entityToUpdate) {
+				throw new Error(`Сущность с ID ${id} не найдена`);
+		}
+		if (picture) {
+			const imagePathPromise = this.fileService.createFile(FileType.IMAGE, picture);
+			const [imagePath] = await Promise.all([imagePathPromise]);
+			newData.picture = imagePath
+			console.log('picture added');
+			
+		} else{
+			console.log('picture dont add')
+		}
+		if (audio) {
+			const audioPathPromise = this.fileService.createFile(FileType.AUDIO, audio);
+			const [audioPath] = await Promise.all([audioPathPromise]);
+			const duration = await this.audioService.getAudioDuration(audioPath)
+			newData.audio = audioPath
+			newData.duration = duration
+			console.log('audio added')
+		} else{
+			console.log('audio dont add')
+		}
+		
+		if (newData.id) newData.id = Number(newData.id);
+		// Обновление данных сущности
+		Object.assign(entityToUpdate, newData);
+		console.log('Updated entity:', entityToUpdate);
+
+		// Сохранение обновленной сущности в базе данных
+		const updatedTrack = await this.trackRepository.save(entityToUpdate);
+		console.log('Updated artist:', updatedTrack);
+		return updatedTrack;
+}
 
 
 

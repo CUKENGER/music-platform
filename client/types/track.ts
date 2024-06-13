@@ -27,7 +27,8 @@ export interface ITrack {
     audio: string | null | File;
     active?: boolean;
     comments: IComment[]; 
-    duration?: string
+    duration?: string;
+    genre?: string
 }
 
 export interface AudioFile {
@@ -49,16 +50,25 @@ export interface IAlbum {
 }
 
 export interface IArtist {
-    data: any;
+    data?: any;
     id:number;
     name: string;
     description: string;
     genre: string;
     likes: number;
     listens: number;
-    picture?: File;
+    picture?: File | string | null;
     tracks?: ITrack[];
     comments?: IComment[];
     albums?: IAlbum[]
+}
+
+
+export interface IError{
+	data: {
+		message: string,
+		statusCode: number
+	};
+	status:number
 }
 

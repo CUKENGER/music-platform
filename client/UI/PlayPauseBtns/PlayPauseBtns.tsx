@@ -4,7 +4,7 @@ import {FC} from "react";
 import {useTypedSelector} from "@/hooks/useTypedSelector";
 
 interface PlayPauseBtnsProps{
-    onClick?: () => void;
+    onClick?: (e?:any) => void;
     pause?: boolean;
     track?: ITrack;
 }

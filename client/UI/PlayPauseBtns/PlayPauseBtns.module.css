@@ -7,6 +7,9 @@
     overflow: hidden;
     transition: all .5s ease;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .shape{
@@ -14,8 +17,9 @@
     width: 50%;
     height: 50%;
     position: relative;
-    top: 25%;
-    left: 26%;
+    /* transform: translate(-50%, -50%); */
+    /* top: 50%; */
+    /* left: 50%; */
 }
 
 .stop {
@@ -35,7 +39,7 @@
 }
 
 .stop::before {
-    /*left: 10%;*/
+    left: 10%;
 }
 
 .stop::after {

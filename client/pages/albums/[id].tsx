@@ -8,13 +8,10 @@ import Image from 'next/image'
 import { baseUrl } from "@/services/baseUrl"
 import AlbumTrackList from "@/components/Albums/AlbumPage/AlbumTrackList/AlbumTrackList";
 import Btn from "@/UI/Btn/Btn"
-import { useDeleteAlbumMutation } from "@/api/AlbumService"
+import { useDeleteAlbumMutation } from "@/api/Album/AlbumService"
 import { isAdmin } from "@/services/isAdmin"
+import {formatDate} from '@/services/formatDate'
 
-const months = [
-    "января", "февраля", "марта", "апреля", "мая", "июня",
-    "июля", "августа", "сентября", "октября", "ноября", "декабря"
-];
 
 const AlbumPage = () => {
     const router = useRouter()
@@ -25,15 +22,7 @@ const AlbumPage = () => {
             router.push('/albums')
         }
     })
-
-    const formatDate = useCallback((dateString: string): string => {
-        const date = new Date(dateString);
-        const day = date.getDate();
-        const month = months[date.getMonth()];
-        const year = date.getFullYear();
-        return `${day} ${month} ${year}`;
-    },[] )
-
+0
     const [deleteAlbumMutation] = useDeleteAlbumMutation()
 
     const handleDelete = async () => {

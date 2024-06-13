@@ -1,75 +1,29 @@
 import InputString from "@/UI/InputString/InputString";
 import MainLayout from "@/layouts/MainLayout";
-import { memo, useCallback, useState } from "react";
+import { memo} from "react";
 import styles from '@/styles/CreateArtist.module.css'
-import { useInput } from "@/hooks/useInput";
 import Textarea from "@/UI/Textarea/Textarea";
 import ImageInput from "@/UI/ImageInput/ImageInput";
 import ModalContainer from "@/UI/ModalContainer/ModalContainer";
-import { useRouter } from "next/router";
 import Btn from "@/UI/Btn/Btn";
 import CheckInput from "@/UI/CheckInput/CheckInput";
-import { genres } from "@/services/genres";
 import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
-import { useCreateArtistMutation } from "@/api/ArtistService";
+import useCreateArtist from "@/api/Artist/useCreateArtist";
 
 const CreateArtist = () => {
-
-    const [options, setOptions] = useState<string[]>(genres);
-    const [modal, setModal] = useState({isOpen:false, message: ''});
-    const [cover, setCover] = useState<File | null>(null)
-    const router = useRouter()
-    
-    const name = useInput('')
-    const description = useInput('')
-    const genre = useInput('')
-
-    const [createArtist, {isLoading}] = useCreateArtistMutation()
-
-    const handleCreate = useCallback(async () => {
-        console.log('name.value', name.value);
-        console.log('genre.value', genre.value);
-        console.log('description.value', description.value);
-        console.log('cover', cover);
-        if (!name.value.trim() || !description.value.trim() || !genre.value || !cover) {
-            setModal({
-                isOpen: true,
-                message: 'Заполните все данные, пожалуйста'
-            })
-            return 
-        }
-
-        const fd = new FormData()
-        fd.append('name', name.value);
-        fd.append('genre', genre.value);
-        fd.append('description', description.value);
-        fd.append('picture', cover);
-
-        try {
-            await createArtist(fd).unwrap()
-                .then((response) => {
-                    setModal({
-                        isOpen: true,
-                        message: `Artist with name ${response.name} creates successfully`
-                    })
-                })
-                .catch((error) => {
-                    setModal({
-                        isOpen: true,
-                        message: `Произошла ошибка: \n ${error.data.message}`
-                    })
-                })
-                .finally(() => {
-                    console.log('created artist vse');
-                })
-        } catch(e) {
-            setModal({
-                isOpen: true,
-                message: `Произошла неизвестная ошибка`
-            })
-        }
-
-    }, [name.value, description.value, genre.value, cover])
+    const {
+        handleCreate,
+        router,
+        showModal,
+        modal,
+        hideModal,
+        name, description,
+        genre,
+        options,
+        setOptions, 
+        setCover,
+        isLoading
+    } = useCreateArtist()
 
     return (
         <ErrorBoundary>
@@ -89,6 +43,7 @@ const CreateArtist = () => {
                             />
                             <div className={styles.SelectInput_container}>
                                 <CheckInput 
+                                    value={genre.value}
                                     options={options}
                                     setOptions={setOptions}
                                     setValue={genre.setValue}
@@ -120,7 +75,11 @@ const CreateArtist = () => {
                         Отправить
                     </button>
                     {modal.isOpen && (
-                        <ModalContainer text={modal.message} setState={() => setModal({ isOpen: false, message: '' })} onClick={() => router.push('/artists')}/>
+                        <ModalContainer 
+                            text={modal.message} 
+                            hideModal={hideModal}
+                            onClick={modal.onClick}
+                        />
                     )}
                 </div>
             </MainLayout>

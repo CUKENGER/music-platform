@@ -4,9 +4,10 @@ import styles from './AudioInput.module.css'
 interface AudioInputProps{
     placeholder: string;
     setAudio: (audio: File) => void;
+    audioName?: string | null
 }
 
-const AudioInput:FC<AudioInputProps> = ({placeholder, setAudio}) => {
+const AudioInput:FC<AudioInputProps> = ({placeholder, setAudio, audioName}) => {
 
     const handleAudioChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -16,15 +17,22 @@ const AudioInput:FC<AudioInputProps> = ({placeholder, setAudio}) => {
 
     return (
         <div className={styles.container}>
+            {audioName && (
+                <div className={styles.audioName_container}>
+                    <p>{audioName}</p>
+                </div>
+            )}
             <input 
                 onChange={handleAudioChange}
                 className={styles.input}
-                id='file'
+                id='fileAudio'
                 type="file"
+                accept='audio/*'
             />
-            <label htmlFor="file" className={styles.label}>
+            <label htmlFor="fileAudio" className={styles.label}>
                 {placeholder}
             </label>
+
         </div>
     )
 }

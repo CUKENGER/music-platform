@@ -1,9 +1,10 @@
-import {Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors} from '@nestjs/common';
+import {Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors, Put} from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateTrackCommentDto } from './dto/create-trackComment-dto';
 import { CreateReplyTrackCommentDto } from './dto/create-trackReplyComment.dto';
+import { Track } from './scheme/track.schema';
 
 
 
@@ -89,6 +90,20 @@ export class TrackController {
 	@Post('/comment/reply/dislike/:id')
 	deleteLikesCommentReply(@Param('id', ParseIntPipe) id: number) {
 		return this.trackService.deleteLikesCommentReply(id)
+	}
+
+	@Put(':id')
+	@UseInterceptors(FileFieldsInterceptor([
+		{name: 'picture', maxCount: 1},
+		{name: 'audio', maxCount: 1},
+	]))
+	async updateTrack(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() newData: Partial<Track>,
+		@UploadedFiles() files
+	):Promise<Track> {
+		const {picture, audio} = files
+		return this.trackService.updateTrack(id, newData, picture, audio)
 	}
 
 }

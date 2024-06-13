@@ -9,19 +9,16 @@
     height:55px;
     align-items: center;
     padding-left: 10px;
+    position: relative;
+}
+
+.reorder_item{
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .container:hover{
     cursor: move;
-}
-
-.dragging{
-    background-color: #cfcece;
-    opacity: 1;
-}
-
-.drag_over{
-    background-color: var(--textgray);
 }
 
 .name_container{
@@ -31,10 +28,24 @@
     align-items: center;
 }
 
+.menu_icon_container{
+    display: flex;
+    width: 14%;
+    justify-content: flex-end;
+}
+
+.menu_icon_btn{
+    cursor: pointer;
+}
+
 .duration_container{
     display: flex;
     width: 14%;
     justify-content: flex-end;
+}
+
+.duration{
+    color: var(--textgray);
 }
 
 .artist{
@@ -98,5 +109,6 @@
 .index{
     width: 15px;
 }
+
 
 

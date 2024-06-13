@@ -56,7 +56,15 @@ export const tracksApi = createApi({
                 result ? 
                 result.map(({ id }) => ({ type: 'Track', id })) : 
                 ['Track'],
-        })
+        }),
+        updateTrack : builder.mutation<ITrack, {id:number, data: FormData}>({
+            query: ({id, data}) => ({
+                url: `tracks/${id}`,
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Track']
+        }),
     })
 })
 
@@ -65,5 +73,6 @@ export const { useGetTracksQuery,
      useCreateTrackMutation, 
      useAddListenMutation, 
      useDeleteTrackMutation ,
-     useSearchByNameQuery
+     useSearchByNameQuery,
+     useUpdateTrackMutation
 } = tracksApi

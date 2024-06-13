@@ -1,12 +1,14 @@
 import { ChangeEvent, FC, memo, useState } from 'react'
 import styles from './ImageInput.module.css'
+import { baseUrl } from '@/services/baseUrl';
 
 interface FileInputProps{
     placeholder: string;
     setPicture: (picture: File) => void
+    currentPicture?: string | null
 }
 
-const ImageInput:FC<FileInputProps> = memo(({placeholder, setPicture}) => {
+const ImageInput:FC<FileInputProps> = memo(({placeholder, setPicture, currentPicture}) => {
 
     const [uploadPicture, setUploadPicture] = useState<string | null>(null)
 
@@ -36,6 +38,13 @@ const ImageInput:FC<FileInputProps> = memo(({placeholder, setPicture}) => {
 
             <label htmlFor="file" className={styles.label}>
                 {placeholder}
+                {currentPicture && !uploadPicture && (
+                    <img 
+                    className={styles.uploadPicture} 
+                    src={currentPicture} 
+                    alt="uploaded cover" 
+                />
+                )}
                 {uploadPicture && (
                     <img 
                         className={styles.uploadPicture} 

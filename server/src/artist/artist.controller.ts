@@ -65,10 +65,20 @@ export class ArtistController {
     }
 
     @Put(':id') // Маршрут обновления сущности, например, PUT /entities/:id
+    @UseInterceptors(FileFieldsInterceptor([
+        {name: 'picture', maxCount: 1}
+    ]))
     async updateArtist(
       @Param('id', ParseIntPipe) id: number, // Параметр ID из URL
       @Body() newData: Partial<Artist>, // Новые данные сущности из тела запроса
+      @UploadedFiles() files
     ): Promise<Artist> {
-      return this.artistService.updateArtist(id, newData); // Вызов сервиса для обновления сущности
+        console.log('files',files)
+        console.log('Update artist called with id:', id);
+        console.log('New data:', newData);
+        console.log('Files:', files);
+        const picture = files?.picture ? files?.picture[0] : null;
+        console.log('picture',picture)
+        return this.artistService.updateArtist(id, newData, picture); // Вызов сервиса для обновления сущности
     }
 }

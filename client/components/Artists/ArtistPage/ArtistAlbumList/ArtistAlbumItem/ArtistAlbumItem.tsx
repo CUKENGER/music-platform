@@ -7,7 +7,7 @@ import like from '@/assets/like.png'
 import like_fill from '@/assets/like_fill.png'
 import delete_icon from '@/assets/delete.svg'
 import plays_icon from '@/assets/plays.png'
-import { useAddLikeAlbumMutation, useDeleteAlbumMutation, useDeleteLikeAlbumMutation} from "@/api/AlbumService";
+import { useAddLikeAlbumMutation, useDeleteAlbumMutation, useDeleteLikeAlbumMutation} from "@/api/Album/AlbumService";
 import { useRouter } from "next/router";
 import useActions from "@/hooks/useActions";
 import { useTypedSelector } from "@/hooks/useTypedSelector";

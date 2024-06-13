@@ -86,8 +86,8 @@ export const usePlayer = () => {
       playBtn,
       handleOpenPlayer,
       handleLike,
-      handleMix,
-  }
+      handleMix  
+    }
 
 
 }

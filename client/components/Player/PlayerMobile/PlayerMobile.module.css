@@ -1,162 +1,25 @@
 
-.main_container{
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    background-color: var(--pmr);
-    height: 100px;
+
+.container{
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background-color: var(--pmr);
+  height: 70px;
+  padding: 25px;
+  font-size: 14px;
+  cursor: pointer;
 }
 
-.playBtnPlayer,
-.prevBtnPlayer,
-.nextBtnPlayer,
-.name{
-    cursor: pointer;
+.btns_container{
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
 }
 
-.bottom_container{
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    padding-bottom: 10px;
-    /*column-gap: 50px;*/
-    display: grid; 
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    place-items: center;
+.artist{
+  color: var(--textgray);
 }
-
-.name_container{
-    font-size: 14px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    row-gap: 5px;
-}
-
-.name{
-    /*padding-bottom: 5px;*/
-    /*text-decoration: underline var(--bg) 2px;*/
-    border-bottom: 1px solid white;
-}
-
-.playerBtns_container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    column-gap: 15px;
-}
-
-.playBtn_container{
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.playBtnPlayer{
-    width: 100%;
-    height: auto;
-    background-color: transparent;
-}
-
-.nextBtnPlayer,
-.prevBtnPlayer{
-    width: 30px;
-}
-
-.button{
-    margin: 100px auto;
-    display: table;
-}
-
-.openPlayer_icon_container{
-    cursor: pointer;
-}
-
-.general_name_container{
-    display: flex;
-    width: 100%;
-    column-gap: 50px;
-    align-items: center;
-    padding-left: 70px;
-}
-
-.like_container {
-    display: flex;
-    width: 20%;
-    cursor: pointer;
-    align-items: center;
-}
-
-.like_count{
-    margin-left: 5px;
-}
-
-.openPlayer_icon_down{
-    transform: rotateX(180deg);
-    cursor: pointer;
-}
-
-.mix_icon_container{
-    cursor: pointer;
-}
-
-.duration_container{
-    display: flex;
-    width: 90px;
-}
-
-.duration_text{
-    font-size: 14px;
-}
-
-@media(max-width:700px) {
-    .main_container{
-        height: 80px;
-    }
-
-    .name,
-    .artist{
-        font-size: 13px;
-    }
-
-    .playBtnPlayer{
-        width: 35px;
-        height: 35px;
-    }
-
-    .nextBtnPlayer,
-    .prevBtnPlayer{
-        width: 30px;
-        height: 30px;
-    }
-}
-
-@media(max-width: 650px) {
-
-    .bottom_container{
-        column-gap: 25px;
-        grid-template-columns: 150px auto 150px; 
-    }
-    
-}
-
-@media(max-width:480px){
-
-    .bottom_container{
-        column-gap: 25px;
-        grid-template-columns: auto auto; 
-    }
-
-    .name_container{
-        width: 150px;
-        text-overflow: hidden;
-    }
-}
-

@@ -5,7 +5,7 @@ import * as timeout from 'connect-timeout';
 
 const start = async () => {
 	try {
-		const PORT = process.env.PORT || 5000
+		const PORT = parseInt(process.env.PORT,10) || 5000
  		const app = await NestFactory.create(AppModule)
 		
 		// чтобы отправлять запросы с браузера

@@ -12,6 +12,7 @@ import ArtistList from "@/components/Artists/ArtistList/ArtistList"
 import { useSearchByNameArtistsQuery } from "@/api/Artist/ArtistService"
 import ModalContainer from "@/UI/ModalContainer/ModalContainer"
 import useModal from "@/hooks/useModal"
+import HeaderList from "@/components/HeaderList/HeaderList"
 
 const IndexArtists = () => {
 
@@ -32,19 +33,10 @@ const IndexArtists = () => {
     return (
         <MainLayout title_text="Список артистов">
             <div className={styles.container}>
-                <div className={styles.container_input_container}>
-                    <div className={styles.input_container}>
-                        <MainInput placeholder='Найти артиста'/>
-                    </div>
-                </div>
-                <div className={styles.btn_container}>
-                    {isAdmin && (
-                        <Btn onClick={()=> router.push('/artists/create')}>
-                            Загрузить
-                        </Btn>
-                    )}
-                    <DropDownMenu/>
-                </div>
+                <HeaderList 
+                    placeholder="Найти артиста" 
+                    routerPath="/artists/create"
+                />
                 {searchArtists &&
                 searchArtists.length > 0 
                 ? (<ArtistList artists={searchArtists}/>) 

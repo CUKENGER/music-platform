@@ -10,6 +10,7 @@ import * as fs from 'fs/promises'
 import { ArtistFileService, ArtistFileType } from "./artistFile/artistFile.service";
 import { Track } from "src/track/scheme/track.schema";
 import { Album } from "src/album/album.schema";
+import { UpdateArtistDto } from "./dto/update-artist.dto";
 
 @Injectable()
 export class ArtistService {
@@ -171,20 +172,32 @@ export class ArtistService {
     	return artists;
 	}
 
-    async updateArtist(id: number, newData: Partial<Artist>): Promise<Artist> {
+    async updateArtist(id: number, newData: Partial<UpdateArtistDto>, picture): Promise<Artist> {
         // Поиск сущности по ID
         const entityToUpdate = await this.artistRepository.findOne({ where: { id } });
-    
+        console.log('Entity to update:', entityToUpdate);
+        
         if (!entityToUpdate) {
-          throw new Error(`Сущность с ID ${id} не найдена`);
+            throw new Error(`Сущность с ID ${id} не найдена`);
         }
-    
+
+        if (picture) {
+            const imagePath = this.artistFileService.createCover(ArtistFileType.IMAGE, picture);
+            newData.picture = imagePath;
+            console.log('Пикчер добавлена:', newData.picture);
+        } else {
+            console.log('Пикчер не добавлена');
+        }
+        if (newData.id) newData.id = Number(newData.id);
         // Обновление данных сущности
         Object.assign(entityToUpdate, newData);
-    
+        console.log('Updated entity:', entityToUpdate);
+
         // Сохранение обновленной сущности в базе данных
-        return await this.artistRepository.save(entityToUpdate);
-      }
+        const updatedArtist = await this.artistRepository.save(entityToUpdate);
+        console.log('Updated artist:', updatedArtist);
+        return updatedArtist;
+    }
 
 
 }

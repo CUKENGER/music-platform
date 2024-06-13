@@ -15,7 +15,8 @@ const SwitchTracksBtn:FC<SwitchTracksBtnProps> = ({isNextBtn=true}) => {
     const {activeTrackList, activeTrack} = useTypedSelector(state=> state.playerReducer)
     const {playerSetActiveTrack} = useActions()
 
-    const handleBtn = () => {
+    const handleBtn = (event:React.MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation()
         const tracks = activeTrackList;
         if (tracks) {
             const currentIndex = tracks.findIndex(track => track.id === activeTrack?.id);
@@ -37,7 +38,7 @@ const SwitchTracksBtn:FC<SwitchTracksBtnProps> = ({isNextBtn=true}) => {
             {isNextBtn 
                 ? (
                     <Image 
-                        onClick={handleBtn}
+                        onClick={(e) => handleBtn(e)}
                         className={styles.nextBtnPlayer} 
                         src={nextBtn} 
                         alt='nextBtnPlayer'
@@ -45,7 +46,7 @@ const SwitchTracksBtn:FC<SwitchTracksBtnProps> = ({isNextBtn=true}) => {
                 )
                 : (
                     <Image
-                        onClick={handleBtn}
+                        onClick={(e) => handleBtn(e)}
                         className={styles.prevBtnPlayer} 
                         src={prevBtn} 
                         alt='prevBtnPlayer'
