@@ -1,11 +1,12 @@
 import { memo } from "react";
 import styles from './Index.module.scss'
+import SectionsList from "@/components/IndexPage/SectionsList";
 
 const Index = () => {
   return (
-    <div className={styles.container}>
-      
-    </div>
+    <>
+      <SectionsList/>
+    </>
   );
 };
 

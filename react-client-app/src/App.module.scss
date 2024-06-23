@@ -1,0 +1,29 @@
+
+
+.container{
+  padding-left: 230px;
+  margin-top: 15px;
+  display: flex;
+  column-gap: 50px;
+  padding-right: 30px;
+  width: 100%;
+}
+
+.header_container{
+  display: flex;
+  justify-content: flex-end;
+}
+
+// Loader
+.loader_container {
+  animation: up 1s linear forwards;
+}
+
+@keyframes up {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+} 

@@ -1,0 +1,21 @@
+
+.plays_container{
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+}
+
+.listens{
+  color: var(--textgray);
+  font-size: 13px;
+}
+
+.plays_container_icon{
+  width: 15px;
+  height: 15px;
+}
+
+.plays_icon{
+  width: 100%;
+  height: 100%;
+}

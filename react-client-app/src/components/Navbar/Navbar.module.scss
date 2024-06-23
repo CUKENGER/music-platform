@@ -1,0 +1,29 @@
+
+
+.container{
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: var(--black-lt);
+  width: 200px;
+  height: 100vh;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+}
+
+.user_info_container{
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid gray;
+}
+
+.user_avatar{
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background-color: var(--textgray);
+}

@@ -1,0 +1,19 @@
+// ScrolBtn
+.scrollButton_enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+.scrollButton_enter_active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms, transform 200ms;
+}
+.scrollButton_exit {
+  opacity: 1;
+  transform: scale(1);
+}
+.scrollButton_exit_active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 200ms, transform 200ms;
+}

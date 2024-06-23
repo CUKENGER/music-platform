@@ -1,10 +1,13 @@
 import { bindActionCreators } from "@reduxjs/toolkit"
 import { useDispatch } from "react-redux"
 import { counterActions } from "../store/slices/counterSlice"
-
+import { dropdownActions } from "@/store/slices/dropdownSlice"
+import { playerActions } from "@/store/slices/playerSlice"
 
 const AllActions ={
-  ...counterActions
+  ...counterActions,
+	...dropdownActions,
+	...playerActions,
 }
 
 const useActions = () => {

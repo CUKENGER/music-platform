@@ -3,13 +3,20 @@
 
 .container{
   background-color: var(--pmr);
+  width: calc(100vw - 200px);
   height: 60px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 0 25px;
-  column-gap: 35px;
+  position: relative;
 }
 
-.title{
-  font-size: 22px;
+.burger_container {
+  position: absolute;
+  margin-left: 25px;
+}
+
+.search_container {
+  width: 350px;
+  margin: 0 auto;
 }

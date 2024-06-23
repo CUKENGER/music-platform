@@ -11,7 +11,8 @@
   --pmr: #880000;
   --bg: #202020;
   --text: #FFFFFF;
-  --textgray: #A5A5A5;
+  // --textgray: #A5A5A5;
+  --textgray: #c9c8c8;
   // --textgray: #C0C0C0;
   --black-lt: #333333;
 }
@@ -36,7 +37,14 @@ button {
   border: none;
   cursor: pointer;
   background-color: var(--pmr);
-  color: var(--text);
+  color: var(--textgray);
+  padding: 6px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  
+  &:hover{
+    color: var(--text);
+  }
 }
 
 ::selection {
@@ -92,17 +100,28 @@ input {
   color: var(--text);
   font-size: 14px;
   padding: 13px 15px;
+  background-color: var(--pmr);
+  border-radius: 10px;
 
   &::placeholder {
     font-family: 'Roboto';
-    color: var(--text);
+    color: var(--textgray);
+  }
+
+  &:hover{
+    outline: 2px solid var(--textgray);
   }
 }
 
 input:invalid,
-textarea:invalid {
-  background-color: #570000;
+textarea:invalid,
+button:disabled {
+  background-color: var(--black-lt);
 }
+
+// button:disabled{
+//   background-color: var(--black-lt);
+// }
 
 ul,
 li {
@@ -142,4 +161,32 @@ h6 {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+
+/* Общие стили для всех браузеров */
+* {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--textgray) var(--bg); /* Firefox */
+}
+
+/* Стили для Chrome, Edge и Safari */
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--bg); 
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--textgray); 
+  border-radius: 10px;
+  // border: 3px solid black; /* добавляет отступ вокруг полосы прокрутки */
+}
+
+/* Стилизация при наведении */
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--textgray); 
 }

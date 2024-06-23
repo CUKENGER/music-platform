@@ -1,0 +1,148 @@
+
+.container {
+    position: relative;
+    display: inline-block;
+    border-radius: 20px;
+    width: 210px;
+    height: 40px;
+}
+
+.container_active::after{
+    content: "";
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    width: 100%;
+}
+
+.btn {
+    height: 50px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn,.btn_active{
+    background-color: var(--pmr);
+    color: var(--text);
+    line-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 170px;
+    height: 40px;
+    border-radius: 10px;
+    padding: 0 20px;
+}
+
+.btn_active {
+    border-radius: 10px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.list {
+    display: none;
+    width: 100%;
+    border-radius: 10px;
+    border-radius: 10px;
+}
+
+.list_open{
+    width: 170px;
+    position: absolute;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: var(--pmr);
+    z-index: 1;
+}
+
+.list_item {
+    list-style: none;
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+    line-height: 30px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    background-color: var(--bgbg);
+    color: var(--text);
+    font-size: 14px;
+
+    &:last-child:hover{
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+}
+
+.list_item:hover,
+.list_item:active {
+    background-color: var(--black-lt);
+    /* border-radius: 10px; */
+}
+
+.show {
+    display: block;
+}
+
+@media(max-width: 700px) {
+
+    .container{
+        height: auto;
+    }
+
+    .btn_text,
+    .list_item{
+        font-size: 12px;
+    }
+
+    .btn,
+    .btn_active{
+        height: 30px;
+        line-height: 20px;
+        padding: 0 20px;
+    }
+
+    .list_item{
+        height: 30px;
+    }
+}
+
+@media(max-width: 650px) {
+    .container,
+    .btn,
+    .btn_active,
+    .list_open{
+        width: 150px;
+    }
+}
+
+@media(max-width:400px){
+
+    .btn,
+    .btn_active{
+        height: 27px;
+    }
+
+    .list_item{
+        height: 25px;
+    }
+
+    .container,
+    .btn,
+    .btn_active,
+    .list_open{
+        width: 100px;
+    }
+
+    .btn_text,
+    .list_item{
+        font-size: 11px;
+    }
+
+    .btn_arrow{
+        height: 10px;
+        width: 15px;
+    }
+}

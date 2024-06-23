@@ -1,0 +1,27 @@
+
+
+.name_container{
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  font-size: 14px;
+}
+
+.artist{
+  color: var(--textgray);
+  cursor: pointer;
+
+  &:hover{
+    color: var(--text);
+  }
+}
+
+.name{
+  cursor: pointer;
+  height: 18px;
+  white-space: nowrap;
+
+  &:hover{
+    border-bottom: 1px solid var(--pmr);
+  }
+}

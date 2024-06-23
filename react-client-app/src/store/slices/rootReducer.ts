@@ -1,9 +1,14 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { counterReducer } from "./counterSlice";
-
+import { dropdownReducer } from "./dropdownSlice";
+import { tracksApi } from "@/api/Track/TrackService";
+import { playerReducer } from "./playerSlice";
 
 export const rootReducer = combineReducers({
-  counterReducer
+  counterReducer,
+  dropdownReducer,
+  playerReducer,
+  [tracksApi.reducerPath]: tracksApi.reducer
 })
 
 

@@ -1,0 +1,66 @@
+
+
+.container{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // height: 55px;
+  background-color: var(--black-lt);
+  border-radius: 10px;
+  padding: 0 10px;
+  opacity: 0; /* Начальная непрозрачность */
+  transition: opacity 0.4s ease-in-out; /* Плавное изменение непрозрачности */
+}
+
+.visible {
+  opacity: 1; /* Устанавливаем полную непрозрачность при появлении */
+}
+
+.main_container{
+  display: flex;
+  align-items: center;
+  column-gap: 15px;
+  padding:5px 0;
+}
+
+.right_container{
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  column-gap: 25px;
+  width: 30%;
+  height: 100%;
+  padding-bottom: 5px;
+}
+
+.name_container{
+  display: flex;
+  flex-direction: column;
+  row-gap: 7px;
+}
+
+.name,
+.artist{
+  font-size: 14px;
+}
+
+.time,
+.listens{
+  font-size: 13px;
+}
+
+.artist,
+.listens,
+.time{
+  color: var(--textgray);
+}
+
+@keyframes slideOut {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+.slide-out {
+  animation: slideOut 0.3s ease forwards;
+}

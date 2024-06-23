@@ -1,0 +1,15 @@
+
+
+.like_container{
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+}
+
+.like{
+  cursor: pointer;
+}
+
+.like_count{
+  color: var(--textgray);
+}
