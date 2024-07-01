@@ -35,7 +35,7 @@ export class Album {
   @Column({ type: 'date'})
   releaseDate: Date;
 
-  @Column({ type: 'date'})
+  @Column({ type: 'date', nullable: true})
   createdAt: Date;
 
   @Column({ type: 'date', nullable: true})

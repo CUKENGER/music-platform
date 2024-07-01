@@ -1,4 +1,4 @@
-import { memo} from "react";
+import { memo } from "react";
 import styles from './Player.module.scss'
 import TrackProgress from "./TrackProgress";
 import CoverContainer from "./CoverContainer";
@@ -11,10 +11,13 @@ import LikeContainer from "@/UI/LikeContainer";
 import MixContainer from "./MixContainer";
 import Portal from "../Portal";
 import PlayerDetailed from "./PlayerDetailed";
+import useWindowWidth from "@/hooks/useWindowWidth";
 
 const Player = () => {
 
-  const { activeTrack, deleteLike, addLike, handleOpen, isOpenPlayer} = usePlayerComponent()
+  const { activeTrack, deleteLike, addLike, handleOpen, isOpenPlayer } = usePlayerComponent()
+
+  const windowWidth = useWindowWidth()
 
   if (!activeTrack) {
     return null
@@ -44,22 +47,24 @@ const Player = () => {
               likes={activeTrack?.likes}
             />
           </div>
-          <PlayerBtns />
+          {windowWidth && windowWidth < 800 
+            ? (<PlayerBtns needPrevNextBtns={false}/>) 
+            : (<PlayerBtns/>)
+          }
+          
           <div className={styles.rigth_container}>
             <MixContainer />
             <TrackProgress isVolume={true} />
-            <OpenPlayerBtn
-              onClick={handleOpen}
-            />
+            <OpenPlayerBtn onClick={handleOpen} />
           </div>
         </div>
-        
+
       </div>
       {isOpenPlayer && (
-          <Portal selector="#portal-root" isOpen={isOpenPlayer}>
-            <PlayerDetailed/>
-          </Portal>
-        )}
+        <Portal selector="#portal-root" isOpen={isOpenPlayer}>
+          <PlayerDetailed />
+        </Portal>
+      )}
     </>
   )
 };

@@ -6,10 +6,13 @@ import Navbar from './components/Navbar'
 import Player from './components/Player'
 import Loader from './UI/Loader'
 import ScrollContainer from './components/ScrollContainer'
+import useWindowWidth from './hooks/useWindowWidth'
 
 function App() {
 
   const [isLoading, setIsLoading] = useState(true)
+
+  const windowWidth = useWindowWidth()
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -34,8 +37,9 @@ function App() {
       <div className={styles.container}>
         <AppRouter />
       </div>
-
+      
       <Player />
+      
       <ScrollContainer />
       
     </>

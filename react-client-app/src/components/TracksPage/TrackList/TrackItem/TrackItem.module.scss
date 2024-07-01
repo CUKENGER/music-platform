@@ -64,3 +64,15 @@
 .slide-out {
   animation: slideOut 0.3s ease forwards;
 }
+
+@media(max-width:800px) {
+  .right_container{
+    column-gap: 10px;
+  }
+}
+
+@media(max-width:650px) {
+  .right_container{
+    width: auto;
+  }
+}

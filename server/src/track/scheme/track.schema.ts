@@ -42,7 +42,7 @@ export class Track {
   @Column({ nullable: true })
   albumId: number;
 
-  @Column({ type: 'date'})
+  @Column({ type: 'date', nullable: true})
   createdAt: Date;
 
   @Column({ type: 'date', nullable: true})

@@ -26,7 +26,7 @@ export class Artist {
   @Column()
   picture: string;
 
-  @Column({ type: 'date'})
+  @Column({ type: 'date', nullable: true})
   createdAt: Date;
 
   @Column({ type: 'date', nullable: true})

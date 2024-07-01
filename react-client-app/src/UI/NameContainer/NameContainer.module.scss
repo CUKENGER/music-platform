@@ -7,6 +7,15 @@
   font-size: 14px;
 }
 
+.name,
+.artist{
+  width: 100px;
+  width: 150px;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .artist{
   color: var(--textgray);
   cursor: pointer;
@@ -23,5 +32,11 @@
 
   &:hover{
     border-bottom: 1px solid var(--pmr);
+  }
+}
+
+@media(max-width:650px) {
+  .name_container{
+    font-size: 12px;
   }
 }

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import useActions from "@/hooks/useActions";
 
 const useWindowWidth = () => {
   const [windowWidth, setWindowWidth] = useState<number | null>(null)
