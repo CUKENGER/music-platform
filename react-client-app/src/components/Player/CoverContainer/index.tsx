@@ -7,6 +7,11 @@ interface CoverContainerProps{
 }
 
 const CoverContainer:FC<CoverContainerProps> = ({cover}) => {
+
+  const handleClick = () => {
+    
+  }
+
   return (
     <div className={styles.cover_container}>
       <img

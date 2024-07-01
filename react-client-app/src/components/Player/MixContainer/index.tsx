@@ -8,23 +8,23 @@ import useActions from "@/hooks/useActions";
 import { mixTracks } from "@/services/mixTracks";
 
 const MixContainer = () => {
-  const { activeTrackList } = useTypedSelector(state => state.playerReducer)
+  const { activeTrackList } = useTypedSelector(state => state.activeTrackListReducer)
   const { setActiveTrackList } = useActions()
 
   const [prevTrackList, setPrevTrackList] = useState<ITrack[] | null>(activeTrackList)
   const [isMix, setIsMix] = useState(false)
 
-  useEffect(() => {
-    if (isMix && prevTrackList === null) {
-      setPrevTrackList(activeTrackList)
-    }
-  }, [isMix, activeTrackList, prevTrackList])
+  // useEffect(() => {
+  //   if (isMix && prevTrackList === null) {
+  //     setPrevTrackList(activeTrackList)
+  //   }
+  // }, [isMix, activeTrackList, prevTrackList])
 
   const handleMix = () => {
     if (activeTrackList) {
       if (isMix && prevTrackList) {
         setActiveTrackList(prevTrackList);
-        setPrevTrackList(null);
+        // setPrevTrackList(null);
       } else {
         const mixedTrackList = mixTracks(activeTrackList);
         setActiveTrackList(mixedTrackList);

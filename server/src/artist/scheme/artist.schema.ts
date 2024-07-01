@@ -23,8 +23,14 @@ export class Artist {
   @Column({ default: 0})
   likes: number;
 
-  @Column({ nullable: true })
+  @Column()
   picture: string;
+
+  @Column({ type: 'date'})
+  createdAt: Date;
+
+  @Column({ type: 'date', nullable: true})
+  updatedAt: Date;
 
   @OneToMany(() => Track, track => track.artistEntity)
   tracks: Track[];

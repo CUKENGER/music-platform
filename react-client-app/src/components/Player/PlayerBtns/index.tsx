@@ -4,15 +4,13 @@ import SwitchTrackBtns from "./SwitchTrackBtns";
 import PlayPauseBtns from "./PlayPauseBtns";
 
 interface PlayerBtnsProps{
-  onClick: () => void
 }
 
-const PlayerBtns:FC<PlayerBtnsProps> = ({onClick}) => {
+const PlayerBtns:FC<PlayerBtnsProps> = () => {
   return (
     <div className={styles.playerBtns_container}>
       <SwitchTrackBtns isNextBtn={false}/>
         <PlayPauseBtns
-          onClick={onClick}
         />
       <SwitchTrackBtns isNextBtn={true}/>
     </div>

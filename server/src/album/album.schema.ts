@@ -14,10 +14,10 @@ export class Album {
   @Column()
   artist: string;
 
-  @Column({ nullable: true })
+  @Column()
   artistId: number;
 
-  @Column({ nullable: true })
+  @Column()
   genre: string;
 
   @Column({ default: 0 })
@@ -26,14 +26,23 @@ export class Album {
   @Column({ default: 0 })
   likes: number;
 
-  @Column({ nullable: true })
+  @Column()
   picture: string;
 
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: 'date'})
   releaseDate: Date;
+
+  @Column({ type: 'date'})
+  createdAt: Date;
+
+  @Column({ type: 'date', nullable: true})
+  updatedAt: Date;
+
+  @Column()
+  type: string
 
   @ManyToOne(() => Artist, artist => artist.albums)
   @JoinColumn({ name: 'artistId' }) 

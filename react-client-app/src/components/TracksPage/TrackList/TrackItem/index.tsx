@@ -12,33 +12,33 @@ import DeleteContainer from "@/UI/DeleteContainer";
 import { useDeleteTrackMutation } from "@/api/Track/TrackService";
 import DurationContainer from "@/components/Player/DurationContainer";
 import audioManager from "@/services/AudioManager";
+import usePlayTrack from "@/hooks/usePlayTrack";
 
 interface TrackItemProps {
   track: ITrack;
   trackList: ITrack[];
 }
 
-const TrackItem: FC<TrackItemProps> = ({ track, trackList }) => { 
-  const { setActiveTrack, setPlay, setPause, setActiveTrackList } = useActions();
-  const {activeTrackList, activeTrack, pause } = useTypedSelector(state => state.playerReducer)
-
-  const {setAudio } = usePlayer(activeTrackList);
-
+const TrackItem: FC<TrackItemProps> = ({ track, trackList }) => {
+  const [isVisible, setIsVisible] = useState(false)
   const audio = audioManager.audio
+  
+  const {setActiveTrackList } = useActions();
+  const { activeTrack } = useTypedSelector(state => state.playerReducer)
+  const {activeTrackList} = useTypedSelector(state => state.activeTrackListReducer)
+
+  const {setAudio} = usePlayer(activeTrackList);
+  const {handlePlay} = usePlayTrack(track)
 
   const [deleteTrack] = useDeleteTrackMutation();
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
 
   const handleDelete = useCallback(async () => {
-    setIsDeleting(true);
     try {
       await deleteTrack(track.id).unwrap();
       console.log('Track deleted successfully');
     } catch (error) {
       console.error('Failed to delete track:', error);
     } finally {
-      setIsDeleting(false);
     }
   }, [deleteTrack, track.id]);
 
@@ -50,17 +50,9 @@ const TrackItem: FC<TrackItemProps> = ({ track, trackList }) => {
     }
   }, [activeTrack, audio, track.id]);
 
-  const handlePlay = () => {
-    setActiveTrack(track);
+  const clickPlay = () => {
     setActiveTrackList(trackList);
-
-    if (pause) {
-      audio?.play();
-      setPlay();
-    } else {
-      audio?.pause();
-      setPause();
-    }
+    handlePlay()
   }
 
   useEffect(() => {
@@ -74,7 +66,7 @@ const TrackItem: FC<TrackItemProps> = ({ track, trackList }) => {
     <div className={`${styles.container} ${isVisible ? styles.visible : ''}`}>
       <div className={styles.main_container}>
         <TrackItemCover
-          handlePlay={handlePlay}
+          handlePlay={clickPlay}
           cover={track.picture}
           trackId={track.id}
         />
@@ -89,7 +81,6 @@ const TrackItem: FC<TrackItemProps> = ({ track, trackList }) => {
         />
         <div>
           <DurationContainer
-            isItem={true}
             duration={track.duration}
           />
         </div>

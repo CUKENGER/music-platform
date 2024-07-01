@@ -1,7 +1,6 @@
-import { memo, useState } from "react";
+import { memo} from "react";
 import styles from './Player.module.scss'
 import TrackProgress from "./TrackProgress";
-import { useTypedSelector } from "@/hooks/useTypedSelector";
 import CoverContainer from "./CoverContainer";
 import DurationContainer from "./DurationContainer";
 import NameContainer from "@/UI/NameContainer";
@@ -15,15 +14,7 @@ import PlayerDetailed from "./PlayerDetailed";
 
 const Player = () => {
 
-  const { activeTrack } = useTypedSelector(state => state.playerReducer)
-
-  const [isOpenPlayer, setIsOpenPlayer] = useState(false)
-
-  const { playBtn, deleteLike, addLike } = usePlayerComponent()
-
-  const handleOpen = () => {
-    setIsOpenPlayer(!isOpenPlayer)
-  }
+  const { activeTrack, deleteLike, addLike, handleOpen, isOpenPlayer} = usePlayerComponent()
 
   if (!activeTrack) {
     return null
@@ -39,6 +30,7 @@ const Player = () => {
               cover={activeTrack?.picture}
             />
             <DurationContainer
+              isItem={false}
               duration={activeTrack?.duration}
             />
             <NameContainer
@@ -52,7 +44,7 @@ const Player = () => {
               likes={activeTrack?.likes}
             />
           </div>
-          <PlayerBtns onClick={playBtn} />
+          <PlayerBtns />
           <div className={styles.rigth_container}>
             <MixContainer />
             <TrackProgress isVolume={true} />

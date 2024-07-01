@@ -1,6 +1,7 @@
 import { ChangeEvent, FC, memo, useEffect, useRef } from "react";
 import styles from './Textarea.module.scss'
 import exclamErrorIcon from '@/assets/exclamError.svg'
+import { genToTag } from "@/services/genIdToTag";
 
 interface TextareaProps{
   placeholder: string
@@ -31,11 +32,13 @@ const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur, isEmp
       }
   };
 
+  const id = genToTag()
+
   return (
     <div className={styles.container}>
-       <label className={styles.label} htmlFor="textarea">{placeholder}</label>
+       <label className={styles.label} htmlFor={`textarea-${id}`}>{placeholder}</label>
           <textarea 
-              id="textarea"
+              id={`textarea-${id}`}
               onChange={onChange}
               value={value}
               ref={textareaRef}

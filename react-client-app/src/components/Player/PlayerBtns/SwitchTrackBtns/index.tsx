@@ -10,13 +10,14 @@ interface SwitchTrackBtnsProps {
 }
 
 const SwitchTrackBtns: FC<SwitchTrackBtnsProps> = ({isNextBtn}) => {
-  const { activeTrackList, activeTrack } = useTypedSelector(state => state.playerReducer)
+  const { activeTrack } = useTypedSelector(state => state.playerReducer)
+  const {activeTrackList} = useTypedSelector(state => state.activeTrackListReducer)
   const { setActiveTrack } = useActions()
 
   const handleBtn = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation()
     const tracks = activeTrackList;
-    if (tracks) {
+    if (tracks) { 
       const currentIndex = tracks.findIndex(track => track.id === activeTrack?.id);
       let nextIndex;
       if (isNextBtn) {

@@ -15,7 +15,8 @@ const TrackProgress: FC<TrackProgressProps> = ({ isVolume }) => {
   const [isMute, setIsMute] = useState(false);
   const [prevVolume, setPrevVolume] = useState(50);
 
-  const { volume, duration, currentTime} = useTypedSelector(state => state.playerReducer);
+  const volume = useTypedSelector(state => state.playerReducer.volume);
+  const {currentTime, duration} = useTypedSelector(state => state.trackTimeReducer)
   const { setVolume, setCurrentTime } = useActions();
 
   const changeVolume = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -28,11 +29,11 @@ const TrackProgress: FC<TrackProgressProps> = ({ isVolume }) => {
   }, [audio, setVolume]);
 
   const changeCurrentTime = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (audio) {
+    if (audio && !isVolume) {
       audio.currentTime = Number(e.target.value);
       setCurrentTime(Number(e.target.value));
     }
-  }, [audio, setCurrentTime]);
+  }, [audio, setCurrentTime, isVolume]);
 
   const handleMute = useCallback(() => {
     if (audio) {
@@ -48,8 +49,16 @@ const TrackProgress: FC<TrackProgressProps> = ({ isVolume }) => {
     }
   }, [audio, isMute, volume, prevVolume, setVolume]);
 
-  const inputVolumeStyle = useMemo(() => ({ '--value': `${(volume / 100) * 100}%` }), [volume]);
-  const inputDurationStyle = useMemo(() => ({ '--value': `${(currentTime / duration) * 100}%` }), [currentTime, duration]);
+  const inputVolumeStyle = useMemo(() => ({ 
+    '--value': `${(volume / 100) * 100}%` 
+  }),[volume]);
+
+  const inputDurationStyle = useMemo(() => {
+    if (!isVolume) {
+      return { '--value': `${(currentTime / duration) * 100}%` };
+    }
+    return {};
+  }, [isVolume, currentTime, duration]);
 
   return (
     <>

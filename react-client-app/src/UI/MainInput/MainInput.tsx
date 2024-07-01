@@ -8,7 +8,7 @@ interface MainInputProps{
 const MainInput:FC<MainInputProps> = ({placeholder}) => {
   return (
     <>
-      <input className={styles.input} type="text" placeholder={placeholder}/> 
+      <input name="main_input" className={styles.input} type="text" placeholder={placeholder}/> 
     </>
   );
 };

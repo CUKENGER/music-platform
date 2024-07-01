@@ -18,10 +18,12 @@ const InputString:FC<InputStringProps> = ({placeholder, value, onChange, onBlur,
   //   setValue(e.target.value)
   // }
 
+  const id = genToTag();
+
   return (
     <div className={styles.container}>
       <label 
-        htmlFor={`inputString-${genToTag()}`}
+        htmlFor={`inputString-${id}`}
         className={styles.label}
       >
         {placeholder}
@@ -33,7 +35,7 @@ const InputString:FC<InputStringProps> = ({placeholder, value, onChange, onBlur,
       )}
       
       <input
-        id={`inputString-${genToTag()}`}
+        id={`inputString-${id}`}
         className={styles.input}
         onChange={onChange}
         value={value}

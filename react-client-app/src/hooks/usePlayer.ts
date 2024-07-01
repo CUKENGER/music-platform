@@ -3,14 +3,12 @@ import audioManager from "@/services/AudioManager";
 import { useTypedSelector } from "./useTypedSelector";
 import useActions from "./useActions";
 import { ITrack } from "@/types/track";
-import { useCallback } from "react";
 
 const usePlayer = (trackList: ITrack[] | null) => {
   const audio = audioManager.audio;
 
-  const { volume, activeTrack, pause } = useTypedSelector(state => state.playerReducer);
-  const { setDuration, setCurrentTime, setActiveTrack, setPlay, setPause } = useActions();
-
+  const { volume, activeTrack } = useTypedSelector(state => state.playerReducer);
+  const { setDuration, setCurrentTime, setActiveTrack } = useActions();
 
   const setAudio = () => {
     if (activeTrack && audio) {
@@ -50,21 +48,10 @@ const usePlayer = (trackList: ITrack[] | null) => {
     }
   };
 
-  // const handlePlay = useCallback(async () => {
-  //   if (pause) {
-  //     await audio?.play()
-  //     setPlay();
-  //   } else {
-  //     await audio?.pause();
-  //     setPause();
-  //   }
-  // }, [pause]);
 
   return {
     setAudio,
-    handleNextTrack,
-    audio,
-    // handlePlay
+    handleNextTrack
   }
 
 }

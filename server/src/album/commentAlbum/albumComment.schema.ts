@@ -17,6 +17,12 @@ export class AlbumComment {
     @Column()
     albumId: number
 
+    @Column({ type: 'date'})
+    createdAt: Date;
+
+    @Column({ type: 'date'})
+    updatedAt: Date;
+
     @ManyToOne(() => Album, (album) => album.comments)
     album: Album;
 }

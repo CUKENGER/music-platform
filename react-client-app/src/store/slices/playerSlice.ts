@@ -3,20 +3,14 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface PlayerState {
   activeTrack: ITrack | null;
-  currentTime: number,
-  duration: number;
   pause: boolean;
   volume: number;
-  activeTrackList: ITrack[] | null;
 }
 
 const initialState: PlayerState = {
   activeTrack: null,
-  currentTime: 0,
-  duration: 0,
   pause: true,
-  volume: 50,
-  activeTrackList: null
+  volume: 50
 };
 
 export const playerSlice = createSlice({
@@ -30,21 +24,10 @@ export const playerSlice = createSlice({
       state.pause = true;
     },
     setActiveTrack(state, action: PayloadAction<ITrack>) {
-      if (state.activeTrack?.id !== action.payload.id) {
-        state.activeTrack = action.payload;
-      }
-    },
-    setCurrentTime(state, action: PayloadAction<number>) {
-      state.currentTime = action.payload
-    },
-    setDuration(state, action : PayloadAction<number>){
-      state.duration = action.payload
+      state.activeTrack = action.payload;
     },
     setVolume(state, action: PayloadAction<number>){
       state.volume = action.payload
-    },
-    setActiveTrackList(state, action: PayloadAction<ITrack[]>) {
-      state.activeTrackList = action.payload
     }
   },
 });

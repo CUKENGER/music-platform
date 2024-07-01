@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import styles from './PageHeader.module.scss'
 import DropDownMenu from "@/UI/DropdownMenu";
 import { useNavigate } from "react-router-dom";
@@ -9,9 +9,9 @@ const PageHeader = () => {
 
   const navigate = useNavigate()
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     navigate('/tracks/create')
-  }
+  }, [navigate])
 
   return (
     <div className={styles.container}>

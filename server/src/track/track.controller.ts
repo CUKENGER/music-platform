@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors, Put} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors, Put } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -14,41 +14,41 @@ export class TrackController {
 	constructor(private readonly trackService: TrackService) {
 
 	}
-	
+
 	@Post()
 	@UseInterceptors(FileFieldsInterceptor([
 		{ name: 'picture', maxCount: 1 },
 		{ name: 'audio', maxCount: 1 },
-	  ]))
-  	async create(@UploadedFiles() files, @Body() createTrackDto: CreateTrackDto) {
+	]))
+	async create(@UploadedFiles() files, @Body() createTrackDto: CreateTrackDto) {
 		const { picture, audio } = files;
 
 		if (!audio || !picture) {
 			throw new Error('audio and picture are required');
 		}
-        return this.trackService.create(createTrackDto, picture, audio)
-  	}	
+		return this.trackService.create(createTrackDto, picture, audio)
+	}
 
 	@Get()
 	getAll(@Query('count', ParseIntPipe) count: number,
-			@Query('offset', ParseIntPipe) offset: number) {
+		@Query('offset', ParseIntPipe) offset: number) {
 		return this.trackService.getAll(count, offset)
 	}
 
 	@Get('/search')
 	searchByName(@Query('query') query: string,
-				@Query('count', ParseIntPipe) count: number,
-				@Query('offset', ParseIntPipe) offset: number) {
+		@Query('count', ParseIntPipe) count: number,
+		@Query('offset', ParseIntPipe) offset: number) {
 		return this.trackService.searchByName(query, count, offset)
 	}
 
 	@Get(':id')
-	getOne(@Param('id', ParseIntPipe) id: number ) {
+	getOne(@Param('id', ParseIntPipe) id: number) {
 		return this.trackService.getOne(id)
 	}
 
 	@Delete(':id')
-	delete(@Param('id', ParseIntPipe) id: number ) {
+	delete(@Param('id', ParseIntPipe) id: number) {
 		return this.trackService.delete(id)
 	}
 
@@ -63,13 +63,18 @@ export class TrackController {
 	}
 
 	@Post('/listen/:id')
-	addListen(@Param('id',ParseIntPipe) id: number) {
+	addListen(@Param('id', ParseIntPipe) id: number) {
 		return this.trackService.listen(id)
 	}
 
-	@Post('/likes/:id')
-	addLikes(@Param('id', ParseIntPipe) id: number) {
-		return this.trackService.addLikes(id)
+	@Post('/like/:id')
+	addLike(@Param('id', ParseIntPipe) id: number) {
+		return this.trackService.addLike(id)
+	}
+
+	@Post('/unlike/:id')
+	deleteLike(@Param('id', ParseIntPipe) id: number) {
+		return this.trackService.deleteLike(id)
 	}
 
 	@Post('/comment/like/:id')
@@ -94,15 +99,15 @@ export class TrackController {
 
 	@Put(':id')
 	@UseInterceptors(FileFieldsInterceptor([
-		{name: 'picture', maxCount: 1},
-		{name: 'audio', maxCount: 1},
+		{ name: 'picture', maxCount: 1 },
+		{ name: 'audio', maxCount: 1 },
 	]))
 	async updateTrack(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() newData: Partial<Track>,
 		@UploadedFiles() files
-	):Promise<Track> {
-		const {picture, audio} = files
+	): Promise<Track> {
+		const { picture, audio } = files
 		return this.trackService.updateTrack(id, newData, picture, audio)
 	}
 

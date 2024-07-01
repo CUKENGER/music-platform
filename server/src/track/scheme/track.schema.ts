@@ -21,19 +21,19 @@ export class Track {
   @Column({ default: 0})
   likes: number;
 
-  @Column({ nullable: true })
+  @Column()
   genre: string;
 
-  @Column({ nullable: true })
+  @Column()
   duration: string;
 
-  @Column({ nullable: true })
+  @Column()
   picture: string;
 
-  @Column({ nullable: true })
+  @Column()
   audio: string;
 
-  @Column({ nullable: true })
+  @Column()
   text: string;
 
   @Column({ nullable: true })
@@ -41,6 +41,12 @@ export class Track {
 
   @Column({ nullable: true })
   albumId: number;
+
+  @Column({ type: 'date'})
+  createdAt: Date;
+
+  @Column({ type: 'date', nullable: true})
+  updatedAt: Date;
 
   @ManyToOne(() => Artist, artist => artist.tracks)
   @JoinColumn({ name: 'artistId' })

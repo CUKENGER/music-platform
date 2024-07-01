@@ -27,7 +27,7 @@ const CreateTrackForm = () => {
   
   return (
     <>
-      <form className={styles.create_container}>
+      <form className={styles.create_container} name="create_track">
         <div className={styles.inputs_container}>
           <InputString
             onChange={name.onChange}

@@ -17,6 +17,12 @@ export class ArtistComment {
     @Column()
     artistId: number
 
+    @Column({ type: 'date'})
+    createdAt: Date;
+
+    @Column({ type: 'date'})
+    updatedAt: Date;
+
     @ManyToOne(() => Artist, (artist) => artist.comments)
     @JoinColumn({ name: 'artistId' })
     artist: Artist;

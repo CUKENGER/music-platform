@@ -18,8 +18,11 @@ export class TrackComment {
     @Column()
     trackId: number
 
-    @Column({nullable: true})
-    createDate: Date
+    @Column({ type: 'date'})
+    createdAt: Date;
+
+    @Column({ type: 'date'})
+    updatedAt: Date;
 
     @Column({default: 0})
     likes: number

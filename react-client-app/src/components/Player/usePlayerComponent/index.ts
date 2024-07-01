@@ -1,78 +1,53 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAddLikeTrackMutation, useAddListenMutation, useDeleteLikeTrackMutation } from "@/api/Track/TrackService";
-import audioManager from "@/services/AudioManager";
 import { useTypedSelector } from "@/hooks/useTypedSelector";
-import useActions from "@/hooks/useActions";
 
 export const usePlayerComponent = () => {
-  const { activeTrack,
-    pause,
-    activeTrackList,
-    currentTime,
-    duration } = useTypedSelector(state => state.playerReducer);
+  const activeTrack = useTypedSelector(state => state.playerReducer.activeTrack);
 
-  const {
-    setPlay,
-    setPause,
-    setActiveTrackList } = useActions();
-
-  const [isMix, setIsMix] = useState(false);
   const [hasListen, setHasListen] = useState(false);
+  const [isOpenPlayer, setIsOpenPlayer] = useState(false)
 
   const [deleteLike] = useDeleteLikeTrackMutation()
   const [addLike] = useAddLikeTrackMutation()
 
-  const [addListenMutation] = useAddListenMutation()
-  const audio = audioManager.audio
+  const [addListen] = useAddListenMutation()
 
   useEffect(() => {
-    if (currentTime >= 30 && !hasListen && activeTrack) {
-      if (activeTrack.id) {
-        addListenMutation(activeTrack.id);
-        setHasListen(true);
-      }
+    let timeoutId: NodeJS.Timeout;
+
+    if (activeTrack && !hasListen) {
+      timeoutId = setTimeout(() => {
+        if (activeTrack.id) {
+          addListen(activeTrack.id);
+          console.log('add');
+          setHasListen(true);
+        }
+      }, 30000); // 30000 миллисекунд = 30 секунд
     }
-  }, [currentTime, hasListen, activeTrack, addListenMutation]);
 
-  // const handleTrackClick = useCallback(() => {
-  //   if (activeTrack) {
-  //     router.push('/tracks/' + activeTrack?.id);
-  //     // setOpenedTrack(activeTrack);
-  //   }
-  // }, [router, activeTrack, setOpenedTrack]);
+    // Очистка таймера, если компонент размонтируется или трек меняется
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [activeTrack, hasListen, addListen]);
 
-  const playBtn = useCallback(async () => {
-    // audio?.load()
-    if (pause) {
-      await audio?.play()
-      setPlay();
-    } else {
-      await audio?.pause();
-      setPause();
+  // Сбрасываем hasListen при смене трека
+  useEffect(() => {
+    if (activeTrack) {
+      setHasListen(false);
     }
-  }, [pause]);
+  }, [activeTrack]);
 
-  // const handleOpenPlayer = useCallback(() => {
-  //   setIsOpenPlayerDetailed(!isOpenPlayerDetailed);
-  // }, [isOpenPlayerDetailed, setIsOpenPlayerDetailed]);
-
-  // const handleMix = useCallback(() => {
-  //   if (isMix) {
-  //     setActiveTrackList(defaultTrackList);
-  //   } else {
-  //     setActiveTrackList(mixTracks(activeTrackList));
-  //   }
-  //   setIsMix(!isMix);
-  // }, [isMix, activeTrackList, defaultTrackList, setActiveTrackList]);
+  const handleOpen = () => {
+    setIsOpenPlayer(!isOpenPlayer)
+  }
 
   return {
     activeTrack,
-    pause,
-    currentTime,
-    duration,
-    isMix,
-    playBtn,
     addLike,
-    deleteLike
+    deleteLike,
+    handleOpen,
+    isOpenPlayer
   }
 }
