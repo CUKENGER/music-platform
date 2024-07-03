@@ -9,7 +9,7 @@
 
 .name,
 .artist{
-  width: 100px;
+  // width: 100px;
   width: 150px;
   overflow:hidden;
   text-overflow: ellipsis;
@@ -38,5 +38,17 @@
 @media(max-width:650px) {
   .name_container{
     font-size: 12px;
+  }
+}
+
+@media(max-width:400px) {
+  .name,
+  .artist{
+    width: 88px;
+  }
+
+  .name_container{
+    font-size: 10px;
+    // row-gap: 0px;
   }
 }

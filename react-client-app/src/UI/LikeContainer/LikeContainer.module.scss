@@ -13,3 +13,19 @@
 .like_count{
   color: var(--textgray);
 }
+
+@media(max-width:400px) {
+  .like_container{
+    width: 15px;
+    height: 15px;
+  }
+
+  .like_count{
+    font-size: 12px;
+  }
+
+  .like{
+    width: 100%;
+    height: 100%;
+  }
+}

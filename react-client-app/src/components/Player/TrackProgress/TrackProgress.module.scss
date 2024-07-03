@@ -1,7 +1,7 @@
 
 
 .input_duration_container{
-  // height: 30px;
+  height: 20px;
   width: 100%;
 }
 
@@ -100,6 +100,20 @@
   transition: background 0.3s ease;
 }
 
+.hover_time {
+  position: absolute;
+  background-color: var(--bg);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  bottom: 20px;
+}
+
+.input_duration_container {
+  position: relative;
+}
+
 @media(max-width:700px) {
 
   .volume_icon{
@@ -107,7 +121,6 @@
       height: 35px;
   }
 }
-
 
 @media(max-width: 650px) {
   .volume_icon{
@@ -120,3 +133,13 @@
       display: none;
   }
 }
+
+// @media(max-width:400px){
+//   .input_duration[type="range"],
+//   .input_duration[type="range"]::-webkit-slider-runnable-track,
+//   .input_duration[type="range"]::-moz-range-track{
+//     height:30px;
+//   }
+
+  
+// }

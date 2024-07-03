@@ -27,3 +27,14 @@
   height: 40px;
   background-color: var(--textgray);
 }
+
+@media(max-width:700px) {
+
+  .name_container{
+    display: none;
+  }
+  .container{
+    width: 50px;
+    padding: 5px;
+  }
+}

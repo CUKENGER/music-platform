@@ -1,6 +1,5 @@
 import { memo } from "react";
 import styles from './Header.module.scss'
-import burgerBtn from '@/assets/burgerBtn.svg'
 import MainInput from "@/UI/MainInput/MainInput";
 
 const Header = () => {

@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { Album } from 'src/album/album.schema';
 import { Artist } from 'src/artist/scheme/artist.schema';
 import { TrackComment } from './trackComment.schema';
+import { Min } from 'class-validator';
 
 
 @Entity()
@@ -19,6 +20,7 @@ export class Track {
   listens: number;
 
   @Column({ default: 0})
+  @Min(0)
   likes: number;
 
   @Column()

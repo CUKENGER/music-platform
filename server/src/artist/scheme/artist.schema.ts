@@ -2,6 +2,7 @@ import { Album } from "src/album/album.schema";
 import { Track } from "src/track/scheme/track.schema";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ArtistComment } from "../artistComment/artistComment.schema";
+import { Min } from "class-validator";
 
 @Entity()
 export class Artist {
@@ -21,6 +22,7 @@ export class Artist {
   listens: number;
 
   @Column({ default: 0})
+  @Min(0)
   likes: number;
 
   @Column()

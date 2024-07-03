@@ -14,6 +14,9 @@ const TrackProgress: FC<TrackProgressProps> = ({ isVolume }) => {
   const audio = audioManager.audio;
   const [isMute, setIsMute] = useState(false);
   const [prevVolume, setPrevVolume] = useState(50);
+  const [x, setX] = useState(0);
+  const [hoverTime, setHoverTime] = useState('')
+
 
   const volume = useTypedSelector(state => state.playerReducer.volume);
   const {currentTime, duration} = useTypedSelector(state => state.trackTimeReducer)
@@ -60,6 +63,36 @@ const TrackProgress: FC<TrackProgressProps> = ({ isVolume }) => {
     return {};
   }, [isVolume, currentTime, duration]);
 
+  const handleMouseOver = useCallback((e: React.MouseEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (!isVolume) {
+      const offsetX = e.nativeEvent.offsetX;
+      const offsetY = e.nativeEvent.offsetY;
+      setX(offsetX);
+      const maxValue = parseInt(target.max, 10);
+      const value = (offsetX / target.offsetWidth) * maxValue;
+      const time = Math.floor(value / 60) + ':' + (value % 60 < 10 ? '0' : '') + Math.floor(value % 60);
+      setHoverTime(time);
+    }
+  }, [isVolume]);
+  
+  const handleMouseLeave = useCallback(() => {
+    setHoverTime('')
+  }, [setHoverTime]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (!isVolume) {
+      const offsetX = e.nativeEvent.offsetX;
+      const offsetY = e.nativeEvent.offsetY;
+      setX(offsetX);
+      const maxValue = parseInt(target.max, 10);
+      const value = (offsetX / target.offsetWidth) * maxValue;
+      const time = Math.floor(value / 60) + ':' + (value % 60 < 10 ? '0' : '') + Math.floor(value % 60);
+      setHoverTime(time);
+    }
+  }, [isVolume]);
+
   return (
     <>
       {isVolume ? (
@@ -82,7 +115,25 @@ const TrackProgress: FC<TrackProgressProps> = ({ isVolume }) => {
         </div>
       ) : (
         <div className={styles.input_duration_container}>
+          {hoverTime !== '' 
+          ? (
+            <div 
+              className={styles.hover_time}   
+              style={{
+                // top: `${y - 20}px`,
+                left: `${x - 13}px`,
+              }}
+            >
+              {hoverTime}
+            </div>
+          ) 
+          : ('')
+          }
+          
           <input
+            onMouseOver={handleMouseOver}
+            onMouseLeave={handleMouseLeave}
+            onMouseMove={handleMouseMove}
             type="range"
             min={0}
             max={duration}

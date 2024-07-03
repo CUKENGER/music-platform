@@ -190,3 +190,15 @@ a {
 *::-webkit-scrollbar-thumb:hover {
   background: var(--textgray); 
 }
+
+
+@media(max-width:460px){
+  button {
+    padding: 6px 15px;
+    font-size: 12px;
+    
+    &:hover{
+      color: var(--text);
+    }
+  }
+}

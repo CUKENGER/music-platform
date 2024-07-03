@@ -1,40 +1,43 @@
-import { FC, memo, useEffect, useState } from "react";
+import { FC, memo, useCallback, useEffect, useState } from "react";
 import styles from './LikeContainer.module.scss'
 import likeIcon from '@/assets/likeIcon.svg'
 import likeFillIcon from '@/assets/likeFillIcon.svg'
+import useActions from "@/hooks/useActions";
+import { ITrack } from "@/types/track";
 
 interface LikeContainerProps {
   deleteLike: (id:number) => void;
   addLike: (id: number) => void;
-  likes: number | undefined
-  id:number
+  track: ITrack
 }
 
-const LikeContainer: FC<LikeContainerProps> = ({deleteLike, addLike, likes, id}) => {
+const LikeContainer: FC<LikeContainerProps> = ({deleteLike, addLike, track}) => {
 
   const [isLike, setIsLike] = useState(false);
-  const [localLikes, setLocalLikes] = useState(0);
+
+  const {setActiveTrack} = useActions()
 
   const handleLike = async () => {
     try {
-      if (isLike) {
-        await deleteLike(id);
-        setLocalLikes(prevLikes => prevLikes - 1);
-      } else {
-        await addLike(id);
-        setLocalLikes(prevLikes => prevLikes + 1);
+      if(track) {
+        if (isLike) {
+          await deleteLike(track?.id);
+        } else {
+          await addLike(track?.id);
+        }
+        setIsLike(prevIsLike => !prevIsLike);
+  
+        if(track) {
+          // Fetch updated likes count
+          const updatedTrack = track
+          // Update the likes count in the state
+          setActiveTrack(updatedTrack);
+        }
       }
-      setIsLike(prevIsLike => !prevIsLike);
     } catch (e) {
       console.log('Error handling like:', e);
     }
-  };
-
-  useEffect(() => {
-    if (likes) {
-      setLocalLikes(likes)
-    }
-  }, [likes])
+  }
 
   return (
     <div className={styles.like_container} onClick={handleLike}>
@@ -44,7 +47,7 @@ const LikeContainer: FC<LikeContainerProps> = ({deleteLike, addLike, likes, id})
         alt="like icon"
       />
       <p className={styles.like_count}>
-        {localLikes}
+        {track?.likes > 0 ? track?.likes : 0}
       </p>
     </div>
   );

@@ -9,7 +9,7 @@ export const usePlayerComponent = () => {
   const [isOpenPlayer, setIsOpenPlayer] = useState(false)
 
   const [deleteLike] = useDeleteLikeTrackMutation()
-  const [addLike] = useAddLikeTrackMutation()
+  const [addLike,{}] = useAddLikeTrackMutation()
 
   const [addListen] = useAddListenMutation()
 

@@ -85,9 +85,11 @@ const TrackItem: FC<TrackItemProps> = ({ track, trackList }) => {
           />
         </div>
         {isAdmin && (
-          <DeleteContainer
-            onClick={handleDelete}
-          />
+          <div className={styles.delete}>
+              <DeleteContainer
+                onClick={handleDelete}
+              />
+          </div>
         )}
       </div>
     </div>

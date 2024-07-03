@@ -76,3 +76,24 @@
     width: auto;
   }
 }
+
+@media(max-width:430px) {
+
+  .container{
+    padding: 0 5px;
+  }
+
+  .main_container{
+    column-gap: 5px;
+  }
+
+  .right_container{
+    column-gap: 6px;
+  }
+}
+
+@media(max-width:340px) {
+  .delete{
+    display: none;
+  }
+}

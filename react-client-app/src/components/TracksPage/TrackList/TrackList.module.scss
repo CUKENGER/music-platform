@@ -7,3 +7,9 @@
   row-gap: 8px;
   padding-bottom: 100px;
 }
+
+@media(max-width:400px) {
+  .container{
+    row-gap: 5px;
+  }
+}

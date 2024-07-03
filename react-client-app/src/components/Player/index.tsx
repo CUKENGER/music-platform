@@ -12,12 +12,18 @@ import MixContainer from "./MixContainer";
 import Portal from "../Portal";
 import PlayerDetailed from "./PlayerDetailed";
 import useWindowWidth from "@/hooks/useWindowWidth";
+import { useTypedSelector } from "@/hooks/useTypedSelector";
+import { useGetOneTrackQuery } from "@/api/Track/TrackService";
 
 const Player = () => {
 
-  const { activeTrack, deleteLike, addLike, handleOpen, isOpenPlayer } = usePlayerComponent()
-
   const windowWidth = useWindowWidth()
+
+  const activeTrack = useTypedSelector(state => state.playerReducer.activeTrack)
+
+  const {data:track} = useGetOneTrackQuery(activeTrack?.id ?? 0)
+ 
+  const { deleteLike, addLike, handleOpen, isOpenPlayer } = usePlayerComponent()
 
   if (!activeTrack) {
     return null
@@ -32,20 +38,23 @@ const Player = () => {
             <CoverContainer
               cover={activeTrack?.picture}
             />
-            <DurationContainer
-              isItem={false}
-              duration={activeTrack?.duration}
-            />
+            <div className={styles.duration}>
+              <DurationContainer
+                isItem={false}
+                duration={activeTrack?.duration}
+              />
+            </div>
             <NameContainer
               name={activeTrack?.name}
               artist={activeTrack?.artist}
             />
-            <LikeContainer
-              addLike={addLike}
-              deleteLike={deleteLike}
-              id={activeTrack?.id}
-              likes={activeTrack?.likes}
-            />
+            {track && (
+              <LikeContainer
+                addLike={addLike}
+                deleteLike={deleteLike}
+                track={track}
+              />
+            )}
           </div>
           {windowWidth && windowWidth < 800 
             ? (<PlayerBtns needPrevNextBtns={false}/>) 

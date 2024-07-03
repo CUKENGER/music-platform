@@ -9,7 +9,7 @@ const Navbar = () => {
         <div className={styles.user_info_container}>
           <div className={styles.user_avatar}>
           </div>
-          <div>
+          <div className={styles.name_container}>
             <p>ИмяФамилия</p>
           </div>
         </div>

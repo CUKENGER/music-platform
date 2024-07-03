@@ -1,10 +1,12 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
+  private readonly logger = new Logger(LoggingMiddleware.name);
+
   use(req: Request, res: Response, next: NextFunction) {
-    console.log(`Request URL: ${req.originalUrl}`);
+    this.logger.log(`[${new Date().toISOString()}] Request URL: ${req.originalUrl}`);
     let responseData: any; // переменная для хранения данных ответа
 
     // Перехватываем функцию res.json()
@@ -16,8 +18,8 @@ export class LoggingMiddleware implements NestMiddleware {
 
     // Логируем данные ответа после отправки ответа клиенту
     res.on('finish', () => {
-      console.log(`Response status: ${res.statusCode}`);
-      console.log(`Response data: ${JSON.stringify(responseData)}`);
+      this.logger.log(`Response status: ${res.statusCode}`);
+      this.logger.log(`Response data: ${JSON.stringify(responseData, null, 2)}`);
     });
 
     next();

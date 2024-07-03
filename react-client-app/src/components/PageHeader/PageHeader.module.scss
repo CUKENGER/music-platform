@@ -7,3 +7,9 @@
   height: 45px;
   width: 100%;
 }
+
+@media(max-width:400px){
+  .container{
+    height: 35px;
+  }
+}
