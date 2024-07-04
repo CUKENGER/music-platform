@@ -1,7 +1,8 @@
 import { ChangeEvent, FC, memo, useEffect, useRef } from "react";
 import styles from './Textarea.module.scss'
-import exclamErrorIcon from '@/assets/exclamError.svg'
 import { genToTag } from "@/services/genIdToTag";
+import ExclamIcon from "../ExclamIcon";
+import ClearIcon from "../ClearIcon";
 
 interface TextareaProps{
   placeholder: string
@@ -9,10 +10,11 @@ interface TextareaProps{
   onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur: (e: ChangeEvent<HTMLTextAreaElement>) => void,
   isEmpty?: boolean;
-  isRequired?: boolean
+  isRequired?: boolean;
+  setValue?: (e:string) => void
 }
 
-const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur, isEmpty, isRequired=true}) => {
+const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur, isEmpty, isRequired=true, setValue}) => {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -34,6 +36,12 @@ const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur, isEmp
 
   const id = genToTag()
 
+  const handleClear = () => {
+    if(setValue) {
+      setValue('')
+    }
+  }
+
   return (
     <div className={styles.container}>
        <label className={styles.label} htmlFor={`textarea-${id}`}>{placeholder}</label>
@@ -49,11 +57,9 @@ const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur, isEmp
           >
             
         </textarea>
-        {isEmpty && (
-          <div className={styles.exclam_container}>
-            <img className={styles.exclam} src={exclamErrorIcon} alt="error icon" />
-          </div>
-        )}
+        {isEmpty ? (<ExclamIcon/>) : (<ClearIcon handleClear={handleClear}/>)}
+        
+        
     </div>
   );
 };

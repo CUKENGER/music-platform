@@ -3,20 +3,23 @@
 [x] - сделать страницу создания трека
 [x] - сделать страницу списка треков
 [x] - make adaptive in TrackList,Player,Header, Navbar
-[] - make ebanye likes which is not work blyat
-[] - сделать адаптив в готовых компонентах
+[x] - подсвечивать время на TrackProgress
+[x] - make ebanye likes which is not work blyat
+[_x] - сделать адаптив в готовых компонентах
 [] - страница трека(роутинг)
-[] - адаптив TrackItem
+[x] - адаптив TrackItem
 [] - сделать страницу для каждого трека(разобраться с роутингом)
 [] - сделать адаптив
 [] - наполнить контентом
 [] - сделать авторизацию
 [] - попробовать сделать алгоритмы
-[] - подсвечивать время на TrackProgress
-[] - 
-[] -
-[] -
-[] -
+[] - подставлять имя трека при загрузке
+[] - появляется стрелка в playerDetailed
+[] - поворот стрелки openPlayerDetailed
+[] - нажатие на плеер -- открытие playerDetailed(mobile...)
+[] - подсказки при наведении(react-tooltip или самопис)
+[x] - exclam and clear components
+[] - textContainerComponent
 [] -
 [] -
 [] -

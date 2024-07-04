@@ -1,7 +1,7 @@
 import { useCreateTrackMutation } from "@/api/Track/TrackService"
 import { useInput } from "@/hooks/useInput"
 import useModal from "@/hooks/useModal"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 
 const useCreateTrackForm = () => {
@@ -16,6 +16,19 @@ const useCreateTrackForm = () => {
   const [cover, setCover] = useState<File | null>(null)
 
   const [createTrack, { isLoading }] = useCreateTrackMutation()
+
+  useEffect(() => {
+    if (audio?.name) {
+      const str = audio.name;
+      const match = str.match(/\.(.*)\./);
+      if (match && match[1]) {
+        const word = match[1].trim();
+        name.setValue(word);
+      } else {
+        name.setValue(''); // Обработка случая, когда нет совпадений
+      }
+    }
+  }, [audio]);
 
   const hasData = !!(
     name.value.trim() &&

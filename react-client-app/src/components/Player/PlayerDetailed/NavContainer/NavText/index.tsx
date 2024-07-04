@@ -8,9 +8,11 @@ const NavText = () => {
 
   return (
     <div className={styles.container}>
-      <p className={styles.text}>
-        {activeTrack?.text}
-      </p>
+      {activeTrack?.text.split('\n').map((line, index) => (
+        <p key={index} className={styles.line}>
+          {line}
+        </p>
+      ))}
     </div>
   );
 };

@@ -24,7 +24,7 @@ export const tracksApi = createApi({
                 url: `tracks/${id}`,
                 method: 'GET',
             }),
-            providesTags: (result) => ['Track'],
+            providesTags: (result) => result ? [{ type: 'Track', id: result.id }] : ['Track'],
         }),
         createTrack : builder.mutation<ITrack, FormData>({
             query: (track) => ({

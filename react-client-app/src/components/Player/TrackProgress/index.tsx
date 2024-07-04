@@ -67,7 +67,6 @@ const TrackProgress: FC<TrackProgressProps> = ({ isVolume }) => {
     const target = e.target as HTMLInputElement;
     if (!isVolume) {
       const offsetX = e.nativeEvent.offsetX;
-      const offsetY = e.nativeEvent.offsetY;
       setX(offsetX);
       const maxValue = parseInt(target.max, 10);
       const value = (offsetX / target.offsetWidth) * maxValue;
@@ -84,7 +83,6 @@ const TrackProgress: FC<TrackProgressProps> = ({ isVolume }) => {
     const target = e.target as HTMLInputElement;
     if (!isVolume) {
       const offsetX = e.nativeEvent.offsetX;
-      const offsetY = e.nativeEvent.offsetY;
       setX(offsetX);
       const maxValue = parseInt(target.max, 10);
       const value = (offsetX / target.offsetWidth) * maxValue;

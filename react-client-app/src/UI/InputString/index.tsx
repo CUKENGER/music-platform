@@ -1,7 +1,9 @@
 import { ChangeEvent, FC, memo } from "react";
 import styles from './InputString.module.scss'
 import { genToTag } from "@/services/genIdToTag";
-import exclamErrorIcon from '@/assets/exclamError.svg'
+import ClearIcon from "../ClearIcon";
+import ExclamIcon from "../ExclamIcon";
+
 
 interface InputStringProps{
   value:string;
@@ -9,16 +11,19 @@ interface InputStringProps{
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onBlur: (e: ChangeEvent<HTMLInputElement>) => void,
   isEmpty?: boolean;
-  isRequired?: boolean
+  isRequired?: boolean;
+  setValue?:(e:string) => void
 }
 
-const InputString:FC<InputStringProps> = ({placeholder, value, onChange, onBlur, isEmpty, isRequired=true}) => {
-
-  // const handleChange = (e:ChangeEvent<HTMLInputElement>) => {
-  //   setValue(e.target.value)
-  // }
+const InputString:FC<InputStringProps> = ({placeholder, value, onChange, onBlur, isEmpty, isRequired=true, setValue}) => {
 
   const id = genToTag();
+
+  const handleClear = () => {
+    if(setValue){
+      setValue('')
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -28,12 +33,7 @@ const InputString:FC<InputStringProps> = ({placeholder, value, onChange, onBlur,
       >
         {placeholder}
       </label>
-      {isEmpty && (
-        <div className={styles.exclam_container}>
-          <img className={styles.exclam} src={exclamErrorIcon} alt="error icon" />
-        </div>
-      )}
-      
+      {isEmpty ? (<ExclamIcon/>) : (<ClearIcon handleClear={handleClear}/>)}
       <input
         id={`inputString-${id}`}
         className={styles.input}
@@ -43,6 +43,7 @@ const InputString:FC<InputStringProps> = ({placeholder, value, onChange, onBlur,
         onBlur={onBlur}
         required={isRequired}
       />
+      
     </div>
   );
 };

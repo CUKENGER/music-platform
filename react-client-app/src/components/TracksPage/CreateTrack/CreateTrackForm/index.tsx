@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import styles from './CreateTrackForm.module.scss'
 import InputString from "@/UI/InputString";
 import Textarea from "@/UI/Textarea";
@@ -6,6 +6,8 @@ import InputFile from "@/UI/InputFile";
 import UploadBtn from "@/UI/UploadBtn";
 import ModalContainer from "@/UI/ModalContainer";
 import useCreateTrackForm from "./useCreateTrackForm";
+import { genres } from "@/services/genres";
+import CheckInput from "@/UI/CheckInput";
 
 const CreateTrackForm = () => {
 
@@ -23,7 +25,9 @@ const CreateTrackForm = () => {
     setAudio,
     setCover, 
     isLoading
-  } =useCreateTrackForm()
+  } = useCreateTrackForm()
+
+  const [options, setOptions] = useState(genres) 
   
   return (
     <>
@@ -35,6 +39,7 @@ const CreateTrackForm = () => {
             placeholder="Введите название"
             value={name.value}
             isEmpty={name.isEmpty}
+            setValue={name.setValue}
           />
           <InputString
             onChange={artist.onChange}
@@ -42,13 +47,13 @@ const CreateTrackForm = () => {
             placeholder="Введите исполнителя"
             value={artist.value}
             isEmpty={artist.isEmpty}
+            setValue={artist.setValue}
           />
-          <InputString
-            onChange={genre.onChange}
-            onBlur={genre.onBlur}
-            placeholder="Введите исполнителя"
+          <CheckInput
+            options={options}
+            setOptions={setOptions}
+            setValue={genre.setValue}
             value={genre.value}
-            isEmpty={genre.isEmpty}
           />
           <Textarea
             onChange={text.onChange}
@@ -56,6 +61,7 @@ const CreateTrackForm = () => {
             placeholder="Введите текст песни"
             value={text.value}
             isEmpty={text.isEmpty}
+            setValue={text.setValue}
           />
 
         </div>
