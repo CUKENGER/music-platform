@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { Track } from './track/scheme/track.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TrackModule } from './track/track.module';
@@ -16,10 +16,14 @@ import { Artist } from './artist/scheme/artist.schema';
 import { ArtistModule } from './artist/artist.module';
 import { TrackComment } from './track/scheme/trackComment.schema';
 import { TrackReplyComment } from './track/scheme/trackReplyComment.schema';
+import { LyricsService } from './lyrics/lyrics.service';
+import { HttpModule } from '@nestjs/axios';
+import { LyricsController } from './lyrics/lyrics.controller';
 
 
 @Module({
   imports: [
+    HttpModule,
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, '..','static'),
     }),
@@ -46,15 +50,14 @@ import { TrackReplyComment } from './track/scheme/trackReplyComment.schema';
     AlbumModule,
     ArtistModule
   ],
-  controllers: [],
-  providers: [],
+  controllers: [LyricsController],
+  providers: [LyricsService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggingMiddleware)
       .forRoutes('*'); // Apply middleware to all routes
-  
     // You can also apply middleware to specific routes
   
     // Apply interceptor globally

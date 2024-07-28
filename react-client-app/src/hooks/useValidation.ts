@@ -15,8 +15,6 @@ const useValidation = (value: string, validations: validTerms) => {
           value.trim() ? setIsEmpty(false) : setIsEmpty(true)
           break
       }
-        
-      
     }
   }, [value])
 

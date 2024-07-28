@@ -2,12 +2,15 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module';
 import * as compression from 'compression'
 import * as timeout from 'connect-timeout';
+import * as dotenv from 'dotenv'
+
+dotenv.config();
 
 const start = async () => {
 	try {
 		const PORT = parseInt(process.env.PORT,10) || 5000
  		const app = await NestFactory.create(AppModule)
-		
+
 		// чтобы отправлять запросы с браузера
 		app.enableCors()
 

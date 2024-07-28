@@ -2,6 +2,13 @@ import { ITrack } from "@/types/track"
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import { apiUrl } from "../apiUrl";
 
+interface TrackSearchResult {
+    track_id?: number | undefined;
+    track_name: string;
+    artist_name: string;
+    track_genre: string;
+  }
+
 
 export const tracksApi = createApi({
     reducerPath: 'tracksApi',
@@ -80,6 +87,7 @@ export const tracksApi = createApi({
             }),
             invalidatesTags: ['Track']
         }),
+        
     })
 })
 
@@ -91,5 +99,5 @@ export const { useGetTracksQuery,
      useSearchByNameQuery,
      useUpdateTrackMutation,
      useAddLikeTrackMutation,
-     useDeleteLikeTrackMutation
+     useDeleteLikeTrackMutation,
 } = tracksApi

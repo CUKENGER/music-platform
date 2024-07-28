@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo } from "react";
 import styles from './CreateTrackForm.module.scss'
 import InputString from "@/UI/InputString";
 import Textarea from "@/UI/Textarea";
@@ -6,7 +6,6 @@ import InputFile from "@/UI/InputFile";
 import UploadBtn from "@/UI/UploadBtn";
 import ModalContainer from "@/UI/ModalContainer";
 import useCreateTrackForm from "./useCreateTrackForm";
-import { genres } from "@/services/genres";
 import CheckInput from "@/UI/CheckInput";
 
 const CreateTrackForm = () => {
@@ -24,11 +23,11 @@ const CreateTrackForm = () => {
     hasData,
     setAudio,
     setCover, 
-    isLoading
+    isLoading,
+    options,
+    setOptions
   } = useCreateTrackForm()
 
-  const [options, setOptions] = useState(genres) 
-  
   return (
     <>
       <form className={styles.create_container} name="create_track">

@@ -23,7 +23,7 @@ const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur, isEmp
           textareaRef.current.style.height = '100%';
           textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
       }
-  }, []);
+  }, [value]);
 
   const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
       e.currentTarget.style.height = 'auto';

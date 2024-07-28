@@ -8,10 +8,10 @@
 }
 
 .line {
-  margin: 4px 0;
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--text);
+  // margin: 4px 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--karaoke-text);
 }
 
 /* Пример дополнительных стилей */
@@ -20,5 +20,9 @@
 }
 
 .line:hover {
-  color: var(--pmr);
+  color: var(--text);
+}
+
+.currentLine{
+  color: var(--text);
 }

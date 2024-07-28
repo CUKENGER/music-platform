@@ -1,6 +1,10 @@
+import { apiUrl } from "@/api/apiUrl"
 import { useCreateTrackMutation } from "@/api/Track/TrackService"
+import useDebounce from "@/hooks/useDebounce"
 import { useInput } from "@/hooks/useInput"
 import useModal from "@/hooks/useModal"
+import { genres } from "@/services/genres"
+import axios from "axios"
 import { useEffect, useState } from "react"
 
 
@@ -14,6 +18,11 @@ const useCreateTrackForm = () => {
 
   const [audio, setAudio] = useState<File | null>(null)
   const [cover, setCover] = useState<File | null>(null)
+
+  const [options, setOptions] = useState(genres) 
+
+  const debouncedName = useDebounce(name.value, 500);
+  const debouncedArtist = useDebounce(artist.value, 500);
 
   const [createTrack, { isLoading }] = useCreateTrackMutation()
 
@@ -29,6 +38,27 @@ const useCreateTrackForm = () => {
       }
     }
   }, [audio]);
+
+  useEffect(() => {
+    const get = async () => {
+      if( debouncedArtist && debouncedName) {
+        try {
+          const response = await axios.get(apiUrl + 'lyrics/search', {
+            params: {track_name: debouncedName, artist_name: debouncedArtist}
+          });
+          
+          if (response.data.track_id) {
+            const lyricsResponse = await axios.get(apiUrl + `lyrics?track_id=${response.data.track_id}`);
+            console.log('lyricsResponse',lyricsResponse.data)
+            text.setValue(lyricsResponse.data)
+          }
+        } catch(e) {
+          console.error('Error in get', e)
+        }
+      }
+    }
+    get()
+  }, [debouncedArtist, debouncedName])
 
   const hasData = !!(
     name.value.trim() &&
@@ -64,6 +94,8 @@ const useCreateTrackForm = () => {
 
   }
 
+  
+
   return {
     name,
     artist,
@@ -77,7 +109,9 @@ const useCreateTrackForm = () => {
     hasData,
     setAudio,
     setCover,
-    isLoading
+    isLoading,
+    options,
+    setOptions
   }
 }
 

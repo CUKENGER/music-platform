@@ -6,9 +6,11 @@ const NavText = () => {
 
   const {activeTrack} = useTypedSelector(state => state.playerReducer)
 
+  const lines = activeTrack?.text.split('\n')
+
   return (
     <div className={styles.container}>
-      {activeTrack?.text.split('\n').map((line, index) => (
+      {lines && lines.map((line, index) => (
         <p key={index} className={styles.line}>
           {line}
         </p>
