@@ -4,8 +4,6 @@ import Albums from "@/pages/Albums";
 import Artists from "@/pages/Artists";
 import CreateTrack from "@/components/TracksPage/CreateTrack";
 
-
-
 export const publicRoutes =[
   {path: '/', component: Index, exact:true},
   {path: '/tracks', component: Tracks, exact:true},

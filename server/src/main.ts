@@ -11,7 +11,6 @@ const start = async () => {
 		const PORT = parseInt(process.env.PORT,10) || 5000
  		const app = await NestFactory.create(AppModule)
 
-		// чтобы отправлять запросы с браузера
 		app.enableCors()
 
 		app.use(compression())

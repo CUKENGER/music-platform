@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { Track } from './track/scheme/track.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TrackModule } from './track/track.module';
@@ -20,12 +20,11 @@ import { LyricsService } from './lyrics/lyrics.service';
 import { HttpModule } from '@nestjs/axios';
 import { LyricsController } from './lyrics/lyrics.controller';
 
-
 @Module({
   imports: [
     HttpModule,
     ServeStaticModule.forRoot({
-      rootPath: path.resolve(__dirname, '..','static'),
+      rootPath: path.resolve(__dirname, '..', 'static'),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -35,31 +34,29 @@ import { LyricsController } from './lyrics/lyrics.controller';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       entities: [
-        Track, 
-        Album, 
+        Track,
+        Album,
         AlbumComment,
-        Artist, 
+        Artist,
         ArtistComment,
         TrackComment,
-        TrackReplyComment
+        TrackReplyComment,
       ],
       synchronize: true,
     }),
     TrackModule,
     FileModule,
     AlbumModule,
-    ArtistModule
+    ArtistModule,
   ],
   controllers: [LyricsController],
   providers: [LyricsService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggingMiddleware)
-      .forRoutes('*'); // Apply middleware to all routes
+    consumer.apply(LoggingMiddleware).forRoutes('*'); // Apply middleware to all routes
     // You can also apply middleware to specific routes
-  
+
     // Apply interceptor globally
     providers: [
       {
