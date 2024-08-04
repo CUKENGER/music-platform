@@ -1,24 +1,32 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { Track } from './track/scheme/track.schema';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TrackModule } from './track/track.module';
-import { FileModule } from './file/file.module';
+import { HttpModule } from '@nestjs/axios';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'path';
-import { Album } from './album/album.schema';
 import { AlbumModule } from './album/album.module';
+import { Album } from './album/album.schema';
 import { AlbumComment } from './album/commentAlbum/albumComment.schema';
-import { LoggingMiddleware } from './middleware/appMiddleware';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from './middleware/appInterceptor';
+import { ArtistModule } from './artist/artist.module';
 import { ArtistComment } from './artist/artistComment/artistComment.schema';
 import { Artist } from './artist/scheme/artist.schema';
-import { ArtistModule } from './artist/artist.module';
+import { AuthModule } from './auth/auth.module';
+import { MailService } from './auth/mail.service';
+import { FileModule } from './file/file.module';
+import { LyricsController } from './lyrics/lyrics.controller';
+import { LyricsService } from './lyrics/lyrics.service';
+import { AuthMiddleware } from './middleware/auth.middleware';
+import { ErrorMiddleware } from './middleware/error.middleware';
+import { RoleModule } from './role/role.module';
+import { Track } from './track/scheme/track.schema';
 import { TrackComment } from './track/scheme/trackComment.schema';
 import { TrackReplyComment } from './track/scheme/trackReplyComment.schema';
-import { LyricsService } from './lyrics/lyrics.service';
-import { HttpModule } from '@nestjs/axios';
-import { LyricsController } from './lyrics/lyrics.controller';
+import { TrackModule } from './track/track.module';
+import { UserModule } from './user/user.module';
+import { TokenModule } from './token/token.module';
+import { Token } from './token/token.model';
+import { User } from './user/user.model';
+import { Role } from './role/role.model';
+import { UserRole } from './role/userRole.model';
 
 @Module({
   imports: [
@@ -41,6 +49,10 @@ import { LyricsController } from './lyrics/lyrics.controller';
         ArtistComment,
         TrackComment,
         TrackReplyComment,
+        Token,
+        User,
+        Role,
+        UserRole
       ],
       synchronize: true,
     }),
@@ -48,21 +60,19 @@ import { LyricsController } from './lyrics/lyrics.controller';
     FileModule,
     AlbumModule,
     ArtistModule,
+    UserModule,
+    RoleModule,
+    AuthModule,
+    TokenModule,
   ],
   controllers: [LyricsController],
-  providers: [LyricsService],
+  providers: [LyricsService, MailService],
+  exports: [ MailService]
 })
-export class AppModule {
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggingMiddleware).forRoutes('*'); // Apply middleware to all routes
-    // You can also apply middleware to specific routes
-
-    // Apply interceptor globally
-    providers: [
-      {
-        provide: APP_INTERCEPTOR,
-        useClass: LoggingInterceptor,
-      },
-    ];
+    consumer
+      .apply(ErrorMiddleware, AuthMiddleware)
+      .forRoutes('*');
   }
 }

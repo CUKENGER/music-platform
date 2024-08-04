@@ -17,6 +17,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "typeRoots": ["./node_modules/@types", "./acrcloud.d.ts"],
+    "typeRoots": ["./node_modules/@types", "./acrcloud.d.ts", "./src/request.d.ts"],
   }
 }

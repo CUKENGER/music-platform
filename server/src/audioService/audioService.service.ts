@@ -9,6 +9,7 @@ export class AudioService{
         const dp = path.resolve(__dirname, '../../', 'static', filePath)
 
         const duration = await new Promise<number>((resolve, reject) => {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
             const ffmpeg = require('fluent-ffmpeg');
             ffmpeg.setFfprobePath(ffprobePath);
             ffmpeg.ffprobe(dp, (err, metadata) => {
