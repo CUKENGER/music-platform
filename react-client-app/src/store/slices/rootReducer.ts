@@ -1,10 +1,11 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import { counterReducer } from "./counterSlice";
-import { dropdownReducer } from "./dropdownSlice";
+import { counterActions, counterReducer } from "./counterSlice";
+import { dropdownActions, dropdownReducer } from "./dropdownSlice";
 import { tracksApi } from "@/api/Track/TrackService";
-import { playerReducer } from "./playerSlice";
-import { trackTimeReducer } from "./trackTimeSlice";
-import { activeTrackListReducer } from "./activeTrackListSlice";
+import { playerActions, playerReducer } from "./playerSlice";
+import { trackTimeActions, trackTimeReducer } from "./trackTimeSlice";
+import { activeTrackListActions, activeTrackListReducer } from "./activeTrackListSlice";
+import { authActions, authReducer } from "./authSlice";
 
 export const rootReducer = combineReducers({
   counterReducer,
@@ -12,8 +13,18 @@ export const rootReducer = combineReducers({
   playerReducer,
   trackTimeReducer,
   activeTrackListReducer,
+  authReducer,
   [tracksApi.reducerPath]: tracksApi.reducer
 })
+
+export const AllActions ={
+  ...counterActions,
+	...dropdownActions,
+	...playerActions,
+	...trackTimeActions,
+	...activeTrackListActions,
+	...authActions
+}
 
 
 export type RootReducerState = ReturnType<typeof rootReducer>

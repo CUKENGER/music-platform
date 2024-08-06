@@ -110,8 +110,17 @@ input {
   }
 
   &:hover{
-    outline: 2px solid var(--textgray);
+    outline: 1px solid #494949;
   }
+
+  &:focus{
+    outline: 1px solid #494949;
+  }
+
+  &:-internal-autofill-selected{
+    background-color: black;
+  }
+
 }
 
 input:invalid,

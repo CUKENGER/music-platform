@@ -6,13 +6,17 @@ import Navbar from './components/Navbar'
 import Player from './components/Player'
 import Loader from './UI/Loader'
 import ScrollContainer from './components/ScrollContainer'
-import useWindowWidth from './hooks/useWindowWidth'
+import { useNavigate } from 'react-router-dom'
+// import useWindowWidth from './hooks/useWindowWidth'
 
 function App() {
 
   const [isLoading, setIsLoading] = useState(true)
+  const navigate = useNavigate()
 
-  const windowWidth = useWindowWidth()
+  // const windowWidth = useWindowWidth()
+
+  const isAuth = false
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -20,6 +24,12 @@ function App() {
     }, 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!isAuth) {
+      navigate('/login')
+    }
+  }, [isAuth])
 
   if (isLoading) return (
     <div className={styles.loader_container}>
@@ -29,18 +39,28 @@ function App() {
 
   return (
     <>
-      <div className={styles.header_container}>
-        <Header />
-      </div>
-      <Navbar />
+    {isAuth 
+    ? (
+      <>
+        <div className={styles.header_container}>
+          <Header />
+        </div>
+        <Navbar />
 
-      <div className={styles.container}>
-        <AppRouter />
-      </div>
+        <div className={styles.container}>
+          <AppRouter />
+        </div>
+        
+        <Player />
+        
+        <ScrollContainer />
+      </>
+    ) 
+    : (
+      <AppRouter/>
+    )
+    }
       
-      <Player />
-      
-      <ScrollContainer />
       
     </>
   )
