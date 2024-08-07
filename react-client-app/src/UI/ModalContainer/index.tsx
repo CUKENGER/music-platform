@@ -1,9 +1,9 @@
-import { FC, memo } from "react";
+import { FC, memo, ReactNode } from "react";
 import styles from './ModalContainer.module.scss'
 import krestIcon from '@/assets/krest.svg'
 
 interface ModalContainerProps {
-  text: any;
+  text: string | ReactNode;
   hideModal: () => void;
   onClick?: () => void;
 }

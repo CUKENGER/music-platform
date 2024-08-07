@@ -12,6 +12,11 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({ example: "cukenger", description: "Никнейм" })
+  @IsString()
+  @Column({ unique: true, nullable: false})
+  username: string;
+
   @ApiProperty({ example: "user@gmail.com", description: "Почта пользователя" })
   @IsString()
   @Column({ unique: true, nullable: false })

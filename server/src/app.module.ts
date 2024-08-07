@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'path';
@@ -72,7 +72,22 @@ import { UserRole } from './role/userRole.model';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(ErrorMiddleware, AuthMiddleware)
+      .apply(ErrorMiddleware)
       .forRoutes('*');
+    consumer
+    .apply(AuthMiddleware)
+    .exclude(
+      { path: 'user', method: RequestMethod.POST },
+      { path: 'auth/activate/:link', method: RequestMethod.GET },
+      { path: 'activate/:link', method: RequestMethod.GET },
+      { path: 'auth/login', method: RequestMethod.POST },
+      { path: 'auth/registration', method: RequestMethod.POST },
+      { path: 'login', method: RequestMethod.POST },
+      { path: 'favicon.ico', method: RequestMethod.GET },
+    )
+    .forRoutes(
+      { path: '*', method: RequestMethod.ALL }
+    );
+      
   }
 }

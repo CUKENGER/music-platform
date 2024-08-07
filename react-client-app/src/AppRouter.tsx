@@ -1,9 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import { privateRoutes, publicRoutes } from "./routes/routes";
+import { useTypedSelector } from "./hooks/useTypedSelector";
 
 const AppRouter = () => {
 
-  const isAuth = false
+  const {isAuth} = useTypedSelector((state) => state.authReducer)
 
   return (
     <Routes>

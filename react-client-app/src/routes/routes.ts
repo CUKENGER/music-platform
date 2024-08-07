@@ -5,17 +5,33 @@ import Artists from "@/pages/Artists";
 import CreateTrack from "@/components/TracksPage/CreateTrack";
 import Login from "@/pages/Auth/Login";
 import Registration from "@/pages/Auth/Registration";
+import GoActivation from "@/pages/Auth/GoActivation";
+
+export enum PrivateRoutes {
+  HOME = '/',
+  TRACKS = '/tracks',
+  CREATE_TRACK = '/tracks/create',
+  ALBUMS = '/albums',
+  ARTISTS = '/artists'
+}
+
+export enum PublicRoutes {
+  LOGIN = '/login',
+  REGISTRATION = '/registration',
+  ACTIVATION = '/activation'
+}
 
 export const privateRoutes =[
-  {path: '/', component: Index, exact:true},
-  {path: '/tracks', component: Tracks, exact:true},
-  {path: '/tracks/create', component: CreateTrack, exact:true},
-  {path: '/albums', component: Albums, exact:true},
-  {path: '/artists', component: Artists, exact:true},
+  {path: PrivateRoutes.HOME, component: Index, exact:true},
+  {path: PrivateRoutes.TRACKS, component: Tracks, exact:true},
+  {path: PrivateRoutes.CREATE_TRACK, component: CreateTrack, exact:true},
+  {path: PrivateRoutes.ALBUMS, component: Albums, exact:true},
+  {path: PrivateRoutes.ARTISTS, component: Artists, exact:true},
 ]
 
 
 export const publicRoutes = [
-  { path: '/login', component: Login, exact: true },
-  { path: '/registration', component: Registration, exact: true },
+  { path: PublicRoutes.LOGIN, component: Login, exact: true },
+  { path: PublicRoutes.REGISTRATION, component: Registration, exact: true },
+  { path: PublicRoutes.ACTIVATION, component: GoActivation, exact: true },
 ];

@@ -53,7 +53,6 @@ button {
   color: var(--text);
 }
 
-
 ::-moz-selection {
   background-color: #b90101;
   color: rgb(197, 197, 197);
@@ -61,6 +60,7 @@ button {
 
 label {
   font-size: 14px;
+  user-select: none;
 }
 
 textarea {

@@ -7,16 +7,14 @@ import Player from './components/Player'
 import Loader from './UI/Loader'
 import ScrollContainer from './components/ScrollContainer'
 import { useNavigate } from 'react-router-dom'
-// import useWindowWidth from './hooks/useWindowWidth'
+import { useTypedSelector } from './hooks/useTypedSelector'
 
 function App() {
 
   const [isLoading, setIsLoading] = useState(true)
   const navigate = useNavigate()
 
-  // const windowWidth = useWindowWidth()
-
-  const isAuth = false
+  const {isAuth} = useTypedSelector((state) => state.authReducer)
 
   useEffect(() => {
     const timer = setTimeout(() => {

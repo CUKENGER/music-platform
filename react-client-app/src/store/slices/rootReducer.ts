@@ -6,6 +6,7 @@ import { playerActions, playerReducer } from "./playerSlice";
 import { trackTimeActions, trackTimeReducer } from "./trackTimeSlice";
 import { activeTrackListActions, activeTrackListReducer } from "./activeTrackListSlice";
 import { authActions, authReducer } from "./authSlice";
+import { authApi } from "@/api/Auth/AuthService";
 
 export const rootReducer = combineReducers({
   counterReducer,
@@ -14,7 +15,8 @@ export const rootReducer = combineReducers({
   trackTimeReducer,
   activeTrackListReducer,
   authReducer,
-  [tracksApi.reducerPath]: tracksApi.reducer
+  [tracksApi.reducerPath]: tracksApi.reducer,
+  [authApi.reducerPath]: authApi.reducer
 })
 
 export const AllActions ={

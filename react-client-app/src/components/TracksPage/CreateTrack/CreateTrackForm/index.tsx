@@ -1,6 +1,6 @@
 import { memo } from "react";
 import styles from './CreateTrackForm.module.scss'
-import InputString from "@/UI/InputString";
+import InputString, { InputTypes } from "@/UI/InputString";
 import Textarea from "@/UI/Textarea";
 import InputFile from "@/UI/InputFile";
 import UploadBtn from "@/UI/UploadBtn";
@@ -39,6 +39,7 @@ const CreateTrackForm = () => {
             value={name.value}
             isEmpty={name.isEmpty}
             setValue={name.setValue}
+            type={InputTypes.TEXT}
           />
           <InputString
             onChange={artist.onChange}
@@ -47,6 +48,7 @@ const CreateTrackForm = () => {
             value={artist.value}
             isEmpty={artist.isEmpty}
             setValue={artist.setValue}
+            type={InputTypes.TEXT}
           />
           <CheckInput
             options={options}

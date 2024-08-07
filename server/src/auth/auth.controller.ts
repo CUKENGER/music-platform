@@ -4,6 +4,7 @@ import { UserDto } from 'src/user/dto/user.dto';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { UserService } from 'src/user/user.service';
+import { LoginUserDto } from 'src/user/dto/loginUser.dto';
 
 class TokenResponse {
   @ApiProperty()
@@ -24,16 +25,16 @@ export class AuthController {
   ) {}
 
   @ApiOperation({ summary: 'Вход пользователя' })
-  @ApiBody({ type: UserDto })
+  @ApiBody({ type: LoginUserDto })
   @ApiResponse({ status: 200, type: TokenResponse})
   @Post('/login')
-  async login(@Body() dto: UserDto, @Res() res: Response) {
+  async login(@Body() dto: LoginUserDto, @Res() res: Response, @Next() next) {
     try{
       const userData = await this.authService.login(dto)
       res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
       return res.json(userData)
     } catch(e) {
-      console.error(e);
+      next(e);
     }
   }
 
@@ -42,13 +43,13 @@ export class AuthController {
   @ApiBody({ type: UserDto })
   @ApiResponse({ status: 201, type: TokenResponse})
   @Post('/registration')
-  async registration(@Body() dto: UserDto, @Res() res: Response) {
+  async registration(@Body() dto: UserDto, @Res() res: Response, @Next() next) {
     try {
       const userData = await this.authService.registration(dto)
       res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
       return res.json(userData)
     } catch(e) {
-      console.error(e);
+      next(e);
     }
     
   }
@@ -71,7 +72,7 @@ export class AuthController {
   async activate(@Param('link') activationLink: string, @Res() res: Response, @Next() next) {
     try {
       await this.authService.activate(activationLink);
-      return res.redirect(process.env.CLIENT_URL);
+      return res.redirect(`${process.env.CLIENT_URL}/activate/${activationLink}`);
     } catch (e) {
       next(e);
     }

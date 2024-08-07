@@ -20,6 +20,15 @@ const start = async () => {
 		app.enableCors({
 			credentials: true,
 			origin: process.env.CLIENT_URL,
+			methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+			allowedHeaders: ['Content-Type', 'Authorization'],
+		});
+		app.use((req, res, next) => {
+			console.log('Request:', req.method, req.url);
+			res.on('finish', () => {
+					console.log('Response:', res.statusCode);
+			});
+			next();
 		});
 		app.use(cookieParser());
 		app.use(compression())

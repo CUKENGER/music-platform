@@ -11,6 +11,7 @@ import { MailService } from './mail.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApiError } from 'src/exceptions/api.error';
+import { LoginUserDto } from 'src/user/dto/loginUser.dto';
 
 export interface RegUserResponse{
   accessToken: string,
@@ -31,7 +32,7 @@ export class AuthService {
   ) {}
 
 
-  async login(dto: UserDto) {
+  async login(dto: LoginUserDto) {
     const user = await this.userRepository.findOne({where: {email: dto.email}})
     if(!user) {
       throw ApiError.BadRequest('User with this email not found')
@@ -58,12 +59,17 @@ export class AuthService {
       throw new HttpException("User with this email already exists", HttpStatus.BAD_REQUEST)
     }
 
+    const candidateUsername = await this.userService.getByUsername(dto.username)
+    if(candidateUsername) {
+      throw new HttpException("User with this username already exists", HttpStatus.BAD_REQUEST)
+    }
+
     const hashPassword = await bcrypt.hash(dto.password, 10)
     const activationLink = uuid.v4()
 
-    const user = await this.userService.registration(dto.email, hashPassword, activationLink)
+    const user = await this.userService.registration(dto.email, hashPassword, activationLink, `dto.username`)
 
-    await this.mailService.sendActivationMail(dto.email, `${process.env.API_URL}/api/activate/${activationLink}`)
+    await this.mailService.sendActivationMail(dto.email, `${process.env.API_URL}auth/activate/${activationLink}`)
 
     const userDto = new RegUserDto(user)
     const tokens = this.tokenService.generateTokens({...userDto})

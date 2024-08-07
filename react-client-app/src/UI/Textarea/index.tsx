@@ -1,8 +1,8 @@
 import { ChangeEvent, FC, memo, useEffect, useRef } from "react";
 import styles from './Textarea.module.scss'
 import { genToTag } from "@/services/genIdToTag";
-import ExclamIcon from "../ExclamIcon";
 import ClearIcon from "../ClearIcon";
+import ExclamIcon from "../Icons/ExclamIcon";
 
 interface TextareaProps{
   placeholder: string
@@ -57,7 +57,13 @@ const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur, isEmp
           >
             
         </textarea>
-        {isEmpty ? (<ExclamIcon/>) : (<ClearIcon handleClear={handleClear}/>)}
+        {isEmpty 
+        ? (<div className={styles.exclam_container}>
+            <ExclamIcon/> 
+          </div>
+          ) 
+        : (<ClearIcon handleClear={handleClear}/>)
+        }
         
         
     </div>

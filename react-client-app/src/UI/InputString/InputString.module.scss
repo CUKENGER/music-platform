@@ -17,6 +17,7 @@
 
 .label{
   margin-left: 5px;
+  user-select: none;
 }
 
 
@@ -25,5 +26,14 @@
   right: 40px;
   top: 47%; 
   cursor: pointer;
+}
+
+.exclam_container{
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 47%;
+  right: 5px;
+  transform: translateY(-50%, -50%);
 }
 

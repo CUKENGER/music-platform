@@ -25,8 +25,8 @@ export class UserService {
   //   return user
   // }
 
-  async registration(email: string, password: string, activationLink: string) {
-    const user = await this.userRepository.create({email: email, password: password, activationLink: activationLink})
+  async registration(email: string, password: string, activationLink: string, username: string) {
+    const user = await this.userRepository.create({email: email, password: password, activationLink: activationLink, username: username})
     const role = await this.roleService.getByValue("USER")
     user.roles = [role]
     await this.userRepository.save(user)
@@ -38,8 +38,18 @@ export class UserService {
     return users
   }
 
+  async search(username) {
+    const user = await this.userRepository.find({where: {username: username}, relations: ['roles']})
+    return user
+  }
+
   async getByEmail(email: string) {
     const user = await this.userRepository.findOne({where: {email}, relations: ['roles']})
+    return user 
+  }
+
+  async getByUsername(username: string) {
+    const user = await this.userRepository.findOne({where: {username}, relations: ['roles']})
     return user 
   }
 
@@ -64,7 +74,12 @@ export class UserService {
     
     await this.userRepository.save(user);
     return user;
-}
+  }
+
+  async checkUsername (username: string) {
+    const user = await this.userRepository.findOne({ where: { username } });
+    return !user;
+  }
 
 
 }
