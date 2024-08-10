@@ -36,7 +36,7 @@ const LoginForm:FC<LoginFormProps> = ({
 
   return (
     <form className={styles.LoginForm} onSubmit={handleSubmit}>
-      <h1 className={styles.title}>Welcome to NoteVomit!</h1>
+      <h1 className={styles.title}>Welcome</h1>
       {children}
       <InputString
         name="email input"

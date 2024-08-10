@@ -6,15 +6,15 @@ import Navbar from './components/Navbar'
 import Player from './components/Player'
 import Loader from './UI/Loader'
 import ScrollContainer from './components/ScrollContainer'
-import { useNavigate } from 'react-router-dom'
-import { useTypedSelector } from './hooks/useTypedSelector'
+// import { useNavigate } from 'react-router-dom'
+// import { useTypedSelector } from './hooks/useTypedSelector'
 
 function App() {
 
   const [isLoading, setIsLoading] = useState(true)
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
-  const {isAuth} = useTypedSelector((state) => state.authReducer)
+  // const {isAuth} = useTypedSelector((state) => state.authReducer)
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -23,11 +23,11 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    if (!isAuth) {
-      navigate('/login')
-    }
-  }, [isAuth])
+  // useEffect(() => {
+  //   if (!isAuth) {
+  //     navigate('/login')
+  //   }
+  // }, [isAuth])
 
   if (isLoading) return (
     <div className={styles.loader_container}>
@@ -37,7 +37,19 @@ function App() {
 
   return (
     <>
-    {isAuth 
+    <div className={styles.header_container}>
+          <Header />
+        </div>
+        <Navbar />
+
+        <div className={styles.container}>
+          <AppRouter />
+        </div>
+        
+        <Player />
+        
+        <ScrollContainer />
+    {/* {isAuth 
     ? (
       <>
         <div className={styles.header_container}>
@@ -57,7 +69,7 @@ function App() {
     : (
       <AppRouter/>
     )
-    }
+    } */}
       
       
     </>
