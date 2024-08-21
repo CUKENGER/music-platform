@@ -1,0 +1,26 @@
+
+
+.route_item{
+  display: flex;
+  column-gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg);
+  padding: 10px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.route_item.active{
+  outline: 1px solid var(--prm);
+}
+
+.icon_container{
+  width: 20px;
+  height: 20px;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}

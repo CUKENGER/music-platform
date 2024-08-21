@@ -1,0 +1,13 @@
+
+.container{
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: var(--black-lt);
+  width: 200px;
+  height: 100vh;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+}

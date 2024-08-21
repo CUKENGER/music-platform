@@ -1,0 +1,15 @@
+
+
+.container{
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+
+  img {
+    cursor: pointer;
+  }
+}
+
+.right{
+  transform: rotate(180deg);
+}

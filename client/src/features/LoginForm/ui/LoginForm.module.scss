@@ -1,0 +1,26 @@
+
+
+.LoginForm{
+  background-color: #242424;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+  border-radius: 10px;
+  min-width: 510px;
+}
+
+.title{
+  color: #fff;
+  margin-bottom: 40px;
+  text-align: center;
+  user-select: none;
+}
+
+.reg_btn{
+  width: 100%;
+  background-color: var(--black-lt);
+  border-radius: 10px;
+}
+
+
