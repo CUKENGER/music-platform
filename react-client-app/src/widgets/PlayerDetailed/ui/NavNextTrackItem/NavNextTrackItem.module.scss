@@ -1,0 +1,29 @@
+
+
+.container{
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: var(--black-lt);
+  border-radius: 10px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.left_container{
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.right_container{
+  display: flex;
+  align-items: flex-end;
+  height: 45px;
+  padding-right: 5px;
+}
+
+.reorder_item{
+  cursor: move;
+  margin-top: 5px;
+}

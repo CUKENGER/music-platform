@@ -1,0 +1,28 @@
+
+
+.container{
+  width: 440px;
+  max-height: calc(100vh - 160px);
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.line {
+  // margin: 4px 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--karaoke-text);
+}
+
+/* Пример дополнительных стилей */
+.line:nth-child(odd) {
+  // background-color: var(--pmr);
+}
+
+.line:hover {
+  color: var(--text);
+}
+
+.currentLine{
+  color: var(--text);
+}

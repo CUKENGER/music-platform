@@ -1,0 +1,15 @@
+
+
+.container{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 45px;
+  width: 100%;
+}
+
+@media(max-width:400px){
+  .container{
+    height: 35px;
+  }
+}

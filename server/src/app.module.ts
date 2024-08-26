@@ -1,93 +1,54 @@
-import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import * as path from 'path';
-import { AlbumModule } from './album/album.module';
-import { Album } from './album/album.schema';
-import { AlbumComment } from './album/commentAlbum/albumComment.schema';
-import { ArtistModule } from './artist/artist.module';
-import { ArtistComment } from './artist/artistComment/artistComment.schema';
-import { Artist } from './artist/scheme/artist.schema';
-import { AuthModule } from './auth/auth.module';
-import { MailService } from './auth/mail.service';
-import { FileModule } from './file/file.module';
-import { LyricsController } from './lyrics/lyrics.controller';
-import { LyricsService } from './lyrics/lyrics.service';
-import { AuthMiddleware } from './middleware/auth.middleware';
-import { ErrorMiddleware } from './middleware/error.middleware';
-import { RoleModule } from './role/role.module';
-import { Track } from './track/scheme/track.schema';
-import { TrackComment } from './track/scheme/trackComment.schema';
-import { TrackReplyComment } from './track/scheme/trackReplyComment.schema';
-import { TrackModule } from './track/track.module';
-import { UserModule } from './user/user.module';
-import { TokenModule } from './token/token.module';
-import { Token } from './token/token.model';
-import { User } from './user/user.model';
-import { Role } from './role/role.model';
-import { UserRole } from './role/userRole.model';
+import { JwtModule } from '@nestjs/jwt';
+import { PrismaModule } from './prisma/prisma.module';
+import { AuthMiddleware } from 'middleware/auth.middleware';
+import { AuthModule } from 'models/auth/auth.module';
+import { AlbumModule } from 'models/album/album.module';
+import { ArtistModule } from 'models/artist/artist.module';
+import { CommentModule } from 'models/comment/comment.module';
+import { RoleModule } from 'models/role/role.module';
+import { TokenModule } from 'models/token/token.module';
+import { TrackModule } from 'models/track/track.module';
+import { UserModule } from 'models/user/user.module';
+import { ArtistFileModule } from 'models/artist/artistFile/artistFile.module';
+import { AlbumFileModule } from 'models/album/albumFile/albumFile.module';
 
 @Module({
   imports: [
-    HttpModule,
-    ServeStaticModule.forRoot({
-      rootPath: path.resolve(__dirname, '..', 'static'),
+    JwtModule.register({
+      secret: process.env.JWT_ACCESS_SECRET_KEY,
+      signOptions: {expiresIn: '24h'}
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT, 10),
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
-      entities: [
-        Track,
-        Album,
-        AlbumComment,
-        Artist,
-        ArtistComment,
-        TrackComment,
-        TrackReplyComment,
-        Token,
-        User,
-        Role,
-        UserRole
-      ],
-      synchronize: true,
-    }),
-    TrackModule,
-    FileModule,
+    PrismaModule,
+    AuthModule,
     AlbumModule,
     ArtistModule,
-    UserModule,
-    RoleModule,
     AuthModule,
+    CommentModule,
+    RoleModule,
     TokenModule,
+    TrackModule,
+    UserModule,
+    ArtistFileModule,
+    AlbumFileModule
   ],
-  controllers: [LyricsController],
-  providers: [LyricsService, MailService],
-  exports: [ MailService]
+  controllers: [],
+  providers: [],
 })
-export class AppModule implements NestModule {
+
+export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(ErrorMiddleware)
-      .forRoutes('*');
-    consumer
-    .apply(AuthMiddleware)
-    .exclude(
-      { path: 'user', method: RequestMethod.POST },
-      { path: 'auth/activate/:link', method: RequestMethod.GET },
-      { path: 'activate/:link', method: RequestMethod.GET },
-      { path: 'auth/login', method: RequestMethod.POST },
-      { path: 'auth/registration', method: RequestMethod.POST },
-      { path: 'login', method: RequestMethod.POST },
-      { path: 'favicon.ico', method: RequestMethod.GET },
-    )
-    .forRoutes(
-      { path: '*', method: RequestMethod.ALL }
-    );
-      
+      consumer
+      .apply(AuthMiddleware)
+      .exclude(
+        { path: 'auth/activate/:link', method: RequestMethod.GET },
+        { path: 'auth/login', method: RequestMethod.POST },
+        { path: 'auth/registration', method: RequestMethod.POST },
+        { path: 'user/check/:username', method: RequestMethod.POST },
+        { path: 'user', method: RequestMethod.POST },
+      )
+      .forRoutes(
+        { path: '*', method: RequestMethod.ALL }
+      )
   }
 }

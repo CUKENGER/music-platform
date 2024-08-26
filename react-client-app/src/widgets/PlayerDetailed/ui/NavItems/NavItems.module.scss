@@ -1,0 +1,27 @@
+
+
+.nav_bar{
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  column-gap: 10px;
+}
+
+.nav_item{
+  color: var(--textgray);
+  padding: 8px 15px;
+  width: 140px;
+  cursor: pointer;
+  text-align: center;
+  border-bottom: 1px solid var(--textgray);
+
+
+  &:hover{
+    color: var(--text);
+  }
+}
+
+.nav_item_active{
+  color: var(--text);
+  border: 1px solid var(--pmr);
+}

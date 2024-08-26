@@ -30,7 +30,7 @@ export const useRegWidget = () => {
 
     checkUsername(username.value, {
       onSuccess: () => {
-        if (isUsernameValid) {
+        if (!isUsernameValid) {
           showModal('Этот никнейм уже занят');
           return;
         }

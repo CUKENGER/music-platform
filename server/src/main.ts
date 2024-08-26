@@ -1,5 +1,5 @@
-import {NestFactory} from '@nestjs/core';
-import {AppModule} from './app.module';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 import * as compression from 'compression'
 import * as timeout from 'connect-timeout';
 import * as dotenv from 'dotenv'
@@ -8,11 +8,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { ValidationPipe } from '@nestjs/common';
 
-dotenv.config();
+dotenv.config()
 
 const start = async () => {
 	try {
-		const PORT = parseInt(process.env.PORT,10) || 5000
+		const PORT = parseInt(process.env.PORT, 10) || 5000
  		const app = await NestFactory.create(AppModule, {
 			logger: ['log', 'error', 'warn', 'debug', 'verbose'],
 		})
@@ -46,7 +46,6 @@ const start = async () => {
 
 		app.useGlobalInterceptors(new LoggingInterceptor())
 		app.useGlobalPipes(new ValidationPipe());
-		// app.useGlobalGuards(JwtAuthGuard)
 
  		await app.listen(PORT, '0.0.0.0')
 		console.log(`server started at ${PORT}`)

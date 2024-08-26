@@ -5,11 +5,14 @@ import { useEffect } from "react";
 import { axiosInstance, PublicRoutes } from "@/shared";
 import { useNavigate } from "react-router-dom";
 import { Header, Navbar } from "@/widgets";
+import { useAxiosInterceptor } from "@/shared/api/axiosInstance";
 
 function BaseLayout() {
 
   const navigate = useNavigate();
   const { isAuth, setIsAuth } = useUserStore();
+
+  useAxiosInterceptor()
 
   // useEffect(() => {
   //   const token = localStorage.getItem('token');
