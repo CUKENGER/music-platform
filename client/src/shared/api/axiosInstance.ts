@@ -10,6 +10,7 @@ const axiosInstance = axios.create({
   baseURL: ApiUrl,
   headers: {
     'Content-Type': 'application/json',
+
   },
   withCredentials: true,
 });
@@ -39,11 +40,10 @@ export const useAxiosInterceptor = () => {
 
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
+        console.log('refresh')
         try {
           const refreshToken = localStorage.getItem('refreshToken');
           cookies.set('refreshToken', refreshToken, { 
-            httpOnly: true,
-            secure: false,
             sameSite: 'strict'
           });
           const { data } = await axiosInstance.get('/auth/refresh', { withCredentials: true });
@@ -51,8 +51,6 @@ export const useAxiosInterceptor = () => {
           localStorage.setItem('token', data.accessToken);
           localStorage.setItem('refreshToken', data.refreshToken);
           cookies.set('refreshToken', data.refreshToken, { 
-            httpOnly: true,
-            secure: false,
             sameSite: 'strict'
           });
 

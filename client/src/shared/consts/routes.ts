@@ -1,4 +1,4 @@
-import { Albums, Artists, GoActivation, Home, Login, Registration, Tracks, User } from "@/pages";
+import { Albums, Artists, CreateTrack, GoActivation, Home, Login, Profile, Registration, Tracks} from "@/pages";
 
 export enum PrivateRoutes {
   HOME = '/',
@@ -6,24 +6,24 @@ export enum PrivateRoutes {
   CREATE_TRACK = '/tracks/create',
   ALBUMS = '/albums',
   ARTISTS = '/artists',
-  USER = '/user/:id',
+  PROFILE = '/profile/:id',
   NOT_FOUND = "*"
 }
 
 export enum PublicRoutes {
   LOGIN = '/',
   REGISTRATION = '/registration',
-  ACTIVATION = '/activate/:activationLink', 
+  ACTIVATION = '/goActivate', 
   NOT_FOUND = "*"
 }
 
 export const privateRoutes =[
   {path: PrivateRoutes.HOME, component: Home, exact:true},
   {path: PrivateRoutes.TRACKS, component: Tracks, exact:true},
-  // {path: PrivateRoutes.CREATE_TRACK, component: CreateTrack, exact:true},
+  {path: PrivateRoutes.CREATE_TRACK, component: CreateTrack, exact:true},
   {path: PrivateRoutes.ALBUMS, component: Albums, exact:true},
   {path: PrivateRoutes.ARTISTS, component: Artists, exact:true},
-  {path: PrivateRoutes.USER, component: User, exact:true},
+  {path: PrivateRoutes.PROFILE, component: Profile, exact:true},
   {path: PrivateRoutes.NOT_FOUND, component: Home, exact:true},
 ]
 

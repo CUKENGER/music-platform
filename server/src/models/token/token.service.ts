@@ -39,28 +39,52 @@ export class TokenService {
   }
 
   async saveToken(
-    userId: string, 
+    userId: number, 
     refreshToken: string, 
     accessToken: string, 
     prisma: PrismaService
-  ): Promise<Token> {
+  ) {
     // Начинаем транзакцию
-    return await prisma.$transaction(async (tx) => {
-      // Ищем существующий токен по userId
-      const tokenData = await tx.token.findFirst({ where: { userId } });
+    // return await prisma.$transaction(async (tx) => {
+    //   // Ищем существующий токен по userId
+    //   const tokenData = await tx.token.findFirst({ where: { userId } });
       
-      if (tokenData) {
-        // Обновляем существующий токен
-        return await tx.token.update({
-          where: { id: tokenData.id }, // Используем id для обновления
-          data: {
-            refreshToken,
-            accessToken,
-          },
-        });
+    //   if (tokenData) {
+    //     console.log('tokenData', tokenData)
+    //     // Обновляем существующий токен
+    //     return await tx.token.update({
+    //       where: { id: tokenData.id }, // Используем id для обновления
+    //       data: {
+    //         refreshToken,
+    //         accessToken,
+    //       },
+    //     });
+    //   } else {
+    //     // Создаем новый токен
+    //     console.log('tokenData', tokenData)
+    //     return await tx.token.create({
+    //       data: {
+    //         userId,
+    //         refreshToken,
+    //         accessToken,
+    //       },
+    //     });
+    //   }
+    // });
+    try {
+
+      const tokenData = await prisma.token.findFirst({ where: { userId } })
+  
+      if(tokenData) {
+        return await prisma.token.update({
+          where: { id: tokenData.id },
+            data: {
+              refreshToken,
+              accessToken,
+            },
+        })
       } else {
-        // Создаем новый токен
-        return await tx.token.create({
+        return await prisma.token.create({
           data: {
             userId,
             refreshToken,
@@ -68,7 +92,9 @@ export class TokenService {
           },
         });
       }
-    });
+    } catch(e) {
+      throw new Error(`Error token save ${e}`)
+    }
   }
 
   async removeToken(refreshToken) {

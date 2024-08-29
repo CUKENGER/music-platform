@@ -12,3 +12,12 @@ export interface ITrack {
   duration: string;
   genre: string
 }
+
+export interface CreateTrackDto {
+  name: string;
+  artist: string;
+  text: string;
+  genre: string;
+  picture: File;
+  audio: File
+}

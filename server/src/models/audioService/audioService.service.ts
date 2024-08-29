@@ -6,7 +6,7 @@ import * as path from "path";
 export class AudioService{
     async getAudioDuration(filePath: string): Promise<string> {
         const ffprobePath = ffprobeStatic.path;
-        const dp = path.resolve(__dirname, '../../', 'static', filePath)
+        const dp = path.resolve(__dirname, '../../../', 'static', filePath)
 
         const duration = await new Promise<number>((resolve, reject) => {
             // eslint-disable-next-line @typescript-eslint/no-var-requires

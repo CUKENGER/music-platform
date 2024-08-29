@@ -12,6 +12,10 @@ import { TrackModule } from 'models/track/track.module';
 import { UserModule } from 'models/user/user.module';
 import { ArtistFileModule } from 'models/artist/artistFile/artistFile.module';
 import { AlbumFileModule } from 'models/album/albumFile/albumFile.module';
+import { LyricsModule } from 'models/lyrics/lyrics.module';
+import { HttpModule} from '@nestjs/axios';
+import { FileModule } from 'models/file/file.module';
+import { AudioModule } from 'models/audioService/audioService.module';
 
 @Module({
   imports: [
@@ -23,14 +27,17 @@ import { AlbumFileModule } from 'models/album/albumFile/albumFile.module';
     AuthModule,
     AlbumModule,
     ArtistModule,
-    AuthModule,
     CommentModule,
     RoleModule,
     TokenModule,
     TrackModule,
     UserModule,
     ArtistFileModule,
-    AlbumFileModule
+    AlbumFileModule,
+    LyricsModule,
+    HttpModule,
+    FileModule,
+    AudioModule
   ],
   controllers: [],
   providers: [],

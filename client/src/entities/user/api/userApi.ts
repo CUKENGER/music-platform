@@ -25,6 +25,16 @@ export const getByEmail = async (email: string): Promise<IUser> => {
   }
 }
 
+export const getByToken = async (): Promise<IUser> => {
+  try {
+    const response = await axiosInstance.get(`user/byToken`)
+    return response.data
+  } catch(e) {
+    console.error('Error getByToken', e);
+    throw e
+  }
+}
+
 export const getAll = async (): Promise<IUser[]> => {
   try {
     const response = await axiosInstance.get(`user`)
@@ -56,7 +66,11 @@ export const logoutUser = async (): Promise<string> => {
   }
 }
 
-export const checkUsername = async (username: string): Promise<void> => {
+interface CheckUsernameResponse {
+  available: boolean
+}
+
+export const checkUsername = async (username: string): Promise<CheckUsernameResponse> => {
   try {
     const response = await axiosInstance.post(`user/check/${username}`)
     return response.data

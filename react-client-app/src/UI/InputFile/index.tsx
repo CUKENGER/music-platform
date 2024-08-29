@@ -14,7 +14,7 @@ const InputFile:FC<InputAudioProps> = ({placeholder, fileName, setFile, isAudio=
   const [uploadPicture, setUploadPicture] = useState<string>('')
 
   const onChange = (e:ChangeEvent<HTMLInputElement>) => {
-    let files = e.target.files
+    const files = e.target.files
     if(files) {
       setFile(files[0])
     }

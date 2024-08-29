@@ -11,5 +11,5 @@ export class AddRoleDto {
 
   @ApiProperty({example: "2", description: "ID пользователя"})
   @IsString()
-  readonly userId: string
+  readonly userId: number
 }

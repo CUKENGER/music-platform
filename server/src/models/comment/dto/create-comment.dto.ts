@@ -12,13 +12,13 @@ export class CreateCommentDto {
 
   @IsOptional()
   @IsString()
-  parentId?: string;
+  parentId?: number;
 
   @IsOptional()
   @IsString()
-  trackId?: string;
+  trackId?: number;
 
   @IsOptional()
   @IsString()
-  artistId?: string;
+  artistId?: number;
 }

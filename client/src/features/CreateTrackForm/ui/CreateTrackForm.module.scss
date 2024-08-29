@@ -1,0 +1,40 @@
+
+
+
+
+.form{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  column-gap: 30px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.fields_container{
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  width: 50%;
+}
+
+.fields_upload_container{
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.input_cover{
+  width: 200px;
+  height: 250px;
+}
+
+.input_audio{
+  width: 100%;
+}
+
+.upload_btn{
+  width: 100%;
+}

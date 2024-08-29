@@ -10,3 +10,5 @@ export {handleAuthError} from './user/model/handleAuthError'
 export {useAuthInterceptor} from './user/model/useAuthInterceptor'
 
 export { default as usePlayer } from './track/hooks/usePlayer'
+
+export {useCreateTrack} from './track/api/useTrackApi'

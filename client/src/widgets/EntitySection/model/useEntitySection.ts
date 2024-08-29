@@ -1,32 +1,51 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const useEntitySection = () => {
-  const listRef = useRef<HTMLDivElement | null>(null);
-  const [currentOffset, setCurrentOffset] = useState<number>(0);
-  const itemWidth = 210;
-  const items = Array.from({ length: 12 }, (_, index) => index);
-  const visibleItems = Math.floor(listRef.current ? listRef.current.offsetWidth / itemWidth : 0);
+  const slidesPerPage = 3;
+  const totalSlides = 14;
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const handleLeftArrowClick = () => {
-    setCurrentOffset((prev) => Math.max(prev - 6, 0));
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const nextSlide = () => {
+    if (sliderRef.current) {
+      const newScrollLeft = sliderRef.current.scrollLeft + sliderRef.current.offsetWidth;
+      sliderRef.current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+    }
   };
 
-  const handleRightArrowClick = () => {
-    const maxOffset = items.length - visibleItems;
-    setCurrentOffset((prev) => Math.min(prev + 6, maxOffset));
+  const prevSlide = () => {
+    if (sliderRef.current) {
+      const newScrollLeft = sliderRef.current.scrollLeft - sliderRef.current.offsetWidth;
+      sliderRef.current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+    }
   };
 
-  const isLeftDisabled = currentOffset === 0;
-  const isRightDisabled = currentOffset >= items.length - visibleItems;
+  const handleScroll = () => {
+    if (sliderRef.current) {
+      const slideWidth = sliderRef.current.offsetWidth / slidesPerPage;
+      const newCurrentSlide = Math.round(sliderRef.current.scrollLeft / slideWidth);
+      setCurrentSlide(newCurrentSlide);
+    }
+  };
+
+  useEffect(() => {
+    if (sliderRef.current) {
+      setCurrentSlide(Math.round(sliderRef.current.scrollLeft / (sliderRef.current.offsetWidth / slidesPerPage)));
+
+      sliderRef.current.addEventListener('scroll', handleScroll);
+      return () => {
+        sliderRef.current?.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
 
   return {
-    handleLeftArrowClick,
-    handleRightArrowClick,
-    listRef,
-    items,
-    currentOffset,
-    visibleItems,
-    isLeftDisabled,
-    isRightDisabled
+    prevSlide,
+    currentSlide,
+    nextSlide,
+    totalSlides,
+    slidesPerPage,
+    sliderRef
   }
 }

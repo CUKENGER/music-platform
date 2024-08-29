@@ -1,19 +1,16 @@
-import { ChangeEvent, FC,  TextareaHTMLAttributes, useEffect, useId, useRef } from "react";
+import { FC,  TextareaHTMLAttributes, useEffect, useId, useRef } from "react";
 import styles from './Textarea.module.scss';
 import { ClearIcon } from "../assets/ClearIcon/ClearIcon";
 import { ExclamIcon } from "../assets/ExclamIcon/ExclamIcon";
+import { UseInputProps } from "@/shared";
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement>{
-  placeholder: string
-  value:string;
-  onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-  onBlur: (e: ChangeEvent<HTMLTextAreaElement>) => void,
+  placeholder: string;
+  inputValue: UseInputProps
   isEmpty?: boolean;
-  isRequired?: boolean;
-  setValue?: (e:string) => void
 }
 
-export const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur, isEmpty, isRequired=true, setValue, ...props}) => {
+export const Textarea:FC<TextareaProps> = ({ isEmpty, inputValue, placeholder, ...props}) => {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -22,7 +19,7 @@ export const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur
           textareaRef.current.style.height = '100%';
           textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
       }
-  }, [value]);
+  }, [inputValue.value]);
 
   const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
       e.currentTarget.style.height = 'auto';
@@ -36,8 +33,8 @@ export const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur
   const id = useId()
 
   const handleClear = () => {
-    if(setValue) {
-      setValue('')
+    if(inputValue.setValue) {
+      inputValue.setValue('')
     }
   }
 
@@ -46,13 +43,12 @@ export const Textarea:FC<TextareaProps> = ({placeholder, value, onChange, onBlur
        <label className={styles.label} htmlFor={`textarea-${id}`}>{placeholder}</label>
           <textarea 
               id={`textarea-${id}`}
-              onChange={onChange}
-              value={value}
+              onChange={inputValue.onChange}
+              value={inputValue.value}
               ref={textareaRef}
               onInput={handleInput}
               className={styles.textarea} 
-              required={isRequired}
-              onBlur={onBlur}
+              onBlur={inputValue.onBlur}
               {...props}
           >
             

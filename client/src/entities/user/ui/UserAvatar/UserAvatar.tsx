@@ -1,33 +1,37 @@
 import { FC } from 'react';
 import styles from './UserAvatar.module.scss'
-import { useGetByEmail } from '../../api/useUserApi';
-import { useUserStore } from '../../model/userStore';
+import { Menu, MenuItem, PrivateRoutes} from '@/shared';
+import { useGetByToken, useLogoutUser } from '../../api/useUserApi';
+import { useNavigate } from 'react-router-dom';
 
-interface UserAvatarProps {
-}
+const UserAvatar: FC = () => {
+  const navigate = useNavigate()
 
-const UserAvatar: FC<UserAvatarProps> = () => {
+  const { mutate: logout } = useLogoutUser()
 
-  const token = localStorage.getItem('token')
+  const handleClick = () => {
+    logout();
+  };
 
-  // const {data: userData, isLoading} = useGetByEmail(user?.email ?? "")
+  const items: MenuItem[] = [
+    {text: 'Профиль', onClick: () => navigate(PrivateRoutes.PROFILE)},
+    {text: 'Выйти', onClick: handleClick},
+  ]
 
-  // console.log('userData', userData)
-
-  // if (isLoading) {
-    // return <p>...LOadibng</p>
-  // }
+  const {data: user} = useGetByToken()
 
   return (
 
     <div className={styles.user_container}>
-      <div className={styles.user_avatar}>
+      <div className={styles.main_container}>
+        <div className={styles.user_avatar}>
+        </div>
+        <div className={styles.name_container}>
+          <p>{user?.username}</p>
+        </div>
       </div>
-      <div className={styles.name_container}>
-        {/* <p>{userData?.username} член {userData?.email} {userData?.id}</p> */}
-      </div>
+      <Menu items={items}/>
     </div>
-
   );
 }
 

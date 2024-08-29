@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
 @Injectable()
@@ -18,7 +18,9 @@ export class LyricsService {
     };
 
     try {
+      console.log('serachTrack lyrics')
       const response = await this.httpService.get(`${this.BASE_URL}/track.search`, { params }).toPromise();
+      console.log('response', response)
       const trackInfo = response.data.message.body.track_list[0].track;
       return {
         track_id: trackInfo.track_id,
@@ -27,7 +29,8 @@ export class LyricsService {
         track_genre: trackInfo.track_genre ? trackInfo.track_genre : null
       };
     } catch (error) {
-      throw new Error(`Failed to search track: ${error.message}`);
+      console.error(`Error searchTrack Lyrics ${error}`)
+      throw new InternalServerErrorException(`Failed to search track: ${error.message}`);
     }
   }
 
@@ -39,11 +42,14 @@ export class LyricsService {
     };
 
     try {
+      console.log('getLyrics lyrics')
+
       const response = await this.httpService.get(`${this.BASE_URL}/track.lyrics.get`, { params }).toPromise();
       const lyrics = response.data.message.body.lyrics.lyrics_body;
       return lyrics.substring(0, lyrics.lastIndexOf('...')).trim();
     } catch (error) {
-      throw new Error(`Failed to get lyrics: ${error.message}`);
+      console.error(`Failed to get lyrics: ${error}`)
+      throw new InternalServerErrorException(`Failed to get lyrics: ${error.message}`);
     }
   }
 }

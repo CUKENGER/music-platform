@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors, Put, Next, InternalServerErrorException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -20,13 +20,17 @@ export class TrackController {
 	]))
 	@ApiOperation({ summary: 'Создание трека' })
   @ApiBody({ type: CreateTrackDto })
-	async create(@UploadedFiles() files, @Body() createTrackDto: CreateTrackDto) {
+	async create(@UploadedFiles() files, @Body() dto: CreateTrackDto) {
+
+		console.log('files', files)
+		console.log('dto', dto)
 		const { picture, audio } = files;
 
+
 		if (!audio || !picture) {
-			throw new Error('audio and picture are required');
+			throw new InternalServerErrorException('Audio and picture are required');
 		}
-		return this.trackService.create(createTrackDto, picture, audio)
+		return await this.trackService.create(dto, picture, audio)
 	}
 
 	@Get('/search')

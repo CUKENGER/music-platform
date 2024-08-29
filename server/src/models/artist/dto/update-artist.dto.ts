@@ -1,5 +1,5 @@
 export class UpdateArtistDto {
-  id: string;
+  id: number;
   name: string;
   genre: string;
   description: string;

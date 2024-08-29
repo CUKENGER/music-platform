@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -7,7 +7,6 @@ import { CreateReplyTrackCommentDto } from './dto/create-trackReplyComment.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { FileService, FileType } from 'models/file/file.service';
 import { AudioService } from 'models/audioService/audioService.service';
-import { ArtistService } from 'models/artist/artist.service';
 import { Track } from '@prisma/client';
 import { CommentService } from 'models/comment/comment.service';
 
@@ -17,49 +16,56 @@ export class TrackService {
     private prisma: PrismaService,
     private fileService: FileService,
     private audioService: AudioService,
-    private artistService: ArtistService,
     private commentService: CommentService
   ) {}
 
-  async create(dto: CreateTrackDto, picture: Express.Multer.File, audio: Express.Multer.File): Promise<Track> {
+  async create(dto: CreateTrackDto, picture: Express.Multer.File, audio: Express.Multer.File) {
+    try {
+        const [audioPath, imagePath] = await Promise.all([
+            this.fileService.createFile(FileType.AUDIO, audio),
+            this.fileService.createFile(FileType.IMAGE, picture),
+        ]);
 
-    const [audioPath, imagePath] = await Promise.all([
-      this.fileService.createFile(FileType.AUDIO, audio),
-      this.fileService.createFile(FileType.IMAGE, picture),
-    ]);
+        const duration = await this.audioService.getAudioDuration(audioPath);
 
-    const duration = await this.audioService.getAudioDuration(audioPath);
+        let artist = await this.prisma.artist.findFirst({
+            where: { name: dto.artist },
+        });
 
-    // Проверка на существование артиста
-    let artist = await this.prisma.artist.findFirst({
-      where: { name: dto.artist },
-    });
+        if (!artist) {
+            artist = await this.prisma.artist.create({
+                data: {
+                    name: dto.artist,
+                    genre: dto.genre,
+                    description: '',
+                    picture: imagePath,
+                },
+            });
+        }
 
-    if (!artist) {
-      artist = await this.artistService.create({
-        name: dto.artist,
-        genre: dto.genre,
-        description: '',
-      }, picture);
+        const newTrack = await this.prisma.track.create({
+            data: {
+                ...dto,
+                audio: audioPath,
+                picture: imagePath,
+                duration,
+                artistId: artist.id,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            },
+        });
+        return newTrack
+
+    } catch (error) {
+        console.error('Error creating track:', error);
+        throw new InternalServerErrorException('Failed to create track');
     }
-
-    const newTrack = await this.prisma.track.create({
-      data: {
-        ...dto,
-        audio: audioPath,
-        picture: imagePath,
-        duration,
-        artistId: artist.id,
-        createdAt: new Date(),
-      },
-    });
-
-    return newTrack;
   }
 
-  async getOne(id: string): Promise<Track> {
+
+  async getOne(id: number): Promise<Track> {
     const track = await this.prisma.track.findUnique({
-      where: { id },
+      where: { id: Number(id) },
       include: {
         comments: {
           include: {
@@ -78,7 +84,7 @@ export class TrackService {
     return track;
   }
 
-  async delete(id: string): Promise<Track> {
+  async delete(id: number): Promise<Track> {
     const track = await this.prisma.track.findUnique({ where: { id } });
     if (!track) {
       throw new NotFoundException(`Track with id ${id} not found`);
@@ -101,7 +107,7 @@ export class TrackService {
     return track;
   }
 
-  async updateTrack(id: string, newData: Partial<Track>, picture?: Express.Multer.File, audio?: Express.Multer.File): Promise<Track> {
+  async updateTrack(id: number, newData: Partial<Track>, picture?: Express.Multer.File, audio?: Express.Multer.File): Promise<Track> {
     const entityToUpdate = await this.prisma.track.findUnique({ where: { id } });
     if (!entityToUpdate) {
       throw new NotFoundException(`Track with ID ${id} not found`);
@@ -155,7 +161,7 @@ export class TrackService {
     return reply
   }
 
-  async listen(id: string): Promise<string> {
+  async listen(id: number): Promise<number> {
     const track = await this.prisma.track.findUnique({ where: { id } });
     if (track) {
       const updatedTrack = await this.prisma.track.update({
@@ -189,7 +195,7 @@ export class TrackService {
     });
   }
 
-  async addLike(id: string): Promise<string> {
+  async addLike(id: number): Promise<number> {
     const track = await this.prisma.track.findUnique({ where: { id } });
     if (track) {
       const updatedTrack = await this.prisma.track.update({
@@ -202,7 +208,7 @@ export class TrackService {
     }
   }
 
-  async deleteLike(id: string): Promise<string> {
+  async deleteLike(id: number): Promise<number> {
     const track = await this.prisma.track.findUnique({ where: { id } });
     if (track) {
       const updatedTrack = await this.prisma.track.update({

@@ -42,16 +42,8 @@ export const useLoginWidget = () => {
         if (data.accessToken && data.refreshToken) {
           localStorage.removeItem("token");
           localStorage.removeItem("refreshToken");
-          // cookies.set('refreshToken', data.refreshToken, { 
-          //   path: '/',
-          //   httpOnly: true,
-          //   secure: false,
-          //   sameSite: 'strict'
-          // });
           localStorage.setItem("token", data.accessToken);
           localStorage.setItem("refreshToken", data.refreshToken);
-          console.log('loginRefreshToken', data.refreshToken)
-          console.log('localStorage',localStorage)
   
           setIsAuth(true);
           setUser(userDto);

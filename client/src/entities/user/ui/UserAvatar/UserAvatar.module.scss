@@ -6,6 +6,8 @@
   column-gap: 5px;
   padding-bottom: 5px;
   border-bottom: 1px solid gray;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .user_avatar{
@@ -15,6 +17,16 @@
   background-color: var(--gray);
 }
 
+.main_container{
+  display: flex;
+  align-items: center;
+  column-gap: 25px;
+}
+
 .name_container{
+  cursor: pointer;
+}
+
+.dots{
   cursor: pointer;
 }

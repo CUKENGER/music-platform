@@ -84,7 +84,7 @@ export class AlbumService {
         return albums
     }
 
-    async listen(id: string): Promise<string> {
+    async listen(id: number): Promise<number> {
         try {
             // Поиск альбома по уникальному идентификатору
             const album = await this.prisma.album.findUnique({
@@ -108,7 +108,7 @@ export class AlbumService {
         }
     }
 
-    async getOne(id: string) {
+    async getOne(id: number) {
         const album = await this.prisma.album.findFirst({where : {id: id}, include: {tracks: true, artist: true}})
         return album
     } 
@@ -124,7 +124,7 @@ export class AlbumService {
         return comment;
     }
 
-    async delete(id: string) {
+    async delete(id: number) {
         const album = await this.prisma.album.findUnique({
           where: { id },
           include: {

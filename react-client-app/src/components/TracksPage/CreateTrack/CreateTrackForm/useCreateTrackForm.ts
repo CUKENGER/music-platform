@@ -34,7 +34,7 @@ const useCreateTrackForm = () => {
         const word = match[1].trim();
         name.setValue(word);
       } else {
-        name.setValue(''); // Обработка случая, когда нет совпадений
+        name.setValue('');
       }
     }
   }, [audio]);
@@ -93,9 +93,7 @@ const useCreateTrackForm = () => {
     }
 
   }
-
   
-
   return {
     name,
     artist,

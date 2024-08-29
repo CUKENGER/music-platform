@@ -54,7 +54,7 @@ export class ArtistService {
         });
     }
 
-    async listen(id: string) {
+    async listen(id: number) {
         const artist = await this.prisma.artist.findUnique({ where: { id } });
         if (!artist) {
             throw new Error(`Artist with id ${id} not found`);
@@ -66,7 +66,7 @@ export class ArtistService {
         });
     }
 
-    async addLike(id: string) {
+    async addLike(id: number) {
         const artist = await this.prisma.artist.findUnique({ where: { id } });
         if (!artist) {
             throw new Error(`Artist with id ${id} not found`);
@@ -78,7 +78,7 @@ export class ArtistService {
         });
     }
 
-    async deleteLike(id: string) {
+    async deleteLike(id: number) {
         const artist = await this.prisma.artist.findUnique({ where: { id } });
         if (!artist) {
             throw new Error(`Artist with id ${id} not found`);
@@ -90,7 +90,7 @@ export class ArtistService {
         });
     }
 
-    async getOne(id: string) {
+    async getOne(id: number) {
         return await this.prisma.artist.findUnique({
             where: { id },
             include: {
@@ -126,7 +126,7 @@ export class ArtistService {
         return comment;
     }
 
-    async delete(id: string) {
+    async delete(id: number) {
         const artist = await this.prisma.artist.findUnique({ where: { id } });
         if (!artist) {
             throw new Error(`Artist with id ${id} not found`);
@@ -171,7 +171,7 @@ export class ArtistService {
         });
     }
 
-    async updateArtist(id: string, newData: Partial<UpdateArtistDto>, picture) {
+    async updateArtist(id: number, newData: Partial<UpdateArtistDto>, picture) {
         let imagePath;
         if (picture) {
             imagePath = this.artistFileService.createCover(ArtistFileType.IMAGE, picture);

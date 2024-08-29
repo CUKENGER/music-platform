@@ -2,7 +2,7 @@ import { memo} from "react";
 import styles from './CreateTrack.module.scss'
 import { useNavigate } from "react-router-dom";
 import CreateTrackForm from "./CreateTrackForm";
-import LyricsSearch from "@/components/LyricsSearch";
+// import LyricsSearch from "@/components/LyricsSearch";
 
 const CreateTrack = () => {
 

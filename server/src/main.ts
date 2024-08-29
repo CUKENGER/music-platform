@@ -33,7 +33,7 @@ const start = async () => {
 		app.use(cookieParser());
 		app.use(compression())
 
-		app.use(timeout('60s'))
+		app.use(timeout('10s'))
 
 		const config = new DocumentBuilder()
 			.setTitle("NoteVomit")

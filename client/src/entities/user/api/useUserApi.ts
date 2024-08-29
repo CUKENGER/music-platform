@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { checkUsername, getByEmail, loginUser, logoutUser, refreshToken, regUser } from "./userApi";
+import { checkUsername, getByEmail, getByToken, loginUser, logoutUser, refreshToken, regUser } from "./userApi";
 import { CreateUserDto, RegUserResponse } from "../types/User";
-import { handleErrorHandler } from "@/shared";
+import { handleErrorHandler, PublicRoutes } from "@/shared";
+import { useUserStore } from "../model/userStore";
+import { useNavigate } from "react-router-dom";
 
 const invalidateUserQuery = (queryClient: ReturnType<typeof useQueryClient>) => {
   queryClient.invalidateQueries({
@@ -57,6 +59,34 @@ export const useGetByEmail = (email: string) => {
   });
 };
 
+export const useGetByToken = () => {
+  return useQuery({
+    queryFn: () => getByToken(),
+    queryKey: ['user'],
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+};
+
+export const useLogoutUser = () => {
+
+  const {setIsAuth} = useUserStore()
+  const navigate = useNavigate()
+
+  return useMutation({
+    mutationFn: logoutUser,
+    onSuccess: () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      setIsAuth(false);
+      navigate(PublicRoutes.LOGIN);
+    },
+    onError: (error) => {
+      console.error('Ошибка при выходе:', error);
+    },
+  })
+};
+
 
 export const useCheckUsername = () => {
   const queryClient = useQueryClient();
@@ -65,17 +95,6 @@ export const useCheckUsername = () => {
     mutationFn: checkUsername,
     onSuccess: () => invalidateUserQuery(queryClient),
     onError: (error: unknown) => handleError(error, 'useCheckUsername'),
-  });
-};
-
-
-export const useLogoutUser = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: logoutUser,
-    onSuccess: () => invalidateUserQuery(queryClient),
-    onError: (error: unknown) => handleError(error, 'logging out user'),
   });
 };
 

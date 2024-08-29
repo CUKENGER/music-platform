@@ -15,6 +15,9 @@ export {ModalContainer} from './ui/ModalContainer/ModalContainer'
 export {Portal} from './ui/Portal/Portal'
 export {Textarea} from './ui/Textarea/Textarea'
 export {WarningMessage} from './ui/WarningMessage/WarningMessage'
+export {Menu} from './ui/Menu/Menu'
+export {Options} from './ui/Options/Options'
+export {InputFile} from './ui/InputFile/InputFile'
 
 export { default as audioManager } from './model/AudioManager'
 export {handleErrorHandler} from './model/errorHandler'
@@ -22,9 +25,14 @@ export {handleErrorHandler} from './model/errorHandler'
 export {useInput} from './hooks/useInput'
 export {useValidation} from './hooks/useValidation'
 export {useModal} from './hooks/useModal'
+export {useDebounce} from './hooks/useDebounce'
 
-export type {UseInputProps} from './hooks/useInput'
 
 export {ClearIcon} from './ui/assets/ClearIcon/ClearIcon'
 export {ExclamIcon} from './ui/assets/ExclamIcon/ExclamIcon'
 export {ShowPassIcon} from './ui/assets/ShowPassIcon/ShosPassIcon'
+
+export type {MenuItem} from './types/MenuItem'
+export type {UseInputProps} from './hooks/useInput'
+
+export {genres} from './moks/genres'

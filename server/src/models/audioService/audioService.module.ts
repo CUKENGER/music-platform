@@ -6,6 +6,6 @@ import { AudioService } from "./audioService.service";
     providers: [AudioService],
     exports: [AudioService]
 })
-export class FileModule{
+export class AudioModule{
 
 }

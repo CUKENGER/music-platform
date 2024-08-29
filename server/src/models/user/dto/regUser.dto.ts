@@ -2,7 +2,7 @@
 
 export class RegUserDto {
   email: string;
-  id: string
+  id: number
   isActivated: boolean;
 
   constructor(model) {

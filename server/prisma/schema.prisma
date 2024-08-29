@@ -1,7 +1,5 @@
-
-
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -11,49 +9,51 @@ generator client {
 
 // Модель User
 model User {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  username        String   @unique
-  email           String   @unique
-  isActivated     Boolean  @default(false)
+  id              Int       @id @default(autoincrement()) 
+  username        String    @unique
+  email           String    @unique
+  isActivated     Boolean   @default(false)
   password        String
   activationLink  String
-  banned          Boolean  @default(false)
+  banned          Boolean   @default(false)
   banReason       String?
-  
+
   roles           UserRole[] // Связь Many-to-Many через промежуточную модель
   tokens          Token[]
 }
 
 // Модель Role
 model Role {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  value           String   @unique
+  id              Int       @id @default(autoincrement())
+  value           String    @unique
   description     String
   userRoles       UserRole[] // Связь Many-to-Many через промежуточную модель
 }
 
 // Промежуточная модель для связи Many-to-Many
 model UserRole {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  roleId String   @db.ObjectId // Убедитесь, что это соответствует типу Role.id
-  userId String   @db.ObjectId
+  id     Int     @id @default(autoincrement())
+  roleId Int
+  userId Int
 
-  role   Role     @relation(fields: [roleId], references: [id])
-  user   User     @relation(fields: [userId], references: [id])
+  role   Role    @relation(fields: [roleId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
+
+  @@unique([roleId, userId])
 }
 
 // Модель Token
 model Token {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  refreshToken    String   @unique
+  id              Int       @id @default(autoincrement())
+  refreshToken    String    @unique
   accessToken     String
-  userId          String   @db.ObjectId
+  userId          Int
 
-  user            User     @relation(fields: [userId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
 }
 
 model Track {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  id         Int         @id @default(autoincrement())
   name       String
   artist     String
   listens    Int         @default(0)
@@ -63,69 +63,69 @@ model Track {
   picture    String
   audio      String
   text       String
-  artistId   String?     @db.ObjectId
-  albumId    String?     @db.ObjectId
-  createdAt  DateTime?
-  updatedAt  DateTime?
+  artistId   Int?
+  albumId    Int?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   artistEntity Artist?   @relation(fields: [artistId], references: [id])
-  comments     Comment[]  @relation("TrackComments") // Обратное отношение
-  album        Album?     @relation(fields: [albumId], references: [id])
+  comments     Comment[] @relation("TrackComments") // Обратное отношение
+  album        Album?    @relation(fields: [albumId], references: [id])
 }
 
 model Artist {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  id          Int          @id @default(autoincrement())
   name        String
   genre       String
   description String
-  createdAt   DateTime      @default(now())
-  listens   Int      @default(0)
-  likes     Int      @default(0)
+  createdAt   DateTime     @default(now())
+  listens     Int          @default(0)
+  likes       Int          @default(0)
   picture     String?       
-  
+
   // Связи с треками и альбомами
   tracks      Track[]
-  albums      Album[]       // Массив альбомов, связанный с Artist
-  comments    Comment[]     @relation("ArtistComments") // Связь с комментариями
+  albums      Album[]      // Массив альбомов, связанный с Artist
+  comments    Comment[]    @relation("ArtistComments") // Связь с комментариями
 }
 
 model Album {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        Int       @id @default(autoincrement())
   name      String
-  artistId  String   @db.ObjectId
+  artistId  Int
   genre     String
   picture   String
-  createdAt DateTime @default(now())
-  listens   Int      @default(0)
-  likes     Int      @default(0)
+  createdAt DateTime  @default(now())
+  listens   Int       @default(0)
+  likes     Int       @default(0)
 
-  artist    Artist   @relation(fields: [artistId], references: [id])
+  artist    Artist    @relation(fields: [artistId], references: [id])
   tracks    Track[]
-  comments  Comment[]  @relation("AlbumComments")
+  comments  Comment[] @relation("AlbumComments")
 }
 
 model Comment {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  id          Int        @id @default(autoincrement())
   username    String
   text        String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  likes       Int         @default(0)
-  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  likes       Int        @default(0)
+
   // Поле для связи с родительским комментарием (если есть)
-  parentId    String?     @db.ObjectId
-  parent      Comment?    @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  
+  parentId    Int?
+  parent      Comment?   @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
   // Поля для связи с другими сущностями
-  trackId     String?     @db.ObjectId
-  artistId    String?     @db.ObjectId
-  albumId     String?     @db.ObjectId
-  
+  trackId     Int?
+  artistId    Int?
+  albumId     Int?
+
   // Связи с другими сущностями
-  track       Track?      @relation("TrackComments", fields: [trackId], references: [id])
-  artist      Artist?     @relation("ArtistComments", fields: [artistId], references: [id])
-  album       Album?      @relation("AlbumComments", fields: [albumId], references: [id])
+  track       Track?     @relation("TrackComments", fields: [trackId], references: [id])
+  artist      Artist?    @relation("ArtistComments", fields: [artistId], references: [id])
+  album       Album?     @relation("AlbumComments", fields: [albumId], references: [id])
 
   // Ответы на комментарий
-  replies     Comment[]   @relation("CommentReplies")
+  replies     Comment[]  @relation("CommentReplies")
 }

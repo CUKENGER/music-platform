@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Headers,  UseGuards } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
@@ -7,6 +7,7 @@ import { RolesGuard } from 'models/auth/roles.guard';
 import { Roles } from 'models/auth/rolesAuth.decorator';
 import { AddRoleDto } from 'models/auth/dto/addRole.dto';
 import { AuthService } from 'models/auth/auth.service';
+import { ApiHeader } from '@nestjs/swagger';
 
 @ApiTags('Users')
 @Controller('user')
@@ -22,6 +23,19 @@ export class UserController {
   @Post()
   create(@Body() dto: UserDto) {
     return this.authService.registration(dto)
+  }
+
+
+  @ApiOperation({ summary: 'Получение пользователя по токену' })
+  @Get('/byToken')
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer токен',
+    required: true,
+  })
+  getByToken(@Headers('Authorization') authHeader: string) {
+    const token = authHeader.split(' ')[1];
+    return this.userService.getByToken(token)
   }
 
   @ApiOperation({ summary: 'Получение всех пользователей' })
@@ -63,6 +77,7 @@ export class UserController {
   @Post('/check/:username')
   async checkUsername(@Param('username') username: string): Promise<{ available: boolean }> {
     const isAvailable = await this.userService.checkUsername(username);
+    console.log('isAvailable', isAvailable);
     return { available: isAvailable };
   }
 

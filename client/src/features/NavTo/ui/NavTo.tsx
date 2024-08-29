@@ -18,6 +18,7 @@ export const NavTo = () => {
     <div className={styles.route_list}>
       {routes.map((route) => (
         <NavItem
+          key={route.id}
           icon={route.icon}
           path={route.path}
           title={route.title}

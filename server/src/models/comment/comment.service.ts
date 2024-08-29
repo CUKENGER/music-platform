@@ -40,7 +40,7 @@ export class CommentService {
     }
   }
 
-  async deleteCommentOrReply(commentId: string) {
+  async deleteCommentOrReply(commentId: number) {
     const comment = await this.prisma.comment.findUnique({ where: { id: commentId } });
 
     if (!comment) {
@@ -54,7 +54,7 @@ export class CommentService {
     }
   }
 
-  async addLike(commentId: string) {
+  async addLike(commentId: number) {
     const comment = await this.prisma.comment.findUnique({
       where: { id: commentId },
     });
@@ -75,7 +75,7 @@ export class CommentService {
     }
   }
 
-  async deleteLike(commentId: string) {
+  async deleteLike(commentId: number) {
     const comment = await this.prisma.comment.findUnique({
       where: { id: commentId },
     });

@@ -1,0 +1,34 @@
+
+
+.menu {
+  position: relative;
+}
+
+.menu_btn {
+  cursor: pointer;
+  user-select: none;
+}
+
+.menu_list {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  background-color: var(--black-lt);
+  border-radius: 10px;
+  list-style: none;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
+.menu_item {
+  padding: 10px 15px;
+  cursor: pointer;
+  white-space: nowrap; /* Это свойство предотвратит перенос текста */
+  overflow-wrap: nowrap;
+
+  &:hover {
+    background-color: #5f5f5f;
+    border-radius: 10px;
+  }
+}

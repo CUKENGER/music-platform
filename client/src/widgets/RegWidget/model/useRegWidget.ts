@@ -11,6 +11,8 @@ export const useRegWidget = () => {
   const { mutate: regUser, isPending: isLoading } = useRegUser();
   const { mutate: checkUsername, data: isUsernameValid } = useCheckUsername();
 
+  console.log('data', isUsernameValid)
+
   const navigate = useNavigate();
 
   const email = useInput('', { isEmpty: true, isEmail: true, isLatin: true });
@@ -23,6 +25,12 @@ export const useRegWidget = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    console.log('isUsernameValid', isUsernameValid);
+    if (!isUsernameValid?.available) {
+      showModal('Этот никнейм уже занят');
+      return;
+    }
+
     if (isValid) {
       showModal('Заполните все данные корректно, пожалуйста');
       return;
@@ -30,11 +38,6 @@ export const useRegWidget = () => {
 
     checkUsername(username.value, {
       onSuccess: () => {
-        if (!isUsernameValid) {
-          showModal('Этот никнейм уже занят');
-          return;
-        }
-
         const userDto = {
           email: email.value,
           password: password.value,

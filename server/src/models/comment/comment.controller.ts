@@ -11,13 +11,13 @@ export class CommentController {
 
   @Post('/like/:id')
   @ApiOperation({ summary: 'Добавление лайка к комменту' })
-  addLike(@Param('id') id: string) {
+  addLike(@Param('id') id: number) {
     return this.commentService.addLike(id)
   }
 
   @Delete('/like/:id')
   @ApiOperation({ summary: 'Удаление лайка у комменту' })
-  deleteLike(@Param('id') id: string) {
+  deleteLike(@Param('id') id: number) {
     return this.commentService.deleteLike(id)
   }
 

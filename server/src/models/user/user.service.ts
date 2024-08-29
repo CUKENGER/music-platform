@@ -1,4 +1,5 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { AddRoleDto } from 'models/auth/dto/addRole.dto';
 import { BanUserDto } from 'models/auth/dto/banUser.dto';
 import { RoleService } from 'models/role/role.service';
@@ -10,7 +11,8 @@ export class UserService {
 
   constructor(
     private prisma: PrismaService,
-    private roleService: RoleService
+    private roleService: RoleService,
+    private jwtService: JwtService 
   ) {}
 
 
@@ -81,6 +83,31 @@ export class UserService {
         roles: true,
       },
     });
+  }
+
+  async getByToken(token: string) {
+    try {
+      const payload = this.jwtService.verify(token, {secret: process.env.JWT_ACCESS_SECRET_KEY})
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id: payload.id,
+        },
+        include: {
+          roles: true,
+          tokens: true
+        },
+      });
+  
+      if (!user) {
+        throw new NotFoundException('Пользователь не найден');
+      }
+  
+      console.log(`Найден пользователь: ${user.username}`);
+      return user;
+    } catch (error) {
+      console.error(`Ошибка при поиске пользователя: ${error.message}`);
+      // throw new InternalServerErrorException('Ошибка при поиске пользователя');
+    }
   }
 
   async getByUsername(username: string) {

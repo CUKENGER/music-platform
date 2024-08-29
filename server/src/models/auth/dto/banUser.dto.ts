@@ -6,7 +6,7 @@ export class BanUserDto {
 
   @ApiProperty({example: "1", description: "Id user"})
   @IsString()
-  readonly userId: string;
+  readonly userId: number;
 
   @ApiProperty({example: "Сказал нет", description: "Причина бана"})
   @IsString()

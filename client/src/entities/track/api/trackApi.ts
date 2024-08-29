@@ -1,6 +1,5 @@
 import { axiosInstance } from "@/shared"
-import { ITrack } from "../types/Track";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CreateTrackDto, ITrack } from "../types/Track";
 
 export const deleteTrack = async (trackId: number): Promise<ITrack> => {
   try {
@@ -12,23 +11,31 @@ export const deleteTrack = async (trackId: number): Promise<ITrack> => {
   }
 }
 
-export const useDeleteTrack = () => {
-  const queryClient = useQueryClient();
+export const create = async (trackInfo: CreateTrackDto) => {
+  try {
+    const formData = new FormData();
+    
+    formData.append('name', trackInfo.name);
+    formData.append('artist', trackInfo.artist);
+    formData.append('text', trackInfo.text);
+    formData.append('genre', trackInfo.genre);
+    formData.append('picture', trackInfo.picture);
+    formData.append('audio', trackInfo.audio);
 
-  return useMutation({
-    mutationFn: deleteTrack,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['tracks'],
-        exact: true,
-      });
-    },
-    onError: (error: unknown) => {
-      if (error instanceof Error) {
-        console.error('Error deleting track:', error.message);
-      } else {
-        console.error('Unknown error:', error);
-      }
-    },
-  });
+    console.log('formData', formData);
+
+    const response = await axiosInstance.post('/tracks', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('response', response)
+
+    return response.data;
+  } catch (error) {
+    console.error('Error create track:', error);
+    throw error;
+  }
 };
+
