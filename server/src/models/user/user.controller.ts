@@ -46,6 +46,14 @@ export class UserController {
     return this.userService.getAll()
   }
 
+  @ApiOperation({ summary: 'Получение пользователя по id' })
+  @Roles("USER")
+  @UseGuards(RolesGuard)
+  @Get(':id')
+  getOne(@Param('id') id: number) {
+    return this.userService.getOne(id)
+  }
+
   @ApiOperation({ summary: 'Поиск пользователя по никнейму' })
   @Get('/search/:username')
   search(@Param() username: string) {
@@ -55,8 +63,8 @@ export class UserController {
   @ApiOperation({ summary: 'Выдать роль' })
   @ApiBody({ type: AddRoleDto })
   @ApiResponse({ status: 200 })
-  @Roles("ADMIN")
-  @UseGuards(RolesGuard)
+  // @Roles("ADMIN")
+  // @UseGuards(RolesGuard)
   @Post('/role')
   addRole(@Body() dto: AddRoleDto) {
     return this.userService.addRole(dto)

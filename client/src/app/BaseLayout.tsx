@@ -1,14 +1,16 @@
+import { useAxiosInterceptor } from "@/shared";
 import AppRouter from "./AppRouter";
 import styles from './BaseLayout.module.scss';
 import { useUserStore } from "@/entities";
-import { Header, Navbar } from "@/widgets";
-import { useAxiosInterceptor } from "@/shared/api/axiosInstance";
+import { Header, Navbar, Player } from "@/widgets";
 
 function BaseLayout() {
 
   const { isAuth } = useUserStore();
 
   useAxiosInterceptor()
+
+  console.log('isAuth', isAuth)
 
   return (
     <>
@@ -19,6 +21,8 @@ function BaseLayout() {
           <div className={styles.page_content}>
             <AppRouter />
           </div>
+
+          <Player/>
         </>
       ) : (
         <AppRouter />

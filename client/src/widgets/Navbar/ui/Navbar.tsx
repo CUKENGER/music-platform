@@ -1,6 +1,6 @@
 import { NavTo } from '@/features';
 import styles from './Navbar.module.scss';
-import UserAvatar from '@/entities/user/ui/UserAvatar/UserAvatar';
+import { UserAvatar } from '@/entities';
 
 
 const Navbar = () => {

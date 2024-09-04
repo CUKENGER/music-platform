@@ -72,7 +72,7 @@ export class AuthController {
   async activate(@Param('link') activationLink: string, @Res() res: Response, @Next() next) {
     try {
       await this.authService.activate(activationLink);
-      return res.redirect(`${process.env.CLIENT_URL}/login`);
+      return res.redirect(`${process.env.CLIENT_URL}/`);
     } catch (e) {
       next(e);
     }

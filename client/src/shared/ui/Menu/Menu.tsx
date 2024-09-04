@@ -7,7 +7,7 @@ interface MenuProps {
   items: MenuItem[];
 }
 
-export const Menu: FC<MenuProps> = ({items}) => {
+export const Menu: FC<MenuProps> = ({ items }) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
@@ -31,10 +31,10 @@ export const Menu: FC<MenuProps> = ({items}) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  
+
   return (
     <div className={styles.menu} ref={menuRef}>
-        <img src={dots} onClick={toggleMenu} className={styles.menu_btn}/>
+      <img src={dots} onClick={toggleMenu} className={styles.menu_btn} />
       {isOpen && (
         <ul className={styles.menu_list}>
           {items.map((item, index) => (
@@ -42,7 +42,7 @@ export const Menu: FC<MenuProps> = ({items}) => {
               {item.text}
             </li>
           ))}
-      </ul>
+        </ul>
       )}
     </div>
   )

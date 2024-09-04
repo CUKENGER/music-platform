@@ -10,7 +10,6 @@ const axiosInstance = axios.create({
   baseURL: ApiUrl,
   headers: {
     'Content-Type': 'application/json',
-
   },
   withCredentials: true,
 });
@@ -40,26 +39,22 @@ export const useAxiosInterceptor = () => {
 
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        console.log('refresh')
+        console.log('refresh');
         try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          cookies.set('refreshToken', refreshToken, { 
-            sameSite: 'strict'
-          });
           const { data } = await axiosInstance.get('/auth/refresh', { withCredentials: true });
-          
+
           localStorage.setItem('token', data.accessToken);
-          localStorage.setItem('refreshToken', data.refreshToken);
           cookies.set('refreshToken', data.refreshToken, { 
-            sameSite: 'strict'
+            sameSite: 'strict',
+            secure: true,
           });
 
           originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
           return axiosInstance(originalRequest);
         } catch (e) {
+          console.error('Ошибка при обновлении токена:', e);
           cookies.remove('refreshToken');
           localStorage.removeItem('token');
-          localStorage.removeItem('refreshToken');
           setIsAuth(false);
           navigate(PublicRoutes.LOGIN);
           return Promise.reject(e);

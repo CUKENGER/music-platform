@@ -18,9 +18,95 @@ model User {
   banned          Boolean   @default(false)
   banReason       String?
 
-  roles           UserRole[] // Связь Many-to-Many через промежуточную модель
+  roles           UserRole[]   // Связь Many-to-Many через промежуточную модель
   tokens          Token[]
+  
+  // Понравившиеся треки, альбомы и артисты
+  likedTracks     Track[]     @relation("LikedTracks")
+  likedAlbums     Album[]     @relation("LikedAlbums")
+  likedArtists    Artist[]    @relation("LikedArtists")
+  
+  // Последние прослушанные треки
+  listenedTracks  ListenedTrack[]
 }
+
+// Модель Track
+model Track {
+  id         Int         @id @default(autoincrement())
+  name       String
+  listens    Int         @default(0)
+  likes      Int         @default(0)
+  genre      String
+  duration   String
+  picture    String
+  audio      String
+  text       String
+  artistId   Int?
+  albumId    Int?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  artist     Artist?     @relation(fields: [artistId], references: [id])
+  album      Album?      @relation(fields: [albumId], references: [id])
+  
+  likedByUsers User[]     @relation("LikedTracks")
+  listenedByUsers ListenedTrack[]
+
+  comments   Comment[]   @relation("TrackComments")
+}
+
+// Модель Album
+model Album {
+  id        Int       @id @default(autoincrement())
+  name      String
+  artistId  Int
+  genre     String
+  picture   String
+  createdAt DateTime  @default(now())
+  listens   Int       @default(0)
+  likes     Int       @default(0)
+
+  artist    Artist    @relation(fields: [artistId], references: [id])
+  tracks    Track[]
+  
+  likedByUsers User[]     @relation("LikedAlbums")
+
+  comments  Comment[] @relation("AlbumComments")
+}
+
+// Модель Artist
+model Artist {
+  id          Int          @id @default(autoincrement())
+  name        String
+  genre       String
+  description String
+  createdAt   DateTime     @default(now())
+  listens     Int          @default(0)
+  likes       Int          @default(0)
+  picture     String?       
+
+  tracks      Track[]
+  albums      Album[]
+  
+  likedByUsers User[]     @relation("LikedArtists")
+
+  comments    Comment[]    @relation("ArtistComments")
+}
+
+// Промежуточная модель для связи Many-to-Many для последних прослушанных треков
+model ListenedTrack {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  trackId   Int
+  listenedAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  track     Track    @relation(fields: [trackId], references: [id])
+
+  @@index([userId, trackId])
+}
+
+// Остальные модели (UserRole, Role, Token, Comment) остаются без изменений
 
 // Модель Role
 model Role {
@@ -50,58 +136,6 @@ model Token {
   userId          Int
 
   user            User      @relation(fields: [userId], references: [id])
-}
-
-model Track {
-  id         Int         @id @default(autoincrement())
-  name       String
-  artist     String
-  listens    Int         @default(0)
-  likes      Int         @default(0)
-  genre      String
-  duration   String
-  picture    String
-  audio      String
-  text       String
-  artistId   Int?
-  albumId    Int?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-
-  artistEntity Artist?   @relation(fields: [artistId], references: [id])
-  comments     Comment[] @relation("TrackComments") // Обратное отношение
-  album        Album?    @relation(fields: [albumId], references: [id])
-}
-
-model Artist {
-  id          Int          @id @default(autoincrement())
-  name        String
-  genre       String
-  description String
-  createdAt   DateTime     @default(now())
-  listens     Int          @default(0)
-  likes       Int          @default(0)
-  picture     String?       
-
-  // Связи с треками и альбомами
-  tracks      Track[]
-  albums      Album[]      // Массив альбомов, связанный с Artist
-  comments    Comment[]    @relation("ArtistComments") // Связь с комментариями
-}
-
-model Album {
-  id        Int       @id @default(autoincrement())
-  name      String
-  artistId  Int
-  genre     String
-  picture   String
-  createdAt DateTime  @default(now())
-  listens   Int       @default(0)
-  likes     Int       @default(0)
-
-  artist    Artist    @relation(fields: [artistId], references: [id])
-  tracks    Track[]
-  comments  Comment[] @relation("AlbumComments")
 }
 
 model Comment {

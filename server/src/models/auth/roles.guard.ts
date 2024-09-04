@@ -1,49 +1,72 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable  } from "@nestjs/common";
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { JwtService } from "@nestjs/jwt";
-import { Observable } from "rxjs";
+import { PrismaService } from "prisma/prisma.service";
 import { ROLES_KEY } from "./rolesAuth.decorator";
-import { ApiError } from "exceptions/api.error";
-
 
 @Injectable()
 export class RolesGuard implements CanActivate {
 
   constructor(
-    private jwtService: JwtService,
-    private reflector: Reflector
-  ) {
+    private reflector: Reflector,
+    private prisma: PrismaService
+  ) {}
 
-  }
-
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
       const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
         context.getHandler(),
         context.getClass()
-      ])
-      if(!requiredRoles) {
-        return true
-      }
-      const req = context.switchToHttp().getRequest()
-      const authHeader = req.headers.authorization
-      const bearer = authHeader.split(' ')[0]
-      const token = authHeader.split(' ')[1]
+      ]);
 
-      if(bearer !== 'Bearer' || !token) {
-        throw ApiError.UnauthorizedError()
+      if (!requiredRoles) {
+        return true;
       }
 
-      const user = this.jwtService.verify(token)
-      req.user = user
+      const req = context.switchToHttp().getRequest();
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader) {
+        throw new ForbiddenException('Authorization header is missing');
+      }
+      
+      const token = authHeader.split(' ')[1];
+
+      if (!token) {
+        throw new ForbiddenException('Token is missing or invalid');
+      }
+
+      console.log('token', token)
+
+      const user = await this.prisma.user.findFirst({
+        where: {
+          tokens: {
+            some: {
+              accessToken: token
+            }
+          }
+        },
+        include: {
+          roles: {
+            include: {
+              role: true
+            }
+          }
+        }
+      });
+
       console.log('user', user)
-      const userData = user.roles.some(role => requiredRoles.includes(role.value))
-      console.log('userData', userData);
-      return userData
 
-    } catch(e) {
-      throw new HttpException({message: "No access"}, HttpStatus.FORBIDDEN)
+      if (!user || !user.roles) {
+        throw new ForbiddenException('You do not have the required permissions');
+      }
+
+      return user.roles.some(userRole => 
+        requiredRoles.includes(userRole.role.value)
+      );
+
+    } catch (e) {
+      console.error(`Error in roles guard: ${e.message}`);
+      throw new ForbiddenException("No access");
     }
   }
-  
 }

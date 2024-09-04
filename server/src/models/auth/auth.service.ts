@@ -63,15 +63,36 @@ export class AuthService {
         const hashPassword = await bcrypt.hash(dto.password, 10);
         const activationLink = uuid.v4();
 
-        const user = await prisma.user.create({
-            data: {
-                email: dto.email,
-                password: hashPassword,
-                activationLink,
-                username: dto.username,
-                isActivated: false,
-            },
+        let role = await prisma.role.findUnique({
+          where: { value: "USER" },
         });
+    
+        console.log('role', role)
+
+        if (!role) {
+          role = await prisma.role.create({
+            data: { value: "USER", description: "Default user role" },
+          });
+          console.log('role create', role)
+        }
+    
+        const user = await prisma.user.create({
+          data: {
+            email: dto.email,
+            password: hashPassword,
+            activationLink,
+            username: dto.username,
+            isActivated: false,
+            roles: {
+              create: {
+                role: {
+                  connect: { id: role.id },
+                },
+              },
+            },
+          },
+        });
+        console.log('user create', user)
 
         console.log('User created:', user);
 
@@ -80,7 +101,6 @@ export class AuthService {
         const userDto = new RegUserDto(user);
         const tokens = this.tokenService.generateTokens({ ...userDto });
 
-        // Check if user exists before creating a token
         const existingUser = await prisma.user.findUnique({ where: { id: userDto.id } });
         if (!existingUser) {
             throw new HttpException("User creation failed, cannot save token", HttpStatus.INTERNAL_SERVER_ERROR);

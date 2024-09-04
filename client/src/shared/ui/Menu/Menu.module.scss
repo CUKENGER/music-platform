@@ -2,6 +2,7 @@
 
 .menu {
   position: relative;
+  z-index: 10000;
 }
 
 .menu_btn {
@@ -16,7 +17,7 @@
   background-color: var(--black-lt);
   border-radius: 10px;
   list-style: none;
-  z-index: 1000;
+  z-index: 10000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   font-size: 14px;
 }
@@ -26,6 +27,7 @@
   cursor: pointer;
   white-space: nowrap; /* Это свойство предотвратит перенос текста */
   overflow-wrap: nowrap;
+  z-index: 10000;
 
   &:hover {
     background-color: #5f5f5f;

@@ -1,11 +1,12 @@
 
-export { default as axiosInstance } from './api/axiosInstance'
+export { default as axiosInstance, useAxiosInterceptor } from './api/axiosInstance'
 
 export { ApiUrl } from './consts/apiUrl'
 export { publicRoutes } from './consts/routes'
 export {privateRoutes} from './consts/routes'
 export {PublicRoutes} from './consts/routes'
 export {PrivateRoutes} from './consts/routes'
+export {isAdmin} from './consts/isAdmin'
 
 export { Btn } from './ui/Btn/Btn'
 export {DeleteContainer} from './ui/DeleteContainer/DeleteContainer'
@@ -21,16 +22,29 @@ export {InputFile} from './ui/InputFile/InputFile'
 
 export { default as audioManager } from './model/AudioManager'
 export {handleErrorHandler} from './model/errorHandler'
+export {formatTime} from './model/formatTime'
+export {sortList} from './model/sortList'
 
 export {useInput} from './hooks/useInput'
 export {useValidation} from './hooks/useValidation'
 export {useModal} from './hooks/useModal'
 export {useDebounce} from './hooks/useDebounce'
-
+export {useInfiniteScroll} from './hooks/useInfiniteScroll'
 
 export {ClearIcon} from './ui/assets/ClearIcon/ClearIcon'
 export {ExclamIcon} from './ui/assets/ExclamIcon/ExclamIcon'
 export {ShowPassIcon} from './ui/assets/ShowPassIcon/ShosPassIcon'
+export {MusicWaves} from './ui/assets/MusicWaves/MusicWaves'
+
+export {default as playIcon} from './ui/assets/playIcon.svg'
+export {default as pauseIcon} from './ui/assets/pauseIcon.svg'
+export {default as playsIcon} from './ui/assets/playsIcon.svg'
+export {default as volumeIcon} from './ui/assets/volumeIcon.svg'
+export {default as muteIcon} from './ui/assets/muteIcon.svg'
+export {default as prevBtnBg} from './ui/assets/prevBtnBg.svg'
+export {default as nextBtnBg} from './ui/assets/nextBtnBg.svg'
+export {default as playBtnBg} from './ui/assets/playBtnBg.svg'
+export {default as pauseBtnBg} from './ui/assets/pauseBtnBg.svg'
 
 export type {MenuItem} from './types/MenuItem'
 export type {UseInputProps} from './hooks/useInput'

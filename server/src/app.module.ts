@@ -16,9 +16,15 @@ import { LyricsModule } from 'models/lyrics/lyrics.module';
 import { HttpModule} from '@nestjs/axios';
 import { FileModule } from 'models/file/file.module';
 import { AudioModule } from 'models/audioService/audioService.module';
+import * as path from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: path.resolve(__dirname, '..','static'),
+      // serveRoot: '/static',
+    }),
     JwtModule.register({
       secret: process.env.JWT_ACCESS_SECRET_KEY,
       signOptions: {expiresIn: '24h'}
@@ -53,9 +59,13 @@ export class AppModule implements NestModule{
         { path: 'auth/registration', method: RequestMethod.POST },
         { path: 'user/check/:username', method: RequestMethod.POST },
         { path: 'user', method: RequestMethod.POST },
+        { path: '/image/*', method: RequestMethod.ALL},
+        { path: '/audio/*', method: RequestMethod.ALL},
+        { path: '/static/*', method: RequestMethod.ALL},
+        { path: '/favicon.ico', method: RequestMethod.GET}
       )
       .forRoutes(
-        { path: '*', method: RequestMethod.ALL }
+        // { path: '*', method: RequestMethod.ALL }
       )
   }
 }

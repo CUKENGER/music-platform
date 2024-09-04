@@ -1,0 +1,93 @@
+
+.container{
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  background-color: var(--prm);
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.main_container{
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+  align-items: center;
+  padding: 0 15px;
+  height: 100%;
+}
+
+.main_info_container{
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+}
+
+.volume_container{
+  width: 200px;
+}
+
+.play_btns{
+  display: flex;
+  column-gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.right_container{
+  display: flex;
+  align-items: center;
+  column-gap: 15px;
+  justify-content: flex-end;
+  padding-right: 15px;
+}
+
+.cover_container{
+  width:45px;
+  height: 45px;
+  cursor: pointer;
+}
+
+.cover{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.openBtn{
+  cursor: pointer;
+}
+
+@media(max-width: 800px) {
+  .right_container{
+    display: none;
+  }
+
+  .main_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+@media(max-width:425px){
+  .duration{
+    display: none;
+  }
+}
+
+@media(max-width:400px){
+  .container{
+    height: 70px;
+  }
+
+  .main_info_container{
+    column-gap: 10px;
+  }
+
+  .cover_container{
+    width: 35px;
+    height: 35px;
+  }
+}

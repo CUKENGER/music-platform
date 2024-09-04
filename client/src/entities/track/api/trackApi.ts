@@ -1,17 +1,68 @@
 import { axiosInstance } from "@/shared"
 import { CreateTrackDto, ITrack } from "../types/Track";
 
-export const deleteTrack = async (trackId: number): Promise<ITrack> => {
+export const getAll = async (count?: number, offset?: number) => {
   try {
-    const response = await axiosInstance.delete(`/tracks/${trackId}`)
+    const response = await axiosInstance.get('/tracks', { params: { count, offset }});
     return response.data
-  } catch (error) {
-    console.error('Error delete track:', error);
-    throw error;
+  } catch (e: unknown) {
+    console.error(`Error fetching tracks: ${e}`);
+    return null
+  }
+};
+
+export const getOne = async (trackId: number): Promise<ITrack | null> => {
+  try {
+    const response = await axiosInstance.get<ITrack>(`/tracks/${trackId}`, { params: { id: Number(trackId) }});
+    return response.data
+  } catch (e: unknown) {
+    console.error(`Error get one track: ${e}`);
+    return null
+  }
+};
+
+export const addLike = async (id: number): Promise<ITrack | null> => {
+  try {
+    const response = await axiosInstance.post(`/tracks/like/${id}`)
+    return response.data
+  } catch(e) {
+    console.error(`error post like track axios, ${e}`)
+    return null;
   }
 }
 
-export const create = async (trackInfo: CreateTrackDto) => {
+export const addListen = async (id: number): Promise<ITrack | null> => {
+  try {
+    const response = await axiosInstance.post(`/tracks/listen/${id}`)
+    return response.data
+  } catch(e) {
+    console.error(`error add listen track axios, ${e}`)
+    return null;
+  }
+}
+
+
+export const deleteLike = async (id: number): Promise<ITrack | null> => {
+  try {
+    const response = await axiosInstance.delete(`/tracks/like/${id}`)
+    return response.data
+  } catch(e) {
+    console.error(`error delete like track axios, ${e}`)
+    return null;
+  }
+}
+
+export const deleteTrack = async (id: number): Promise<ITrack | null> => {
+  try {
+    const response = await axiosInstance.delete(`/tracks/${id}`)
+    return response.data
+  } catch(e) {
+    console.error(`error delete track axios, ${e}`)
+    return null;
+  }
+}
+
+export const create = async (trackInfo: CreateTrackDto): Promise<ITrack> => {
   try {
     const formData = new FormData();
     
@@ -22,7 +73,6 @@ export const create = async (trackInfo: CreateTrackDto) => {
     formData.append('picture', trackInfo.picture);
     formData.append('audio', trackInfo.audio);
 
-    console.log('formData', formData);
 
     const response = await axiosInstance.post('/tracks', formData, {
       headers: {
@@ -30,7 +80,6 @@ export const create = async (trackInfo: CreateTrackDto) => {
       },
     });
 
-    console.log('response', response)
 
     return response.data;
   } catch (error) {

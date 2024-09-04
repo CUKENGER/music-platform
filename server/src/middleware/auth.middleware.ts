@@ -14,11 +14,9 @@ export class AuthMiddleware implements NestMiddleware {
   use(req: RequestWithUser, res: Response, next: NextFunction) {
     try {
       const authorizationHeader = req.headers.authorization;
-      console.log('член')
       console.log('authorizationHeader', authorizationHeader);
       if (!authorizationHeader) {
-        throw new Error('Фгер шв вфыв')
-        // return next(ApiError.UnauthorizedError());
+        return next(ApiError.UnauthorizedError());
       }
 
       const accessToken = authorizationHeader.split(' ')[1];
@@ -37,8 +35,6 @@ export class AuthMiddleware implements NestMiddleware {
       next();
     } catch (e) {
       console.log(`catch(e) ${e}`)
-      // throw new UnauthorizedException(`Error catch(e ${e}`)
-      // throw new HttpException(`Error ctach( 4 ${e}`, HttpStatus.UNAUTHORIZED)
       return next(ApiError.UnauthorizedError());
     }
   }

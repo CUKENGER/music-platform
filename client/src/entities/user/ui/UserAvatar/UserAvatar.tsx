@@ -1,12 +1,13 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import styles from './UserAvatar.module.scss'
 import { Menu, MenuItem, PrivateRoutes} from '@/shared';
 import { useGetByToken, useLogoutUser } from '../../api/useUserApi';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../model/userStore';
 
-const UserAvatar: FC = () => {
+export const UserAvatar: FC = () => {
   const navigate = useNavigate()
-
+  const {setUser} = useUserStore()
   const { mutate: logout } = useLogoutUser()
 
   const handleClick = () => {
@@ -19,6 +20,12 @@ const UserAvatar: FC = () => {
   ]
 
   const {data: user} = useGetByToken()
+
+  useEffect(() => {
+    if(user) {
+      setUser(user)
+    }
+  }, [user])
 
   return (
 
@@ -35,4 +42,3 @@ const UserAvatar: FC = () => {
   );
 }
 
-export default UserAvatar;

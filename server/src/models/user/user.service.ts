@@ -24,41 +24,55 @@ export class UserService {
   //   return user
   // }
 
-  async registration(
-    email: string,
-    password: string,
-    activationLink: string,
-    username: string,
-) {
-    try {
-      const user = await this.prisma.user.create({
-        data: {
-          email,
-          password,
-          activationLink,
-          username,
-        },
-      });
-
-      const role = await this.roleService.getByValue('USER');
-      await this.prisma.userRole.create({
-        data: {
-          userId: user.id,
-          roleId: role.id,
-        },
-      });
-
-      return user;
-    } catch (e) {
-      console.error('Error in registration userService', e);
-      throw new HttpException('Registration failed', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
+  // async registration(email: string, password: string, activationLink: string, username: string) {
+  //   try {
+  //     const user = await this.prisma.$transaction(async (prisma) => {
+  //       const newUser = await prisma.user.create({
+  //         data: {
+  //           email,
+  //           password,
+  //           activationLink,
+  //           username,
+  //           roles: {
+  //             connectOrCreate: {
+  //               where: { role: {value: "USER"} },
+  //               create: { role: {} },
+  //             },
+  //           },
+  //         },
+  //       });
+  
+  //       const role = await this.roleService.getByValue('USER');
+  //       if (!role) {
+  //         throw new NotFoundException('Role not found');
+  //       }
+  
+  //       await prisma.userRole.create({
+  //         data: {
+  //           userId: newUser.id,
+  //           roleId: role.id,
+  //         },
+  //       });
+  
+  //       return newUser;
+  //     });
+  
+  //     return user;
+  //   } catch (e) {
+  //     console.error('Error in registration userService', e);
+  //     throw new InternalServerErrorException('Registration failed');
+  //   }
+  // }
 
   async getAll() {
     return this.prisma.user.findMany({
       include: {
         roles: true,
+        likedAlbums: true,
+        likedArtists: true,
+        likedTracks: true,
+        listenedTracks: true,
+        tokens: true
       },
     });
   }
@@ -81,6 +95,27 @@ export class UserService {
       },
       include: {
         roles: true,
+        likedAlbums: true,
+        likedArtists: true,
+        likedTracks: true,
+        listenedTracks: true,
+        tokens: true
+      },
+    });
+  }
+
+  async getOne(id: number){
+    return this.prisma.user.findUniqueOrThrow({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        roles: true,
+        likedAlbums: true,
+        likedArtists: true,
+        likedTracks: true,
+        listenedTracks: true,
+        tokens: true
       },
     });
   }
@@ -94,6 +129,10 @@ export class UserService {
         },
         include: {
           roles: true,
+          likedAlbums: true,
+          likedArtists: true,
+          likedTracks: true,
+          listenedTracks: true,
           tokens: true
         },
       });
@@ -117,6 +156,11 @@ export class UserService {
       },
       include: {
         roles: true,
+        likedAlbums: true,
+        likedArtists: true,
+        likedTracks: true,
+        listenedTracks: true,
+        tokens: true
       },
     });
   }

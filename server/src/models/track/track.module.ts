@@ -6,6 +6,7 @@ import { FileService } from 'models/file/file.service';
 import { FileModule } from 'models/file/file.module';
 import { AudioService } from 'models/audioService/audioService.service';
 import { CommentService } from 'models/comment/comment.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [FileModule],
@@ -15,7 +16,8 @@ import { CommentService } from 'models/comment/comment.service';
     PrismaService, 
     FileService,
     AudioService,
-    CommentService
+    CommentService,
+    JwtService
   ],
   exports: [TrackService]
 })

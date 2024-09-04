@@ -1,8 +1,11 @@
 import { useCreateTrack } from "@/entities"
-import { useInput, genres, useDebounce, ApiUrl, useModal, axiosInstance } from "@/shared"
+import { useInput, genres, useDebounce, ApiUrl, useModal, axiosInstance, PrivateRoutes } from "@/shared"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 export const useCreateTrackForm = () => {
+
+  const navigate = useNavigate()
 
   const name = useInput('', {})
   const artist = useInput('', {})
@@ -38,15 +41,13 @@ export const useCreateTrackForm = () => {
           const response = await axiosInstance.get(ApiUrl + 'lyrics/search', {
             params: {track_name: debouncedName, artist_name: debouncedArtist}
           });
-          console.log('response', response)
           
           if (response.data.track_id) {
             const lyricsResponse = await axiosInstance.get(ApiUrl + `lyrics?track_id=${response.data.track_id}`);
-            console.log('lyricsResponse',lyricsResponse.data)
             text.setValue(lyricsResponse.data)
           }
         } catch(e) {
-          console.error('Error in get', e)
+          console.error('Error in get lyrics', e)
         }
       }
     }
@@ -80,13 +81,7 @@ export const useCreateTrackForm = () => {
       };
       createTrack(trackInfo, {
         onSuccess: (response) => {
-          showModal(`Трек ${response.name} успешно загружен`)
-          name.setValue('');
-          artist.setValue('');
-          text.setValue('');
-          genre.setValue('');
-          setAudio(null);
-          setCover(null);
+          showModal(`Трек ${response.name} успешно загружен`, () => navigate(PrivateRoutes.TRACKS))
         },
         onError: (error: unknown) => {
           showModal(`Ошибка при загрузке трека: ${String(error)}`);

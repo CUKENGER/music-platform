@@ -1,10 +1,11 @@
 
 .container {
-  position: relative;
+  // position: relative;
   display: inline-block;
   border-radius: 20px;
   width: 210px;
   height: 40px;
+  // z-index: 1;
 }
 
 .container_active::after{
@@ -13,12 +14,14 @@
   bottom: -50px;
   left: 0;
   width: 100%;
+  z-index: 1;
 }
 
 .btn {
   height: 50px;
   border: none;
   cursor: pointer;
+  z-index: 1;
 }
 
 .btn,.btn_active{
@@ -32,12 +35,14 @@
   height: 40px;
   border-radius: 10px;
   padding: 0 20px;
+  z-index: 1;
 }
 
 .btn_active {
   border-radius: 10px;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+  z-index: 1;
 }
 
 .list {
@@ -45,6 +50,7 @@
   width: 100%;
   border-radius: 10px;
   border-radius: 10px;
+  z-index: 1;
 }
 
 .list_open{
@@ -68,6 +74,7 @@
   background-color: var(--prm);
   color: var(--white);
   font-size: 14px;
+  z-index: 1;
 
   &:last-child{
     border-bottom-left-radius: 20px;
@@ -85,10 +92,12 @@
 .list_item:active {
   background-color: var(--black-lt);
   /* border-radius: 10px; */
+  z-index: 1;
 }
 
 .show {
   display: block;
+  z-index: 1;
 }
 
 @media(max-width: 700px) {

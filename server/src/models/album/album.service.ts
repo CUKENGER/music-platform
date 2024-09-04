@@ -22,64 +22,66 @@ export class AlbumService {
     }
 
     async create(dto: CreateAlbumDto, files): Promise<string> {
-        if (!files) {
+      if (!files) {
           console.log('Файлы не загружены');
           throw new HttpException('Files not found', HttpStatus.NOT_FOUND);
-        }
-      
-        const tracksPath = this.albumFileService.createTracks(AlbumFileType.AUDIO, files.tracks);
-        const imagePath = this.albumFileService.createCover(AlbumFileType.IMAGE, files.picture);
-      
-        let artist = await this.prisma.artist.findFirst({
+      }
+  
+      const tracksPath = this.albumFileService.createTracks(AlbumFileType.AUDIO, files.tracks);
+      const imagePath = this.albumFileService.createCover(AlbumFileType.IMAGE, files.picture);
+  
+      let artist = await this.prisma.artist.findFirst({
           where: { name: dto.artist },
           include: { tracks: true, albums: true },
-        });
-      
-        if (!artist) {
+      });
+  
+      if (!artist) {
           const artistDto = {
-            name: dto.artist,
-            genre: dto.genre,
-            description: '',
+              name: dto.artist,
+              genre: dto.genre,
+              description: '',
           };
           artist = await this.artistService.create(artistDto, files.picture);
-        }
-      
-        // Создание нового альбома
-        const newAlbum = await this.prisma.album.create({
+      }
+  
+      // Создание нового альбома
+      const newAlbum = await this.prisma.album.create({
           data: {
-            name: dto.name,
-            genre: dto.genre,
-            picture: imagePath,
-            artistId: artist.id, // Используем artistId вместо связи через connect
-            createdAt: new Date(),
+              name: dto.name,
+              genre: dto.genre,
+              picture: imagePath,
+              artistId: artist.id,
+              createdAt: new Date(),
           },
-        });
-      
-        // Создание треков
-        for (let i = 0; i < dto.track_names.length; i++) {
-            const duration = await this.audioService.getAudioDuration(tracksPath[i]);
-            
-            await this.prisma.track.create({
-            data: {
-                name: dto.track_names[i],
-                artistId: artist.id,
-                text: dto.track_texts[i],
-                audio: tracksPath[i],
-                picture: imagePath,
-                genre: dto.genre,
-                duration: duration,
-                albumId: newAlbum.id,
-                artist: dto.artist,
-            },
-            });
-        }
-      
-        return JSON.stringify({ id: newAlbum.id, name: newAlbum.name });
-    }
+      });
+  
+      // Создание треков
+      for (let i = 0; i < dto.track_names.length; i++) {
+          const duration = await this.audioService.getAudioDuration(tracksPath[i]);
+  
+          await this.prisma.track.create({
+              data: {
+                  name: dto.track_names[i],
+                  artistId: artist.id,
+                  text: dto.track_texts[i],
+                  audio: tracksPath[i],
+                  picture: imagePath,
+                  genre: dto.genre,
+                  duration: duration,
+                  albumId: newAlbum.id,
+              },
+          });
+      }
+  
+      return JSON.stringify({ id: newAlbum.id, name: newAlbum.name });
+  }
       
     async getAll(){
         const albums = await this.prisma.album.findMany({
-            include: {tracks: true, artist: true}
+            include: {
+              tracks: true, 
+              artist: true
+            }
         })
         return albums
     }

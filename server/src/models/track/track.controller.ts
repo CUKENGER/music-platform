@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors, Put, Next, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UploadedFiles, Query, ParseIntPipe, UseInterceptors, Put, Next, InternalServerErrorException, Req, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -11,7 +11,9 @@ import { Track } from '@prisma/client';
 @Controller('/tracks')
 export class TrackController {
 
-	constructor(private readonly trackService: TrackService) {}
+	constructor(
+		private readonly trackService: TrackService,
+	) {}
 
 	@Post()
 	@UseInterceptors(FileFieldsInterceptor([
@@ -41,16 +43,21 @@ export class TrackController {
 		return this.trackService.searchByName(query, count, offset)
 	}
 
-
 	@Get(':id')
 	@ApiOperation({ summary: 'Получение трека по id' })
-	getOne(@Param('id') id) {
+	getOne(@Param('id', ParseIntPipe) id: number) {
 		return this.trackService.getOne(id)
+	}
+
+	@Get()
+	@ApiOperation({ summary: 'Получение всех треков с пагинацией' })
+	async getAll(@Query('count') count?: number, @Query('cursor') offset?: number) {
+		return await this.trackService.getAll(offset, count);
 	}
 
 	@Delete(':id')
 	@ApiOperation({ summary: 'Удаление трека по id' })
-	delete(@Param('id',) id) {
+	delete(@Param('id') id: number) {
 		return this.trackService.delete(id)
 	}
 
@@ -68,20 +75,54 @@ export class TrackController {
 
 	@Post('/listen/:id')
 	@ApiOperation({ summary: 'Добавление прослушивания к треку по id' })
-	addListen(@Param('id' ) id) {
-		return this.trackService.listen(id)
-	}
+	async addListen(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    const authHeader = req.headers['authorization'];
+    
+    if (!authHeader) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+    return this.trackService.listen(id, token);
+  }
 
 	@Post('/like/:id')
 	@ApiOperation({ summary: 'Добавление лайка к треку по id' })
-	addLike(@Param('id' ) id) {
-		return this.trackService.addLike(id)
+	addLike(@Param('id', ParseIntPipe ) id: number, @Req() req: Request) {
+		try {
+			const authHeader = req.headers['authorization'];
+			
+			if (!authHeader) {
+				throw new UnauthorizedException('User not authenticated');
+			}
+	
+			const token = authHeader.split(' ')[1];
+			if (!token) {
+				throw new UnauthorizedException('User not authenticated');
+			}
+			return this.trackService.addLike(id, token)
+		} catch(e) {
+			throw new Error(`Error add like to track: ${e}`)
+		}
 	}
 
 	@Delete('/like/:id')
 	@ApiOperation({ summary: 'Удаление лайка к треку по id' })
-	deleteLike(@Param('id') id) {
-		return this.trackService.deleteLike(id)
+	deleteLike(@Param('id', ParseIntPipe ) id: number, @Req() req: Request) {
+		const authHeader = req.headers['authorization'];
+    
+    if (!authHeader) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+		return this.trackService.deleteLike(id, token)
 	}
 
 	@Put(':id')

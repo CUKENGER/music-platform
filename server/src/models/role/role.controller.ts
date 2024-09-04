@@ -12,8 +12,8 @@ export class RoleController {
   constructor (private roleService: RoleService) {}
 
   @ApiOperation({summary: "Создание роли для пользователя"})
-  @Roles("ADMIN")
-  @UseGuards(RolesGuard)
+  // @Roles("ADMIN")
+  // @UseGuards(RolesGuard)
   @Post()
   async create(@Body() dto: RoleDto) {
     return this.roleService.create(dto)
@@ -28,8 +28,8 @@ export class RoleController {
   }
 
   @ApiOperation({summary: "Получение роли по значению"})
-  @Roles("ADMIN")
-  @UseGuards(RolesGuard)
+  // @Roles("ADMIN")
+  // @UseGuards(RolesGuard)
   @Get('/:value')
   async getByValue(@Param('value') value: string) {
     return this.roleService.getByValue(value)

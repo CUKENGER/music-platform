@@ -1,3 +1,4 @@
+import { ITrack } from "@/entities";
 
 
 export interface IUser {
@@ -11,7 +12,11 @@ export interface IUser {
   banReason?: string;
   roles?: string[];
   userRoles?: string[];
-  tokens?: string[]
+  tokens?: string[];
+  likedTracks: ITrack[] | []
+  likedAlbums: []
+  likedArtists: []  
+  listenedTracks: ITrack[] | []
 }
 
 export interface CreateUserDto {

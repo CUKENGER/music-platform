@@ -1,56 +1,89 @@
-import { useCallback, useEffect, useState } from "react";
-import usePlayer from "../hooks/usePlayer";
-import { audioManager } from "@/shared";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { ITrack } from "../types/Track";
 import useActiveTrackListStore from "./ActiveTrackListStore";
 import usePlayerStore from "./PlayerStore";
-import usePlayTrack from "../hooks/usePlayTrack";
-import { useDeleteTrack } from "../api/trackApi";
+import { useDeleteTrack } from "../api/useTrackApi";
+import usePlayTrack from "./usePlayTrack";
+import { ApiUrl, audioManager } from "@/shared";
 
-export const useTrackItem = (track : ITrack, trackList: ITrack[]) => {
-  const [isVisible, setIsVisible] = useState(false)
-  const audio = audioManager.audio
+export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
+  const [isVisible, setIsVisible] = useState(true);
   
-  const {setActiveTrackList, activeTrackList} = useActiveTrackListStore()
-  const {activeTrack} = usePlayerStore()
+  const { setActiveTrackList } = useActiveTrackListStore();
+  const { activeTrack } = usePlayerStore();
+  const { setActiveTrack, volume} = usePlayerStore()
 
-  const {setAudio} = usePlayer(activeTrackList);
-  const {handlePlay} = usePlayTrack(track)
-
-  const {mutate: deleteTrack} = useDeleteTrack();
+  const audio = audioManager.audio;
+  
+  const { handlePlay } = usePlayTrack(track);
+  const { mutate: deleteTrack } = useDeleteTrack();
 
   const handleDelete = useCallback(async () => {
     try {
-      await deleteTrack(track.id)
+      await deleteTrack(track.id);
       console.log('Track deleted successfully');
     } catch (error) {
       console.error('Failed to delete track:', error);
     }
   }, [deleteTrack, track.id]);
 
-  useEffect(() => {
-    if (activeTrack?.id !== track.id) {
-      if (audio && activeTrack) {
-        setAudio();
+  const handleNextTrack = useCallback(() => {
+    if (trackList) {
+      let nextTrackIndex = trackList.findIndex(t => t.id === activeTrack?.id) + 1;
+      if (nextTrackIndex >= trackList.length) {
+        nextTrackIndex = 0;
       }
+      const nextTrack = trackList[nextTrackIndex];
+      setActiveTrack(nextTrack);
     }
-  }, [activeTrack, audio, track.id]);
+  }, [trackList, activeTrack, setActiveTrack]);
 
-  const clickPlay = () => {
+  const setAudio = useCallback(() => {
+    if (activeTrack && audio) {
+      if (audio.src !== ApiUrl + activeTrack.audio) {
+        audio.src = ApiUrl + activeTrack.audio;
+        audio.load();
+        audio.onended = () => {
+          handleNextTrack();
+        };
+        audio.oncanplay = () => {
+          audio.play().catch(error => {
+            console.error('Failed to play audio:', error);
+          });
+        };
+      }
+      audio.volume = volume / 100;
+    }
+  }, [activeTrack, audio, volume, handleNextTrack]);
+
+  useEffect(() => {
+    if (activeTrack?.id === track.id && audio) {
+      setAudio();
+      audio.play().catch(error => {
+        console.error('Failed to play audio:', error);
+      });
+    }
+  }, [activeTrack?.id, track.id, audio, setAudio]);
+
+  const clickPlay = useCallback(async () => {
     setActiveTrackList(trackList);
-    handlePlay()
-  }
+    await handlePlay();
+  }, [setActiveTrackList, trackList, handlePlay]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsVisible(true);
+      if (!isVisible) {
+        setIsVisible(true);
+        console.log('isVisible', isVisible);
+      }
     }, 100);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isVisible]);
 
-  return {
+
+  return useMemo(() => ({
     isVisible,
     clickPlay,
     handleDelete
-  }
+  }), [isVisible, clickPlay, handleDelete]);
 }
