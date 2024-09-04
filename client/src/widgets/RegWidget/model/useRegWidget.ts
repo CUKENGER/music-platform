@@ -26,10 +26,10 @@ export const useRegWidget = () => {
     e.preventDefault();
 
     console.log('isUsernameValid', isUsernameValid);
-    if (!isUsernameValid?.available) {
-      showModal('Этот никнейм уже занят');
-      return;
-    }
+    // if (!isUsernameValid?.available) {
+    //   showModal('Этот никнейм уже занят');
+    //   return;
+    // }
 
     if (isValid) {
       showModal('Заполните все данные корректно, пожалуйста');
@@ -56,6 +56,7 @@ export const useRegWidget = () => {
       },
       onError: (error) => {
         handleAuthError(error, showModal);
+        showModal('Этот никнейм уже занят');
         console.error('Username check failed:', error);
       }
     });
