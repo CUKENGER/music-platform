@@ -1,24 +1,16 @@
 [x] - сделать тип для альбомов (type: 'single' | 'album')
-[x] - сделать дату создания везде
 [x] - сделать страницу создания трека
 [x] - сделать страницу списка треков
-[x] - make adaptive in TrackList,Player,Header, Navbar
 [x] - подсвечивать время на TrackProgress
-[x] - make ebanye likes which is not work blyat
+[x] - exclam and clear components
+[x] - подставлять имя трека при загрузке
 [_x] - сделать адаптив в готовых компонентах
 [] - страница трека(роутинг)
-[x] - адаптив TrackItem
 [] - сделать страницу для каждого трека(разобраться с роутингом)
-[] - сделать адаптив
-[] - наполнить контентом
 [] - сделать авторизацию
-[] - попробовать сделать алгоритмы
-[] - подставлять имя трека при загрузке
-[] - появляется стрелка в playerDetailed
 [] - поворот стрелки openPlayerDetailed
 [] - нажатие на плеер -- открытие playerDetailed(mobile...)
 [] - подсказки при наведении(react-tooltip или самопис)
-[x] - exclam and clear components
 [] - textContainerComponent
 [] -
 [] -
