@@ -27,7 +27,6 @@ export const sortList = (items: any[], selectedSort: string) => {
               }
               break;
           default:
-              // Возвращаем исходный массив в случае недопустимого значения selectedSort
               return items;
       }
   });

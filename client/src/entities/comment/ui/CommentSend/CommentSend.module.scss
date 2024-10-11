@@ -1,0 +1,23 @@
+
+
+.commentAdd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.textarea{
+  max-width: 97%;
+}
+
+.commentSend {
+  width: 25px;
+  height: 25px;
+  margin-top: 25px;
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}

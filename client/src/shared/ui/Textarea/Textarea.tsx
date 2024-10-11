@@ -3,14 +3,16 @@ import styles from './Textarea.module.scss';
 import { ClearIcon } from "../assets/ClearIcon/ClearIcon";
 import { ExclamIcon } from "../assets/ExclamIcon/ExclamIcon";
 import { UseInputProps } from "@/shared";
+import classNames from "classnames";
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement>{
   placeholder: string;
-  inputValue: UseInputProps
-  isEmpty?: boolean;
+  inputValue: UseInputProps;
+  classNameContainer?: string;
+  classNameTextarea?: string
 }
 
-export const Textarea:FC<TextareaProps> = ({ isEmpty, inputValue, placeholder, ...props}) => {
+export const Textarea:FC<TextareaProps> = ({inputValue, placeholder, classNameContainer, classNameTextarea, ...props}) => {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -39,7 +41,10 @@ export const Textarea:FC<TextareaProps> = ({ isEmpty, inputValue, placeholder, .
   }
 
   return (
-    <div className={styles.container}>
+    <div className={classNames(
+      classNameContainer,
+      styles.container
+    )}>
        <label className={styles.label} htmlFor={`textarea-${id}`}>{placeholder}</label>
           <textarea 
               id={`textarea-${id}`}
@@ -47,13 +52,16 @@ export const Textarea:FC<TextareaProps> = ({ isEmpty, inputValue, placeholder, .
               value={inputValue.value}
               ref={textareaRef}
               onInput={handleInput}
-              className={styles.textarea} 
+              className={classNames(
+                classNameTextarea,
+                styles.textarea
+              )} 
               onBlur={inputValue.onBlur}
               {...props}
           >
             
         </textarea>
-        {isEmpty 
+        {inputValue.isEmpty 
         ? (<div className={styles.exclam_container}>
             <ExclamIcon/> 
           </div>

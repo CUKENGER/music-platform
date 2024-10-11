@@ -64,3 +64,14 @@
 .input_duration_container {
   position: relative;
 }
+
+@media(max-width: 500px) {
+  .input_duration[type="range"]::-webkit-slider-runnable-track,
+  .input_duration_container{
+    height: 13px;
+  }
+
+  .input_duration[type="range"]{
+    height: 20px;
+  }
+}

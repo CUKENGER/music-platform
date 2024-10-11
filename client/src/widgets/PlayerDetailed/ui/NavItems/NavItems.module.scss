@@ -1,0 +1,39 @@
+
+
+.nav_bar{
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  column-gap: 10px;
+}
+
+.nav_item{
+  color: var(--gray);
+  padding: 8px 15px;
+  width: 100%;
+  cursor: pointer;
+  text-align: center;
+  border: 1px solid transparent;
+  border-bottom: 1px solid var(--gray);
+
+  &:hover{
+    color: var(--white);
+  }
+}
+
+.nav_item_active{
+  color: var(--white);
+  border: 1px solid var(--prm);
+}
+
+@media(max-width: 700px) {
+  .nav_item{
+    font-size: 14px;
+  }
+}
+
+@media(max-width: 600px) {
+  .nav_item{
+    font-size: 12px;
+  }
+}

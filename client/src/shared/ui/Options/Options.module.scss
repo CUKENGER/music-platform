@@ -12,8 +12,7 @@
   display: flex;
   width: 100%;
   flex-wrap: wrap;
-  column-gap: 5px;
-  row-gap: 5px;
+  gap: 5px;
 }
 
 .selectedOption{
@@ -27,8 +26,10 @@
   display: flex;
   width: 100%;
   flex-wrap: wrap;
-  column-gap: 5px;
-  row-gap: 5px;
+  gap: 5px;
+  height: 200px;
+  overflow: hidden;
+  overflow-y: auto;
 }
 
 .option{
@@ -36,6 +37,28 @@
   border-radius: 10px;
   background-color: var(--black-lt);
   cursor: pointer;
+  width: fit-content;
+  height: fit-content;
+}
+
+@media(max-width: 700px) {
+  .option_text,
+  .option{
+    font-size: 14px;
+  }
+}
+
+@media(max-width: 550px) {
+  .option_text,
+  .option{
+    font-size: 12px;
+  }
+}
+
+@media(max-width: 450px) {
+  .options{
+    height: 120px;
+  }
 }
 
 

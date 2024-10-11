@@ -1,5 +1,4 @@
 
-
 .user_container{
   display: flex;
   align-items: center;
@@ -15,6 +14,11 @@
   width: 40px;
   height: 40px;
   background-color: var(--gray);
+  cursor: pointer;
+
+  &:hover{
+    transform: scale(1.02);
+  }
 }
 
 .main_container{
@@ -24,9 +28,48 @@
 }
 
 .name_container{
+  color: var(--gray);
   cursor: pointer;
+
+  &:hover{
+    color: var(--white);
+  }
 }
 
 .dots{
   cursor: pointer;
+}
+
+@media(max-width: 900px) {
+  .main_container{
+    column-gap: 10px;
+  }
+}
+
+@media(max-width: 800px) {
+  .user_container{
+    justify-content: center;
+  }
+
+  .menu{
+    display: none;
+  }
+
+  .name_container{
+    display: none;
+  }
+}
+
+@media(max-width: 600px) {
+  .user_avatar{
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media(max-width: 500px) {
+  .user_avatar{
+    width: 30px;
+    height: 30px;
+  }
 }

@@ -1,22 +1,21 @@
+import { DeleteContainer, ListensIcon } from '@/shared'
 import { FC, memo } from 'react'
 import styles from './TrackItem.module.scss'
-import { ITrack } from '../../types/Track'
-import { CoverContainer } from '../CoverContainer/CoverContainer'
-import { NameContainer } from '../NameContainer/NameContainer'
-import { DeleteContainer, isAdmin, playsIcon } from '@/shared'
-import { useTrackItem } from '../../model/useTrackItem'
+import { CoverContainer, ITrack, NameContainer, useTrackItem, useUserStore } from '@/entities';
 
 interface TrackItemProps {
-  track: ITrack;
-  trackList: ITrack[]
+  item: ITrack;
+  itemList: ITrack[]
 }
 
-export const TrackItem: FC<TrackItemProps> = memo(({ track, trackList }) => {
+export const TrackItem: FC<TrackItemProps> = memo(({ item: track, itemList: trackList }) => {
 
   const { clickPlay, handleDelete, isVisible} = useTrackItem(track, trackList)
 
+  const {isAdmin} = useUserStore()
+
   return (
-    <div className={`${styles.container} ${isVisible && styles.visible}`}>
+    <div className={`${styles.container} ${isVisible && styles.visible}`} onClick={clickPlay}>
       <div className={styles.main_container}>
         <CoverContainer
           handlePlay={clickPlay}
@@ -28,15 +27,13 @@ export const TrackItem: FC<TrackItemProps> = memo(({ track, trackList }) => {
         />
       </div>
       <div className={styles.right_container}>
-        <div className={styles.plays_container}>
-          <div className={styles.plays_container_icon}>
-            <img className={styles.plays_icon} src={playsIcon} alt="count plays" />
-          </div>
-          <p className={styles.listens}>{track.listens}</p>
-        </div>
+        <ListensIcon
+          className={styles.listens}
+          listens={track.listens}
+        />
         <div>
           <div className={styles.duration_container}>
-            <p className={styles.duration}>{track.duration}</p>
+            <p>{track.duration}</p>
           </div>
         </div>
         {isAdmin && (

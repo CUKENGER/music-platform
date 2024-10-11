@@ -6,9 +6,8 @@ interface SelectFilterState{
   setSelectedSort: (sort: string) => void
 }
 
-const useSelectFilterStore = create<SelectFilterState>((set) => ({
+export const useSelectFilterStore = create<SelectFilterState>((set) => ({
   selectedSort: 'Все',
   setSelectedSort: (sort: string) => set({ selectedSort: sort }),
 }));
 
-export default useSelectFilterStore

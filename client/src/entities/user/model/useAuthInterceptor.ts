@@ -17,20 +17,16 @@ export const useAuthInterceptor = () => {
         originalRequest._retry = true;
 
         try {
-          // Отправляем запрос на обновление токена
           const { data } = await axiosInstance.post("/auth/refresh");
           
-          // Обновляем токен
           localStorage.setItem("token", data.accessToken);
           
-          // Повторяем оригинальный запрос с новым токеном
           originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
           return axiosInstance(originalRequest);
         } catch (refreshError) {
-          // Если обновление токена не удалось, выполняем выход из системы и перенаправляем на страницу входа
           localStorage.removeItem('token');
           setIsAuth(false);
-          logout(); // Можно обработать ошибку в `logout` функции
+          logout();
           navigate("/login");
           return Promise.reject(refreshError);
         }

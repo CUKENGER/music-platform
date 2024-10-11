@@ -1,11 +1,9 @@
 
 
-
-
 .form{
   display: flex;
   width: 100%;
-  justify-content: center;
+  justify-content: space-between;
   column-gap: 30px;
   margin-top: 15px;
   margin-bottom: 15px;
@@ -27,7 +25,7 @@
 }
 
 .input_cover{
-  width: 200px;
+  width: 250px;
   height: 250px;
 }
 
@@ -37,4 +35,53 @@
 
 .upload_btn{
   width: 100%;
+}
+
+@media(max-width: 900px) {
+
+  .fields_container{
+    width: auto;
+  }
+
+  .fields_upload_container{
+    width: auto;
+  }
+
+  .input_cover{
+    width: 200px;
+    height: 200px;
+  }
+}
+
+@media(max-width: 700px) {
+  .input_cover{
+    width: 160px;
+    height: 160px;
+  }
+
+  .form{
+    column-gap: 15px;
+  }
+}
+
+@media(max-width: 530px) {
+  .input_cover{
+    width: 130px;
+    height: 130px;
+  }
+
+  .form{
+    column-gap: 10px;
+  }
+}
+
+@media(max-width: 450px) {
+  .form{
+    flex-direction: column-reverse;
+  }
+  
+  .fields_upload_container{
+    row-gap: 10px;
+    margin-bottom: 10px;
+  }
 }

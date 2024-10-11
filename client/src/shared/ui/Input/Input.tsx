@@ -21,7 +21,7 @@ export const Input:FC<InputProps> = ({inputValue, placeholder, ...inputProps}) =
 
   if (!inputValue) {
     console.error("Input component: 'inputValue' is undefined or null.");
-    return null; // Или вы можете отобразить какой-то fallback-контент
+    return null;
   }
 
   return (

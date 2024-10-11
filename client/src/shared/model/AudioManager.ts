@@ -1,10 +1,10 @@
 
 class AudioManager {
   private static instance: AudioManager;
-  private _audio?: HTMLAudioElement; // Сделали _audio необязательным
+  private _audio?: HTMLAudioElement;
 
   private constructor() {
-    if (typeof window !== 'undefined') { // Проверяем, что код выполняется в браузере
+    if (typeof window !== 'undefined') {
       this._audio = new Audio();
     }
   }

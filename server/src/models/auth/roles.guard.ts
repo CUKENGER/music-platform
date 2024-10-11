@@ -1,72 +1,66 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, ForbiddenException, UnauthorizedException, NotFoundException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { PrismaService } from "prisma/prisma.service";
 import { ROLES_KEY } from "./rolesAuth.decorator";
+import { ApiError } from "exceptions/api.error";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-
   constructor(
     private reflector: Reflector,
     private prisma: PrismaService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    try {
-      const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
-        context.getHandler(),
-        context.getClass()
-      ]);
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass()
+    ]);
 
-      if (!requiredRoles) {
-        return true;
-      }
+    if (!requiredRoles) {
+      return true;
+    }
 
-      const req = context.switchToHttp().getRequest();
-      const authHeader = req.headers.authorization;
-      
-      if (!authHeader) {
-        throw new ForbiddenException('Authorization header is missing');
-      }
-      
-      const token = authHeader.split(' ')[1];
+    const req = context.switchToHttp().getRequest();
+    const authHeader = req.headers.authorization;
 
-      if (!token) {
-        throw new ForbiddenException('Token is missing or invalid');
-      }
+    if (!authHeader) {
+      throw ApiError.UnauthorizedError();
+    }
 
-      console.log('token', token)
+    const token = authHeader.split(' ')[1];
 
-      const user = await this.prisma.user.findFirst({
-        where: {
-          tokens: {
-            some: {
-              accessToken: token
-            }
-          }
-        },
-        include: {
-          roles: {
-            include: {
-              role: true
-            }
+    if (!token) {
+      throw ApiError.UnauthorizedError();
+    }
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        tokens: {
+          some: {
+            accessToken: token
           }
         }
-      });
-
-      console.log('user', user)
-
-      if (!user || !user.roles) {
-        throw new ForbiddenException('You do not have the required permissions');
+      },
+      include: {
+        roles: {
+          include: {
+            role: true
+          }
+        }
       }
+    });
 
-      return user.roles.some(userRole => 
-        requiredRoles.includes(userRole.role.value)
-      );
-
-    } catch (e) {
-      console.error(`Error in roles guard: ${e.message}`);
-      throw new ForbiddenException("No access");
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
+
+    if (!user.roles || user.roles.length === 0) {
+      throw new ForbiddenException('User does not have any roles');
+    }
+
+    return user.roles.some(userRole => 
+      requiredRoles.includes(userRole.role.value)
+    );
   }
 }

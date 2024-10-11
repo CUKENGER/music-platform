@@ -11,6 +11,7 @@ export const useVolumeBar = () => {
   const {volume, setVolume} = usePlayerStore()
 
   const changeVolume = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation()
     if (audio) {
       const newVolume = Number(e.target.value) / 100;
       audio.volume = newVolume;
@@ -19,7 +20,12 @@ export const useVolumeBar = () => {
     }
   }, [audio, setVolume]);
 
-  const handleMute = useCallback(() => {
+  const clickVolume = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+  }
+
+  const handleMute = useCallback((e: React.MouseEvent<HTMLImageElement>) => {
+    e.stopPropagation()
     if (audio) {
       if (!isMute) {
         setPrevVolume(volume);
@@ -42,6 +48,7 @@ export const useVolumeBar = () => {
     isMute,
     volume,
     changeVolume,
-    inputVolumeStyle
+    inputVolumeStyle,
+    clickVolume
   }
 }

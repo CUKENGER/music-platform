@@ -1,0 +1,40 @@
+
+
+.like_container{
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+  cursor: pointer;
+}
+
+.like{
+  cursor: pointer;
+  
+  &:hover{
+    transform: scale(1.02);
+  }
+}
+
+.like_count{
+  color: var(--gray);
+
+  &:hover{
+    color: var(--white);
+  }
+}
+
+@media(max-width:400px) {
+  .like_container{
+    width: 15px;
+    height: 15px;
+  }
+
+  .like_count{
+    font-size: 12px;
+  }
+
+  .like{
+    width: 100%;
+    height: 100%;
+  }
+}

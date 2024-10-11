@@ -8,6 +8,7 @@ import { AudioService } from "models/audioService/audioService.service";
 import { CommentService } from "models/comment/comment.service";
 import { AlbumFileModule } from "./albumFile/albumFile.module";
 import { ArtistFileModule } from "models/artist/artistFile/artistFile.module";
+import { AlbumHelperService } from "./albumHelper.service";
 
 
 @Module({
@@ -19,7 +20,8 @@ import { ArtistFileModule } from "models/artist/artistFile/artistFile.module";
         AlbumFileService,
         ArtistService, 
         AudioService, 
-        CommentService
+        CommentService,
+        AlbumHelperService
     ]
 })
 export class AlbumModule {}

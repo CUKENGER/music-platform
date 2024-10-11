@@ -6,5 +6,7 @@ export class CreateAlbumDto {
     tracks?: any[];
     track_names: string[];
     track_texts: string[]
-    genre: string
+    genre: string;
+    description: string;
+    releaseDate: string;
 }

@@ -11,9 +11,9 @@ interface PageHeaderProps {
 export const PageHeader: FC<PageHeaderProps> = memo(({toCreate}) => {
   return (
     <div className={styles.page_header}>
-      <SelectFilter/>
+      <SelectFilter options={['Все', 'Популярные', 'По алфавиту']}/>
       <Link to={toCreate}>
-        <Btn s={true}>
+        <Btn small={true}>
             Загрузить
         </Btn>
       </Link>

@@ -1,9 +1,51 @@
 
-.page_content{
+.pageContent{
   padding-left: 230px;
   margin-top: 15px;
   display: flex;
   column-gap: 50px;
   padding-right: 30px;
   width: 100%;
+  margin-bottom: 100px;
+  padding-bottom: 70px;
 }
+
+@media(max-width: 1100px) {
+  .pageContent{
+    padding-left: 210px;
+  }
+}
+
+@media(max-width: 900px) {
+  .pageContent{
+    padding-left: 190px;
+  }
+}
+
+@media(max-width: 800px) {
+  .pageContent{
+    padding-left: 170px;
+  }
+}
+
+@media(max-width: 700px) {
+  .pageContent{
+    padding-left: 130px;
+  }
+}
+
+@media(max-width: 700px) {
+  .pageContent{
+    padding-left: 110px;
+    padding-right: 10px;
+    margin-top: 5px;
+  }
+}
+
+@media(max-width: 500px) {
+  .pageContent{
+    padding-left: 70px;
+  }
+}
+
+

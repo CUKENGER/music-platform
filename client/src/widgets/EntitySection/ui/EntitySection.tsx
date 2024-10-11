@@ -19,8 +19,8 @@ const EntitySection: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <p>Title</p>
-        <div className={styles.controls}>
-          <Btn s={true}>Ещё</Btn>
+        <div>
+          <Btn small={true}>Ещё</Btn>
           <div className={styles.controls_arrows}>
             <SectionArrow
               left={true}

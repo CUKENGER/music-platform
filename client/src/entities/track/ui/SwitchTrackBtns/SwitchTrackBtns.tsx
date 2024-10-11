@@ -1,8 +1,8 @@
 import { FC } from "react";
 import styles from './SwitchTrackBtns.module.scss'
-import usePlayerStore from "../../model/PlayerStore";
-import useActiveTrackListStore from "../../model/ActiveTrackListStore";
-import { nextBtnBg, prevBtnBg } from "@/shared";
+import nextBtnBg from './nextBtnBg.svg'
+import prevBtnBg from './prevBtnBg.svg'
+import { useActiveTrackListStore, usePlayerStore } from "@/entities";
 
 interface SwitchTrackBtnsProps {
   isNextBtn: boolean

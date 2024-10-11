@@ -5,11 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/entities';
 import { PublicRoutes } from '../consts/routes';
 
+const accessToken = localStorage.getItem('token');
+
 // Создание экземпляра axios
 const axiosInstance = axios.create({
   baseURL: ApiUrl,
   headers: {
     'Content-Type': 'application/json',
+    'Authorization': `Bearer ${accessToken}`
   },
   withCredentials: true,
 });

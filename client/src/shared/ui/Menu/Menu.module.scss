@@ -25,7 +25,7 @@
 .menu_item {
   padding: 10px 15px;
   cursor: pointer;
-  white-space: nowrap; /* Это свойство предотвратит перенос текста */
+  white-space: nowrap;
   overflow-wrap: nowrap;
   z-index: 10000;
 

@@ -3,35 +3,35 @@ import { ArtistService } from "./artist.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { CreateArtistDto } from "./dto/create-artist.dto";
 import { CreateArtistCommentDto } from "./dto/create-artistComment.dto";
+import { ApiOperation } from "@nestjs/swagger";
 
 @Controller('/artists')
 export class ArtistController {
-    constructor (private readonly artistService: ArtistService) {
+    constructor(private readonly artistService: ArtistService) {
 
     }
 
     @Post()
     @UseInterceptors(FileFieldsInterceptor([
-        {name: 'picture', maxCount: 1}
+        { name: 'picture', maxCount: 1 }
     ]))
-    async create(@UploadedFiles() files , @Body() dto: CreateArtistDto) {
+    async create(@UploadedFiles() files, @Body() dto: CreateArtistDto) {
 
-        const {picture} = files
+        const { picture } = files
 
         return this.artistService.create(dto, picture)
     }
 
     @Get()
-    getAll() {
-            return this.artistService.getAll()
-    }
+	@ApiOperation({ summary: 'Получение всех артистов с пагинацией' })
+	async getAll(@Query('count') count?: number, @Query('cursor') offset?: number) {
+		return await this.artistService.getAll(offset, count);
+	}
 
     @Get('/search')
-	searchByName(@Query('query') query: string,
-				@Query('count', ParseIntPipe) count: number,
-				@Query('offset', ParseIntPipe) offset: number) {
-		return this.artistService.searchByName(query, count, offset)
-	}
+    searchByName(@Query('name') name: string) {
+        return this.artistService.searchByName(name)
+    }
 
     @Get(':id')
     getOne(@Param('id') id) {
@@ -65,19 +65,15 @@ export class ArtistController {
 
     @Put(':id')
     @UseInterceptors(FileFieldsInterceptor([
-        {name: 'picture', maxCount: 1}
+        { name: 'picture', maxCount: 1 }
     ]))
     async updateArtist(
-      @Param('id') id,
-      @Body() newData,
-      @UploadedFiles() files
+        @Param('id') id,
+        @Body() newData,
+        @UploadedFiles() files
     ) {
-        console.log('files',files)
-        console.log('Update artist called with id:', id);
-        console.log('New data:', newData);
-        console.log('Files:', files);
         const picture = files?.picture ? files?.picture[0] : null;
-        console.log('picture',picture)
-        return this.artistService.updateArtist(id, newData, picture); // Вызов сервиса для обновления сущности
+        return this.artistService.updateArtist(id, newData, picture);
     }
+
 }

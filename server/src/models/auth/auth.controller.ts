@@ -2,7 +2,6 @@ import { Body, Controller, Get, Next, Param, Post, Req, Res } from '@nestjs/comm
 import { ApiBody, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
-import { UserService } from 'models/user/user.service';
 import { LoginUserDto } from 'models/user/dto/loginUser.dto';
 import { UserDto } from 'models/user/dto/user.dto';
 
@@ -21,7 +20,6 @@ export class AuthController {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService
   ) {}
 
   @ApiOperation({ summary: 'Вход пользователя' })
@@ -30,9 +28,9 @@ export class AuthController {
   @Post('/login')
   async login(@Body() dto: LoginUserDto, @Res() res: Response, @Next() next) {
     try{
-      const userData = await this.authService.login(dto)
-      res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-      return res.json(userData)
+      const userData = await this.authService.login(dto);
+      this.setRefreshTokenCookie(res, userData.refreshToken);
+      return res.json(userData);
     } catch(e) {
       next(e);
     }
@@ -45,9 +43,9 @@ export class AuthController {
   @Post('/registration')
   async registration(@Body() dto: UserDto, @Res() res: Response, @Next() next) {
     try {
-      const userData = await this.authService.registration(dto)
-      res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-      return res.json(userData)
+      const userData = await this.authService.registration(dto);
+      this.setRefreshTokenCookie(res, userData.refreshToken);
+      return res.json(userData);
     } catch(e) {
       next(e);
     }
@@ -83,18 +81,19 @@ export class AuthController {
   async refresh(@Req() req: ReqWithCookie, @Res() res: Response, @Next() next) {
     try {
       const { refreshToken } = req.cookies;
-      console.log('req.cookies', req.cookies);
       const tokenData = await this.authService.refresh(refreshToken);
-
-      res.cookie('refreshToken', tokenData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
-
+      this.setRefreshTokenCookie(res, tokenData.refreshToken);
       return res.json(tokenData);
     } catch (e) {
       next(e);
     }
+  }
+
+  private setRefreshTokenCookie(res: Response, refreshToken: string) {
+    res.cookie('refreshToken', refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
   }
 
 }

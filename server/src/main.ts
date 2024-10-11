@@ -7,6 +7,7 @@ import * as cookieParser from 'cookie-parser'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from 'exceptions/allExceptionFilter';
 
 dotenv.config()
 
@@ -33,7 +34,7 @@ const start = async () => {
 		app.use(cookieParser());
 		app.use(compression())
 
-		app.use(timeout('10s'))
+		app.use(timeout('130s'))
 
 		const config = new DocumentBuilder()
 			.setTitle("NoteVomit")
@@ -46,6 +47,7 @@ const start = async () => {
 
 		app.useGlobalInterceptors(new LoggingInterceptor())
 		app.useGlobalPipes(new ValidationPipe());
+		app.useGlobalFilters(new AllExceptionsFilter());
 
  		await app.listen(PORT, '0.0.0.0')
 		console.log(`server started at ${PORT}`)

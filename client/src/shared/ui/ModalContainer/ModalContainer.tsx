@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react";
 import styles from './ModalContainer.module.scss'
-import krestIcon from '../assets/krest.svg'
+import krestIcon from './krest.svg'
 
 interface ModalContainerProps {
   text: string | ReactNode;
@@ -29,7 +29,7 @@ export const ModalContainer: FC<ModalContainerProps> = ({ text, hideModal, onCli
             className={styles.x_icon}
             onClick={handleClose}
             src={krestIcon}
-            alt='close icon'
+            alt='close'
           />
         </div>
         <div className={styles.main_container}>

@@ -10,9 +10,8 @@
 
 .name,
 .artist{
-  // width: 100px;
-  width: 200px;
-  overflow:hidden;
+  max-width: 200px;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -50,6 +49,5 @@
 
   .name_container{
     font-size: 10px;
-    // row-gap: 0px;
   }
 }

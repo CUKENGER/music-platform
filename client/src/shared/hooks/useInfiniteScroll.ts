@@ -19,5 +19,11 @@ export function useInfiniteScroll(callback: () => void) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isFetching, callback]);
 
-  return isFetching;
+  useEffect(() => {
+    if (!isFetching) return;
+    callback();
+    setIsFetching(false);
+  }, [isFetching, callback]);
+
+  return {isFetching}
 }

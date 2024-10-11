@@ -52,7 +52,7 @@ export const Options: FC<CheckInputProps> = memo(({ setValue, options, setOption
                         onClick={() => handleOptionClick(selectedOption)}
                         className={styles.selectedOption}
                     >
-                        <span>{selectedOption}</span>
+                        <span className={styles.option_text}>{selectedOption}</span>
                     </div>
                 )}
             </div>

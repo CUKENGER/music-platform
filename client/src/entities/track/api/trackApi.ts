@@ -1,11 +1,11 @@
 import { axiosInstance } from "@/shared"
 import { CreateTrackDto, ITrack } from "../types/Track";
 
-export const getAll = async (count?: number, offset?: number) => {
+export const getAll = async (count?: number) => {
   try {
-    const response = await axiosInstance.get('/tracks', { params: { count, offset }});
+    const response = await axiosInstance.get('/tracks', { params: { count }});
     return response.data
-  } catch (e: unknown) {
+} catch (e: unknown) {
     console.error(`Error fetching tracks: ${e}`);
     return null
   }

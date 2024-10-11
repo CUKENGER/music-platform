@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, BadRequestException } from "@nestjs/common";
 import * as path from "path";
 import * as fs from "fs";
 import * as uuid from "uuid";
@@ -14,60 +14,79 @@ interface FileType {
 }
 
 @Injectable()
-export class AlbumFileService{
+export class AlbumFileService {
 
     createCover(type: AlbumFileType, cover): string {
         try {
             cover = Array.isArray(cover) ? cover[0] : cover;
-            if (!cover) {
-                throw new Error('File or file.originalname is undefined');
+
+            if (!cover || !cover.originalname) {
+                throw new BadRequestException('Cover file or originalname is missing');
             }
-            const coverExtension = cover.originalname.split('.').pop()
-            const coverName = uuid.v4() + '.' + coverExtension
-            const coverPath = path.resolve(__dirname, '../../../', 'static', type)
-            if(!fs.existsSync(coverPath)) {
-                fs.mkdirSync(coverPath, {recursive: true})
+
+            const coverExtension = cover.originalname.split('.').pop();
+            const coverName = uuid.v4() + '.' + coverExtension;
+            const coverPath = path.resolve(__dirname, '../../../../', 'static', type);
+
+            if (!fs.existsSync(coverPath)) {
+                fs.mkdirSync(coverPath, { recursive: true });
             }
-            fs.writeFileSync(path.resolve(coverPath, coverName), cover.buffer)
-            return type + '/' + coverName
-        } catch(e) {
-            throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR)
+
+            fs.writeFileSync(path.resolve(coverPath, coverName), cover.buffer);
+            return type + '/' + coverName;
+        } catch (e) {
+            console.error(`Error creating cover: ${e.message}`);
+            throw new InternalServerErrorException('Failed to create cover file');
         }
     }
 
-    createTracks(type: AlbumFileType, tracks: FileType[]){
+    createTracks(tracks: FileType[]): string[] {
         const tracksPaths: string[] = [];
         for (const track of tracks) {
             try {
                 if (!track || !track.originalname) {
-                    throw new Error('File or file.originalname is undefined');
+                    throw new BadRequestException('Track file or originalname is missing');
                 }
-                
+
                 const trackExtension = track.originalname.split('.').pop();
                 const trackName = uuid.v4() + '.' + trackExtension;
-
-                // Создаем путь к папке альбома
-                const trackPath = path.resolve(__dirname , '../../../', 'static', 'audio');
+                const trackPath = path.resolve(__dirname, '../../../../', 'static', 'audio');
 
                 if (!fs.existsSync(trackPath)) {
                     fs.mkdirSync(trackPath, { recursive: true });
                 }
 
-                // Записываем файл
-                fs.writeFileSync(path.resolve(trackPath, trackName), track.buffer);
+                const fullTrackPath = path.resolve(trackPath, trackName);
 
-                // Добавляем относительный путь к файлу в массив путей
-                const oneTrackPath = 'audio/' + trackName
-                tracksPaths.push(oneTrackPath);
+                fs.writeFileSync(fullTrackPath, track.buffer);
+                tracksPaths.push('audio/' + trackName);
+
             } catch (e) {
-                throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+                console.error(`Error creating track: ${track.originalname}, ${e.message}`);
+                throw new InternalServerErrorException('Failed to create track file');
             }
         }
+
         return tracksPaths;
     }
 
-    removeFile(filename: string) {
-
-    }
+    cleanupFiles(tracks: string[], coverPath: string): void {
+        try {
+            if (coverPath) {
+                const fullCoverPath = path.resolve(__dirname, '../../../../static', coverPath);
+                if (fs.existsSync(fullCoverPath)) {
+                    fs.unlinkSync(fullCoverPath);
+                }
+            }
     
+            tracks.forEach(track => {
+                const fullTrackPath = path.resolve(__dirname, '../../../../static', track);
+                if (fs.existsSync(fullTrackPath)) {
+                    fs.unlinkSync(fullTrackPath);
+                }
+            });
+        } catch (error) {
+            console.error(`Error cleaning up files: ${error.message}`);
+        }
+    }
 }

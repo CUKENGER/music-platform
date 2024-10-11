@@ -1,6 +1,7 @@
 import { Btn, Input, InputFile, ModalContainer, Options, Textarea } from '@/shared'
 import styles from './CreateTrackForm.module.scss'
 import { useCreateTrackForm } from '../model/useCreateTrackForm'
+import { SearchArtistInput } from '@/entities'
 
 export const CreateTrackForm = () => {
 
@@ -30,9 +31,8 @@ export const CreateTrackForm = () => {
             inputValue={name}
             placeholder='Введите название'
           />
-          <Input
-            placeholder='Введите исполнителя'
-            inputValue={artist}
+          <SearchArtistInput
+            artist={artist}
           />
           <Options
             options={options}

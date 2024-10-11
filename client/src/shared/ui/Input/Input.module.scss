@@ -20,14 +20,6 @@
   user-select: none;
 }
 
-
-.showIcon {
-  position: absolute;
-  right: 40px;
-  top: 47%; 
-  cursor: pointer;
-}
-
 .exclam_container{
   width: 24px;
   height: 24px;
@@ -37,3 +29,18 @@
   transform: translateY(-50%, -50%);
 }
 
+@media(max-width: 700px) {
+  .label {
+    font-size: 12px;
+  }
+
+  .input{
+    height: 35px;
+  }
+}
+
+@media(max-width: 550px) {
+  .label {
+    font-size: 11px;
+  }
+}

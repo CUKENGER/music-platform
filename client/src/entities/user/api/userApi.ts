@@ -2,13 +2,10 @@ import { axiosInstance } from "@/shared";
 import { CreateUserDto, IUser, LoginUserDto, RegUserResponse } from "../types/User";
 
 
-export const regUser = async (userDto: CreateUserDto) :Promise<RegUserResponse> => {
+export const regUser = async (userDto: CreateUserDto):Promise<RegUserResponse> => {
   try {
     const response = await axiosInstance.post<RegUserResponse>(`user`, userDto)
-    console.log('Server response:', response);
-    console.log('response.data', response.data);
     return response.data
-
   } catch (error) {
     console.error('Error reg user:', error);
     throw error;

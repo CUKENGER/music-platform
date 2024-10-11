@@ -10,7 +10,7 @@ export const InputCheckbox: FC<InputCheckboxProps> = ({placeholder, onChange}) =
 
   return (
     <label className={styles.label}>
-      <input type="checkbox" className={styles.input} onChange={onChange}/>
+      <input type="checkbox" onChange={onChange}/>
       <span className={styles.checkmark}></span>
       {placeholder}
     </label>

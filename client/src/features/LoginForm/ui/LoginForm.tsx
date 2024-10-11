@@ -52,7 +52,7 @@ export const LoginForm: FC<LoginFormProps> = ({
       />
       {password.isDirty && password.isEmpty && <WarningMessage text="Поле должно быть заполнено"/>}
       {password.isDirty && !password.isPasswordStrong && (
-        <WarningMessage text="Пароль должен содержать минимум 8 символов и цифры"/>
+        <WarningMessage text="Пароль должен содержать минимум 8 символов, заглавные буквы и цифры"/>
       )}
       {password.isDirty && !password.isLatin && <WarningMessage text="Поля заполняются латиницей"/>}
 

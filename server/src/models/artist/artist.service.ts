@@ -1,8 +1,8 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateArtistDto } from "./dto/create-artist.dto";
 import { CreateArtistCommentDto } from "./dto/create-artistComment.dto";
 import * as path from 'path';
-import * as fs from 'fs/promises'
+import * as fs from 'fs/promises';
 import { ArtistFileService, ArtistFileType } from "./artistFile/artistFile.service";
 import { UpdateArtistDto } from "./dto/update-artist.dto";
 import { PrismaService } from "prisma/prisma.service";
@@ -14,52 +14,43 @@ export class ArtistService {
         private artistFileService: ArtistFileService,
     ) {}
 
-    async create(dto: CreateArtistDto, picture) {
-        const existingArtist = await this.prisma.artist.findFirst({where: {name: dto.name}});
-        if (existingArtist) {
-            throw new ConflictException('Artist with this name already exists');
-        }
+    async create(dto: CreateArtistDto, picture: Express.Multer.File) {
+        await this.ensureArtistDoesNotExist(dto.name);
+        const imagePath = await this.artistFileService.createCover(ArtistFileType.IMAGE, picture);
 
-        const imagePath = this.artistFileService.createCover(ArtistFileType.IMAGE, picture);
-
-        const newArtist = await this.prisma.artist.create({
+        return await this.prisma.artist.create({
             data: {
                 ...dto,
                 listens: 0,
                 likes: 0,
                 picture: imagePath,
-                tracks: {
-                    create: [],
-                },
-                albums: {
-                    create: [],
-                }
+                tracks: { create: [] },
+                albums: { create: [] }
             },
             include: {
                 tracks: true,
                 albums: true,
             }
         });
-
-        return newArtist;
     }
-    
-    async getAll() {
+
+    async getAll(offset?: number, count?: number) {
+        const limit = count ? Number(count) : 20;
+        const skip = offset ? Number(offset) : 0;
         return await this.prisma.artist.findMany({
+            take: limit,
+            skip: skip,
             include: {
-                tracks: true,
                 comments: true,
+                likedByUsers: true,
                 albums: true,
-            },
+                tracks: true
+            }
         });
     }
 
     async listen(id: number) {
-        const artist = await this.prisma.artist.findUnique({ where: { id } });
-        if (!artist) {
-            throw new Error(`Artist with id ${id} not found`);
-        }
-
+        const artist = await this.getArtistById(id);
         return await this.prisma.artist.update({
             where: { id },
             data: { listens: artist.listens + 1 },
@@ -67,11 +58,7 @@ export class ArtistService {
     }
 
     async addLike(id: number) {
-        const artist = await this.prisma.artist.findUnique({ where: { id } });
-        if (!artist) {
-            throw new Error(`Artist with id ${id} not found`);
-        }
-
+        const artist = await this.getArtistById(id);
         return await this.prisma.artist.update({
             where: { id },
             data: { likes: artist.likes + 1 },
@@ -79,11 +66,7 @@ export class ArtistService {
     }
 
     async deleteLike(id: number) {
-        const artist = await this.prisma.artist.findUnique({ where: { id } });
-        if (!artist) {
-            throw new Error(`Artist with id ${id} not found`);
-        }
-
+        const artist = await this.getArtistById(id);
         return await this.prisma.artist.update({
             where: { id },
             data: { likes: artist.likes - 1 },
@@ -95,51 +78,21 @@ export class ArtistService {
             where: { id },
             include: {
                 tracks: true,
-                albums: {
-                    include: {
-                        tracks: true,
-                    },
-                },
+                albums: { include: { tracks: true } },
             },
         });
     }
 
     async addComment(dto: CreateArtistCommentDto) {
-        const artist = await this.prisma.artist.findUnique({
-            where: { id: dto.artistId },
-            include: {
-                comments: true,
-            },
+        const artist = await this.getArtistById(dto.artistId);
+        return await this.prisma.comment.create({
+            data: { ...dto, artistId: dto.artistId },
         });
-
-        if (!artist) {
-            throw new Error(`Artist with id ${dto.artistId} not found`);
-        }
-
-        const comment = await this.prisma.comment.create({
-            data: {
-                ...dto,
-                artistId: dto.artistId,
-            },
-        });
-
-        return comment;
     }
 
     async delete(id: number) {
-        const artist = await this.prisma.artist.findUnique({ where: { id } });
-        if (!artist) {
-            throw new Error(`Artist with id ${id} not found`);
-        }
-
-        if (artist.picture) {
-            try {
-                const picturePath = path.resolve('static/', artist.picture);
-                await fs.unlink(picturePath);
-            } catch (error) {
-                console.error(`Error deleting picture for artist ${id}:`, error);
-            }
-        }
+        const artist = await this.getArtistById(id);
+        await this.removeArtistPicture(artist.picture);
 
         await this.prisma.comment.deleteMany({ where: { artistId: id } });
         await this.prisma.track.deleteMany({ where: { artistId: id } });
@@ -149,43 +102,50 @@ export class ArtistService {
         return artist;
     }
 
-    async searchByName(query: string, count = 50, offset = 0) {
+    async searchByName(name: string) {
         return await this.prisma.artist.findMany({
-            where: {
-                name: {
-                    contains: query,
-                    mode: 'insensitive',
-                },
-            },
-            skip: offset,
-            take: count,
-            include: {
-                tracks: true,
-                comments: true,
-                albums: {
-                    include: {
-                        tracks: true,
-                    },
-                },
-            },
+            where: { name: { contains: name, mode: 'insensitive' } }
         });
     }
 
-    async updateArtist(id: number, newData: Partial<UpdateArtistDto>, picture) {
+    async updateArtist(id: number, newData: Partial<UpdateArtistDto>, picture: Express.Multer.File) {
         let imagePath;
         if (picture) {
-            imagePath = this.artistFileService.createCover(ArtistFileType.IMAGE, picture);
+            imagePath = await this.artistFileService.createCover(ArtistFileType.IMAGE, picture);
             newData.picture = imagePath;
         }
 
-        const updatedArtist = await this.prisma.artist.update({
+        return await this.prisma.artist.update({
             where: { id },
-            data: {
-                ...newData,
-                picture: imagePath || undefined,
-            },
+            data: { ...newData, picture: imagePath || undefined },
         });
+    }
 
-        return updatedArtist;
+    private async getArtistById(id: number) {
+        const artist = await this.prisma.artist.findUnique({ where: { id } });
+        if (!artist) {
+            throw new NotFoundException(`Artist with id ${id} not found`);
+        }
+        return artist;
+    }
+
+    // to create 
+    private async ensureArtistDoesNotExist(name: string) {
+        const existingArtist = await this.prisma.artist.findFirst({ where: { name } });
+        if (existingArtist) {
+            throw new ConflictException('Artist with this name already exists');
+        }
+    }
+
+    // to delete
+    private async removeArtistPicture(picturePath: string) {
+        if (picturePath) {
+            try {
+                const resolvedPath = path.resolve('static/', picturePath);
+                await fs.unlink(resolvedPath);
+            } catch (error) {
+                console.error(`Error deleting picture: ${error.message}`);
+            }
+        }
     }
 }

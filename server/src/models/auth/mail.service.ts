@@ -5,25 +5,6 @@ import * as nodemailer from 'nodemailer';
 export class MailService {
   private transporter: nodemailer.Transporter;
 
-  // constructor() {
-  //   this.transporter = nodemailer.createTransport({
-  //     service: 'gmail',
-  //     host: process.env.SMTP_HOST,
-  //     port: parseInt(process.env.SMTP_PORT, 10),
-  //     secure: false,
-  //     logger: true,
-  //     debug: true,
-  //     secureConnection: false,
-  //     auth: {
-  //       user: process.env.SMTP_USER,
-  //       pass: process.env.SMTP_APP_PASS,
-  //     },
-  //     tls: {
-  //       rejectUnauthorized: true,
-  //     },
-  //   });
-  // }
-
   constructor() {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',

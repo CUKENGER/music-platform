@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
 import { Token } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
@@ -7,34 +7,29 @@ import { PrismaService } from "prisma/prisma.service";
 export class TokenService {
 
   constructor(
-    private prisma: PrismaService,
-    private jwtService: JwtService
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService
   ) {}
 
-  generateTokens (payload) {
-    const accessToken = this.jwtService.sign(payload, {secret: process.env.JWT_ACCESS_SECRET_KEY})
-    const refreshToken = this.jwtService.sign(payload, {secret: process.env.JWT_REFRESH_SECRET_KEY})
-    return {
-      accessToken,
-      refreshToken
+  generateTokens(payload: any): { accessToken: string; refreshToken: string } {
+    const accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET_KEY });
+    const refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET_KEY });
+    return { accessToken, refreshToken };
+  }
+
+  validateAccessToken(token: string): any | null {
+    try {
+      return this.jwtService.verify(token, { secret: process.env.JWT_ACCESS_SECRET_KEY });
+    } catch (e) {
+      return null;
     }
   }
 
-  validateAccessToken(token) {
+  validateRefreshToken(token: string): any | null {
     try {
-      const tokenData = this.jwtService.verify(token, {secret: process.env.JWT_ACCESS_SECRET_KEY})
-      return tokenData
-    } catch(e) {
-      return null
-    }
-  }
-
-  validateRefreshToken(token) {
-    try {
-      const tokenData = this.jwtService.verify(token, {secret: process.env.JWT_REFRESH_SECRET_KEY})
-      return tokenData  
-    } catch(e) {
-      return null
+      return this.jwtService.verify(token, { secret: process.env.JWT_REFRESH_SECRET_KEY });
+    } catch (e) {
+      return null;
     }
   }
 
@@ -43,76 +38,52 @@ export class TokenService {
     refreshToken: string, 
     accessToken: string, 
     prisma: PrismaService
-  ) {
-    // Начинаем транзакцию
-    // return await prisma.$transaction(async (tx) => {
-    //   // Ищем существующий токен по userId
-    //   const tokenData = await tx.token.findFirst({ where: { userId } });
-      
-    //   if (tokenData) {
-    //     console.log('tokenData', tokenData)
-    //     // Обновляем существующий токен
-    //     return await tx.token.update({
-    //       where: { id: tokenData.id }, // Используем id для обновления
-    //       data: {
-    //         refreshToken,
-    //         accessToken,
-    //       },
-    //     });
-    //   } else {
-    //     // Создаем новый токен
-    //     console.log('tokenData', tokenData)
-    //     return await tx.token.create({
-    //       data: {
-    //         userId,
-    //         refreshToken,
-    //         accessToken,
-    //       },
-    //     });
-    //   }
-    // });
+  ): Promise<Token> {
     try {
-
-      const tokenData = await prisma.token.findFirst({ where: { userId } })
+      const tokenData = await prisma.token.findFirst({ where: { userId } });
   
-      if(tokenData) {
+      if (tokenData) {
         return await prisma.token.update({
           where: { id: tokenData.id },
-            data: {
-              refreshToken,
-              accessToken,
-            },
-        })
+          data: { refreshToken, accessToken },
+        });
       } else {
         return await prisma.token.create({
-          data: {
-            userId,
-            refreshToken,
-            accessToken,
-          },
+          data: { userId, refreshToken, accessToken },
         });
       }
-    } catch(e) {
-      throw new Error(`Error token save ${e}`)
+    } catch (e) {
+      console.error(`Error saving token: ${e.message}`);
+      throw new InternalServerErrorException('Error saving token');
     }
   }
 
-  async removeToken(refreshToken) {
+  async removeToken(refreshToken: string): Promise<Token | null> {
     try {
-      const tokenData = await this.prisma.token.delete({ where: { refreshToken } });
-      return tokenData
-    } catch(e) {
-      console.log('Error with removeToken', e)
+      const token = await this.prisma.token.findUnique({
+        where: { refreshToken },
+      });
+  
+      if (!token) {
+        console.warn('Token not found, nothing to delete');
+        return null;
+      }
+  
+      return await this.prisma.token.delete({
+        where: { refreshToken },
+      });
+    } catch (error) {
+      console.error('Error removing token:', error);
+      throw new Error('Failed to remove token');
     }
   }
 
-  async findToken(refreshToken) {
+  async findToken(refreshToken: string): Promise<Token | null> {
     try {
-      const tokenData = await this.prisma.token.findUnique({where: {refreshToken}})
-      console.log('findToken tokenData', tokenData);
-      return tokenData
-    } catch(e) {
-      console.log('Error with findToken', e)
+      return await this.prisma.token.findUnique({ where: { refreshToken } });
+    } catch (e) {
+      console.error(`Error finding token: ${e.message}`);
+      throw new InternalServerErrorException('Error finding token');
     }
   }
 }

@@ -59,13 +59,13 @@ export class AppModule implements NestModule{
         { path: 'auth/registration', method: RequestMethod.POST },
         { path: 'user/check/:username', method: RequestMethod.POST },
         { path: 'user', method: RequestMethod.POST },
-        { path: '/image/*', method: RequestMethod.ALL},
-        { path: '/audio/*', method: RequestMethod.ALL},
-        { path: '/static/*', method: RequestMethod.ALL},
-        { path: '/favicon.ico', method: RequestMethod.GET}
+        { path: 'image/(.*)', method: RequestMethod.ALL},
+        { path: 'audio/(.*)', method: RequestMethod.ALL},
+        { path: 'static/*', method: RequestMethod.ALL},
+        { path: '.favicon.ico', method: RequestMethod.GET }
       )
       .forRoutes(
-        // { path: '*', method: RequestMethod.ALL }
+        { path: '*', method: RequestMethod.ALL }
       )
   }
 }

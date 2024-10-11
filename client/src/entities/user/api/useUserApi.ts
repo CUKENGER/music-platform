@@ -25,8 +25,8 @@ export const useRegUser = () => {
 
   return useMutation<RegUserResponse, unknown, CreateUserDto>({
     mutationFn: regUser,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: (data) => {
-      console.log('Mutation successful:', data);
       queryClient.invalidateQueries({ queryKey: ['user'], exact: true });
     },
     onError: (error: unknown) => {
@@ -63,8 +63,8 @@ export const useGetByToken = () => {
   return useQuery({
     queryFn: () => getByToken(),
     queryKey: ['user'],
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnWindowFocus: true,
+    // refetchOnMount: false,
   });
 };
 
