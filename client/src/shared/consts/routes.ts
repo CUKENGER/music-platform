@@ -1,4 +1,4 @@
-import { AlbumPage, Albums, Artists, CreateAlbum, CreateArtist, CreateTrack, GoActivation, Home, Login, PrivateNotFound, Profile, Registration, Tracks} from "@/pages";
+import { AlbumPage, Albums, Artists, CreateAlbum, CreateArtist, CreateTrack, GoActivation, Home, Login, PrivateNotFound, Profile, Registration, ResetPassword, SendEmail, Tracks} from "@/pages";
 import { PublicNotFound } from "@/pages/PublicNotFound/PublicNotFound";
 
 export enum PrivateRoutes {
@@ -17,6 +17,7 @@ export enum PublicRoutes {
   LOGIN = '/',
   REGISTRATION = '/registration',
   ACTIVATION = '/goActivate', 
+  SEND_EMAIL = '/send_email',
   NOT_FOUND = "*"
 }
 
@@ -38,5 +39,7 @@ export const publicRoutes = [
   { path: PublicRoutes.LOGIN, component: Login, exact: true },
   { path: PublicRoutes.REGISTRATION, component: Registration, exact: true },
   { path: PublicRoutes.ACTIVATION, component: GoActivation, exact: true },
+  { path: '/reset_password/:token', component: ResetPassword, exact: true },
+  { path: PublicRoutes.SEND_EMAIL, component: SendEmail, exact: true },
   { path: PublicRoutes.NOT_FOUND, component: PublicNotFound, exact: true },
 ];

@@ -78,10 +78,10 @@ export class CommentService {
     }
   }
 
-  async addLike(commentId: number, token: string) {
+  async addLike(id: number, token: string) {
     const user = await this.findUserByToken(token);
     const userId = Number(user.id);
-    const comment = await this.ensureCommentExistsWithLikes(commentId);
+    const comment = await this.ensureCommentExistsWithLikes(id);
 
     const hasLiked = comment.likedByUsers.some((likedUser) => likedUser.id === userId);
 
@@ -91,7 +91,7 @@ export class CommentService {
 
     try {
       await this.prisma.comment.update({
-        where: { id: commentId },
+        where: { id },
         data: {
           likes: comment.likes + 1,
           likedByUsers: {
@@ -102,14 +102,15 @@ export class CommentService {
 
       return { message: 'Like added' };
     } catch (error) {
+      console.error(`Error adding like: ${error}`)
       throw new InternalServerErrorException('Error adding like');
     }
   }
 
-  async deleteLike(commentId: number, token: string) {
+  async deleteLike(id: number, token: string) {
     const user = await this.findUserByToken(token);
     const userId = Number(user.id);
-    const comment = await this.ensureCommentExistsWithLikes(commentId);
+    const comment = await this.ensureCommentExistsWithLikes(id);
 
     const hasLiked = comment.likedByUsers.some((likedUser) => likedUser.id === userId);
 
@@ -123,7 +124,7 @@ export class CommentService {
 
     try {
       await this.prisma.comment.update({
-        where: { id: commentId },
+        where: { id },
         data: {
           likes: comment.likes - 1,
           likedByUsers: {
@@ -134,7 +135,8 @@ export class CommentService {
 
       return { message: 'Like removed' };
     } catch (error) {
-      throw new InternalServerErrorException('Error deleting like');
+      console.error(`Error deleting like: ${error}`)
+      throw new InternalServerErrorException(`Error deleting like: ${error}`);
     }
   }
 
@@ -180,9 +182,9 @@ export class CommentService {
   }
 
   // to likes
-  private async ensureCommentExistsWithLikes(commentId: number) {
+  private async ensureCommentExistsWithLikes(id: number) {
     const comment = await this.prisma.comment.findUnique({
-      where: { id: commentId },
+      where: { id },
       include: { likedByUsers: true },
     });
 

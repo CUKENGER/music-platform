@@ -1,15 +1,42 @@
-import { axiosInstance } from "@/shared";
+import { apiRequest, axiosInstance } from "@/shared";
 import { CreateArtistDto, IArtist } from "../types/Artist";
+import axios from "axios";
 
-export const getAll = async (count?: number, offset?: number) => {
+export const getAll = async (count?: number): Promise<IArtist[]> => {
   try {
-    const response = await axiosInstance.get('/artists', { params: { count, offset }});
+    const response = await axiosInstance.get('artists', {
+      params: {count: count}
+    })
     return response.data
-  } catch (e: unknown) {
-    console.error(`Error fetching artists: ${e}`);
-    return null
+  } catch(e) {
+    if (axios.isAxiosError(e)) {
+      throw e;
+    } else {
+      throw new Error('Неизвестная ошибка');
+    }
   }
-};
+}
+
+export const getOne = async (id: number): Promise<IArtist | null> => {
+  return apiRequest<IArtist | null>('get', `artists`, { id });
+}
+
+export const search = async (name: string): Promise<IArtist[]> => {
+  try {
+    const response = await axiosInstance.get('artists/search', {
+      params: {
+        name: name
+      }
+    });
+    return response.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      throw e;
+    } else {
+      throw new Error('Неизвестная ошибка');
+    }
+  }
+}
 
 export const create = async (artistInfo: CreateArtistDto) => {
   try {
@@ -27,32 +54,14 @@ export const create = async (artistInfo: CreateArtistDto) => {
       },
     });
 
-
     return response.data;
-  } catch (error) {
-    console.error('Error create artist:', error);
-    throw error;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      throw e;
+    } else {
+      throw new Error('Неизвестная ошибка');
+    }
   }
 
 }
-
-export const getOne = async (id: number) => {
-  try {
-    const response = await axiosInstance.get<IArtist>(`/artists/${id}`);
-    return response.data
-  } catch (e: unknown) {
-    console.error(`Error get artist: ${e}`);
-    return null
-  }
-};
-
-export const search = async (name: string) => {
-  try {
-    const response = await axiosInstance.get<IArtist[]>(`/artists/search`, {params: {name}});
-    return response.data
-  } catch (e: unknown) {
-    console.error(`Error search artist: ${e}`);
-    return null
-  }
-};
 

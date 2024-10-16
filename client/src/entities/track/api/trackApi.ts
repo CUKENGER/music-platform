@@ -1,65 +1,29 @@
-import { axiosInstance } from "@/shared"
+import { apiRequest, axiosInstance } from "@/shared"
 import { CreateTrackDto, ITrack } from "../types/Track";
+import axios from "axios";
 
-export const getAll = async (count?: number) => {
-  try {
-    const response = await axiosInstance.get('/tracks', { params: { count }});
-    return response.data
-} catch (e: unknown) {
-    console.error(`Error fetching tracks: ${e}`);
-    return null
-  }
-};
+export const getAll = async (count?: number): Promise<ITrack[]> => {
+  return apiRequest<ITrack[]>('get', `tracks`, {count});
+}
 
 export const getOne = async (trackId: number): Promise<ITrack | null> => {
-  try {
-    const response = await axiosInstance.get<ITrack>(`/tracks/${trackId}`, { params: { id: Number(trackId) }});
-    return response.data
-  } catch (e: unknown) {
-    console.error(`Error get one track: ${e}`);
-    return null
-  }
-};
+  return apiRequest<ITrack>('get', `tracks/${trackId}`, {id: trackId});
+}
 
 export const addLike = async (id: number): Promise<ITrack | null> => {
-  try {
-    const response = await axiosInstance.post(`/tracks/like/${id}`)
-    return response.data
-  } catch(e) {
-    console.error(`error post like track axios, ${e}`)
-    return null;
-  }
+  return apiRequest<ITrack>('post', `tracks/${id}/like`, {id});
+}
+
+export const deleteLike = async (id: number): Promise<ITrack | null> => {
+  return apiRequest<ITrack>('delete', `tracks/${id}/like`, {id});
 }
 
 export const addListen = async (id: number): Promise<ITrack | null> => {
-  try {
-    const response = await axiosInstance.post(`/tracks/listen/${id}`)
-    return response.data
-  } catch(e) {
-    console.error(`error add listen track axios, ${e}`)
-    return null;
-  }
-}
-
-
-export const deleteLike = async (id: number): Promise<ITrack | null> => {
-  try {
-    const response = await axiosInstance.delete(`/tracks/like/${id}`)
-    return response.data
-  } catch(e) {
-    console.error(`error delete like track axios, ${e}`)
-    return null;
-  }
+  return apiRequest<ITrack>('post', `tracks/${id}/listen`, {id});
 }
 
 export const deleteTrack = async (id: number): Promise<ITrack | null> => {
-  try {
-    const response = await axiosInstance.delete(`/tracks/${id}`)
-    return response.data
-  } catch(e) {
-    console.error(`error delete track axios, ${e}`)
-    return null;
-  }
+  return apiRequest<ITrack>('delete', `tracks/${id}`, {id});
 }
 
 export const create = async (trackInfo: CreateTrackDto): Promise<ITrack> => {
@@ -80,11 +44,13 @@ export const create = async (trackInfo: CreateTrackDto): Promise<ITrack> => {
       },
     });
 
-
     return response.data;
-  } catch (error) {
-    console.error('Error create track:', error);
-    throw error;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      throw e;
+    } else {
+      throw new Error('Неизвестная ошибка');
+    }
   }
 };
 

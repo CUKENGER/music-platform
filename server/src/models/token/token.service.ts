@@ -86,4 +86,13 @@ export class TokenService {
       throw new InternalServerErrorException('Error finding token');
     }
   }
+
+  async findResetToken(accessToken: string): Promise<Token | null> {
+    try {
+      return await this.prisma.token.findFirst({ where: { accessToken } });
+    } catch (e) {
+      console.error(`Error finding token: ${e.message}`);
+      throw new InternalServerErrorException('Error finding token');
+    }
+  }
 }

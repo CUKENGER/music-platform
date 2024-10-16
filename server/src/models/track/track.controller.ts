@@ -9,7 +9,7 @@ import { Track } from '@prisma/client';
 import { ApiError } from 'exceptions/api.error';
 
 @ApiTags('Tracks')
-@Controller('/tracks')
+@Controller('tracks')
 export class TrackController {
 
 	constructor(
@@ -33,7 +33,7 @@ export class TrackController {
 		return await this.trackService.create(dto, picture, audio)
 	}
 
-	@Get('/search')
+	@Get('search')
 	@ApiOperation({ summary: 'Поиск треков' })
 	searchByName(@Query('query') query: string,
 		@Query('count', ParseIntPipe) count: number,
@@ -59,19 +59,19 @@ export class TrackController {
 		return this.trackService.delete(id)
 	}
 
-	@Post('/comment')
+	@Post('comment')
 	@ApiOperation({ summary: 'Создание коммента к треку' })
 	addComment(@Body() dto: CreateTrackCommentDto) {
 		return this.trackService.addComment(dto)
 	}
 
 	@ApiOperation({ summary: 'Создание ответа к комменту трека' })
-	@Post('/comment/replies')
+	@Post('comment/replies')
 	addReplyToComment(@Body() dto: CreateReplyTrackCommentDto) {
 		return this.trackService.addReplyToComment(dto)
 	}
 
-	@Post('/listen/:id')
+	@Post(':id/listen')
 	@ApiOperation({ summary: 'Добавление прослушивания к треку по id' })
 	async addListen(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
 		const authHeader = req.headers['authorization'];
@@ -87,7 +87,7 @@ export class TrackController {
 		return this.trackService.listen(id, token);
 	}
 
-	@Post('/like/:id')
+	@Post(':id/like')
 	@ApiOperation({ summary: 'Добавление лайка к треку по id' })
 	addLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
 		const authHeader = req.headers['authorization'];
@@ -103,7 +103,7 @@ export class TrackController {
 		return this.trackService.addLike(id, token)
 	}
 
-	@Delete('/like/:id')
+	@Delete(':id/like')
 	@ApiOperation({ summary: 'Удаление лайка к треку по id' })
 	deleteLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
 		const authHeader = req.headers['authorization'];

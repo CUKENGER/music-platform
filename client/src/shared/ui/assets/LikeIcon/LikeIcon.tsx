@@ -9,15 +9,18 @@ interface LikeIconProps{
   className?: string;
   onClick?: () => void;
   isLike?: boolean;
-  likes?: number
+  likes?: number;
+  needStopPropagation?: boolean
 }
 
-export const LikeIcon: FC<LikeIconProps> = ({className, onClick, isLike, likes}) => {
+export const LikeIcon: FC<LikeIconProps> = ({className, onClick, isLike, likes, needStopPropagation=true}) => {
 
   const [isHover, setIsHover] = useState(false)
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.stopPropagation()
+    if(needStopPropagation) {
+      e.stopPropagation()
+    }
     if(onClick) {
       onClick()
     }

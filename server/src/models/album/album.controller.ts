@@ -7,7 +7,7 @@ import { ApiOperation } from "@nestjs/swagger";
 import { ApiError } from "exceptions/api.error";
 
 
-@Controller('/albums')
+@Controller('albums')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {
   }
@@ -28,7 +28,7 @@ export class AlbumController {
   }
 
 
-  @Get('/search')
+  @Get('search')
   searchByName(
     @Query('query') query: string,
     @Query('count', ParseIntPipe) count: number,
@@ -47,22 +47,22 @@ export class AlbumController {
     return this.albumService.delete(id)
   }
 
-  @Post('/comment')
+  @Post('comment')
   addComment(@Body() dto: CreateAlbumCommentDto) {
     return this.albumService.addComment(dto)
   }
 
-  @Post('/listen/:id')
+  @Post(':id/listen')
   addListen(@Param('id', ParseIntPipe) id) {
     return this.albumService.listen(id)
   }
 
-  @Get(`/:id/comment`)
+  @Get(`:id/comment`)
   getComments(@Param() id: number) {
     return this.albumService.getComments(id)
   }
 
-  @Post('/like/:id')
+  @Post(':id/like')
   @ApiOperation({ summary: 'Добавление лайка к альбому по id' })
   addLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
     const authHeader = req.headers['authorization'];
@@ -79,7 +79,7 @@ export class AlbumController {
     return this.albumService.addLike(id, token)
   }
 
-  @Delete('/like/:id')
+  @Delete(':id/like')
   @ApiOperation({ summary: 'Удаление лайка к альбому по id' })
   deleteLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
     const authHeader = req.headers['authorization'];

@@ -84,5 +84,7 @@ export {sortComments} from './comment/model/sortComments'
 export type { IUser }from './user/types/User'
 
 export {
-  useGetByToken 
+  useGetByToken,
+  useSendEmail,
+  useResetPassword
 } from './user/api/useUserApi'

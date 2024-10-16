@@ -1,5 +1,6 @@
 
 export { default as axiosInstance, useAxiosInterceptor } from './api/axiosInstance'
+export {apiRequest} from './api/apiRequest'
 
 export { ApiUrl } from './consts/apiUrl'
 export { publicRoutes } from './consts/routes'
@@ -18,6 +19,7 @@ export {WarningMessage} from './ui/WarningMessage/WarningMessage'
 export {Menu} from './ui/Menu/Menu'
 export {Options} from './ui/Options/Options'
 export {InputFile} from './ui/InputFile/InputFile'
+export {LoginInput} from './ui/LoginInput/LoginInput'
 
 export { default as audioManager } from './model/AudioManager'
 export {handleErrorHandler} from './model/errorHandler'

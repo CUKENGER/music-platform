@@ -1,90 +1,42 @@
-import { axiosInstance } from "@/shared";
-import { CreateUserDto, IUser, LoginUserDto, RegUserResponse } from "../types/User";
+import { apiRequest } from "@/shared";
+import { CheckUsernameResponse, CreateUserDto, IUser, LoginUserDto, RegUserResponse, ResetPasswordDto, ResetPasswordResponse, SendEmailDto, SendEmailResponse } from "../types/User";
 
-
-export const regUser = async (userDto: CreateUserDto):Promise<RegUserResponse> => {
-  try {
-    const response = await axiosInstance.post<RegUserResponse>(`user`, userDto)
-    return response.data
-  } catch (error) {
-    console.error('Error reg user:', error);
-    throw error;
-  }
+export const regUser = async (userDto: CreateUserDto): Promise<RegUserResponse> => {
+  return apiRequest<RegUserResponse>('post', 'user', userDto);
 }
 
 export const getByEmail = async (email: string): Promise<IUser> => {
-  try {
-    const response = await axiosInstance.get(`user/${email}`)
-    return response.data
-  } catch(e) {
-    console.error('Error getByEmail', e);
-    throw e
-  }
+  return apiRequest<IUser>('get', `user/${email}`, {email});
 }
 
 export const getByToken = async (): Promise<IUser> => {
-  try {
-    const response = await axiosInstance.get(`user/byToken`)
-    return response.data
-  } catch(e) {
-    console.error('Error getByToken', e);
-    throw e
-  }
+  return apiRequest<IUser>('get', 'user/byToken');
 }
 
 export const getAll = async (): Promise<IUser[]> => {
-  try {
-    const response = await axiosInstance.get(`user`)
-    return response.data
-  } catch(e) {
-    console.error('Error getAll', e);
-    throw e
-  }
+  return apiRequest<IUser[]>('get', 'user');
 }
 
-
 export const loginUser = async (userDto: LoginUserDto): Promise<RegUserResponse> => {
-  try {
-    const response = await axiosInstance.post<RegUserResponse>('auth/login', userDto)
-    return response.data
-  } catch(e) {
-    console.error('Error loginUser', e);
-    throw e
-  }
+  return apiRequest<RegUserResponse>('post', 'auth/login', userDto);
 }
 
 export const logoutUser = async (): Promise<string> => {
-  try {
-    const response = await axiosInstance.post('auth/logout')
-    return response.data
-  } catch(e) {
-    console.error('Error logoutUser', e);
-    throw e
-  }
-}
-
-interface CheckUsernameResponse {
-  available: boolean
+  return apiRequest<string>('post', 'auth/logout');
 }
 
 export const checkUsername = async (username: string): Promise<CheckUsernameResponse> => {
-  try {
-    const response = await axiosInstance.post(`user/check/${username}`)
-    return response.data
-  } catch(e) {
-    console.error('Error checkUsername', e);
-    throw e
-  }
+  return apiRequest<CheckUsernameResponse>('post', `user/check/${username}`, {username});
 }
-
 
 export const refreshToken = async (): Promise<RegUserResponse> => {
-  try {
-    const response = await axiosInstance.get('auth/refresh')
-    return response.data
-  } catch(e) {
-    console.error('Error refreshToken', e);
-    throw e
-  }
+  return apiRequest<RegUserResponse>('get', 'auth/refresh');
 }
 
+export const sendEmail = async (dto: SendEmailDto): Promise<SendEmailResponse> => {
+  return apiRequest<SendEmailResponse>('post', 'auth/send_email', dto);
+}
+
+export const resetPassword = async (dto: ResetPasswordDto): Promise<ResetPasswordResponse> => {
+  return apiRequest<ResetPasswordResponse>('post', 'auth/reset_password', dto);
+}

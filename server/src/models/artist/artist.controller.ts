@@ -5,75 +5,80 @@ import { CreateArtistDto } from "./dto/create-artist.dto";
 import { CreateArtistCommentDto } from "./dto/create-artistComment.dto";
 import { ApiOperation } from "@nestjs/swagger";
 
-@Controller('/artists')
+@Controller('artists')
 export class ArtistController {
-    constructor(private readonly artistService: ArtistService) {
+  constructor(
+    private readonly artistService: ArtistService
+  ) {}
 
-    }
+  @Post()
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'picture', maxCount: 1 }
+  ]))
+  async create(@UploadedFiles() files, @Body() dto: CreateArtistDto) {
+    const { picture } = files
+    return this.artistService.create(dto, picture)
+  }
 
-    @Post()
-    @UseInterceptors(FileFieldsInterceptor([
-        { name: 'picture', maxCount: 1 }
-    ]))
-    async create(@UploadedFiles() files, @Body() dto: CreateArtistDto) {
+  @Get()
+  @ApiOperation({ summary: 'Получение всех артистов с пагинацией' })
+  async getAllCount(@Query('count', ParseIntPipe) count: number) {
+    return await this.artistService.getAllCount(count);
+  }
 
-        const { picture } = files
+  @Get('/all')
+  @ApiOperation({ summary: 'Получение всех артистов с пагинацией' })
+  async getAll() {
+    return await this.artistService.getAll();
+  }
 
-        return this.artistService.create(dto, picture)
-    }
+  @Get('search')
+  searchByName(@Query('name') name: string) {
+    console.log('name', name)
+    return this.artistService.searchByName(name)
+  }
 
-    @Get()
-	@ApiOperation({ summary: 'Получение всех артистов с пагинацией' })
-	async getAll(@Query('count') count?: number, @Query('cursor') offset?: number) {
-		return await this.artistService.getAll(offset, count);
-	}
+  @Get(':id')
+  getOne(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.getOne(id)
+  }
 
-    @Get('/search')
-    searchByName(@Query('name') name: string) {
-        return this.artistService.searchByName(name)
-    }
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.delete(id)
+  }
 
-    @Get(':id')
-    getOne(@Param('id') id) {
-        return this.artistService.getOne(id)
-    }
+  @Post('comment')
+  addComment(@Body() dto: CreateArtistCommentDto) {
+    return this.artistService.addComment(dto)
+  }
 
-    @Delete(':id')
-    delete(@Param('id') id) {
-        return this.artistService.delete(id)
-    }
+  @Post(':id/listen')
+  addListen(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.listen(id)
+  }
 
-    @Post('/comment')
-    addComment(@Body() dto: CreateArtistCommentDto) {
-        return this.artistService.addComment(dto)
-    }
+  @Post(':id/like')
+  addLike(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.addLike(id)
+  }
 
-    @Post('/listen/:id')
-    addListen(@Param('id') id) {
-        return this.artistService.listen(id)
-    }
+  @Delete(':id/like')
+  deleteLike(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.deleteLike(id)
+  }
 
-    @Post('/like/:id')
-    addLike(@Param('id') id) {
-        return this.artistService.addLike(id)
-    }
-
-    @Delete('/like/:id')
-    deleteLike(@Param('id') id) {
-        return this.artistService.deleteLike(id)
-    }
-
-    @Put(':id')
-    @UseInterceptors(FileFieldsInterceptor([
-        { name: 'picture', maxCount: 1 }
-    ]))
-    async updateArtist(
-        @Param('id') id,
-        @Body() newData,
-        @UploadedFiles() files
-    ) {
-        const picture = files?.picture ? files?.picture[0] : null;
-        return this.artistService.updateArtist(id, newData, picture);
-    }
+  @Put(':id')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'picture', maxCount: 1 }
+  ]))
+  async updateArtist(
+    @Param('id', ParseIntPipe) id,
+    @Body() newData,
+    @UploadedFiles() files
+  ) {
+    const picture = files?.picture ? files?.picture[0] : null;
+    return this.artistService.updateArtist(id, newData, picture);
+  }
 
 }

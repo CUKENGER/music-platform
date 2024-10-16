@@ -150,6 +150,7 @@ export const AlbumInfo: FC<AlbumInfoProps> = ({ album }) => {
             <LikeIcon
               isLike={isLike}
               likes={localLikes}
+              needStopPropagation={false}
             />
           </Btn>
         </div>

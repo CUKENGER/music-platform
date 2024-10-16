@@ -39,7 +39,6 @@ export class AlbumHelperService {
       };
       artist = await this.artistService.create(artistDto, files.picture);
     }
-
     return artist;
   }
 
@@ -181,8 +180,15 @@ export class AlbumHelperService {
 
   // to likes
   async findUserByToken(token: string) {
+    console.log('token', token);
     const user = await this.prisma.user.findFirst({
-      where: { tokens: { some: { accessToken: token } } },
+      where: {
+        tokens: {
+          some: {
+            accessToken: token
+          }
+        }
+      },
     });
     if (!user) throw new NotFoundException('User not found');
     return user;

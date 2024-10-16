@@ -28,7 +28,7 @@ export class UserService {
         },
       });
       return users
-    } catch(e) {
+    } catch (e) {
       console.error(`Error getAll users: ${e}`)
       throw new InternalServerErrorException("Error getAll users")
     }
@@ -45,7 +45,7 @@ export class UserService {
         },
       });
       return users
-    } catch(e) {
+    } catch (e) {
       console.error(`Error search users: ${e}`)
       throw new InternalServerErrorException("Error search users")
     }
@@ -65,12 +65,12 @@ export class UserService {
         },
       });
       return user
-    } catch(e) {
+    } catch (e) {
       console.error(`Error getByEmail user: ${e}`)
       throw new InternalServerErrorException("Error getByEmail user")
     }
   }
-  
+
   async getOne(id: number) {
     return this.prisma.user.findUnique({
       where: {
@@ -92,16 +92,16 @@ export class UserService {
       const payload = this.jwtService.verify(token, { secret: process.env.JWT_ACCESS_SECRET_KEY });
       const user = await this.prisma.user.findFirst({
         where: { id: payload.id },
-        include: { 
-          roles: { 
+        include: {
+          roles: {
             include: {
               role: true
             }
-          }, 
-          likedAlbums: true, 
-          likedArtists: true, 
-          likedTracks: true, 
-          listenedTracks: true ,
+          },
+          likedAlbums: true,
+          likedArtists: true,
+          likedTracks: true,
+          listenedTracks: true,
           likedComments: true
         },
       });
@@ -113,18 +113,18 @@ export class UserService {
       return user;
     } catch (error) {
       console.error(`Ошибка при поиске пользователя: ${error.message}`);
-    
+
       if (error.name === 'TokenExpiredError') {
         throw ApiError.UnauthorizedError()
       }
-      
+
       if (error.name === 'JsonWebTokenError') {
         throw ApiError.UnauthorizedError()
       }
-    
+
       throw new InternalServerErrorException('Ошибка при поиске пользователя');
     }
-    
+
   }
 
   async getByUsername(username: string) {
@@ -148,11 +148,11 @@ export class UserService {
       this.prisma.user.findUnique({ where: { id: dto.userId } }),
       this.roleService.getByValue(dto.value),
     ]);
-  
+
     if (!user || !role) {
       throw new NotFoundException('User or role not found');
     }
-  
+
     await this.prisma.userRole.create({
       data: {
         userId: user.id,
@@ -160,18 +160,18 @@ export class UserService {
       },
     });
   }
-  
+
 
   async ban(dto: BanUserDto) {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id: dto.userId },
       });
-  
+
       if (!user) {
         throw new NotFoundException('User not found');
       }
-  
+
       return await this.prisma.user.update({
         where: { id: user.id },
         data: { banned: true, banReason: dto.banReason },

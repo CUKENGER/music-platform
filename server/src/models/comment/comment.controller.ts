@@ -1,4 +1,4 @@
-import { Controller, Delete, Param, Post, Req, UnauthorizedException } from "@nestjs/common";
+import { Controller, Delete, Param, ParseIntPipe, Post, Req, UnauthorizedException } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CommentService } from "./comment.service";
 import { ApiError } from "exceptions/api.error";
@@ -11,7 +11,7 @@ export class CommentController {
 
   @Post(':id/like')
   @ApiOperation({ summary: 'Добавление лайка к комментарию' })
-  addLike(@Param('id') id: number, @Req() req: Request) {
+  addLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
     const authHeader = req.headers['authorization'];
     
     if (!authHeader) {
@@ -28,7 +28,7 @@ export class CommentController {
 
   @Delete(':id/like')
   @ApiOperation({ summary: 'Удаление лайка у комментария' })
-  deleteLike(@Param('id') id: number, @Req() req: Request) {
+  deleteLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
 
     const authHeader = req.headers['authorization'];
     

@@ -32,4 +32,19 @@ export class MailService {
       `,
     });
   }
+
+  async sendResetMail(to: string, link: string): Promise<void> {
+    await this.transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to,
+      subject: 'Восстановление пароля на сайте MusicPlatform',
+      text: '',
+      html: `
+        <div>
+          <h1>To reset your password go to</h1>
+          <a href="${link}">${link}</a>
+        </div>
+      `,
+    });
+  }
 }

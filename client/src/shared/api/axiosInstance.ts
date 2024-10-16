@@ -42,7 +42,6 @@ export const useAxiosInterceptor = () => {
 
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        console.log('refresh');
         try {
           const { data } = await axiosInstance.get('/auth/refresh', { withCredentials: true });
 

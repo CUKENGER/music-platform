@@ -9,7 +9,9 @@ import { CommentService } from "models/comment/comment.service";
 import { AlbumFileModule } from "./albumFile/albumFile.module";
 import { ArtistFileModule } from "models/artist/artistFile/artistFile.module";
 import { AlbumHelperService } from "./albumHelper.service";
-
+import { UserService } from "models/user/user.service";
+import { RoleService } from "models/role/role.service";
+import { JwtService } from "@nestjs/jwt";
 
 @Module({
     imports: [AlbumFileModule, ArtistFileModule],
@@ -21,7 +23,10 @@ import { AlbumHelperService } from "./albumHelper.service";
         ArtistService, 
         AudioService, 
         CommentService,
-        AlbumHelperService
+        AlbumHelperService,
+        UserService,
+        RoleService,
+        JwtService
     ]
 })
 export class AlbumModule {}

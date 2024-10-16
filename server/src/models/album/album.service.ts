@@ -5,6 +5,7 @@ import { AlbumFileService } from "./albumFile/albumFile.service";
 import { PrismaService } from "prisma/prisma.service";
 import { CommentService } from "models/comment/comment.service";
 import { AlbumHelperService } from "./albumHelper.service";
+import { UserService } from "models/user/user.service";
 
 @Injectable()
 export class AlbumService {
@@ -13,7 +14,8 @@ export class AlbumService {
     private prisma: PrismaService,
     private albumFileService: AlbumFileService,
     private commentService: CommentService,
-    private albumHelperService: AlbumHelperService
+    private albumHelperService: AlbumHelperService,
+    private userService: UserService
   ) {
   }
 
@@ -40,9 +42,10 @@ export class AlbumService {
 
       } catch (e) {
         this.albumFileService.cleanupFiles(tracksPath, imagePath);
+        console.log(`Error creating album: ${e.message}`)
         throw new InternalServerErrorException(`Error creating album: ${e.message}`);
       }
-    });
+    }, { timeout: 60000});
 
     return transaction
       .then(result => JSON.stringify(result))
@@ -50,7 +53,6 @@ export class AlbumService {
         throw new InternalServerErrorException(`Transaction failed: ${e.message}`);
       });
   }
-
 
   async getAll(offset?: number, count?: number) {
     const limit = count ? Number(count) : 20;
@@ -140,7 +142,7 @@ export class AlbumService {
 
   async addLike(albumId: number, token: string) {
     try {
-      const user = await this.albumHelperService.findUserByToken(token);
+      const user = await this.userService.getByToken(token)
       const album = await this.albumHelperService.getAlbumWithLikes(albumId);
 
       this.albumHelperService.validateLikeOperation(album, user.id, true);

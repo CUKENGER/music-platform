@@ -4,13 +4,14 @@ import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { LoginUserDto } from 'models/user/dto/loginUser.dto';
 import { UserDto } from 'models/user/dto/user.dto';
+import { ResetPasswordDto, SendEmailDto } from './dto/resetPassword.dto';
 
 class TokenResponse {
   @ApiProperty()
   token: string;
 }
 
-export interface ReqWithCookie extends Request{
+export interface ReqWithCookie extends Request {
   cookies: any
 }
 
@@ -20,18 +21,18 @@ export class AuthController {
 
   constructor(
     private authService: AuthService,
-  ) {}
+  ) { }
 
   @ApiOperation({ summary: 'Вход пользователя' })
   @ApiBody({ type: LoginUserDto })
-  @ApiResponse({ status: 200, type: TokenResponse})
+  @ApiResponse({ status: 200, type: TokenResponse })
   @Post('/login')
   async login(@Body() dto: LoginUserDto, @Res() res: Response, @Next() next) {
-    try{
+    try {
       const userData = await this.authService.login(dto);
       this.setRefreshTokenCookie(res, userData.refreshToken);
       return res.json(userData);
-    } catch(e) {
+    } catch (e) {
       next(e);
     }
   }
@@ -39,17 +40,17 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Регистрация пользователя' })
   @ApiBody({ type: UserDto })
-  @ApiResponse({ status: 201, type: TokenResponse})
+  @ApiResponse({ status: 201, type: TokenResponse })
   @Post('/registration')
   async registration(@Body() dto: UserDto, @Res() res: Response, @Next() next) {
     try {
       const userData = await this.authService.registration(dto);
       this.setRefreshTokenCookie(res, userData.refreshToken);
       return res.json(userData);
-    } catch(e) {
+    } catch (e) {
       next(e);
     }
-    
+
   }
 
   @ApiOperation({ summary: 'Выход пользователя' })
@@ -87,6 +88,19 @@ export class AuthController {
     } catch (e) {
       next(e);
     }
+  }
+
+  @ApiOperation({ summary: 'Смена пароля' })
+  @Post('/send_email')
+  async resetPassword(@Body() dto: SendEmailDto) {
+    return await this.authService.sendEmail(dto);
+  }
+
+  @ApiOperation({ summary: 'Активация пользователя' })
+  @Post('/reset_password')
+  async resetPasswordCheck(@Body() dto: ResetPasswordDto) {
+    await this.authService.resetPassword(dto);
+    return { message: 'Password reset successful' }
   }
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {

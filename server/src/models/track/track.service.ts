@@ -60,6 +60,7 @@ export class TrackService {
     if (!track) {
       throw new NotFoundException(`Track with id ${id} not found`);
     }
+    
     return track;
   }
 

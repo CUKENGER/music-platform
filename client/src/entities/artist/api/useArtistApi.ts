@@ -2,11 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { create, getAll, getOne, search } from "./artistApi";
 import { CreateArtistDto } from "../types/Artist";
 
-export const useGetAllArtists = (count?: number, offset?: number) => {
+export const useGetAllArtists = (count?: number) => {
 
   return useQuery({
-    queryKey: ['artists', count, offset],
-    queryFn: () => getAll(count, offset),
+    queryKey: ['artists', count],
+    queryFn: () => getAll(count),
     placeholderData: (prev) => prev,
     // placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
@@ -44,9 +44,6 @@ export const useSearchArtists = (name: string) => {
   return useQuery({
     queryKey: ['artists', name],
     queryFn: () => search(name),
-    // placeholderData: (prev) => prev,
-    // placeholderData: keepPreviousData,
-    // staleTime: 1000 * 60 * 5,
     enabled: !!name
   });
 };

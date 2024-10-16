@@ -49,3 +49,24 @@ export interface RegUserResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface CheckUsernameResponse {
+  available: boolean
+}
+
+export interface SendEmailDto{
+  email: string;
+}
+
+export interface SendEmailResponse {
+  message: string;
+}
+
+export interface ResetPasswordDto {
+  token: string;
+  newPassword: string
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}
