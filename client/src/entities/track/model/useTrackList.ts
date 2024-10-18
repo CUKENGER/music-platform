@@ -45,7 +45,7 @@ export const useTrackList = () => {
     memoizedSetActiveTrackList();
   }, [memoizedSetActiveTrackList]);
 
-  const { isFetching } = useInfiniteScroll(() => {
+  useInfiniteScroll(() => {
     if (hasMoreTracks) { 
       setCountTracks((prev) => prev + 15); 
     }
@@ -56,6 +56,5 @@ export const useTrackList = () => {
     isLoading,
     error,
     isError,
-    isLoader: isFetching,
   };
 };

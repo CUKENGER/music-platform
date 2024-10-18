@@ -13,7 +13,6 @@ interface ItemListProps<T extends Identifiable> {
     isLoading: boolean;
     error: Error | null;
     isError: boolean;
-    isLoader: boolean;
   };
   ItemComponent: React.FC<{ item: T; itemList: T[];}>;
   createRoute: string;
@@ -43,11 +42,6 @@ export const ItemList = <T extends Identifiable>({ useItemListHook, ItemComponen
           />
         ))}
       </div>
-      {items.length < 1 && (
-        <div className={styles.noData}>
-          Данных пока нет
-        </div>
-      )}
     </div>
   );
 };

@@ -6,7 +6,6 @@ import { Header, Navbar, Player } from "@/widgets";
 import { useEffect } from "react";
 
 function BaseLayout() {
-
   const { isAuth, user, setIsAdmin } = useUserStore();
 
   function isUserAdmin(user: IUser | null): boolean {
@@ -33,7 +32,7 @@ function BaseLayout() {
             <AppRouter />
           </div>
 
-          <Player/>
+          <Player />
         </>
       ) : (
         <AppRouter />
