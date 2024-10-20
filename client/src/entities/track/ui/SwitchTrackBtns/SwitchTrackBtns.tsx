@@ -13,7 +13,6 @@ export const SwitchTrackBtns: FC<SwitchTrackBtnsProps> = ({isNextBtn}) => {
   const {activeTrack, setActiveTrack} = usePlayerStore()
   const {activeTrackList} = useActiveTrackListStore()
 
-  console.log('activeTrackList', activeTrackList)
 
   const handleBtn = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation()
