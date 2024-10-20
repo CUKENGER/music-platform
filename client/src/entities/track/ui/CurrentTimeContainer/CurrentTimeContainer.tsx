@@ -26,7 +26,7 @@ export const CurrentTimeContainer:FC<CurrentTimeContainerProps> = ({duration}) =
 
   useEffect(() => {
     changeTimeTrack()
-  }, [activeTrack, audio, pause, setCurrentTime, setDuration])
+  }, [audio, setCurrentTime, setDuration])
 
   return (
     <div className={styles.duration_container}>
