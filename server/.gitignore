@@ -3,6 +3,9 @@
 /node_modules
 /build
 /static
+static
+/static/audio
+/static/image
 
 # Logs
 logs
