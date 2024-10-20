@@ -17,7 +17,7 @@ export const NavNextTrackItem: FC<NavNextTrackItemProps> = ({ track }) => {
       value={track}
       className={`${styles.reorder_item} ${activeTrack?.id === track.id && styles.active}`}
       whileDrag={{
-          border: '2px solid var(--pmr)',
+          border: '2px solid var(--prm)',
           borderRadius: '10px'
       }}
     >

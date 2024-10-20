@@ -2,7 +2,7 @@ import { ApiUrl, audioManager } from "@/shared";
 import usePlayerStore from "./PlayerStore";
 import { ITrack } from "@/entities";
 
-export const useAudio = (trackList?: ITrack[]) => {
+export const useAudio = (trackList?: ITrack[] | null) => {
 
   const {activeTrack, setActiveTrack, volume} = usePlayerStore()
   const audio = audioManager.audio
@@ -27,7 +27,8 @@ export const useAudio = (trackList?: ITrack[]) => {
 
   const handleNextTrack = () => {
     if (trackList) {
-      let nextTrackIndex = trackList.findIndex(t => t.id === activeTrack?.id) + 1;
+      const currentTrackIndex = trackList.findIndex(t => t.id === activeTrack?.id);
+      let nextTrackIndex = currentTrackIndex + 1;
       if (nextTrackIndex >= trackList.length) {
         nextTrackIndex = 0;
       }

@@ -80,7 +80,7 @@ export const useGetAllTracks = (count?: number) => {
     queryFn: () => getAll(count),
     placeholderData: (prev) => prev,
     // placeholderData: keepPreviousData,
-    // staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5,
   });
 };
 

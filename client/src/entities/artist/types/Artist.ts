@@ -7,6 +7,8 @@ export interface IArtist {
   picture: string | File;
   listens: number;
   likes: number;
+  genre: string
+  description: string
   albums: IAlbum[];
   tracks: ITrack[]
 }

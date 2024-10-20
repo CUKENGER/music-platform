@@ -36,7 +36,7 @@ export const useArtistList = () => {
     return artists;
   }, [selectedSort, artists]);
 
-  const {isFetching} = useInfiniteScroll(() => {
+  useInfiniteScroll(() => {
     if (hasMoreArtist) {
       setCountArtist((prev) => prev + 10);
     }
@@ -47,6 +47,5 @@ export const useArtistList = () => {
     isLoading,
     error,
     isError,
-    isLoader: isFetching,
   };
 };

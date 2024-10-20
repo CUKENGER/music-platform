@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class LyricsService {
         track_genre: trackInfo.track_genre ? trackInfo.track_genre : null
       };
     } catch (error) {
-      throw new InternalServerErrorException(`Failed to search track: ${error.message}`);
+      throw new NotFoundException(`Failed to search track: ${error.message}`);
     }
   }
 

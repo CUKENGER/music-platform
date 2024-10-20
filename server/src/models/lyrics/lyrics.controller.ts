@@ -7,7 +7,9 @@ export class LyricsController {
 
   @Get('/search')
   async searchTrack(@Query('track_name') trackName: string, @Query('artist_name') artistName: string) {
-    return await this.lyricsService.searchTrack(trackName, artistName);
+    if(artistName && trackName) {
+      return await this.lyricsService.searchTrack(trackName, artistName);
+    }
   }
 
   @Get()

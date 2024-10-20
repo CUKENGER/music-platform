@@ -48,7 +48,7 @@ export const AlbumItem:FC<AlbumItemProps> = ({item: album}) => {
           <Link to={`/albums/${album.id}`}>
             <p className={styles.name}>{album.name}</p>
           </Link>
-          <Link to={`/artist/${album.id}`}>
+          <Link to={`/artists/${album.artist?.id}`}>
             <p className={styles.artist}>{album.artist.name}</p>
           </Link>
         </div>

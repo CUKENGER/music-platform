@@ -29,6 +29,7 @@ export {SwitchTrackBtns} from './track/ui/SwitchTrackBtns/SwitchTrackBtns'
 export {PlayPauseBtn} from './track/ui/PlayPauseBtn/PlayPauseBtn'
 export {MixIcon} from './track/ui/MixIcon/MixIcon'
 export {CoverContainer} from './track/ui/CoverContainer/CoverContainer'
+export {ChildrenTrack} from './track/ui/ChildrenTrack/ChildrenTrack'
 
 export type {IAlbum} from './album/types/Album'
 
@@ -57,11 +58,11 @@ export{
   useGetAllArtists,
   useCreateArtist,
   useGetOneArtist,
-  useSearchArtists
+  useSearchArtists,
+  useGetArtistsPopularTracks
 } from './artist/api/useArtistApi'
 
 export {useArtistList} from './artist/model/useArtistList'
-
 export {useUserStore} from './user/model/userStore'
 export {handleAuthError} from './user/model/handleAuthError'
 export {useAuthInterceptor} from './user/model/useAuthInterceptor'

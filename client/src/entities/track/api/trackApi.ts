@@ -3,7 +3,16 @@ import { CreateTrackDto, ITrack } from "../types/Track";
 import axios from "axios";
 
 export const getAll = async (count?: number): Promise<ITrack[]> => {
-  return apiRequest<ITrack[]>('get', `tracks`, {count});
+  try{
+    const response = await axiosInstance.get('tracks', {params: {count: count}})
+    return response.data
+  } catch(e) {
+    if (axios.isAxiosError(e)) {
+      throw e;
+    } else {
+      throw new Error('Неизвестная ошибка');
+    }
+  }
 }
 
 export const getOne = async (trackId: number): Promise<ITrack | null> => {

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { create, getAll, getOne, search } from "./artistApi";
+import { create, getAll, getOne, getPopularTracks, search } from "./artistApi";
 import { CreateArtistDto } from "../types/Artist";
 
 export const useGetAllArtists = (count?: number) => {
@@ -36,6 +36,17 @@ export const useGetOneArtist = (id: number) => {
     placeholderData: (prev) => prev,
     // placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
+  });
+};
+
+export const useGetArtistsPopularTracks = (id: number) => {
+
+  return useQuery({
+    queryKey: ['artists',  id, 'popular_tracks'],
+    queryFn: () => getPopularTracks(id),
+    // placeholderData: (prev) => prev,
+    // placeholderData: keepPreviousData,
+    // staleTime: 1000 * 60 * 5,
   });
 };
 

@@ -92,7 +92,17 @@ export class ArtistService {
     return await this.prisma.artist.findUnique({
       where: { id },
       include: {
-        tracks: true,
+        tracks: {
+          take: 5,
+          orderBy: {
+            listens : 'desc',
+          },
+          include: {
+            artist: true,
+            likedByUsers: true,
+            listenedByUsers: true,
+          },
+        },
         albums: { include: { tracks: true } },
       },
     });
@@ -142,6 +152,24 @@ export class ArtistService {
     return await this.prisma.artist.update({
       where: { id },
       data: { ...newData, picture: imagePath || undefined },
+    });
+  }
+
+  async getPopularTracks(id: number) {
+    return await this.prisma.artist.findUnique({
+      where: { id },
+      include: {
+        tracks: {
+          orderBy: {
+            listens : 'desc',
+          },
+          include: {
+            artist: true,
+            likedByUsers: true,
+            listenedByUsers: true,
+          },
+        },
+      },
     });
   }
 

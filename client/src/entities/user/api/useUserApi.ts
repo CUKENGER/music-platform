@@ -64,7 +64,7 @@ export const useGetByToken = () => {
   return useQuery({
     queryFn: () => getByToken(),
     queryKey: ['user'],
-    refetchOnWindowFocus: true,
+    // refetchOnWindowFocus: true,
     // refetchOnMount: false,
   });
 };

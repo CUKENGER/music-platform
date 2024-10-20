@@ -43,6 +43,11 @@ export class ArtistController {
     return this.artistService.getOne(id)
   }
 
+  @Get(':id/popular_tracks')
+  getPopularTracks(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.getPopularTracks(id)
+  }
+
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.artistService.delete(id)

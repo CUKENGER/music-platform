@@ -2,11 +2,10 @@ import { PrivateRoutes, Btn, ApiUrl, Portal, ListensIcon, LikeIcon, Loader } fro
 import { Link } from 'react-router-dom'
 import styles from './AlbumInfo.module.scss'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { IAlbum, useAddLikeAlbum, useDeleteLikeAlbum, useGetOneAlbum, useOpenCommentsStore, useUserStore } from '@/entities'
+import { ChildrenTrack, IAlbum, useAddLikeAlbum, useDeleteLikeAlbum, useGetOneAlbum, useOpenCommentsStore, useUserStore } from '@/entities'
 import classNames from 'classnames'
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { AlbumTrackItem } from '../AlbumTrackItem/AlbumTrackItem'
 import { AlbumComments } from '../AlbumComments/AlbumComments'
 
 interface AlbumInfoProps {
@@ -157,7 +156,7 @@ export const AlbumInfo: FC<AlbumInfoProps> = ({ album }) => {
       </div>
       <div className={styles.trackList}>
         {album?.tracks.map((track, index) => (
-          <AlbumTrackItem
+          <ChildrenTrack
             trackList={album.tracks}
             track={track}
             trackIndex={index}

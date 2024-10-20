@@ -33,6 +33,7 @@ function BaseLayout() {
           </div>
 
           <Player />
+          
         </>
       ) : (
         <AppRouter />

@@ -1,0 +1,31 @@
+
+
+.container{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.title_container{
+  font-size: 18px;
+  color: var(--gray);
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.title{
+  display: flex;
+  column-gap: 30px;
+}
+
+.count{
+  margin-right: 10px;
+}
+
+.artist{
+  margin-left: 30px;
+  color: var(--white);
+}

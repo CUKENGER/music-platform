@@ -234,7 +234,8 @@ export class TrackService {
       where: { id: Number(id) } ,
       include: {
         likedByUsers: true,
-        album: true
+        album: true,
+        artist: true
       },
     });
     if (!track) {
@@ -266,12 +267,19 @@ export class TrackService {
   }
 
   private async updateAlbumAndArtistListens(track, updateData: any) {
-    if (track.album) {
-      updateData.album = { update: { listens: track.album.listens + 1 } };
-    }
 
+    if (track.album) {
+      await this.prisma.album.update({
+        where: { id: track.album.id },
+        data: { listens: track.album.listens + 1 },
+      });
+    }
+    
     if (track.artist) {
-      updateData.artist = { update: { listens: track.artist.listens + 1 } };
+      await this.prisma.artist.update({
+        where: { id: track.artist.id },
+        data: { listens: track.artist.listens + 1 },
+      });
     }
 
     await this.prisma.track.update({

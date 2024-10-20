@@ -1,17 +1,17 @@
-import styles from './AlbumTrackItem.module.scss'
-import { FC, useEffect, useState } from 'react'
-import playIcon from '../assets/play.svg'
-import pauseIcon from '../assets/pause.svg'
-import { audioManager, ListensIcon } from '@/shared'
-import { ITrack, useActiveTrackListStore, useAudio, usePlayerStore, usePlayTrack } from '@/entities'
+import { FC, useEffect, useState } from 'react';
+import styles from './ChildrenTrack.module.scss'
+import { audioManager, LikeIcon, ListensIcon } from '@/shared';
+import playIcon from './play.svg'
+import pauseIcon from './pause.svg'
+import { ITrack, useActiveTrackListStore, useAudio, usePlayerStore, usePlayTrack } from '@/entities';
 
-interface AlbumTrackItemProps {
+interface ChildrenTrackProps {
   track: ITrack;
   trackList: ITrack[]
   trackIndex: number
 }
 
-export const AlbumTrackItem: FC<AlbumTrackItemProps> = ({ track, trackIndex, trackList }) => {
+export const ChildrenTrack:FC<ChildrenTrackProps> = ({track, trackIndex, trackList}) => {
 
   const [isHover, setIsHover] = useState(false)
   const { setActiveTrackList } = useActiveTrackListStore()
@@ -61,6 +61,9 @@ export const AlbumTrackItem: FC<AlbumTrackItemProps> = ({ track, trackIndex, tra
         <p className={styles.trackName}>{track.name}</p>
       </div>
       <div className={styles.trackDetails}>
+        <LikeIcon
+          likes={track.likes}
+        />
         <ListensIcon
           listens={track.listens}
         />

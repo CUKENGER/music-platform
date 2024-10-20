@@ -1,22 +1,26 @@
 import { useState } from "react";
-import styles from './MixIcon.module.scss'
-import mixIcon from './assets/mixIcon.svg'
-import mixFillIcon from './assets/mixFillIcon.svg'
-import { ITrack, mixTracks, useActiveTrackListStore } from "@/entities";
+import styles from './MixIcon.module.scss';
+import mixIcon from './assets/mixIcon.svg';
+import mixFillIcon from './assets/mixFillIcon.svg';
+import { ITrack, mixTracks, useActiveTrackListStore, usePlayerStore } from "@/entities";
 
 export const MixIcon = () => {
-  const {activeTrackList, setActiveTrackList} = useActiveTrackListStore()
+  const { activeTrackList, setActiveTrackList } = useActiveTrackListStore();
 
-  const [prevTrackList] = useState<ITrack[] | null>(activeTrackList)
-  const [isMix, setIsMix] = useState(false)
+  const [prevTrackList, setPrevTrackList] = useState<ITrack[] | null>(null);
+  const {isMix, setIsMix} = usePlayerStore()
 
   const handleMix = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation()
+    event.stopPropagation();
+
     if (activeTrackList) {
       if (isMix && prevTrackList) {
         setActiveTrackList(prevTrackList);
-        // setPrevTrackList(null);
+        setPrevTrackList(null);
       } else {
+        if (!prevTrackList) {
+          setPrevTrackList(activeTrackList);
+        }
         const mixedTrackList = mixTracks(activeTrackList);
         setActiveTrackList(mixedTrackList);
       }

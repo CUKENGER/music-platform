@@ -1,9 +1,9 @@
-import { ITrack, TrackState } from "@/entities";
+import { IArtist, ITrack, TrackState } from "@/entities";
 
 export interface IAlbum {
   id: number;
   name: string;
-  artist: {name: string};
+  artist: IArtist;
   genre: string;
   description: string;
   createdAt: string;

@@ -66,7 +66,7 @@ export const useCreateTrackForm = () => {
   const handleSubmit = async () => {
 
     if(!hasData) {
-      showModal('Заполните все данные пожалуйста')
+      showModal('Заполните все данные, пожалуйста')
       return
     }
 

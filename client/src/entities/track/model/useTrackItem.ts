@@ -10,10 +10,10 @@ import { useAudio } from "./useAudio";
 export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
   const [isVisible, setIsVisible] = useState(true);
   
-  const { setActiveTrackList } = useActiveTrackListStore();
-  const { activeTrack } = usePlayerStore();
+  const { setActiveTrackList, activeTrackList } = useActiveTrackListStore();
+  const { activeTrack, setIsMix } = usePlayerStore();
 
-  const {setAudio} = useAudio(trackList)
+  const {setAudio} = useAudio(activeTrackList)
 
   const audio = audioManager.audio;
   
@@ -38,6 +38,7 @@ export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
 
   const clickPlay = useCallback(async () => {
     setActiveTrackList(trackList);
+    setIsMix(false)
     await handlePlay();
   }, [setActiveTrackList, trackList, handlePlay]);
 
