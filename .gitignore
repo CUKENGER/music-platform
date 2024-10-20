@@ -3,6 +3,6 @@
 
 node_modules
 /node_modules
-/server/static
-server/static/audio
-server/static/image
+/server/static/*
+server/static/audio/*
+server/static/image/*
