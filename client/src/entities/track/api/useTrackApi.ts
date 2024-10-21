@@ -73,16 +73,17 @@ export const useAddListenTrack = () => {
   });
 };
 
-export const useGetAllTracks = (count?: number) => {
-
+export const useGetAllTracks = (page = 0, count = 20) => {
   return useQuery({
-    queryKey: ['tracks', count],
-    queryFn: () => getAll(count),
+    queryKey: ['tracks', page],
+    queryFn: () => getAll( page, count ),
     placeholderData: (prev) => prev,
-    // placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
   });
 };
+
+// placeholderData: (prev) => prev,
+
 
 export const useGetOneTrack = (trackId: number) => {
   return useQuery({

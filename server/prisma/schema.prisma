@@ -56,6 +56,11 @@ model Track {
   comments   Comment[]   @relation("TrackComments")
 }
 
+enum AlbumType {
+  ALBUM
+  SINGLE
+}
+
 // Модель Album
 model Album {
   id        Int       @id @default(autoincrement())
@@ -69,6 +74,8 @@ model Album {
   likes     Int       @default(0)
   releaseDate String
   duration  String    @default("0:00")
+
+  type         AlbumType @default(ALBUM)
 
   artist    Artist    @relation(fields: [artistId], references: [id])
   tracks    Track[]

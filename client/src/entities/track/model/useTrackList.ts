@@ -13,20 +13,18 @@ export const useTrackList = () => {
   const { data: newTracks, error, isError, isLoading } = useGetAllTracks(countTracks);
 
   useEffect(() => {
-    if (newTracks) {
-      if (newTracks.length === 0) {
+    if (newTracks && newTracks.length > 0) {
+      const newUniqueTracks = newTracks.filter(
+        (newTrack: ITrack) => !tracks.some((existingTrack) => existingTrack.id === newTrack.id)
+      );
+  
+      setTracks((prevTracks) => [...prevTracks, ...newUniqueTracks]);
+  
+      if (newUniqueTracks.length < 15) {
         setHasMoreTracks(false);
-      } else {
-        const newUniqueTracks = newTracks.filter(
-          (newTrack: ITrack) => !tracks.some((existingTrack) => existingTrack.id === newTrack.id)
-        );
-
-        setTracks((prevTracks) => [...prevTracks, ...newUniqueTracks]);
-
-        if (newUniqueTracks.length < countTracks) {
-          setHasMoreTracks(false);
-        }
       }
+    } else if (newTracks && newTracks.length === 0) {
+      setHasMoreTracks(false);
     }
   }, [newTracks]);
 
@@ -45,9 +43,13 @@ export const useTrackList = () => {
     memoizedSetActiveTrackList();
   }, [memoizedSetActiveTrackList]);
 
+  console.log('count', countTracks)
+
+  console.log('hsmore', hasMoreTracks)
+
   useInfiniteScroll(() => {
     if (hasMoreTracks) { 
-      setCountTracks((prev) => prev + 15); 
+      setCountTracks((prev) => prev + 3);
     }
   });
 

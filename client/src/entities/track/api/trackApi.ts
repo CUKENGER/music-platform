@@ -2,18 +2,23 @@ import { apiRequest, axiosInstance } from "@/shared"
 import { CreateTrackDto, ITrack } from "../types/Track";
 import axios from "axios";
 
-export const getAll = async (count?: number): Promise<ITrack[]> => {
-  try{
-    const response = await axiosInstance.get('tracks', {params: {count: count}})
-    return response.data
-  } catch(e) {
+export const getAll = async (page: number = 0, count: number = 20): Promise<ITrack[]> => {
+  try {
+    const response = await axiosInstance.get('tracks', {
+      params: {
+        page: page,
+        count: count,
+      },
+    });
+    return response.data;
+  } catch (e) {
     if (axios.isAxiosError(e)) {
       throw e;
     } else {
       throw new Error('Неизвестная ошибка');
     }
   }
-}
+};
 
 export const getOne = async (trackId: number): Promise<ITrack | null> => {
   return apiRequest<ITrack>('get', `tracks/${trackId}`, {id: trackId});

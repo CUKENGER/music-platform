@@ -64,19 +64,28 @@ export class TrackService {
     return track;
   }
 
-  async getAll(count?: number) {
-    const limit = count ? Number(count) : 20;
-    return await this.prisma.track.findMany({
-      take: limit,
-      include: {
-        artist: true,
-        album: true,
-        comments: true,
-        likedByUsers: true,
-        listenedByUsers: true,
-      },
-    });
+  async getAll(page: number, count: number) {
+		console.log(`page: ${page}, count: ${count}`)
+    const limit = count;
+    const offset = page * limit;
+		console.log('offset', offset)
+    try {
+      return await this.prisma.track.findMany({
+        skip: offset,
+        take: Number(limit),
+        include: {
+          artist: true,
+          album: true,
+          comments: true,
+          likedByUsers: true,
+          listenedByUsers: true,
+        },
+      });
+    } catch(e) {
+      console.error('e', e)
+    }
   }
+  
 
   async delete(id: number): Promise<Track> {
     const track = await this.findTrackById(id);

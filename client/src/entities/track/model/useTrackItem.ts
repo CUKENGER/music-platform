@@ -11,7 +11,7 @@ export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
   const [isVisible, setIsVisible] = useState(true);
   
   const { setActiveTrackList, activeTrackList } = useActiveTrackListStore();
-  const { activeTrack, setIsMix } = usePlayerStore();
+  const { activeTrack } = usePlayerStore();
 
   const {setAudio} = useAudio(activeTrackList)
 
@@ -38,7 +38,6 @@ export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
 
   const clickPlay = useCallback(async () => {
     setActiveTrackList(trackList);
-    setIsMix(false)
     await handlePlay();
   }, [setActiveTrackList, trackList, handlePlay]);
 

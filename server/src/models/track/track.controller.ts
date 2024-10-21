@@ -49,8 +49,9 @@ export class TrackController {
 
 	@Get()
 	@ApiOperation({ summary: 'Получение всех треков с пагинацией' })
-	getAll(@Query('count') count?: number) {
-		return this.trackService.getAll(count);
+	getAll(@Query('page') page: number = 0, @Query('count') count: number = 15) {
+		console.log('page, count', `${page} ${count}`)
+		return this.trackService.getAll(page, count);
 	}
 
 	@Delete(':id')
