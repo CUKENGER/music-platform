@@ -1,5 +1,6 @@
 import { useCreateTrack } from "@/entities"
 import { useInput, genres, useDebounce, ApiUrl, useModal, axiosInstance, PrivateRoutes } from "@/shared"
+import { AxiosError } from "axios"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -83,8 +84,9 @@ export const useCreateTrackForm = () => {
         onSuccess: (response) => {
           showModal(`Трек ${response.name} успешно загружен`, () => navigate(PrivateRoutes.TRACKS))
         },
-        onError: (error: unknown) => {
-          showModal(`Ошибка при загрузке трека: ${String(error)}`);
+        onError: (error: AxiosError) => {
+          console.error(`Ошибка при загрузке трека: `, error)
+          showModal(`Ошибка при загрузке трека: ${String(error.message)}`);
         },
       })
     } 

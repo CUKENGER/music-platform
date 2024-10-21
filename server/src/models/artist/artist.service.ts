@@ -3,20 +3,20 @@ import { CreateArtistDto } from "./dto/create-artist.dto";
 import { CreateArtistCommentDto } from "./dto/create-artistComment.dto";
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { ArtistFileService, ArtistFileType } from "./artistFile/artistFile.service";
 import { UpdateArtistDto } from "./dto/update-artist.dto";
 import { PrismaService } from "prisma/prisma.service";
+import { FileService, FileType } from "models/file/file.service";
 
 @Injectable()
 export class ArtistService {
   constructor(
     private prisma: PrismaService,
-    private artistFileService: ArtistFileService,
+    private fileService: FileService,
   ) { }
 
   async create(dto: CreateArtistDto, picture: Express.Multer.File) {
     await this.ensureArtistDoesNotExist(dto.name);
-    const imagePath = await this.artistFileService.createCover(ArtistFileType.IMAGE, picture);
+    const imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
 
     return await this.prisma.artist.create({
       data: {
@@ -145,7 +145,7 @@ export class ArtistService {
   async updateArtist(id: number, newData: Partial<UpdateArtistDto>, picture: Express.Multer.File) {
     let imagePath
     if (picture) {
-      imagePath = await this.artistFileService.createCover(ArtistFileType.IMAGE, picture);
+      imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
       newData.picture = imagePath;
     }
 

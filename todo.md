@@ -4,6 +4,8 @@
 [x] - подсвечивать время на TrackProgress
 [x] - exclam and clear components
 [x] - подставлять имя трека при загрузке
+[x] - нажатие на плеер -- открытие playerDetailed(mobile...)
+[x] - сделать авторизацию
 [_x] - сделать адаптив в готовых компонентах
 [] - infiniteScroll Albums
 [] - infiniteScroll Tracks
@@ -12,9 +14,7 @@
 [] - Like in ChildrenTrack
 [] - страница трека(роутинг)
 [] - сделать страницу для каждого трека(разобраться с роутингом)
-[x] - сделать авторизацию
 [] - поворот стрелки openPlayerDetailed
-[x] - нажатие на плеер -- открытие playerDetailed(mobile...)
 [] - подсказки при наведении(react-tooltip или самопис)
 [] - textContainerComponent
 [] - ProfilePage

@@ -10,8 +10,6 @@ import { RoleModule } from 'models/role/role.module';
 import { TokenModule } from 'models/token/token.module';
 import { TrackModule } from 'models/track/track.module';
 import { UserModule } from 'models/user/user.module';
-import { ArtistFileModule } from 'models/artist/artistFile/artistFile.module';
-import { AlbumFileModule } from 'models/album/albumFile/albumFile.module';
 import { LyricsModule } from 'models/lyrics/lyrics.module';
 import { HttpModule} from '@nestjs/axios';
 import { FileModule } from 'models/file/file.module';
@@ -42,8 +40,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
     TokenModule,
     TrackModule,
     UserModule,
-    ArtistFileModule,
-    AlbumFileModule,
     LyricsModule,
     HttpModule,
     FileModule,

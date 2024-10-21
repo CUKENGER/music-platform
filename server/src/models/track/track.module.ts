@@ -7,6 +7,8 @@ import { FileModule } from 'models/file/file.module';
 import { AudioService } from 'models/audioService/audioService.service';
 import { CommentService } from 'models/comment/comment.service';
 import { JwtService } from '@nestjs/jwt';
+import { TrackHelperService } from './trackHelper.service';
+import { ArtistService } from 'models/artist/artist.service';
 
 @Module({
   imports: [FileModule],
@@ -17,7 +19,9 @@ import { JwtService } from '@nestjs/jwt';
     FileService,
     AudioService,
     CommentService,
-    JwtService
+    JwtService,
+    TrackHelperService,
+    ArtistService
   ],
   exports: [TrackService]
 })

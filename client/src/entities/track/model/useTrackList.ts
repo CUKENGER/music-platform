@@ -10,7 +10,7 @@ export const useTrackList = () => {
   const { selectedSort } = useSelectFilterStore();
   const [hasMoreTracks, setHasMoreTracks] = useState(true);
 
-  const { data: newTracks, error, isError, isLoading } = useGetAllTracks(countTracks);
+  const { data: newTracks, error, isError, isLoading } = useGetAllTracks(0,countTracks);
 
   useEffect(() => {
     if (newTracks && newTracks.length > 0) {

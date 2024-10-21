@@ -1,12 +1,17 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addLike, addListen, create, deleteLike, deleteTrack, getAll, getOne } from "./trackApi";
-import { CreateTrackDto } from "../types/Track";
+import { CreateTrackDto, ITrack } from "../types/Track";
+import { AxiosError } from "axios";
 
 export const useCreateTrack = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<
+    ITrack,
+    AxiosError,
+    CreateTrackDto
+  >({
     mutationFn: (trackInfo: CreateTrackDto) => create(trackInfo),
     mutationKey: ['track', 'create'],
     onSuccess: () => {

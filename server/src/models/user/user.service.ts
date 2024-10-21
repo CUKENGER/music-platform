@@ -161,7 +161,6 @@ export class UserService {
     });
   }
 
-
   async ban(dto: BanUserDto) {
     try {
       const user = await this.prisma.user.findUnique({

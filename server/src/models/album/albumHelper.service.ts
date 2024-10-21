@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { AlbumFileService, AlbumFileType } from "./albumFile/albumFile.service";
 import { CreateAlbumDto } from "./dto/create-album.dto";
 import { ArtistService } from "models/artist/artist.service";
 import { AudioService } from "models/audioService/audioService.service";
@@ -10,20 +9,10 @@ import * as fs from 'fs/promises';
 @Injectable()
 export class AlbumHelperService {
   constructor(
-    private albumFileService: AlbumFileService,
     private artistService: ArtistService,
     private audioService: AudioService,
     private prisma: PrismaService
   ) { }
-
-  // to create
-  saveTracks(files): string[] {
-    return this.albumFileService.createTracks(files.tracks);
-  }
-
-  saveImage(files): string {
-    return this.albumFileService.createCover(AlbumFileType.IMAGE, files.picture);
-  }
 
   async findOrCreateArtist(dto: CreateAlbumDto, files, prisma): Promise<any> {
     let artist = await prisma.artist.findFirst({
@@ -42,7 +31,7 @@ export class AlbumHelperService {
     return artist;
   }
 
-  async createAlbum(dto: CreateAlbumDto, imagePath: string, artistId: number, prisma): Promise<any> {
+  async createAlbum(dto: CreateAlbumDto, imagePath: string, artistId: number, albumType: string, prisma): Promise<any> {
     return await prisma.album.create({
       data: {
         name: dto.name,
@@ -52,6 +41,7 @@ export class AlbumHelperService {
         createdAt: new Date(),
         description: dto.description,
         releaseDate: dto.releaseDate,
+        type: albumType
       },
     });
   }
@@ -60,8 +50,8 @@ export class AlbumHelperService {
     let totalDuration = 0;
 
     for (let i = 0; i < dto.track_names.length; i++) {
-      const duration = await this.audioService.getAudioDuration(tracksPath[i]);
-      const durationInNum = await this.audioService.getAudioDurationInNum(tracksPath[i]);
+      const duration = await this.audioService.getAudioDuration(path.resolve(__dirname, '../../../../', 'server/static', tracksPath[i]));
+      const durationInNum = await this.audioService.getAudioDurationInNum(path.resolve(__dirname, '../../../../', 'server/static', tracksPath[i]));
       totalDuration += durationInNum;
 
       await prisma.track.create({

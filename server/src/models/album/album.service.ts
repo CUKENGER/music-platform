@@ -1,18 +1,18 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateAlbumDto } from "./dto/create-album.dto";
 import { CreateAlbumCommentDto } from "./dto/create-albumComment.dto";
-import { AlbumFileService } from "./albumFile/albumFile.service";
 import { PrismaService } from "prisma/prisma.service";
 import { CommentService } from "models/comment/comment.service";
 import { AlbumHelperService } from "./albumHelper.service";
 import { UserService } from "models/user/user.service";
+import { FileService, FileType } from "models/file/file.service";
 
 @Injectable()
 export class AlbumService {
 
   constructor(
     private prisma: PrismaService,
-    private albumFileService: AlbumFileService,
+    private fileService: FileService,
     private commentService: CommentService,
     private albumHelperService: AlbumHelperService,
     private userService: UserService
@@ -29,11 +29,16 @@ export class AlbumService {
 
     const transaction = this.prisma.$transaction(async (prisma) => {
       try {
-        tracksPath = this.albumHelperService.saveTracks(files);
-        imagePath = this.albumHelperService.saveImage(files);
+        tracksPath = await this.fileService.createTracks(files.tracks);
+        imagePath = await this.fileService.createFile(FileType.IMAGE, files.picture);
+
+        let AlbumType = dto.track_names.length > 1 ? 'ALBUM' : "SINGLE"
+
+        console.log('imagePath album', imagePath)
+        console.log('tracksPath album', tracksPath)
 
         const artist = await this.albumHelperService.findOrCreateArtist(dto, files, prisma);
-        const newAlbum = await this.albumHelperService.createAlbum(dto, imagePath, artist.id, prisma);
+        const newAlbum = await this.albumHelperService.createAlbum(dto, imagePath, artist.id, AlbumType, prisma);
         const totalDuration = await this.albumHelperService.createTracks(dto, tracksPath, artist.id, newAlbum.id, imagePath, prisma);
 
         await this.albumHelperService.updateAlbumDuration(newAlbum.id, totalDuration, prisma);
@@ -41,7 +46,7 @@ export class AlbumService {
         return { id: newAlbum.id, name: newAlbum.name };
 
       } catch (e) {
-        this.albumFileService.cleanupFiles(tracksPath, imagePath);
+        this.fileService.cleanupFiles(tracksPath, imagePath);
         console.log(`Error creating album: ${e.message}`)
         throw new InternalServerErrorException(`Error creating album: ${e.message}`);
       }
@@ -66,6 +71,9 @@ export class AlbumService {
         likedByUsers: true,
         artist: true,
         tracks: true
+      },
+      where: {
+        type: "ALBUM"
       }
     });
     return albums
