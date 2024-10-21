@@ -6,20 +6,28 @@ interface BtnProps extends ButtonHTMLAttributes<HTMLButtonElement>{
   children: string | ReactNode;
   isSubmit?: boolean;
   isLoading?: boolean;
-  s?:boolean;
+  small?:boolean;
   className?: string;
 }
 
-export const Btn:FC<BtnProps> = ({children, isLoading=false, s, className, ...rest}) => {
+export const Btn:FC<BtnProps> = ({children, isLoading=false, small, className, ...rest}) => {
   return (
     <button className={classNames(
+      className,
       styles.btn,
-      s && styles.small_btn,
-      className
+      small && styles.small_btn,
     )}
     {...rest}>
       {children}
-      {isLoading && (<span className={styles.loader}></span>)}
+      {isLoading && (
+        <span 
+          className={classNames(
+            styles.loader,
+            small && styles.small_loader
+          )}
+        >
+        </span>
+      )}
     </button>
   );
 };

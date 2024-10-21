@@ -1,6 +1,6 @@
 import usePlayerStore from "@/entities/track/model/PlayerStore";
 import { ITrack } from "@/entities/track/types/Track";
-import { audioManager } from "@/shared";
+import { ApiUrl, audioManager } from "@/shared";
 
 const usePlayTrack = (track: ITrack) => {
 
@@ -8,24 +8,27 @@ const usePlayTrack = (track: ITrack) => {
   const audio = audioManager.audio;
 
   const handlePlay = async () => {
-    await setActiveTrack(track);
     if (activeTrack?.id === track.id) {
       if (pause) {
-        audio?.play()
-          .then(() => setPlay())
+        setActiveTrack(track)
+        await audio?.play();
+        setPlay();
       } else {
-        audio?.pause()
+        audio?.pause();
         setPause();
       }
     } else {
       await setActiveTrack(track);
-      audio?.play();
-      setPlay();
+      if(audio) {
+        audio.src = ApiUrl + track.audio;
+        await audio?.load();
+        await audio?.play();
+        setPlay();
+      }
     }
-  }
+  };
 
   return {
-
     handlePlay
   }
   

@@ -43,20 +43,55 @@
 }
 
 .cover_container{
-  width:45px;
+  width: 45px;
   height: 45px;
   cursor: pointer;
-}
+  overflow: hidden;
 
-.cover{
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
+  .cover{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+    transition: filter .3s ease;
+
+    &:hover{
+      filter: brightness(80%);
+    }
+  }
+
 }
 
 .openBtn{
   cursor: pointer;
+
+  &:hover{
+    transform: scale(1.02);
+  }
 }
+
+.player-enter {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.player-enter-active {
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform 300ms ease-out, opacity 300ms ease-out;
+}
+
+.player-exit {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.player-exit-active {
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 300ms ease-out, opacity 300ms ease-out;
+}
+
 
 @media(max-width: 800px) {
   .right_container{
@@ -68,6 +103,18 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+  }
+}
+
+@media(max-width: 600px) {
+  .play_btns > :nth-child(1){
+    display: none;
+  } 
+}
+
+@media(max-width: 500px) {
+  .main_info_container{
+    padding-right: 20px;
   }
 }
 

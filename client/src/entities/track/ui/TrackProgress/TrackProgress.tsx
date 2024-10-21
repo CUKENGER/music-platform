@@ -22,7 +22,6 @@ export const TrackProgress = () => {
             <div 
               className={styles.hover_time}   
               style={{
-                // top: `${y - 20}px`,
                 left: `${x - 13}px`,
               }}
             >

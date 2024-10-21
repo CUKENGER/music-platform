@@ -5,6 +5,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 // Модель User
@@ -21,12 +22,12 @@ model User {
   roles           UserRole[]   // Связь Many-to-Many через промежуточную модель
   tokens          Token[]
   
-  // Понравившиеся треки, альбомы и артисты
   likedTracks     Track[]     @relation("LikedTracks")
   likedAlbums     Album[]     @relation("LikedAlbums")
   likedArtists    Artist[]    @relation("LikedArtists")
   
-  // Последние прослушанные треки
+  likedComments   Comment[]   @relation("LikedComments")
+
   listenedTracks  ListenedTrack[]
 }
 
@@ -55,16 +56,26 @@ model Track {
   comments   Comment[]   @relation("TrackComments")
 }
 
+enum AlbumType {
+  ALBUM
+  SINGLE
+}
+
 // Модель Album
 model Album {
   id        Int       @id @default(autoincrement())
   name      String
   artistId  Int
   genre     String
+  description String
   picture   String
   createdAt DateTime  @default(now())
   listens   Int       @default(0)
   likes     Int       @default(0)
+  releaseDate String
+  duration  String    @default("0:00")
+
+  type         AlbumType @default(ALBUM)
 
   artist    Artist    @relation(fields: [artistId], references: [id])
   tracks    Track[]
@@ -138,6 +149,7 @@ model Token {
   user            User      @relation(fields: [userId], references: [id])
 }
 
+// Модель Comment
 model Comment {
   id          Int        @id @default(autoincrement())
   username    String
@@ -146,20 +158,18 @@ model Comment {
   updatedAt   DateTime   @updatedAt
   likes       Int        @default(0)
 
-  // Поле для связи с родительским комментарием (если есть)
   parentId    Int?
   parent      Comment?   @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  // Поля для связи с другими сущностями
   trackId     Int?
   artistId    Int?
   albumId     Int?
 
-  // Связи с другими сущностями
   track       Track?     @relation("TrackComments", fields: [trackId], references: [id])
   artist      Artist?    @relation("ArtistComments", fields: [artistId], references: [id])
   album       Album?     @relation("AlbumComments", fields: [albumId], references: [id])
 
-  // Ответы на комментарий
   replies     Comment[]  @relation("CommentReplies")
+
+  likedByUsers User[]     @relation("LikedComments")
 }

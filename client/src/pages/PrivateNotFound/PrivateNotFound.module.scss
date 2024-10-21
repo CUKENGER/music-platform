@@ -1,0 +1,23 @@
+
+
+.NotFound{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  row-gap: 30px;
+  min-height: 80vh;
+}
+
+.container{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  row-gap: 30px;
+  background-color: var(--black-lt);
+  padding: 50px;
+  border-radius: 10px;
+}

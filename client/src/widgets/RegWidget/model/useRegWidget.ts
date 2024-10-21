@@ -9,9 +9,7 @@ export const useRegWidget = () => {
   const { hideModal, modal, showModal } = useModal();
 
   const { mutate: regUser, isPending: isLoading } = useRegUser();
-  const { mutate: checkUsername, data: isUsernameValid } = useCheckUsername();
-
-  console.log('data', isUsernameValid)
+  const { mutate: checkUsername } = useCheckUsername();
 
   const navigate = useNavigate();
 
@@ -20,16 +18,19 @@ export const useRegWidget = () => {
   const repeatPassword = useInput('', { isEmpty: true, isPasswordStrong: true, isLatin: true }, password.value);
   const username = useInput('', { isEmpty: true, isLatin: true, isLength: { min: 3, max: 16 } });
 
-  const isValid = email.isEmpty || password.isEmpty || username.isEmpty || !email.isEmailValid || !username.isLengthValid || password.value !== repeatPassword.value;
+  const isValid = email.isEmpty
+  || password.isEmpty 
+  || username.isEmpty 
+  || !email.isEmailValid 
+  || !username.isLengthValid 
+  || password.value !== repeatPassword.value 
+  || !email.isLatin
+  || !password.isLatin 
+  || !username.isLatin
+  || !password.isPasswordStrong
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    console.log('isUsernameValid', isUsernameValid);
-    // if (!isUsernameValid?.available) {
-    //   showModal('Этот никнейм уже занят');
-    //   return;
-    // }
 
     if (isValid) {
       showModal('Заполните все данные корректно, пожалуйста');

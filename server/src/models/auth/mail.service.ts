@@ -5,25 +5,6 @@ import * as nodemailer from 'nodemailer';
 export class MailService {
   private transporter: nodemailer.Transporter;
 
-  // constructor() {
-  //   this.transporter = nodemailer.createTransport({
-  //     service: 'gmail',
-  //     host: process.env.SMTP_HOST,
-  //     port: parseInt(process.env.SMTP_PORT, 10),
-  //     secure: false,
-  //     logger: true,
-  //     debug: true,
-  //     secureConnection: false,
-  //     auth: {
-  //       user: process.env.SMTP_USER,
-  //       pass: process.env.SMTP_APP_PASS,
-  //     },
-  //     tls: {
-  //       rejectUnauthorized: true,
-  //     },
-  //   });
-  // }
-
   constructor() {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -46,6 +27,21 @@ export class MailService {
       html: `
         <div>
           <h1>To activate go to link</h1>
+          <a href="${link}">${link}</a>
+        </div>
+      `,
+    });
+  }
+
+  async sendResetMail(to: string, link: string): Promise<void> {
+    await this.transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to,
+      subject: 'Восстановление пароля на сайте MusicPlatform',
+      text: '',
+      html: `
+        <div>
+          <h1>To reset your password go to</h1>
           <a href="${link}">${link}</a>
         </div>
       `,

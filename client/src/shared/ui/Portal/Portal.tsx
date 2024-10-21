@@ -3,24 +3,24 @@ import ReactDOM from 'react-dom';
 
 interface PortalProps {
   children: ReactNode;
-  isOpen: boolean; // Флаг для управления открытием/закрытием портала
-  selector?: string; // Опциональный селектор, если требуется
+  isOpen: boolean;
+  selector?: string;
 }
 
 export const Portal: React.FC<PortalProps> = ({ children, isOpen, selector = '#portal-root' }) => {
-  const [el] = useState(document.createElement('div')); // Используем useState для создания элемента
+  const [el] = useState(document.createElement('div'));
 
   useEffect(() => {
     const body = document.body;
 
     if (isOpen) {
-      body.style.overflow = 'hidden'; // Скрыть скроллбар при открытии портала
+      body.style.overflow = 'hidden';
       const mount = document.querySelector(selector);
       if (mount) {
         mount.appendChild(el);
       }
     } else {
-      body.style.overflow = ''; // Восстановить скроллбар при закрытии портала
+      body.style.overflow = '';
       const mount = document.querySelector(selector);
       if (mount) {
         mount.removeChild(el);
@@ -28,7 +28,7 @@ export const Portal: React.FC<PortalProps> = ({ children, isOpen, selector = '#p
     }
 
     return () => {
-      body.style.overflow = ''; // Восстановить скроллбар при размонтировании портала
+      body.style.overflow = '';
       const mount = document.querySelector(selector);
       if (mount) {
         mount.removeChild(el);

@@ -1,8 +1,9 @@
 import { FC, useState } from 'react'
 import styles from './CoverContainer.module.scss'
-import usePlayerStore from '../../model/PlayerStore'
-import { ApiUrl, MusicWaves, pauseIcon, playIcon } from '@/shared'
-import { ITrack } from '../../types/Track'
+import { ApiUrl, MusicWaves } from '@/shared'
+import pauseIcon from './pauseIcon.svg'
+import playIcon from './playIcon.svg'
+import { ITrack, usePlayerStore } from '@/entities'
 
 interface CoverContainerProps {
   track: ITrack;

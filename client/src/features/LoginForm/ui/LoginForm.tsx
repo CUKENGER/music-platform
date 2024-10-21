@@ -1,7 +1,6 @@
 import { FC, FormEvent, ReactNode } from 'react'
 import styles from './LoginForm.module.scss'
-import { WarningMessage, Btn, UseInputProps, PublicRoutes } from '@/shared';
-import { LoginInput } from './LoginInput/LoginInput';
+import { WarningMessage, Btn, UseInputProps, PublicRoutes, LoginInput } from '@/shared';
 import { Link } from 'react-router-dom';
 
 interface LoginFormProps {
@@ -14,7 +13,7 @@ interface LoginFormProps {
   needRepeatPassword?: boolean;
   repeatPassword?: UseInputProps;
   isLoading?: boolean;
-  isActiveBtn?: boolean
+  isActiveBtn?: boolean;
 }
 
 export const LoginForm: FC<LoginFormProps> = ({
@@ -52,7 +51,7 @@ export const LoginForm: FC<LoginFormProps> = ({
       />
       {password.isDirty && password.isEmpty && <WarningMessage text="Поле должно быть заполнено"/>}
       {password.isDirty && !password.isPasswordStrong && (
-        <WarningMessage text="Пароль должен содержать минимум 8 символов и цифры"/>
+        <WarningMessage text="Пароль должен содержать минимум 8 символов, заглавные буквы и цифры"/>
       )}
       {password.isDirty && !password.isLatin && <WarningMessage text="Поля заполняются латиницей"/>}
 
@@ -68,6 +67,13 @@ export const LoginForm: FC<LoginFormProps> = ({
             <WarningMessage text="Пароли не совпадают" />
           )}
         </>
+      )}
+      {isLogin && (
+        <Link to={PublicRoutes.SEND_EMAIL}>
+          <span className={styles.forgotPassword}>
+            Забыли пароль?
+          </span>
+        </Link>
       )}
       <Btn
         isLoading={isLoading}

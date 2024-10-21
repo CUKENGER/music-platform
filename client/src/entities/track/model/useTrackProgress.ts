@@ -1,6 +1,7 @@
 import { audioManager } from "@/shared";
 import { ChangeEvent, CSSProperties, useCallback, useMemo, useState } from "react";
 import useTrackTimeStore from "./TrackTimeStore";
+import usePlayerStore from "./PlayerStore";
 
 export const useTrackProgress = () => {
 
@@ -8,7 +9,15 @@ export const useTrackProgress = () => {
   const [x, setX] = useState(0);
   const [hoverTime, setHoverTime] = useState('')
 
-  const {currentTime, duration, setCurrentTime} = useTrackTimeStore()
+  const {currentTime, setCurrentTime} = useTrackTimeStore()
+  const {activeTrack} = usePlayerStore()
+
+  const convertDurationToSeconds = (duration: string): number => {
+    const [minutes, seconds] = duration.split(':').map(Number);
+    return (minutes * 60) + seconds;
+  };
+
+  const duration = convertDurationToSeconds(activeTrack?.duration ?? '')
 
   const changeCurrentTime = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (audio) {

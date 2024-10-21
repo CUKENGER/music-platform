@@ -1,10 +1,10 @@
-import { Artist } from "@/entities/artist/types/Artist";
+import { IArtist } from "@/entities/artist/types/Artist";
 import { IUser } from "@/entities/user/types/User";
 
 export interface ITrack {
   id: number;
   name: string,
-  artist: Artist,
+  artist: IArtist,
   text: string,
   listens: number;
   likes: number;
@@ -23,4 +23,10 @@ export interface CreateTrackDto {
   genre: string;
   picture: File;
   audio: File
+}
+
+export interface TrackState {
+  name: string;
+  text: string;
+  audio: File | null;
 }

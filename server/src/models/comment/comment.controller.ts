@@ -1,24 +1,46 @@
-import { Controller, Delete, Param, Post } from "@nestjs/common";
+import { Controller, Delete, Param, ParseIntPipe, Post, Req, UnauthorizedException } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CommentService } from "./comment.service";
-
+import { ApiError } from "exceptions/api.error";
 
 
 @ApiTags('Comments')
-@Controller('/comments')
+@Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @Post('/like/:id')
-  @ApiOperation({ summary: 'Добавление лайка к комменту' })
-  addLike(@Param('id') id: number) {
-    return this.commentService.addLike(id)
+  @Post(':id/like')
+  @ApiOperation({ summary: 'Добавление лайка к комментарию' })
+  addLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    const authHeader = req.headers['authorization'];
+    
+    if (!authHeader) {
+      throw ApiError.UnauthorizedError();
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw ApiError.UnauthorizedError();
+    }
+    
+    return this.commentService.addLike(id, token)
   }
 
-  @Delete('/like/:id')
-  @ApiOperation({ summary: 'Удаление лайка у комменту' })
-  deleteLike(@Param('id') id: number) {
-    return this.commentService.deleteLike(id)
-  }
+  @Delete(':id/like')
+  @ApiOperation({ summary: 'Удаление лайка у комментария' })
+  deleteLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
 
+    const authHeader = req.headers['authorization'];
+    
+    if (!authHeader) {
+      throw ApiError.UnauthorizedError();
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw ApiError.UnauthorizedError();
+    }
+
+    return this.commentService.deleteLike(id, token)
+  }
 }

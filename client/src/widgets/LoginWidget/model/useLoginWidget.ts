@@ -3,7 +3,6 @@ import { useLoginUser } from "@/entities/user/api/useUserApi";
 import { useModal, useInput, PrivateRoutes} from "@/shared";
 import { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-// import Cookies from "universal-cookie";
 
 export const useLoginWidget = () => {
   const { hideModal, modal, showModal } = useModal();
@@ -23,7 +22,6 @@ export const useLoginWidget = () => {
 
   const isActive = email.isEmpty || password.isEmpty;
 
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (email.isEmpty || password.isEmpty) {
@@ -38,7 +36,6 @@ export const useLoginWidget = () => {
 
     login(userDto, {
       onSuccess: (data) => {
-        console.log('login data', data)
         if (data.accessToken && data.refreshToken) {
           localStorage.removeItem("token");
           localStorage.removeItem("refreshToken");

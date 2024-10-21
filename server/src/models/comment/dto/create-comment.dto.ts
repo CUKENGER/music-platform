@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString} from "class-validator";
 
 
 export class CreateCommentDto {
@@ -21,4 +21,9 @@ export class CreateCommentDto {
   @IsOptional()
   @IsString()
   artistId?: number;
+
+  @IsOptional()
+  @IsString()
+  albumId?: number;
+
 }

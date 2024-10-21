@@ -9,3 +9,10 @@
     color: var(--gray);
   }
 }
+
+@media(max-width: 800px) {
+  .input{
+    height: 30px;
+    font-size: 12px;
+  }
+}

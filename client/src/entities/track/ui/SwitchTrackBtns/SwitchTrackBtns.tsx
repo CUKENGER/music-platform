@@ -1,8 +1,8 @@
 import { FC } from "react";
 import styles from './SwitchTrackBtns.module.scss'
-import usePlayerStore from "../../model/PlayerStore";
-import useActiveTrackListStore from "../../model/ActiveTrackListStore";
-import { nextBtnBg, prevBtnBg } from "@/shared";
+import nextBtnBg from './nextBtnBg.svg'
+import prevBtnBg from './prevBtnBg.svg'
+import { useActiveTrackListStore, usePlayerStore } from "@/entities";
 
 interface SwitchTrackBtnsProps {
   isNextBtn: boolean
@@ -12,6 +12,7 @@ export const SwitchTrackBtns: FC<SwitchTrackBtnsProps> = ({isNextBtn}) => {
 
   const {activeTrack, setActiveTrack} = usePlayerStore()
   const {activeTrackList} = useActiveTrackListStore()
+
 
   const handleBtn = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation()

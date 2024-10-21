@@ -1,6 +1,7 @@
+import React from "react";
 
 
 export interface MenuItem {
   text: string;
-  onClick: () => void;
+  onClick: (e?: React.MouseEvent) => void;
 }

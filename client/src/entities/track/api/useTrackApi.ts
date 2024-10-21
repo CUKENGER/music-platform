@@ -1,4 +1,5 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addLike, addListen, create, deleteLike, deleteTrack, getAll, getOne } from "./trackApi";
 import { CreateTrackDto } from "../types/Track";
 
@@ -72,16 +73,17 @@ export const useAddListenTrack = () => {
   });
 };
 
-export const useGetAllTracks = (count?: number, offset?: number) => {
-
+export const useGetAllTracks = (page = 0, count = 20) => {
   return useQuery({
-    queryKey: ['tracks', count, offset],
-    queryFn: () => getAll(count, offset),
-    // placeholderData: (prev) => prev,
-    placeholderData: keepPreviousData,
+    queryKey: ['tracks', page],
+    queryFn: () => getAll( page, count ),
+    placeholderData: (prev) => prev,
     staleTime: 1000 * 60 * 5,
   });
 };
+
+// placeholderData: (prev) => prev,
+
 
 export const useGetOneTrack = (trackId: number) => {
   return useQuery({

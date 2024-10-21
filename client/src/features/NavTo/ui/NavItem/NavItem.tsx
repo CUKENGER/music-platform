@@ -23,7 +23,7 @@ const RouteItem:FC<RouteItemProps> = ({icon, title, path}) => {
   return (
     <div className={`${styles.route_item} ${path == pathName && styles.active}`} onClick={handleClick}>
       <div className={styles.icon_container}>
-        <img className={styles.icon} src={icon} alt="home" />
+        <img src={icon} alt="home" />
       </div>
       <p className={styles.route_text}>{title}</p>
     </div>

@@ -3,81 +3,87 @@ import { ArtistService } from "./artist.service";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { CreateArtistDto } from "./dto/create-artist.dto";
 import { CreateArtistCommentDto } from "./dto/create-artistComment.dto";
+import { ApiOperation } from "@nestjs/swagger";
 
-@Controller('/artists')
+@Controller('artists')
 export class ArtistController {
-    constructor (private readonly artistService: ArtistService) {
+  constructor(
+    private readonly artistService: ArtistService
+  ) {}
 
-    }
+  @Post()
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'picture', maxCount: 1 }
+  ]))
+  async create(@UploadedFiles() files, @Body() dto: CreateArtistDto) {
+    const { picture } = files
+    return this.artistService.create(dto, picture)
+  }
 
-    @Post()
-    @UseInterceptors(FileFieldsInterceptor([
-        {name: 'picture', maxCount: 1}
-    ]))
-    async create(@UploadedFiles() files , @Body() dto: CreateArtistDto) {
+  @Get()
+  @ApiOperation({ summary: 'Получение всех артистов с пагинацией' })
+  async getAllCount(@Query('count', ParseIntPipe) count: number) {
+    return await this.artistService.getAllCount(count);
+  }
 
-        const {picture} = files
+  @Get('/all')
+  @ApiOperation({ summary: 'Получение всех артистов с пагинацией' })
+  async getAll() {
+    return await this.artistService.getAll();
+  }
 
-        return this.artistService.create(dto, picture)
-    }
+  @Get('search')
+  searchByName(@Query('name') name: string) {
+    console.log('name', name)
+    return this.artistService.searchByName(name)
+  }
 
-    @Get()
-    getAll() {
-            return this.artistService.getAll()
-    }
+  @Get(':id')
+  getOne(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.getOne(id)
+  }
 
-    @Get('/search')
-	searchByName(@Query('query') query: string,
-				@Query('count', ParseIntPipe) count: number,
-				@Query('offset', ParseIntPipe) offset: number) {
-		return this.artistService.searchByName(query, count, offset)
-	}
+  @Get(':id/popular_tracks')
+  getPopularTracks(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.getPopularTracks(id)
+  }
 
-    @Get(':id')
-    getOne(@Param('id') id) {
-        return this.artistService.getOne(id)
-    }
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.delete(id)
+  }
 
-    @Delete(':id')
-    delete(@Param('id') id) {
-        return this.artistService.delete(id)
-    }
+  @Post('comment')
+  addComment(@Body() dto: CreateArtistCommentDto) {
+    return this.artistService.addComment(dto)
+  }
 
-    @Post('/comment')
-    addComment(@Body() dto: CreateArtistCommentDto) {
-        return this.artistService.addComment(dto)
-    }
+  @Post(':id/listen')
+  addListen(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.listen(id)
+  }
 
-    @Post('/listen/:id')
-    addListen(@Param('id') id) {
-        return this.artistService.listen(id)
-    }
+  @Post(':id/like')
+  addLike(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.addLike(id)
+  }
 
-    @Post('/like/:id')
-    addLike(@Param('id') id) {
-        return this.artistService.addLike(id)
-    }
+  @Delete(':id/like')
+  deleteLike(@Param('id', ParseIntPipe) id: number) {
+    return this.artistService.deleteLike(id)
+  }
 
-    @Delete('/like/:id')
-    deleteLike(@Param('id') id) {
-        return this.artistService.deleteLike(id)
-    }
+  @Put(':id')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'picture', maxCount: 1 }
+  ]))
+  async updateArtist(
+    @Param('id', ParseIntPipe) id,
+    @Body() newData,
+    @UploadedFiles() files
+  ) {
+    const picture = files?.picture ? files?.picture[0] : null;
+    return this.artistService.updateArtist(id, newData, picture);
+  }
 
-    @Put(':id')
-    @UseInterceptors(FileFieldsInterceptor([
-        {name: 'picture', maxCount: 1}
-    ]))
-    async updateArtist(
-      @Param('id') id,
-      @Body() newData,
-      @UploadedFiles() files
-    ) {
-        console.log('files',files)
-        console.log('Update artist called with id:', id);
-        console.log('New data:', newData);
-        console.log('Files:', files);
-        const picture = files?.picture ? files?.picture[0] : null;
-        console.log('picture',picture)
-        return this.artistService.updateArtist(id, newData, picture); // Вызов сервиса для обновления сущности
-    }
 }

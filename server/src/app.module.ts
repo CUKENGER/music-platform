@@ -18,12 +18,16 @@ import { FileModule } from 'models/file/file.module';
 import { AudioModule } from 'models/audioService/audioService.module';
 import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 10,
+    }]),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, '..','static'),
-      // serveRoot: '/static',
     }),
     JwtModule.register({
       secret: process.env.JWT_ACCESS_SECRET_KEY,
@@ -57,15 +61,17 @@ export class AppModule implements NestModule{
         { path: 'auth/activate/:link', method: RequestMethod.GET },
         { path: 'auth/login', method: RequestMethod.POST },
         { path: 'auth/registration', method: RequestMethod.POST },
+        { path: 'auth/send_email', method: RequestMethod.ALL },
+        { path: 'auth/reset_password', method: RequestMethod.ALL },
         { path: 'user/check/:username', method: RequestMethod.POST },
         { path: 'user', method: RequestMethod.POST },
-        { path: '/image/*', method: RequestMethod.ALL},
-        { path: '/audio/*', method: RequestMethod.ALL},
-        { path: '/static/*', method: RequestMethod.ALL},
-        { path: '/favicon.ico', method: RequestMethod.GET}
+        { path: 'image/(.*)', method: RequestMethod.ALL},
+        { path: 'audio/(.*)', method: RequestMethod.ALL},
+        { path: 'static/*', method: RequestMethod.ALL},
+        { path: '.favicon.ico', method: RequestMethod.GET }
       )
       .forRoutes(
-        // { path: '*', method: RequestMethod.ALL }
+        { path: '*', method: RequestMethod.ALL }
       )
   }
 }

@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { checkUsername, getByEmail, getByToken, loginUser, logoutUser, refreshToken, regUser } from "./userApi";
-import { CreateUserDto, RegUserResponse } from "../types/User";
+import { checkUsername, getByEmail, getByToken, loginUser, logoutUser, refreshToken, regUser, resetPassword, sendEmail } from "./userApi";
+import { CreateUserDto, RegUserResponse, ResetPasswordDto, ResetPasswordResponse, SendEmailDto, SendEmailResponse } from "../types/User";
 import { handleErrorHandler, PublicRoutes } from "@/shared";
 import { useUserStore } from "../model/userStore";
 import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
 
 const invalidateUserQuery = (queryClient: ReturnType<typeof useQueryClient>) => {
   queryClient.invalidateQueries({
@@ -25,8 +26,8 @@ export const useRegUser = () => {
 
   return useMutation<RegUserResponse, unknown, CreateUserDto>({
     mutationFn: regUser,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: (data) => {
-      console.log('Mutation successful:', data);
       queryClient.invalidateQueries({ queryKey: ['user'], exact: true });
     },
     onError: (error: unknown) => {
@@ -63,8 +64,8 @@ export const useGetByToken = () => {
   return useQuery({
     queryFn: () => getByToken(),
     queryKey: ['user'],
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    // refetchOnWindowFocus: true,
+    // refetchOnMount: false,
   });
 };
 
@@ -86,7 +87,6 @@ export const useLogoutUser = () => {
     },
   })
 };
-
 
 export const useCheckUsername = () => {
   const queryClient = useQueryClient();
@@ -117,3 +117,31 @@ export const useLogout = () => {
     onError: (error: unknown) => handleError(error, 'refreshing token'),
   });
 }
+
+export const useSendEmail = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+  SendEmailResponse,  // Тип данных, возвращаемых функцией мутации
+  AxiosError,  // Тип ошибки, например, AxiosError
+  SendEmailDto,  // Тип переменных, которые передаются функции мутации (в вашем случае, email)
+  unknown   // Тип контекста
+ >({ 
+    mutationFn: sendEmail,
+    onSuccess: () => invalidateUserQuery(queryClient),
+  });
+};
+
+export const useResetPassword = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    ResetPasswordResponse,
+    AxiosError,
+    ResetPasswordDto,
+    unknown    
+  >({ 
+    mutationFn: resetPassword,
+    onSuccess: () => invalidateUserQuery(queryClient),
+  });
+};

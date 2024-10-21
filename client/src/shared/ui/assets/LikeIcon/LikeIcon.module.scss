@@ -1,0 +1,35 @@
+
+
+.LikeIcon{
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  column-gap: 5px;
+  align-items: center;
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    height: 100%;
+    
+    &:hover{
+      transform: scale(1.02);
+    }
+  }
+
+  p {
+    cursor: pointer;
+    color: var(--gray);
+
+    &:hover{
+      color: var(--white);
+    }
+  }
+}
+
+@media(max-width: 800px) {  
+  .LikeIcon {
+    width: 16px;
+    height: 16px;
+  }
+}

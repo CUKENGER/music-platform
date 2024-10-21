@@ -1,11 +1,12 @@
 import { useAddListenTrack, usePlayerStore } from "@/entities";
 import { useEffect, useState } from "react";
+import { useOpenPlayerStore } from "./openPlayerStore";
 
 export const usePlayer = () => {
   const {activeTrack} = usePlayerStore()
 
   const [hasListen, setHasListen] = useState(false);
-  const [isOpenPlayer, setIsOpenPlayer] = useState(false)
+  const {isOpen: isOpenPlayer, setIsOpen: setIsOpenPlayer} = useOpenPlayerStore()
 
   const {mutate: addListen} = useAddListenTrack()
 
@@ -16,7 +17,6 @@ export const usePlayer = () => {
       timeoutId = setTimeout(() => {
         if (activeTrack.id) {
           addListen(activeTrack.id);
-          console.log('add');
           setHasListen(true);
         }
       }, 30000);

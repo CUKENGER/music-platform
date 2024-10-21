@@ -22,6 +22,7 @@ export class UserController {
   @ApiBody({ type: UserDto })
   @Post()
   create(@Body() dto: UserDto) {
+    console.log('dto', dto)
     return this.authService.registration(dto)
   }
 
@@ -85,7 +86,6 @@ export class UserController {
   @Post('/check/:username')
   async checkUsername(@Param('username') username: string): Promise<{ available: boolean }> {
     const isAvailable = await this.userService.checkUsername(username);
-    console.log('isAvailable', isAvailable);
     return { available: isAvailable };
   }
 

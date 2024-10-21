@@ -1,7 +1,7 @@
-import { ChangeEvent, FC, useState } from "react";
+import { ChangeEvent, FC, InputHTMLAttributes, useState } from "react";
 import styles from './InputFile.module.scss'
 
-interface InputAudioProps{
+interface InputAudioProps extends InputHTMLAttributes<HTMLInputElement>{
   placeholder: string;
   fileName?:string
   setFile: (file: File) => void
@@ -9,7 +9,7 @@ interface InputAudioProps{
   currentPicture?: string
 }
 
-export const InputFile:FC<InputAudioProps> = ({placeholder, fileName, setFile, isAudio=true, currentPicture}) => {
+export const InputFile:FC<InputAudioProps> = ({placeholder, fileName, setFile, isAudio=true, currentPicture, ...defaultProps}) => {
 
   const [uploadPicture, setUploadPicture] = useState<string>('')
 
@@ -41,6 +41,7 @@ export const InputFile:FC<InputAudioProps> = ({placeholder, fileName, setFile, i
         className={styles.input}
         type="file"
         accept={isAudio ? 'audio/*' : 'image/*'}
+        {...defaultProps}
       />
       <label 
         className={`${styles.label} ${fileName ? '' : styles.invalid}`}

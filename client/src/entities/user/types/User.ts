@@ -1,4 +1,4 @@
-import { ITrack } from "@/entities";
+import { IAlbum, IArtist, IComment, ITrack } from "@/entities";
 
 
 export interface IUser {
@@ -10,13 +10,21 @@ export interface IUser {
   activationLink?: string;
   banned?: boolean;
   banReason?: string;
-  roles?: string[];
+  roles?: Role[];
   userRoles?: string[];
   tokens?: string[];
-  likedTracks: ITrack[] | []
-  likedAlbums: []
-  likedArtists: []  
-  listenedTracks: ITrack[] | []
+  likedTracks?: ITrack[] | []
+  likedAlbums?: IAlbum[]
+  likedArtists?: IArtist[]  ;
+  likedComments?: IComment[]
+  listenedTracks?: ITrack[] | []
+}
+
+interface Role{
+  id: number;
+  role: {
+    value: string
+  }
 }
 
 export interface CreateUserDto {
@@ -40,4 +48,25 @@ export interface RegUserResponse {
   user: RegUserDto;
   accessToken: string;
   refreshToken: string;
+}
+
+export interface CheckUsernameResponse {
+  available: boolean
+}
+
+export interface SendEmailDto{
+  email: string;
+}
+
+export interface SendEmailResponse {
+  message: string;
+}
+
+export interface ResetPasswordDto {
+  token: string;
+  newPassword: string
+}
+
+export interface ResetPasswordResponse {
+  message: string;
 }

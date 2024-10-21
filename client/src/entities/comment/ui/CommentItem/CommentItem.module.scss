@@ -1,0 +1,84 @@
+
+
+.comment {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  border-radius: 10px;
+}
+
+.usernameInfo {
+  display: flex;
+  align-items: flex-end;
+  column-gap: 40px;
+  background-color: var(--black-lt);
+  padding: 7px 10px;
+  border-radius: 10px;
+
+  .createdAt {
+    color: var(--gray);
+    font-size: 12px;
+  }
+}
+
+.commentFooter {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 60px;
+  padding-left: 10px;
+}
+
+.repliesTitle{
+  font-size: 12px;
+  color: var(--gray);
+  cursor: pointer;
+
+  &:hover{
+    color: var(--white);
+  }
+}
+
+.commentBtn {
+  width: fit-content;
+  padding: 5px 5px;
+  font-size: 12px;
+  border: none;
+  height: fit-content;
+}
+
+.commentLike {
+  font-size: 14px;
+  color: var(--gray);
+  display: flex;
+  align-items: flex-end;
+}
+
+.replyList {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  max-height: 620px;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+@media(max-width: 800px) {
+  .usernameInfo{
+    .createdAt{
+      font-size: 10px;
+    }
+  }
+
+  .repliesTitle{
+    font-size: 10px;
+  }
+
+  .commentFooter{
+    gap: 25px;
+  }
+}
+
+
+

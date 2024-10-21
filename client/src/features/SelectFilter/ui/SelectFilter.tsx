@@ -1,61 +1,75 @@
-import { useState } from 'react';
-import styles from './SelectFilter.module.scss'
-import DropDownArrow from './assets/DropDownArrow.svg'
-import DropDownArrowActive from './assets/DropDownArrowActive.svg'
-import useSelectFilterStore from '../model/SelectFilterStore';
+import { useState, useEffect, useRef, FC } from 'react';
+import styles from './SelectFilter.module.scss';
+import DropDownArrow from './assets/DropDownArrow.svg';
+import DropDownArrowActive from './assets/DropDownArrowActive.svg';
+import classNames from 'classnames';
+import { useSelectFilterStore } from '@/features';
 
-export const SelectFilter = () => {
-
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-  const {selectedSort, setSelectedSort} = useSelectFilterStore()
-
-	const toggleMenu = () => {
-		setIsOpen(!isOpen);
-	};
-
-	const handleSort = (sortType: string) => {
-		setSelectedSort(sortType)
-	}
-
-	return (
-		<div
-			onClick={toggleMenu}
-			className={isOpen ? styles.container_active : styles.container}
-		>
-			<>
-				<button
-					className={isOpen ? styles.btn_active : styles.btn}
-				>
-					<p className={styles.btn_text}>{selectedSort}</p>
-					<img
-						className={styles.btn_arrow}
-						src={isOpen ? DropDownArrow : DropDownArrowActive}
-						alt="dropdown arrow"
-					/>
-				</button>
-				<ul className={isOpen ? styles.list_open : styles.list}>
-					<li
-						className={styles.list_item}
-						onClick={() => handleSort('Все')}
-					>
-						Все
-					</li>
-					<li
-						className={styles.list_item}
-						onClick={() => handleSort('Популярные')}
-					>
-						Популярные
-					</li>
-					<li
-						className={styles.list_item}
-						onClick={() => handleSort('По алфавиту')}
-					>
-						По алфавиту
-					</li>
-				</ul>
-			</>
-
-
-		</div>
-	)
+interface SelectFilterProps {
+  options: string[];
+  className?: string
 }
+
+export const SelectFilter: FC<SelectFilterProps> = ({ options, className }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { selectedSort, setSelectedSort } = useSelectFilterStore();
+  const ref = useRef<HTMLDivElement>(null);
+
+  const toggleMenu = () => {
+    setIsOpen((prev) => !prev);
+  };
+
+  const handleSort = (sortType: string) => {
+    setSelectedSort(sortType);
+    // setIsOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      onClick={toggleMenu}
+      className={classNames(
+        className,
+        isOpen && styles.container_active,
+        styles.container
+      )}
+    >
+      <>
+        <button className={isOpen ? styles.btn_active : styles.btn}>
+          <p className={styles.btn_text}>{selectedSort}</p>
+          <img
+            className={styles.btn_arrow}
+            src={isOpen ? DropDownArrowActive : DropDownArrow}
+            alt="dropdown arrow"
+          />
+        </button>
+        {isOpen && (
+          <ul className={styles.list_open}>
+            {options.map((option) => (
+              <li
+                key={option}
+                className={styles.list_item}
+                onClick={() => handleSort(option)}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
+      </>
+    </div>
+  );
+};

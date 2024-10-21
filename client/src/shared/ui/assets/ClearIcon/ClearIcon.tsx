@@ -9,7 +9,7 @@ interface ClearIconProps {
 export const ClearIcon: FC<ClearIconProps> = ({handleClear}) => {
   return (
     <div onClick={handleClear} className={styles.ClearIcon}>
-      <img src={crossBg} alt="clear icon" className={styles.clear_icon} />
+      <img src={crossBg} alt="clear icon"/>
     </div>
   );
 };

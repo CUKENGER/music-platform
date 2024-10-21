@@ -1,9 +1,15 @@
-import React from 'react';
+import { AlbumItem, useAlbumList } from "@/entities";
+import { PrivateRoutes } from "@/shared";
+import { ItemList } from "@/widgets";
+import styles from './Albums.module.scss'
 
 export const Albums = () => {
   return (
-    <div>
-      Albums
-    </div>
+    <ItemList 
+      className={styles.AlbumList}
+      useItemListHook={useAlbumList} 
+      ItemComponent={AlbumItem} 
+      createRoute={PrivateRoutes.CREATE_ALBUM} 
+    />
   );
 }

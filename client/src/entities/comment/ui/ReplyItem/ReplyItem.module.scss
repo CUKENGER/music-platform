@@ -1,0 +1,30 @@
+
+
+.reply {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px;
+}
+
+.usernameInfo {
+  display: flex;
+  align-items: flex-end;
+  column-gap: 40px;
+  background-color: var(--black-lt);
+  padding: 7px 10px;
+  border-radius: 10px;
+
+  .createdAt {
+    color: var(--gray);
+    font-size: 12px;
+  }
+}
+
+@media(max-width: 800px) {
+  .usernameInfo{
+    .createdAt{
+      font-size: 10px;
+    }
+  }
+}

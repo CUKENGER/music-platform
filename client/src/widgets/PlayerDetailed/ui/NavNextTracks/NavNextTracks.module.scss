@@ -1,0 +1,35 @@
+
+
+.navNextTracks_container{
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  height: 738px;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+@media(max-width: 730px) {
+  .navNextTracks_container{
+    max-height: calc(100vh - 492px);
+    width: 100%;
+  }
+}
+
+// @media(max-width: 550px) {
+//   .navNextTracks_container{
+//     max-height: calc(100vh - 423px);
+//   }
+// }
+
+// @media(max-width: 450px) {
+//   .navNextTracks_container{
+//     max-height: calc(100vh - 379px);
+//   }
+// }
+
+@media(max-width: 350px) {
+  .container{
+    max-height: calc(100vh - 330px);
+  }
+}

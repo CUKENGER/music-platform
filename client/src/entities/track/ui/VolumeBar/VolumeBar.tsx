@@ -1,16 +1,16 @@
-import { muteIcon, volumeIcon } from '@/shared'
-import { useVolumeBar } from '../../model/useVolumeBar'
+import muteIcon from './muteIcon.svg'
+import volumeIcon from './volumeIcon.svg'
 import styles from './VolumeBar.module.scss'
-
+import { useVolumeBar } from '../../model/useVolumeBar'
 
 export const VolumeBar = () => {
-
   const {
     handleMute,
     isMute,
     volume,
     changeVolume,
-    inputVolumeStyle
+    inputVolumeStyle,
+    clickVolume
   } = useVolumeBar()
 
   return (
@@ -27,6 +27,7 @@ export const VolumeBar = () => {
         max={100}
         value={volume}
         onChange={changeVolume}
+        onClick={clickVolume}
         className={styles.input_volume}
         style={inputVolumeStyle}
       />

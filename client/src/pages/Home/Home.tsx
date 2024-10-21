@@ -9,6 +9,5 @@ export const Home = () => {
       <EntitySection/>
       <EntitySection/>
     </div>
-
   );
 }

@@ -2,16 +2,16 @@ import { Body, Controller, Get, Next, Param, Post, Req, Res } from '@nestjs/comm
 import { ApiBody, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
-import { UserService } from 'models/user/user.service';
 import { LoginUserDto } from 'models/user/dto/loginUser.dto';
 import { UserDto } from 'models/user/dto/user.dto';
+import { ResetPasswordDto, SendEmailDto } from './dto/resetPassword.dto';
 
 class TokenResponse {
   @ApiProperty()
   token: string;
 }
 
-export interface ReqWithCookie extends Request{
+export interface ReqWithCookie extends Request {
   cookies: any
 }
 
@@ -21,19 +21,18 @@ export class AuthController {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService
-  ) {}
+  ) { }
 
   @ApiOperation({ summary: 'Вход пользователя' })
   @ApiBody({ type: LoginUserDto })
-  @ApiResponse({ status: 200, type: TokenResponse})
+  @ApiResponse({ status: 200, type: TokenResponse })
   @Post('/login')
   async login(@Body() dto: LoginUserDto, @Res() res: Response, @Next() next) {
-    try{
-      const userData = await this.authService.login(dto)
-      res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-      return res.json(userData)
-    } catch(e) {
+    try {
+      const userData = await this.authService.login(dto);
+      this.setRefreshTokenCookie(res, userData.refreshToken);
+      return res.json(userData);
+    } catch (e) {
       next(e);
     }
   }
@@ -41,17 +40,17 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Регистрация пользователя' })
   @ApiBody({ type: UserDto })
-  @ApiResponse({ status: 201, type: TokenResponse})
+  @ApiResponse({ status: 201, type: TokenResponse })
   @Post('/registration')
   async registration(@Body() dto: UserDto, @Res() res: Response, @Next() next) {
     try {
-      const userData = await this.authService.registration(dto)
-      res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-      return res.json(userData)
-    } catch(e) {
+      const userData = await this.authService.registration(dto);
+      this.setRefreshTokenCookie(res, userData.refreshToken);
+      return res.json(userData);
+    } catch (e) {
       next(e);
     }
-    
+
   }
 
   @ApiOperation({ summary: 'Выход пользователя' })
@@ -83,18 +82,32 @@ export class AuthController {
   async refresh(@Req() req: ReqWithCookie, @Res() res: Response, @Next() next) {
     try {
       const { refreshToken } = req.cookies;
-      console.log('req.cookies', req.cookies);
       const tokenData = await this.authService.refresh(refreshToken);
-
-      res.cookie('refreshToken', tokenData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-      });
-
+      this.setRefreshTokenCookie(res, tokenData.refreshToken);
       return res.json(tokenData);
     } catch (e) {
       next(e);
     }
+  }
+
+  @ApiOperation({ summary: 'Смена пароля' })
+  @Post('/send_email')
+  async resetPassword(@Body() dto: SendEmailDto) {
+    return await this.authService.sendEmail(dto);
+  }
+
+  @ApiOperation({ summary: 'Активация пользователя' })
+  @Post('/reset_password')
+  async resetPasswordCheck(@Body() dto: ResetPasswordDto) {
+    await this.authService.resetPassword(dto);
+    return { message: 'Password reset successful' }
+  }
+
+  private setRefreshTokenCookie(res: Response, refreshToken: string) {
+    res.cookie('refreshToken', refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
   }
 
 }

@@ -1,10 +1,11 @@
 import { ApiUrl, Portal } from '@/shared'
 import styles from './Player.module.scss'
 import openPlayerBtn from './assets/openPlayerBtn.svg'
-import { CurrentTimeContainer, MixIcon, NameContainer, PlayPauseBtn, SwitchTrackBtns, TrackProgress, VolumeBar } from '@/entities'
+import { CurrentTimeContainer, MixIcon, PlayPauseBtn, SwitchTrackBtns, TrackProgress, VolumeBar } from '@/entities'
 import { PlayerDetailed } from '@/widgets/PlayerDetailed/ui/PlayerDetailed'
 import { usePlayer } from '../../model/usePlayer'
 import { TrackLikeContainer } from '@/features'
+import { PlayerNameContainer } from '../PlayerNameContainer/PlayerNameContainer'
 
 export const Player = () => {
 
@@ -20,9 +21,9 @@ export const Player = () => {
 
   return (
     <>
-      <div className={styles.container}>
+      <div className={styles.container} >
         <TrackProgress />
-        <div className={styles.main_container}>
+        <div className={styles.main_container} onClick={handleOpen}>
           <div className={styles.main_info_container}>
             <div className={styles.cover_container}>
               <img
@@ -36,9 +37,9 @@ export const Player = () => {
                 duration={activeTrack?.duration}
               />
             </div>
-            <NameContainer
+            <PlayerNameContainer
               name={activeTrack?.name}
-              artist={activeTrack?.artist.name ?? '{уй'}
+              artist={activeTrack?.artist.name ?? 'Unknown artist'}
             />
             <TrackLikeContainer
               likes={activeTrack.likes}
@@ -54,7 +55,7 @@ export const Player = () => {
           <div className={styles.right_container}>
             <MixIcon />
             <VolumeBar />
-            <div className={styles.openBtn_container} onClick={handleOpen}>
+            <div onClick={handleOpen}>
               <img
                 className={styles.openBtn}
                 src={openPlayerBtn}

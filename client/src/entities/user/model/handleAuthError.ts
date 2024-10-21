@@ -1,4 +1,3 @@
-// errorHandler.ts
 
 interface ResponseError {
   response: {
