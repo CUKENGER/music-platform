@@ -27,16 +27,24 @@ export class AuthService {
   ) { }
 
   async login(dto: LoginUserDto): Promise<RegUserResponse> {
-    const user = await this.getUserByEmail(dto.email);
-    await this.verifyPassword(dto.password, user.password);
-
-    const userDto = new RegUserDto(user);
-    const tokens = await this.generateAndSaveTokens(userDto, this.prisma);
-
-    return {
-      ...tokens,
-      user: userDto,
-    };
+    try {
+      const user = await this.getUserByEmail(dto.email);
+      await this.verifyPassword(dto.password, user.password);
+  
+      const userDto = new RegUserDto(user);
+      const tokens = await this.generateAndSaveTokens(userDto, this.prisma);
+  
+      return {
+        ...tokens,
+        user: userDto,
+      };
+    } catch(e) {
+      if (e instanceof BadRequestException) {
+        throw new BadRequestException(`${e.message}`)
+      }
+      console.error(`Error login: ${e}`)
+      throw Error(e)
+    }
   }
 
   async registration(dto: UserDto): Promise<RegUserResponse> {
@@ -173,7 +181,7 @@ export class AuthService {
   // Helper functions
 
   private async getUserByEmail(email: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const user = await this.prisma.user.findUnique({ where: { email: email } });
     if (!user) {
       throw new BadRequestException('User with this email not found');
     }

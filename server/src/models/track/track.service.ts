@@ -18,7 +18,7 @@ export class TrackService {
     private readonly audioService: AudioService,
     private readonly commentService: CommentService,
     private trackHelperService: TrackHelperService
-  ) {}
+  ) { }
 
   async create(dto: CreateTrackDto, picture: Express.Multer.File, audio: Express.Multer.File) {
     if (!picture || !audio) {
@@ -46,7 +46,7 @@ export class TrackService {
           type: 'SINGLE',
         },
       });
-  
+
       const newTrack = await this.prisma.track.create({
         data: {
           ...dto,
@@ -59,7 +59,7 @@ export class TrackService {
           updatedAt: new Date(),
         },
       });
-  
+
       return newTrack;
     } catch (error) {
       this.fileService.cleanupFile(imagePath);
@@ -68,7 +68,6 @@ export class TrackService {
       throw new Error(`Error creating track: ${error}`)
     }
   }
-  
 
   async getOne(id: number): Promise<Track & { likedByUsers: User[]; album: Album; artist: Artist }> {
     const track = await this.prisma.track.findUnique({
@@ -81,11 +80,11 @@ export class TrackService {
         listenedByUsers: true,
       },
     });
-  
+
     if (!track) {
       throw new NotFoundException(`Track with id ${id} not found`);
     }
-    
+
     return track;
   }
 
@@ -99,22 +98,34 @@ export class TrackService {
         include: {
           artist: true,
           album: true,
-          comments: true,
+        comments: true,
           likedByUsers: true,
           listenedByUsers: true,
         },
       });
-    } catch(e) {
+    } catch (e) {
       console.error(`Error get All:`, e)
     }
   }
-  
 
   async delete(id: number): Promise<Track> {
     const track = await this.trackHelperService.findTrackById(id);
+
     await this.trackHelperService.deleteTrackFiles(track);
     await this.prisma.comment.deleteMany({ where: { trackId: Number(id) } });
-    return await this.prisma.track.delete({ where: { id: Number(id) } });
+    await this.prisma.listenedTrack.deleteMany({ where: { trackId: Number(id) } });
+    const albumId = track.albumId;
+    await this.prisma.track.delete({
+      where: { id: Number(id) },
+    });
+    const remainingTracks = await this.prisma.track.count({ where: { albumId: albumId } });
+    if (remainingTracks === 0) {
+      await this.prisma.album.delete({
+        where: { id: albumId },
+      });
+    }
+
+    return track;
   }
 
   async updateTrack(
@@ -124,19 +135,19 @@ export class TrackService {
     audio?: Express.Multer.File
   ): Promise<Track> {
     const entityToUpdate = await this.trackHelperService.findTrackById(id);
-  
+
     if (picture) {
       newData.picture = await this.fileService.createFile(FileType.IMAGE, picture);
     }
-  
+
     if (audio) {
       const audioPath = await this.fileService.createFile(FileType.AUDIO, audio);
       newData.audio = audioPath;
       newData.duration = await this.audioService.getAudioDuration(audioPath);
     }
-  
+
     newData.updatedAt = new Date();
-  
+
     const updateData = {
       name: newData.name || entityToUpdate.name,
       genre: newData.genre || entityToUpdate.genre,
@@ -148,7 +159,7 @@ export class TrackService {
       albumId: newData.albumId || entityToUpdate.albumId,
       updatedAt: newData.updatedAt,
     };
-  
+
     return await this.prisma.track.update({
       where: { id: Number(id) },
       data: updateData,
@@ -173,7 +184,7 @@ export class TrackService {
   async listen(trackId: number, token: string): Promise<number> {
     const user = await this.trackHelperService.getUserFromToken(token);
     const track = await this.trackHelperService.findTrackById(trackId);
-    
+
     const updateData: any = { listens: track.listens + 1 };
     await this.trackHelperService.updateAlbumAndArtistListens(track, updateData);
 
@@ -242,9 +253,9 @@ export class TrackService {
     return await this.trackHelperService.getTrackWithLikes(trackId);
   }
 
-  
 
-  
 
-  
+
+
+
 }

@@ -1,7 +1,7 @@
-import muteIcon from './muteIcon.svg'
-import volumeIcon from './volumeIcon.svg'
-import styles from './VolumeBar.module.scss'
-import { useVolumeBar } from '../../model/useVolumeBar'
+import muteIcon from './muteIcon.svg';
+import volumeIcon from './volumeIcon.svg';
+import styles from './VolumeBar.module.scss';
+import { useVolumeBar } from '../../model/useVolumeBar';
 
 export const VolumeBar = () => {
   const {
@@ -9,17 +9,19 @@ export const VolumeBar = () => {
     isMute,
     volume,
     changeVolume,
-    inputVolumeStyle,
-    clickVolume
-  } = useVolumeBar()
+  } = useVolumeBar();
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+  }
 
   return (
-    <div className={styles.input_volume_container}>
+    <div className={styles.input_volume_container} onClick={handleClick}>
       <img
         onClick={handleMute}
         className={styles.volume_icon}
         src={isMute ? muteIcon : volumeIcon}
-        alt='volume Icon'
+        alt="Volume Icon"
       />
       <input
         type="range"
@@ -27,10 +29,9 @@ export const VolumeBar = () => {
         max={100}
         value={volume}
         onChange={changeVolume}
-        onClick={clickVolume}
         className={styles.input_volume}
-        style={inputVolumeStyle}
+        style={{ '--value': `${volume}%` } as React.CSSProperties} // Простое вычисление напрямую
       />
     </div>
-  )
-}
+  );
+};

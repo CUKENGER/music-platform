@@ -1,12 +1,13 @@
 import { useAxiosInterceptor } from "@/shared";
 import AppRouter from "./AppRouter";
 import styles from './BaseLayout.module.scss';
-import { IUser, useUserStore } from "@/entities";
+import { IUser, usePlayerStore, useUserStore } from "@/entities";
 import { Header, Navbar, Player } from "@/widgets";
 import { useEffect } from "react";
 
 function BaseLayout() {
   const { isAuth, user, setIsAdmin } = useUserStore();
+  const activeTrack = usePlayerStore(state => state.activeTrack)
 
   function isUserAdmin(user: IUser | null): boolean {
     if (!user) return false;
@@ -31,8 +32,9 @@ function BaseLayout() {
           <div className={styles.pageContent}>
             <AppRouter />
           </div>
-
-          <Player />
+          {activeTrack?.audio && (
+            <Player audioUrl={activeTrack?.audio}/>
+          )}
           
         </>
       ) : (

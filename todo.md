@@ -7,10 +7,10 @@
 [x] - нажатие на плеер -- открытие playerDetailed(mobile...)
 [x] - сделать авторизацию
 [_x] - сделать адаптив в готовых компонентах
+[x] - fix: singleTypeAlbum CreateTrack
 [] - infiniteScroll Albums
 [] - infiniteScroll Tracks
 [] - infiniteScroll Artists
-[] - fix: singleTypeAlbum CreateTrack
 [] - Like in ChildrenTrack
 [] - страница трека(роутинг)
 [] - сделать страницу для каждого трека(разобраться с роутингом)

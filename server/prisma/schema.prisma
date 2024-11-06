@@ -51,7 +51,7 @@ model Track {
   album      Album?      @relation(fields: [albumId], references: [id])
   
   likedByUsers User[]     @relation("LikedTracks")
-  listenedByUsers ListenedTrack[]
+  listenedByUsers ListenedTrack[] 
 
   comments   Comment[]   @relation("TrackComments")
 }

@@ -49,13 +49,13 @@ export class TrackController {
 
 	@Get()
 	@ApiOperation({ summary: 'Получение всех треков с пагинацией' })
-	getAll(@Query('page') page: number = 0, @Query('count') count: number = 15) {
+	getAll(@Query('page', ParseIntPipe) page: number = 0, @Query('count', ParseIntPipe) count: number = 20) {
 		return this.trackService.getAll(page, count);
 	}
 
 	@Delete(':id')
 	@ApiOperation({ summary: 'Удаление трека по id' })
-	delete(@Param('id') id: number) {
+	delete(@Param('id', ParseIntPipe) id: number) {
 		return this.trackService.delete(id)
 	}
 

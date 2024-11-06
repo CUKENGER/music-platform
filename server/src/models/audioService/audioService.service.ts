@@ -42,6 +42,26 @@ export class AudioService {
     }
   }
 
+  async getAudioBitrate(filePath: string): Promise<number> {
+    const dp = this.resolveFilePath(filePath)
+
+    if (!fs.existsSync(dp)) {
+      throw new NotFoundException(`File does not exist: ${filePath}`)
+    }
+
+    return new Promise<number>((resolve, reject) => {
+      ffmpeg.setFfprobePath(ffprobeStatic.path)
+      ffmpeg.ffprobe(dp, (err, metadata) => {
+        if (err) {
+          reject(new InternalServerErrorException(`Error retrieving bitrate: ${err.message}`))
+        } else {
+          const bitrate = metadata.format.bit_rate
+          resolve(parseInt(bitrate, 10))
+        }
+      })
+    })
+  }
+
   private async getAudioDurationFromFile(dp: string): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       ffmpeg.setFfprobePath(ffprobeStatic.path);

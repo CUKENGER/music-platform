@@ -1,58 +1,45 @@
-import { FC } from "react";
-import styles from './SwitchTrackBtns.module.scss'
-import nextBtnBg from './nextBtnBg.svg'
-import prevBtnBg from './prevBtnBg.svg'
+import React, { FC, useCallback } from "react";
+import styles from './SwitchTrackBtns.module.scss';
+import nextBtnBg from './nextBtnBg.svg';
+import prevBtnBg from './prevBtnBg.svg';
 import { useActiveTrackListStore, usePlayerStore } from "@/entities";
 
 interface SwitchTrackBtnsProps {
-  isNextBtn: boolean
+  isNextBtn: boolean;
 }
 
-export const SwitchTrackBtns: FC<SwitchTrackBtnsProps> = ({isNextBtn}) => {
+export const SwitchTrackBtns: FC<SwitchTrackBtnsProps> = React.memo(({ isNextBtn }) => {
+  const activeTrack = usePlayerStore(state => state.activeTrack);
+  const setActiveTrack = usePlayerStore(state => state.setActiveTrack);
+  const activeTrackList = useActiveTrackListStore(state => state.activeTrackList);
 
-  const {activeTrack, setActiveTrack} = usePlayerStore()
-  const {activeTrackList} = useActiveTrackListStore()
+  const handleBtn = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
 
+    if (activeTrackList) {
+      const currentIndex = activeTrackList.findIndex(track => track.id === activeTrack?.id);
+      const nextIndex = isNextBtn 
+        ? (currentIndex + 1) % activeTrackList.length 
+        : (currentIndex - 1 + activeTrackList.length) % activeTrackList.length;
 
-  const handleBtn = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation()
-    const tracks = activeTrackList;
-    if (tracks) { 
-      const currentIndex = tracks.findIndex(track => track.id === activeTrack?.id);
-      let nextIndex;
-      if (isNextBtn) {
-        nextIndex = (currentIndex + 1) % tracks.length;
-      } else {
-        nextIndex = (currentIndex - 1 + tracks.length) % tracks.length;
-      }
-      const nextTrack = tracks[nextIndex];
+      const nextTrack = activeTrackList[nextIndex];
       if (nextTrack) {
         setActiveTrack(nextTrack);
       }
     }
-  }
+  }, [activeTrack, activeTrackList, isNextBtn, setActiveTrack]);
+
+  const btnBg = isNextBtn ? nextBtnBg : prevBtnBg;
+  const btnClass = isNextBtn ? styles.nextBtnIcon : styles.prevBtnIcon;
 
   return (
-    <>
-      {isNextBtn ? (
-          <div className={styles.icon_container}>
-            <img
-              onClick={(e) => handleBtn(e)}
-              className={styles.nextBtnIcon}
-              src={nextBtnBg}
-              alt='nextBtnPlayer'
-            />
-          </div>
-        ) : (
-          <div className={styles.icon_container}>
-            <img
-              onClick={(e) => handleBtn(e)}
-              className={styles.prevBtnIcon}
-              src={prevBtnBg}
-              alt='prevBtnPlayer'
-            />
-          </div>)}
-    </>
-
-  )
-};
+    <div className={styles.icon_container}>
+      <img
+        onClick={handleBtn}
+        className={btnClass}
+        src={btnBg}
+        alt={isNextBtn ? 'nextBtnPlayer' : 'prevBtnPlayer'}
+      />
+    </div>
+  );
+});

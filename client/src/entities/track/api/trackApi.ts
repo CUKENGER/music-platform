@@ -36,7 +36,7 @@ export const addListen = async (id: number): Promise<ITrack | null> => {
   return apiRequest<ITrack>('post', `tracks/${id}/listen`, {id});
 }
 
-export const deleteTrack = async (id: number): Promise<ITrack | null> => {
+export const deleteTrack = async (id: number): Promise<ITrack> => {
   return apiRequest<ITrack>('delete', `tracks/${id}`, {id});
 }
 

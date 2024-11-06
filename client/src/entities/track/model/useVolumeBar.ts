@@ -1,17 +1,17 @@
 import { audioManager } from "@/shared";
-import { useState, useCallback, ChangeEvent, useMemo, CSSProperties } from "react";
+import { useState, useCallback, ChangeEvent } from "react";
 import usePlayerStore from "./PlayerStore";
 
 export const useVolumeBar = () => {
-
   const audio = audioManager.audio;
   const [isMute, setIsMute] = useState(false);
   const [prevVolume, setPrevVolume] = useState(50);
 
-  const {volume, setVolume} = usePlayerStore()
+  const volume = usePlayerStore(state => state.volume);
+  const setVolume = usePlayerStore(state => state.setVolume);
 
   const changeVolume = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation()
+    e.stopPropagation();
     if (audio) {
       const newVolume = Number(e.target.value) / 100;
       audio.volume = newVolume;
@@ -20,12 +20,8 @@ export const useVolumeBar = () => {
     }
   }, [audio, setVolume]);
 
-  const clickVolume = (e: React.MouseEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-  }
-
   const handleMute = useCallback((e: React.MouseEvent<HTMLImageElement>) => {
-    e.stopPropagation()
+    e.stopPropagation();
     if (audio) {
       if (!isMute) {
         setPrevVolume(volume);
@@ -39,16 +35,10 @@ export const useVolumeBar = () => {
     }
   }, [audio, isMute, volume, prevVolume, setVolume]);
 
-  const inputVolumeStyle = useMemo(() => ({ 
-    '--value': `${(volume / 100) * 100}%`
-  } as CSSProperties),[volume]);
-
   return {
     handleMute,
     isMute,
     volume,
     changeVolume,
-    inputVolumeStyle,
-    clickVolume
-  }
-}
+  };
+};

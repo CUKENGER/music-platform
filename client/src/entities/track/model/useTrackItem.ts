@@ -1,40 +1,37 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { ITrack } from "../types/Track";
 import useActiveTrackListStore from "./ActiveTrackListStore";
 import usePlayerStore from "./PlayerStore";
 import { useDeleteTrack } from "../api/useTrackApi";
-import usePlayTrack from "./usePlayTrack";
-import { audioManager } from "@/shared";
+import { audioManager, useModal } from "@/shared";
 import { useAudio } from "./useAudio";
+import { usePlayTrack } from "./usePlayTrack";
 
 export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
-  const [isVisible, setIsVisible] = useState(true);
-  
-  const { setActiveTrackList, activeTrackList } = useActiveTrackListStore();
-  const { activeTrack } = usePlayerStore();
+  const [isVisible, setIsVisible] = useState(false)
+  const { showModal, modal, hideModal } = useModal();
+  const setActiveTrackList = useActiveTrackListStore(state => state.setActiveTrackList);
+  const activeTrack = usePlayerStore(state => state.activeTrack);
 
-  const {setAudio} = useAudio(activeTrackList)
-
-  const audio = audioManager.audio;
-  
+  const { setAudio } = useAudio(trackList);
   const { handlePlay } = usePlayTrack(track);
+  const audio = audioManager.audio;
+
   const { mutate: deleteTrack } = useDeleteTrack();
 
   const handleDelete = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    try {
-      await deleteTrack(track.id);
-      console.log('Track deleted successfully');
-    } catch (error) {
-      console.error('Failed to delete track:', error);
-    }
-  }, [deleteTrack, track.id]);
+    e.stopPropagation();
+    await deleteTrack(track.id, {
+      onSuccess: (res) => showModal(`Трек ${res.name} успешно удален`),
+      onError: (error) => showModal(`Произошла ошибка при удалении: ${error}`),
+    });
+  }, [deleteTrack, showModal, track.id]);
 
   useEffect(() => {
     if (activeTrack?.id === track.id && audio) {
       setAudio();
     }
-  }, [activeTrack?.id, track.id, audio, setAudio]);
+  }, [activeTrack?.id, track.id, audio]);
 
   const clickPlay = useCallback(async () => {
     setActiveTrackList(trackList);
@@ -51,10 +48,11 @@ export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
     return () => clearTimeout(timer);
   }, [isVisible]);
 
-
-  return useMemo(() => ({
-    isVisible,
+  return {
     clickPlay,
-    handleDelete
-  }), [isVisible, clickPlay, handleDelete]);
-}
+    isVisible,
+    handleDelete,
+    modal,
+    hideModal,
+  };
+};

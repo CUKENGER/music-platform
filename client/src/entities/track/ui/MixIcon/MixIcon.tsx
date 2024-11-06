@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import styles from './MixIcon.module.scss';
 import mixIcon from './assets/mixIcon.svg';
 import mixFillIcon from './assets/mixFillIcon.svg';
@@ -7,33 +7,41 @@ import { ITrack, mixTracks, useActiveTrackListStore } from "@/entities";
 export const MixIcon = () => {
   const { activeTrackList, setActiveTrackList } = useActiveTrackListStore();
 
-  const [prevTrackList, setPrevTrackList] = useState<ITrack[] | null>(null);
-  const [isMix, setIsMix] = useState(false)
-  // const {isMix, setIsMix} = usePlayerStore()
+  const [state, setState] = useState({
+    prevTrackList: null as ITrack[] | null,
+    isMix: false,
+  });
 
-  const handleMix = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleMix = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
 
     if (activeTrackList) {
-      if (isMix && prevTrackList) {
-        setActiveTrackList(prevTrackList);
-        setPrevTrackList(null);
-      } else {
-        if (!prevTrackList) {
-          setPrevTrackList(activeTrackList);
+      setState((prevState) => {
+        const { isMix, prevTrackList } = prevState;
+
+        if (isMix && prevTrackList) {
+          setActiveTrackList(prevTrackList);
+          return { prevTrackList: null, isMix: false };
+        } else {
+          const mixedTrackList = !prevTrackList ? mixTracks(activeTrackList) : activeTrackList;
+          setActiveTrackList(mixedTrackList);
+
+          return {
+            prevTrackList: prevTrackList || activeTrackList,
+            isMix: !isMix,
+          };
         }
-        const mixedTrackList = mixTracks(activeTrackList);
-        setActiveTrackList(mixedTrackList);
-      }
-      setIsMix(!isMix);
+      });
     }
-  };
+  }, [activeTrackList, setActiveTrackList]);
+
+  const currentIcon = useMemo(() => (state.isMix ? mixFillIcon : mixIcon), [state.isMix]);
 
   return (
     <div className={styles.mix_container} onClick={handleMix}>
       <img
         className={styles.mix_icon}
-        src={isMix ? mixFillIcon : mixIcon}
+        src={currentIcon}
         alt="mix"
       />
     </div>

@@ -1,30 +1,41 @@
-import { FC } from "react";
-import styles from './PlayPauseBtn.module.scss'
-import { audioManager} from "@/shared";
+import { FC, useCallback } from "react";
+import styles from './PlayPauseBtn.module.scss';
+import { audioManager } from "@/shared";
 import pauseBtnBg from './pauseBtnBg.svg';
-import playBtnBg from './playBtnBg.svg'
+import playBtnBg from './playBtnBg.svg';
 import { usePlayerStore } from "@/entities";
+import React from "react";
 
-export const PlayPauseBtn: FC = () => {
-  const audio = audioManager.audio
-  const {pause, setPlay, setPause} = usePlayerStore()
+export const PlayPauseBtn: FC = React.memo(() => {
+  const audio = audioManager.audio;
 
-  const playBtn = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation()
+  const pause = usePlayerStore(state => state.pause);
+  const setPlay = usePlayerStore(state => state.setPlay);
+  const setPause = usePlayerStore(state => state.setPause);
+
+  const playBtn = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+
+    if (!audio) return;
+
     if (pause) {
-      audio?.play()
+      audio.play();
       setPlay();
     } else {
-      audio?.pause();
+      audio.pause();
       setPause();
     }
-  }
+  }, [audio, pause, setPlay, setPause]);
+
+  const btnIcon = pause ? playBtnBg : pauseBtnBg;
 
   return (
     <div className={styles.circle} onClick={playBtn}>
       <img 
-        src={pause ? playBtnBg : pauseBtnBg}
-        className={styles.image}/>
+        src={btnIcon}
+        className={styles.image}
+        alt={pause ? "Play" : "Pause"}
+      />
     </div>
   );
-};
+});

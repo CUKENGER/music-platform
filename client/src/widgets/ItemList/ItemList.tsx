@@ -1,6 +1,5 @@
 import { Loader } from "@/shared";
 import { PageHeader } from "@/widgets";
-import 'react-loading-skeleton/dist/skeleton.css';
 import styles from './ItemList.module.scss'
 
 interface Identifiable {

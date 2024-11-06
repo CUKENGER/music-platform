@@ -115,7 +115,6 @@ export class AlbumService {
   async delete(id: number) {
     try {
       const album = await this.albumHelperService.getAlbumWithRelations(id);
-      console.log('album', album)
       if(!album) {
         throw new NotFoundException(`Album with ${id} not found`)
       }

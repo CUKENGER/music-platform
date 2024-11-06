@@ -27,16 +27,11 @@ export class AuthController {
   @ApiBody({ type: LoginUserDto })
   @ApiResponse({ status: 200, type: TokenResponse })
   @Post('/login')
-  async login(@Body() dto: LoginUserDto, @Res() res: Response, @Next() next) {
-    try {
-      const userData = await this.authService.login(dto);
-      this.setRefreshTokenCookie(res, userData.refreshToken);
-      return res.json(userData);
-    } catch (e) {
-      next(e);
-    }
+  async login(@Body() dto: LoginUserDto, @Res() res: Response) {
+    const userData = await this.authService.login(dto);
+    this.setRefreshTokenCookie(res, userData.refreshToken);
+    return res.json(userData);
   }
-
 
   @ApiOperation({ summary: 'Регистрация пользователя' })
   @ApiBody({ type: UserDto })

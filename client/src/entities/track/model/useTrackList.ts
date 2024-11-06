@@ -10,29 +10,24 @@ export const useTrackList = () => {
   const { selectedSort } = useSelectFilterStore();
   const [hasMoreTracks, setHasMoreTracks] = useState(true);
 
-  const { data: newTracks, error, isError, isLoading } = useGetAllTracks(0,countTracks);
+  const { data: newTracks, error, isError, isLoading } = useGetAllTracks(0, countTracks);
 
   useEffect(() => {
-    if (newTracks && newTracks.length > 0) {
+    if (newTracks) {
       const newUniqueTracks = newTracks.filter(
         (newTrack: ITrack) => !tracks.some((existingTrack) => existingTrack.id === newTrack.id)
       );
-  
-      setTracks((prevTracks) => [...prevTracks, ...newUniqueTracks]);
-  
-      if (newUniqueTracks.length < 15) {
-        setHasMoreTracks(false);
+
+      if (newUniqueTracks.length > 0) {
+        setTracks((prevTracks) => [...prevTracks, ...newUniqueTracks]);
       }
-    } else if (newTracks && newTracks.length === 0) {
-      setHasMoreTracks(false);
+      
+      setHasMoreTracks(newUniqueTracks.length === countTracks);
     }
-  }, [newTracks]);
+  }, [newTracks, countTracks]);
 
   const sortedTracks = useMemo(() => {
-    if (tracks.length > 0) {
-      return sortList(tracks, selectedSort);
-    }
-    return tracks;
+    return sortList(tracks, selectedSort);
   }, [selectedSort, tracks]);
 
   const memoizedSetActiveTrackList = useCallback(() => {
@@ -43,12 +38,8 @@ export const useTrackList = () => {
     memoizedSetActiveTrackList();
   }, [memoizedSetActiveTrackList]);
 
-  console.log('count', countTracks)
-
-  console.log('hsmore', hasMoreTracks)
-
   useInfiniteScroll(() => {
-    if (hasMoreTracks) { 
+    if (hasMoreTracks) {
       setCountTracks((prev) => prev + 3);
     }
   });

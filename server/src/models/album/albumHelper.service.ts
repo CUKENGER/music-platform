@@ -5,6 +5,7 @@ import { AudioService } from "models/audioService/audioService.service";
 import { PrismaService } from "prisma/prisma.service";
 import * as path from 'path';
 import * as fs from 'fs/promises';
+import * as fsNot from 'fs'
 
 @Injectable()
 export class AlbumHelperService {
@@ -128,8 +129,13 @@ export class AlbumHelperService {
   async deleteAlbumPicture(picture: string) {
     try {
       if (picture) {
-        const picturePath = path.resolve(__dirname, '../../../../', 'server/static', picture);
-        await fs.unlink(picturePath);
+        const picturePath = path.resolve('static/', picture);
+        
+        if (fsNot.existsSync(picturePath)) {
+          fsNot.unlinkSync(picturePath);
+        } else {
+          console.log(`Файл с изображением не найден: ${picturePath}`);
+        }
       }
     } catch(e){
       console.error(`Error deleteAlbumPicture: ${e}`);
@@ -143,8 +149,10 @@ export class AlbumHelperService {
       if(tracks) {
         for (const track of tracks) {
           if (track.audio) {
-            const audioPath = path.resolve(__dirname, '../../../../', 'server/static', track.audio);
-            await fs.unlink(audioPath);
+            const audioPath = path.resolve('static/', track.audio);
+            if (fsNot.existsSync(audioPath)) {
+              fsNot.unlinkSync(audioPath);
+            }
           }
           await this.prisma.track.delete({ where: { id: track.id } });
         }

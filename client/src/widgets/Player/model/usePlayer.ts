@@ -3,47 +3,40 @@ import { useEffect, useState } from "react";
 import { useOpenPlayerStore } from "./openPlayerStore";
 
 export const usePlayer = () => {
-  const {activeTrack} = usePlayerStore()
-
+  const activeTrack = usePlayerStore((state) => state.activeTrack);
   const [hasListen, setHasListen] = useState(false);
-  const {isOpen: isOpenPlayer, setIsOpen: setIsOpenPlayer} = useOpenPlayerStore()
+  const { isOpen: isOpenPlayer, setIsOpen: setIsOpenPlayer } = useOpenPlayerStore();
 
-  const {mutate: addListen} = useAddListenTrack()
+  const { mutate: addListen } = useAddListenTrack();
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
-    if (activeTrack && !hasListen) {
+    if (activeTrack?.id && !hasListen) {
       timeoutId = setTimeout(() => {
-        if (activeTrack.id) {
-          addListen(activeTrack.id);
-          setHasListen(true);
-        }
+        addListen(activeTrack.id);
+        setHasListen(true);
       }, 30000);
     }
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [
-    activeTrack, 
-    hasListen, 
-    addListen
-  ]);
+  }, [activeTrack?.id, hasListen, addListen]);
 
   useEffect(() => {
-    if (activeTrack) {
+    if (activeTrack?.id) {
       setHasListen(false);
     }
-  }, [activeTrack]);
+  }, [activeTrack?.id]);
 
   const handleOpen = () => {
-    setIsOpenPlayer(!isOpenPlayer)
-  }
+    setIsOpenPlayer(!isOpenPlayer);
+  };
 
   return {
     activeTrack,
     handleOpen,
-    isOpenPlayer
-  }
-}
+    isOpenPlayer,
+  };
+};

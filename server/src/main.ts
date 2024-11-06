@@ -22,7 +22,19 @@ const start = async () => {
 			credentials: true,
 			origin: [process.env.CLIENT_URL, 'http://localhost:5173/'],
 			methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-			allowedHeaders: ['Content-Type', 'Authorization'],
+			allowedHeaders: [
+				'Content-Type', 
+				'Authorization', 
+				'Range', 
+				'X-Chunk-Duration', 
+				'Content-Range',
+				'Accept-Ranges',
+				'Content-Length',
+			],
+			exposedHeaders: [
+				'X-Chunk-Duration',
+				'Content-Range'
+			]
 		});
 		app.use((req, res, next) => {
 			console.log('Request:', req.method, req.url);

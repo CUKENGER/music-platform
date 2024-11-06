@@ -1,4 +1,4 @@
-import { DeleteContainer, ListensIcon } from '@/shared'
+import { DeleteContainer, ListensIcon, ModalContainer } from '@/shared'
 import { FC, memo } from 'react'
 import styles from './TrackItem.module.scss'
 import { CoverContainer, ITrack, NameContainer, useTrackItem, useUserStore } from '@/entities';
@@ -10,9 +10,9 @@ interface TrackItemProps {
 
 export const TrackItem: FC<TrackItemProps> = memo(({ item: track, itemList: trackList }) => {
 
-  const { clickPlay, handleDelete, isVisible} = useTrackItem(track, trackList)
+  const { clickPlay, handleDelete, isVisible, modal, hideModal} = useTrackItem(track, trackList)
 
-  const {isAdmin} = useUserStore()
+  const isAdmin = useUserStore(state => state.isAdmin)
 
   return (
     <div className={`${styles.container} ${isVisible && styles.visible}`} onClick={clickPlay}>
@@ -24,6 +24,7 @@ export const TrackItem: FC<TrackItemProps> = memo(({ item: track, itemList: trac
         <NameContainer
           name={track.name}
           artist={track.artist.name}
+          artistId={track.artist.id}
         />
       </div>
       <div className={styles.right_container}>
@@ -44,6 +45,12 @@ export const TrackItem: FC<TrackItemProps> = memo(({ item: track, itemList: trac
           </div>
         )}
       </div>
+      {modal.isOpen && (
+        <ModalContainer
+          hideModal={hideModal}
+          text={modal.message}
+        />
+      )}
     </div>
   )
 })

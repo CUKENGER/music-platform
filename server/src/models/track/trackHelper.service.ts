@@ -50,12 +50,24 @@ export class TrackHelperService {
   async deleteTrackFiles(track: Track): Promise<void> {
     if (track.picture) {
       const picturePath = path.resolve('static/', track.picture);
-      fs.unlinkSync(picturePath);
+      console.log('picturePath', picturePath);
+      
+      if (fs.existsSync(picturePath)) {
+        fs.unlinkSync(picturePath);
+      } else {
+        console.log(`Файл с изображением не найден: ${picturePath}`);
+      }
     }
-
+  
     if (track.audio) {
       const audioPath = path.resolve('static/', track.audio);
-      fs.unlinkSync(audioPath);
+      console.log('audioPath', audioPath);
+  
+      if (fs.existsSync(audioPath)) {
+        fs.unlinkSync(audioPath);
+      } else {
+        console.log(`Файл с аудио не найден: ${audioPath}`);
+      }
     }
   }
 

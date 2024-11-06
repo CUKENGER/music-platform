@@ -25,7 +25,11 @@ export const useCreateTrack = () => {
 export const useDeleteTrack = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<
+    ITrack,
+    AxiosError,
+    number
+  >({
     mutationFn: (trackId: number) => deleteTrack(trackId),
     mutationKey: ['track', 'delete'],
     onSuccess: () => {

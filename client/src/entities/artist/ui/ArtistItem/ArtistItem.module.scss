@@ -42,10 +42,15 @@
 }
 
 .name_container{
-  width: 100%;
   display: flex;
   justify-content: center;
   font-size: 17px;
+  p{
+    max-width: 195  px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .likes  {

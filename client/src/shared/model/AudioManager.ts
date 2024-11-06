@@ -1,7 +1,9 @@
-
 class AudioManager {
   private static instance: AudioManager;
   private _audio?: HTMLAudioElement;
+  private mediaSource?: MediaSource;
+  private sourceBuffer?: SourceBuffer;
+  private currentChunkIndex = 0;
 
   private constructor() {
     if (typeof window !== 'undefined') {
@@ -20,10 +22,21 @@ class AudioManager {
     return this._audio;
   }
 
-  public play(url: string): void {
-    if (this._audio) {
-      this._audio.src = url;
-      this._audio.play();
+  // Инициализация MediaSource и привязка к <audio>
+  public initializeMediaSource() {
+    this.mediaSource = new MediaSource();
+    this._audio!.src = URL.createObjectURL(this.mediaSource);
+    
+    this.mediaSource.addEventListener('sourceopen', () => {
+      this.sourceBuffer = this.mediaSource!.addSourceBuffer('audio/mpeg');
+    });
+  }
+
+  // Метод для добавления чанков аудио в буфер
+  public appendAudioChunk(data: ArrayBuffer) {
+    if (this.sourceBuffer && !this.sourceBuffer.updating) {
+      this.sourceBuffer.appendBuffer(data);
+      this.currentChunkIndex += 1;
     }
   }
 
@@ -44,4 +57,3 @@ const audioManager = AudioManager.getInstance();
 Object.freeze(audioManager);
 
 export default audioManager;
-
