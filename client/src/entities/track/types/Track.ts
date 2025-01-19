@@ -25,6 +25,16 @@ export interface CreateTrackDto {
   audio: File
 }
 
+export interface TrackUpdateState {
+  id?: number;
+  name: string;
+  text: string;
+  audio: File | null;
+  isUpdated: boolean,
+  isNew: boolean;
+  isExist: boolean
+}
+
 export interface TrackState {
   name: string;
   text: string;

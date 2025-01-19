@@ -1,12 +1,10 @@
 
-export type { ITrack, TrackState} from './track/types/Track'
+export type { ITrack, TrackState, TrackUpdateState} from './track/types/Track'
 
 export { default as usePlayerStore } from './track/model/PlayerStore'
 export { default as useTrackTimeStore } from './track/model/TrackTimeStore'
 export { default as useActiveTrackListStore} from './track/model/ActiveTrackListStore'
-export { default as usePlayTrack} from './track/model/usePlayTrack'
-export { useAudio} from './track/model/useAudio'
-export {useTrackList} from './track/model/useTrackList'
+export {usePlayTrack} from './track/model/usePlayTrack'
 export {mixTracks} from './track/model/mixTracks'
 export {useTrackItem} from './track/model/useTrackItem'
 
@@ -18,7 +16,14 @@ export {
   useDeleteTrack,
   useGetAllTracks,
   useGetOneTrack,
+  useGetAudioChunks,
+  useGetAllPopularTracks,
+  useGetLimitPopularTracks,
 } from './track/api/useTrackApi'
+
+export {
+  getLyrics
+} from './track/api/trackApi'
 
 export {NameContainer} from './track/ui/NameContainer/NameContainer'
 export {TrackItem} from './track/ui/TrackItem/TrackItem'
@@ -30,8 +35,9 @@ export {PlayPauseBtn} from './track/ui/PlayPauseBtn/PlayPauseBtn'
 export {MixIcon} from './track/ui/MixIcon/MixIcon'
 export {CoverContainer} from './track/ui/CoverContainer/CoverContainer'
 export {ChildrenTrack} from './track/ui/ChildrenTrack/ChildrenTrack'
+export {TrackForm} from './track/ui/TrackForm/TrackForm'
 
-export type {IAlbum} from './album/types/Album'
+export type {IAlbum, CreateAlbumDto} from './album/types/Album'
 
 export {
   useGetAllAlbums,
@@ -40,13 +46,21 @@ export {
   useAddLikeAlbum,
   useDeleteLikeAlbum,
   useGetCommentsAlbum,
-  useCreateAlbumComment
+  useCreateAlbumComment,
+  useDeleteAlbum, 
+  useGetAllPopularAlbums,
+  useGetLimitPopularAlbums,
+  useUpdateAlbum
 } from './album/api/useAlbumApi'
-
-export {useAlbumList} from './album/model/useAlbumList'
 
 export {AlbumItem} from './album/ui/AlbumItem/AlbumItem'
 export {AlbumInfo} from './album/ui/AlbumInfo/AlbumInfo'
+export {MainInfoInputs} from './album/ui/MainInfoInputs/MainInfoInputs'
+export {AlbumCoverInput} from './album/ui/AlbumCoverInput/AlbumCoverInput'
+export {TrackFormList} from './album/ui/TrackFormList/TrackFormList'
+export {MultipleInputAudio} from './album/ui/MultipleInputAudio/MultipleInputAudio'
+export {EditTrackFormList} from './album/ui/EditTrackFormList/EditTrackFormList'
+export {AlbumCommonForm} from './album/ui/AlbumCommonForm/AlbumCommonForm'
 
 
 export type {IArtist} from './artist/types/Artist'
@@ -59,10 +73,11 @@ export{
   useCreateArtist,
   useGetOneArtist,
   useSearchArtists,
-  useGetArtistsPopularTracks
+  useGetArtistsPopularTracks,
+  useDeleteArtist,
+  useUpdateArtist
 } from './artist/api/useArtistApi'
 
-export {useArtistList} from './artist/model/useArtistList'
 export {useUserStore} from './user/model/userStore'
 export {handleAuthError} from './user/model/handleAuthError'
 export {useAuthInterceptor} from './user/model/useAuthInterceptor'

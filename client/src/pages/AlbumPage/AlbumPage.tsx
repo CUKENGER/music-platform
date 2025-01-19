@@ -10,8 +10,6 @@ export const AlbumPage = () => {
 
   const {data: album, error, isError, isLoading} = useGetOneAlbum(Number(id))
 
-  console.log('album', album)
-
   if(isError) {
     showModal(`Произошла ошибка, попробуйте позже ${error.message}`, () => {
       navigate(PrivateRoutes.ALBUMS)

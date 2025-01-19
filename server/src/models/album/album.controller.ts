@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, InternalServerErrorException, Param, ParseIntPipe, Post, Query, Req, UnauthorizedException, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { AlbumService } from "./album.service";
 import { CreateAlbumDto } from "./dto/create-album.dto";
 import { CreateAlbumCommentDto } from "./dto/create-albumComment.dto";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { ApiOperation } from "@nestjs/swagger";
 import { ApiError } from "exceptions/api.error";
+import { UpdateAlbumDto } from "./dto/update-album.dto";
 
 
 @Controller('albums')
@@ -23,10 +24,25 @@ export class AlbumController {
 
   @Get()
   @ApiOperation({ summary: 'Получение всех альбомов с пагинацией' })
-  getAll(@Query('count') count?: number, @Query('cursor') offset?: number) {
-    return this.albumService.getAll(offset, count);
+  getAll(
+    @Query('page', ParseIntPipe) page: number = 0,
+    @Query('count', ParseIntPipe) count: number = 20,
+    @Query('sortBy') sortBy: string = 'Все',
+  ) {
+    return this.albumService.getAll(page, count, sortBy);
   }
 
+  @Get('limit_popular')
+  @ApiOperation({ summary: 'Получение популярных альбомов с ограничением' })
+  getLimitPopular() {
+    return this.albumService.getLimitPopular();
+  }
+
+  @Get('all_popular')
+  @ApiOperation({ summary: 'Получение всех популярных альбомов' })
+  getAllPopular() {
+    return this.albumService.getAllPopular();
+  }
 
   @Get('search')
   searchByName(
@@ -93,5 +109,22 @@ export class AlbumController {
     }
 
     return this.albumService.deleteLike(id, token)
+  }
+
+  @Put(':id')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'picture', maxCount: 1 },
+    ...Array.from({ length: 1000 }, (_, i) => ({ name: `tracks[${i}][audio]`, maxCount: 1 })),
+    {name: 'newTracks'}
+  ]))
+  update(
+    @Param('id', ParseIntPipe) id: number, 
+    @Body() dto: UpdateAlbumDto, 
+    @UploadedFiles() files) {
+    const { pictureFile, newTracks, ...tracks } = files;
+
+    const tracksFiles = Object.values(tracks).flat();
+
+    return this.albumService.update(id, dto, pictureFile, tracksFiles, newTracks)
   }
 }

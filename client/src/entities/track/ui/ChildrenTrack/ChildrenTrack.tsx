@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from 'react';
 import styles from './ChildrenTrack.module.scss'
-import { audioManager, LikeIcon, ListensIcon } from '@/shared';
+import { LikeIcon, ListensIcon } from '@/shared';
 import playIcon from './play.svg'
 import pauseIcon from './pause.svg'
-import { ITrack, useActiveTrackListStore, useAudio, usePlayerStore, usePlayTrack } from '@/entities';
+import { ITrack, useAddLikeTrack, useDeleteLikeTrack, usePlayerStore, usePlayTrack, useUserStore } from '@/entities';
 
 interface ChildrenTrackProps {
   track: ITrack;
@@ -11,24 +11,32 @@ interface ChildrenTrackProps {
   trackIndex: number
 }
 
-export const ChildrenTrack:FC<ChildrenTrackProps> = ({track, trackIndex, trackList}) => {
+export const ChildrenTrack: FC<ChildrenTrackProps> = ({ track, trackIndex, trackList }) => {
 
+  const [isLike, setIsLike] = useState(false)
+  const [localLikes, setLocalLikes] = useState(track.likes)
   const [isHover, setIsHover] = useState(false)
-  const { setActiveTrackList } = useActiveTrackListStore()
-  const { activeTrack } = usePlayerStore()
-  const { setAudio } = useAudio(trackList)
-  const audio = audioManager.audio
-  const { handlePlay } = usePlayTrack(track)
+  const activeTrack = usePlayerStore(state => state.activeTrack)
+  const { play } = usePlayTrack(track, trackList)
+  const { user } = useUserStore();
+
+  const { mutate: addLikeTrack } = useAddLikeTrack()
+  const { mutate: deleteLikeTrack } = useDeleteLikeTrack()
 
   useEffect(() => {
-    if (activeTrack?.id === track.id && audio) {
-      setAudio();
+    if (user && track.id) {
+      setIsLike(user?.likedTracks?.some((t) => t.id === track.id) || false)
     }
-  }, [activeTrack?.id, track.id, audio, setAudio]);
+  }, [user, track.id])
 
-  const clickPlay = async () => {
-    setActiveTrackList(trackList)
-    await handlePlay()
+  const handleLike = (id: number) => {
+    if (isLike) {
+      deleteLikeTrack(id)
+    } else {
+      addLikeTrack(id)
+    }
+    setIsLike(!isLike)
+    setLocalLikes(prev => isLike ? prev - 1 : prev + 1)
   }
 
   return (
@@ -36,7 +44,7 @@ export const ChildrenTrack:FC<ChildrenTrackProps> = ({track, trackIndex, trackLi
       className={styles.track}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      onClick={clickPlay}
+      onClick={play}
     >
       <div className={styles.trackMainInfo}>
         <div className={styles.trackIndexPlay}>
@@ -53,7 +61,7 @@ export const ChildrenTrack:FC<ChildrenTrackProps> = ({track, trackIndex, trackLi
                     <img src={pauseIcon} />
                   </div>
                 )
-                : (<p className={styles.trackIndex}>{trackIndex + 1}</p>)
+                : (<p>{trackIndex + 1}</p>)
             )
 
           }
@@ -62,7 +70,9 @@ export const ChildrenTrack:FC<ChildrenTrackProps> = ({track, trackIndex, trackLi
       </div>
       <div className={styles.trackDetails}>
         <LikeIcon
-          likes={track.likes}
+          isLike={isLike}
+          likes={localLikes}
+          onClick={() => handleLike(track.id)}
         />
         <ListensIcon
           listens={track.listens}

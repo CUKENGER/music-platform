@@ -50,15 +50,26 @@ export class TrackService {
       const newTrack = await this.prisma.track.create({
         data: {
           ...dto,
+          text: dto.text.trim() === '' ? 'Текст отсутствует' : dto.text,
           audio: audioPath,
           picture: imagePath,
           duration,
           artist: { connect: { id: artist.id } },
           album: { connect: { id: album.id } },
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       });
+
+      if (dto.featArtists && dto.featArtists.length > 0) {
+        for (const featArtistName of dto.featArtists) {
+          const featuredArtist = await this.trackHelperService.getOrCreateArtist(featArtistName, dto.genre, picture);
+          await this.prisma.featuredArtist.create({
+            data: {
+              artistId: featuredArtist.id,
+              trackId: newTrack.id,
+            },
+          });
+        }
+      }
 
       return newTrack;
     } catch (error) {
@@ -88,17 +99,34 @@ export class TrackService {
     return track;
   }
 
-  async getAll(page: number, count: number) {
+  async getAll(page: number, count: number, sortBy: string) {
     const limit = count;
     const offset = page * limit;
+    let orderBy: any = {};
+
+    switch (sortBy) {
+      case 'Все':
+        orderBy = { id: 'desc' };
+        break;
+      case 'По алфавиту':
+        orderBy = { name: 'asc' };
+        break;
+      case 'Популярные':
+        orderBy = { listens: 'desc' };
+        break;
+      default:
+        orderBy = { id: 'asc' };
+    }
+
     try {
       return await this.prisma.track.findMany({
         skip: offset,
         take: Number(limit),
+        orderBy: orderBy,
         include: {
           artist: true,
           album: true,
-        comments: true,
+          comments: true,
           likedByUsers: true,
           listenedByUsers: true,
         },
@@ -251,6 +279,43 @@ export class TrackService {
     });
 
     return await this.trackHelperService.getTrackWithLikes(trackId);
+  }
+
+  async getLimitPopular() {
+    try {
+      return await this.prisma.track.findMany({
+        take: 20,
+        orderBy: {
+          listens: 'asc'
+        },
+        include: {
+          artist: true,
+          album: true,
+          comments: true,
+          likedByUsers: true,
+          listenedByUsers: true,
+        },
+      });
+    } catch (e) {
+      console.error(`Error get limit popular tracks:`, e)
+    }
+  }
+
+  async getAllPopular() {
+    try {
+      return await this.prisma.track.findMany({
+        orderBy: { listens: 'asc' },
+        include: {
+          artist: true,
+          album: true,
+          comments: true,
+          likedByUsers: true,
+          listenedByUsers: true,
+        }
+      })
+    } catch (e) {
+      console.error('Error get all popular tracks:', e)
+    }
   }
 
 

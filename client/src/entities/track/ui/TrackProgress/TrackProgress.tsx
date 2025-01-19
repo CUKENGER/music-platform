@@ -1,5 +1,5 @@
 import { useTrackProgress } from '../../model/useTrackProgress';
-import { useCallback, CSSProperties } from 'react';
+import { useCallback } from 'react';
 import styles from './TrackProgress.module.scss';
 
 export const TrackProgress = () => {
@@ -8,21 +8,18 @@ export const TrackProgress = () => {
     handleMouseLeave,
     handleMouseOver,
     handleMouseMove,
-    x,
     duration,
     currentTime,
     changeCurrentTime,
-    inputDurationStyle
+    inputDurationStyle,
+    hoverTimeStyle,
+    loadedTime
   } = useTrackProgress();
 
   const onMouseOver = useCallback(handleMouseOver, [handleMouseOver]);
   const onMouseLeave = useCallback(handleMouseLeave, [handleMouseLeave]);
   const onMouseMove = useCallback(handleMouseMove, [handleMouseMove]);
   const onChangeTime = useCallback(changeCurrentTime, [changeCurrentTime, currentTime]);
-
-  const hoverTimeStyle: CSSProperties = {
-    left: `${x - 13}px`,
-  };
 
   return (
     <div className={styles.input_duration_container}>
@@ -31,7 +28,10 @@ export const TrackProgress = () => {
           {hoverTime}
         </div>
       )}
-
+      <div
+        className={styles.input_duration_fill}
+        style={{ width: `${(currentTime / duration) * 100}%` }}
+      ></div>
       <input
         onMouseOver={onMouseOver}
         onMouseLeave={onMouseLeave}
@@ -44,6 +44,8 @@ export const TrackProgress = () => {
         className={styles.input_duration}
         style={inputDurationStyle}
       />
+      <div className={styles.loadedTime} style={{ width: `${(loadedTime / duration) * 100}%` }}>
+      </div>
     </div>
   );
 };

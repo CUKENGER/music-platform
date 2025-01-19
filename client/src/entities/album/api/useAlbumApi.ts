@@ -1,15 +1,18 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addComment, addLike, create, deleteAlbum, deleteLike, getAll, getComments, getOne } from "./albumApi";
-import { CreateAlbumDto, IAlbum } from "../types/Album";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addComment, addLike, create, deleteAlbum, deleteLike, getAll, getAllPopular, getComments, getLimitPopular, getOne, updateAlbum } from "./albumApi";
+import { CreateAlbumDto, EditAlbumDto, IAlbum } from "../types/Album";
 import { CreateCommentDto, IComment } from "@/entities/comment/types/Comment";
 
-export const useGetAllAlbums = (count?: number, offset?: number) => {
-
-  return useQuery({
-    queryKey: ['albums', count, offset],
-    queryFn: () => getAll(count, offset),
-    // placeholderData: (prev) => prev,
-    placeholderData: keepPreviousData,
+export const useGetAllAlbums = (sortBy: string) => {
+  return useInfiniteQuery({
+    queryKey: ['albums', sortBy],
+    queryFn: ({ pageParam }) => getAll({ pageParam, sortBy }),
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.length ? pages.length : undefined
+    },
+    initialPageParam: 0,
+    placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5,
   });
 };
@@ -29,13 +32,12 @@ export const useCreateAlbum = () => {
   })
 }
 
-export const useGetOneAlbum = (id: number | undefined) => {
+export const useGetOneAlbum = (id: number) => {
 
   return useQuery({
     queryKey: ['albums', id],
     queryFn: () => getOne(id),
     placeholderData: (prev) => prev,
-    // placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
   });
 };
@@ -57,7 +59,7 @@ export const useCreateAlbumComment = () => {
 
   return useMutation({
     mutationFn: (dto: CreateCommentDto) => addComment(dto),
-    mutationKey: ['albums','comment','create'],
+    mutationKey: ['albums', 'comment', 'create'],
     onSuccess: (newComment) => {
       queryClient.setQueryData(['albums', 'comments', newComment?.albumId], (oldComments: IComment[] | undefined) => {
         return [...(oldComments || []), newComment];
@@ -103,7 +105,7 @@ export const useDeleteAlbum = () => {
   const queryClient = useQueryClient();
 
   return useMutation<IAlbum | null, Error, number | undefined>({
-    mutationFn: deleteAlbum,
+    mutationFn: (id: number | undefined) => deleteAlbum(id),
     mutationKey: ['album', 'delete'],
     onSuccess: (_deletedAlbum, albumId) => {
       if (!albumId) return;
@@ -120,3 +122,36 @@ export const useDeleteAlbum = () => {
     },
   });
 };
+
+export const useGetLimitPopularAlbums = () => {
+  return useQuery({
+    queryKey: ['albums', 'limit_popular'],
+    queryFn: getLimitPopular,
+    placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetAllPopularAlbums = () => {
+  return useQuery({
+    queryKey: ['albums', 'all_popular'],
+    queryFn: getAllPopular,
+    placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useUpdateAlbum = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { id: number | undefined; albumInfo: EditAlbumDto }) =>
+      updateAlbum(params.id, params.albumInfo),
+    mutationKey: ['album', 'update'],
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['albums'],
+      });
+    },
+  })
+}

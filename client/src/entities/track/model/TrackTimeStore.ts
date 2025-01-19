@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 interface TrackTimeStore{
   currentTime: number;
-  duration: string | number
+  duration: string | number;
   setCurrentTime: (time: number) => void;
   setDuration: (duration: number) => void
 }

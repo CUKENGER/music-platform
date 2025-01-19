@@ -9,8 +9,9 @@ interface NavNextTrackItemProps {
 
 export const NavNextTrackItem: FC<NavNextTrackItemProps> = ({ track }) => {
 
-  const {handlePlay} = usePlayTrack(track)
-  const {activeTrack} = usePlayerStore()
+  const activeTrack = usePlayerStore(state => state.activeTrack)
+
+  const {play} = usePlayTrack(track)
 
   return (
     <Reorder.Item
@@ -24,12 +25,13 @@ export const NavNextTrackItem: FC<NavNextTrackItemProps> = ({ track }) => {
       <div className={styles.container}>
         <div className={styles.left_container}>
           <CoverContainer
-            handlePlay={handlePlay}
+            handlePlay={play}
             track={track}
           />
           <NameContainer
             artist={track.artist.name}
             name={track.name}
+            artistId={track.artist.id}
           />
         </div>
         <div className={styles.right_container}>

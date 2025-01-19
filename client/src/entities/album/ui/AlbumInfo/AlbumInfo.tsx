@@ -1,8 +1,8 @@
 import { PrivateRoutes, Btn, ApiUrl, Portal, ListensIcon, LikeIcon, Loader } from '@/shared'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styles from './AlbumInfo.module.scss'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { ChildrenTrack, IAlbum, useAddLikeAlbum, useDeleteLikeAlbum, useGetOneAlbum, useOpenCommentsStore, useUserStore } from '@/entities'
+import { ChildrenTrack, IAlbum, useAddLikeAlbum, useDeleteAlbum, useDeleteLikeAlbum, useGetOneAlbum, useOpenCommentsStore, useUserStore } from '@/entities'
 import classNames from 'classnames'
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -18,13 +18,16 @@ export const AlbumInfo: FC<AlbumInfoProps> = ({ album }) => {
   const [localLikes, setLocalLikes] = useState<number>(album?.likes ?? 0);
   const [isExpanded, setIsExpanded] = useState(false)
   const [hasGradient, setHasGradient] = useState(false);
-  
+
   const { isOpen: isCommentsOpen, setIsOpen: setIsCommentsOpen } = useOpenCommentsStore()
   const { user } = useUserStore();
 
+  const navigate = useNavigate()
+
   const { mutate: addLike } = useAddLikeAlbum()
   const { mutate: deleteLike } = useDeleteLikeAlbum()
-  const { refetch, isLoading, isError } = useGetOneAlbum(album?.id)
+  const { refetch, isLoading, isError } = useGetOneAlbum(album?.id ?? 1)
+  const { mutate: deleteAlbum } = useDeleteAlbum()
   const descriptionRef = useRef<HTMLDivElement>(null);
 
   const formattedDate = album && format(new Date(album?.releaseDate), 'd MMMM yyyy', { locale: ru });
@@ -79,8 +82,19 @@ export const AlbumInfo: FC<AlbumInfoProps> = ({ album }) => {
     }
   }, [album?.id, isLike, deleteLike, addLike, refetch]);
 
-  if(isLoading) {
-    return <Loader/>
+  const handleDeleteAlbum = () => {
+    deleteAlbum(album?.id, {
+      onSuccess: () => {
+        navigate(PrivateRoutes.ALBUMS + '/' + album?.id)
+      },
+      onError: (error) => {
+        console.error('Error deleting album:', error);
+      }
+    })
+  }
+
+  if (isLoading) {
+    return <Loader />
   }
 
   if (isError || !album) {
@@ -97,12 +111,19 @@ export const AlbumInfo: FC<AlbumInfoProps> = ({ album }) => {
   return (
     <div className={styles.albumInfo}>
       <div className={styles.header}>
-        <Link to={PrivateRoutes.ALBUMS}>
-          <Btn small={true}>Назад</Btn>
-        </Link>
-        <Btn small={true}>
-          Изменить
+        <Btn small={true} onClick={() => navigate(-1)}>
+          Назад
         </Btn>
+        <div className={styles.edit_btn}>
+          <Btn small={true} onClick={handleDeleteAlbum}>
+            Удалить
+          </Btn>
+          <Link to={PrivateRoutes.ALBUMS + `/${album?.id}/edit`}>
+            <Btn small={true}>
+              Изменить
+            </Btn>
+          </Link>
+        </div>
       </div>
       <div className={styles.albumDetails}>
         <div className={styles.albumCover}>
@@ -115,7 +136,7 @@ export const AlbumInfo: FC<AlbumInfoProps> = ({ album }) => {
             styles.albumDescription,
             { [styles.expanded]: isExpanded },
             { [styles.hasGradient]: hasGradient }
-            )}
+          )}
             ref={descriptionRef}
           >
             <p>
@@ -166,6 +187,7 @@ export const AlbumInfo: FC<AlbumInfoProps> = ({ album }) => {
       </div>
       <Btn small={true} onClick={() => setIsCommentsOpen(!isCommentsOpen)}>
         Комментарии
+        <span>({album?.comments.length})</span>
       </Btn>
       {
         isCommentsOpen && (

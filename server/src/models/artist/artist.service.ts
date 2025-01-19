@@ -14,9 +14,15 @@ export class ArtistService {
     private fileService: FileService,
   ) { }
 
-  async create(dto: CreateArtistDto, picture: Express.Multer.File) {
+  async create(dto: CreateArtistDto, picture: Express.Multer.File | string) {
     await this.ensureArtistDoesNotExist(dto.name);
-    const imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
+
+    let imagePath
+    if(picture as Express.Multer.File) {
+      imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
+    } else {
+      imagePath = picture
+    }
 
     return await this.prisma.artist.create({
       data: {
@@ -43,24 +49,41 @@ export class ArtistService {
         tracks: true
       }
     });
-
   }
 
-  async getAllCount(count?: number) {
+  async getAllPage(page: number, count: number, sortBy: string) {
+    const limit = count;
+    const offset = page * limit;
+    let orderBy: any = {};
+
+    switch (sortBy) {
+      case 'Все':
+        orderBy = { id: 'asc' };
+        break;
+      case 'По алфавиту':
+        orderBy = { name: 'asc' };
+        break;
+      case 'Популярные':
+        orderBy = { listens: 'desc' };
+        break;
+      default:
+        orderBy = { id: 'asc' };
+    }
+
     try {
-      const limit = count ? Number(count) : 20;
       return await this.prisma.artist.findMany({
-        take: limit,
+        skip: offset,
+        take: Number(limit),
+        orderBy: orderBy,
         include: {
+          tracks: true,
+          albums: true,
           comments: true,
           likedByUsers: true,
-          albums: true,
-          tracks: true
-        }
+        },
       });
-    } catch(e) {
-      console.error(`Error get artists: ${e}`);
-      throw new InternalServerErrorException(`Error get artists: ${e}`)
+    } catch (e) {
+      console.error(`Error get All artists:`, e)
     }
   }
 
@@ -145,9 +168,12 @@ export class ArtistService {
   async updateArtist(id: number, newData: Partial<UpdateArtistDto>, picture: Express.Multer.File) {
     let imagePath
     if (picture) {
+      console.log('picture', picture)
       imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
       newData.picture = imagePath;
     }
+
+    console.log('newData', newData)
 
     return await this.prisma.artist.update({
       where: { id },

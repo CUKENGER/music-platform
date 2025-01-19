@@ -1,4 +1,4 @@
-import { Btn,Input, InputFile, ModalContainer, Options, PrivateRoutes, Textarea} from '@/shared'
+import { Btn, Input, InputFile, ModalContainer, Options, PrivateRoutes, Textarea } from '@/shared'
 import styles from './CreateArtistForm.module.scss'
 import { Link } from 'react-router-dom'
 import { useCreateArtistForm } from '../model/useCreateArtistForm'
@@ -8,7 +8,7 @@ export const CreateArtistForm = () => {
   const {
     name,
     description,
-    options, 
+    options,
     setOptions,
     genre,
     setPicture,
@@ -21,18 +21,18 @@ export const CreateArtistForm = () => {
   } = useCreateArtistForm()
 
   return (
-    <div className={styles.CreateArtistForm}>
+    <form className={styles.CreateArtistForm} onSubmit={handleSubmit}>
       <Link to={PrivateRoutes.ARTISTS}>
-        <Btn small={true}> 
-            Назад
+        <Btn small={true}>
+          Назад
         </Btn>
       </Link>
       <div className={styles.main_container}>
         <div className={styles.inputs_container}>
           <Input
-              inputValue={name}
-              placeholder='Введите имя исполнителя'
-            />
+            inputValue={name}
+            placeholder='Введите имя исполнителя'
+          />
           <Textarea
             inputValue={description}
             placeholder='Введите описание исполнителя'
@@ -70,6 +70,6 @@ export const CreateArtistForm = () => {
         />
       )}
 
-    </div>
+    </form>
   )
 }

@@ -3,7 +3,7 @@ import styles from './SelectFilter.module.scss';
 import DropDownArrow from './assets/DropDownArrow.svg';
 import DropDownArrowActive from './assets/DropDownArrowActive.svg';
 import classNames from 'classnames';
-import { useSelectFilterStore } from '@/features';
+import { useSelectFilterStore } from '@/shared';
 
 interface SelectFilterProps {
   options: string[];

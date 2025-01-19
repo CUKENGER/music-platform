@@ -1,7 +1,7 @@
-import { ApiUrl, Btn, LikeIcon, ListensIcon, Loader } from '@/shared'
+import { ApiUrl, Btn, LikeIcon, ListensIcon, Loader, PrivateRoutes } from '@/shared'
 import styles from './ArtistPage.module.scss'
-import { ChildrenTrack, useGetOneArtist } from '@/entities'
-import { Link, useParams } from 'react-router-dom'
+import { ChildrenTrack, useGetOneArtist, useDeleteArtist } from '@/entities'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
 
@@ -10,9 +10,11 @@ export const ArtistPage = () => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [hasGradient, setHasGradient] = useState(false);
   const { id } = useParams()
+  const navigate = useNavigate()
   const descriptionRef = useRef<HTMLDivElement>(null);
   
   const { data: artist, isLoading, isError, error } = useGetOneArtist(Number(id))
+  const { mutate: deleteArtist } = useDeleteArtist(Number(id))
 
   useEffect(() => {
     if (descriptionRef.current) {
@@ -20,6 +22,17 @@ export const ArtistPage = () => {
       setHasGradient(isLongDescription && !isExpanded);
     }
   }, [artist?.description, isExpanded]);
+
+  const handleDeleteArtist = () => {
+    deleteArtist(undefined, {
+      onSuccess: () => {
+        navigate(PrivateRoutes.ARTISTS)
+      },
+      onError: (error: Error) => {
+        console.log(error)
+      }
+    })
+  }
 
   if (isLoading) {
     return <Loader />
@@ -35,6 +48,21 @@ export const ArtistPage = () => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.header_btn}>
+        <Btn small={true} onClick={() => navigate(-1)}>
+          Назад
+        </Btn>
+        <div className={styles.edit_btn}>
+          <Btn small={true} onClick={handleDeleteArtist}>
+            Удалить
+          </Btn>
+          <Link to={PrivateRoutes.ARTISTS + '/' + id + '/edit'}>
+            <Btn small={true}>
+              Изменить
+            </Btn>
+          </Link>
+        </div>
+      </div>
       <div className={styles.main_container}>
         <div className={styles.cover}>
           <img src={ApiUrl + artist?.picture} />

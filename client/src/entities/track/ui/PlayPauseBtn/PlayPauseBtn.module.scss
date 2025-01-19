@@ -16,9 +16,16 @@
   }
 }
 
-@media(max-width:400px) {
+@media(max-width:600px) {
   .circle{
     width: 35px;
     height: 35px;
+  }
+}
+
+@media(max-width:400px) {
+  .circle{
+    width: 30px;
+    height: 30px;
   }
 }

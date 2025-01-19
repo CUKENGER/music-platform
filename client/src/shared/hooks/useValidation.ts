@@ -1,15 +1,5 @@
 import { useEffect, useState } from "react";
-
-export interface Validations {
-  isEmpty?: boolean;
-  isEmail?: boolean;
-  isPasswordStrong?: boolean;
-  isLatin?: boolean;
-  isLength?: { min: number; max: number };
-  repeatPassword?: string;
-  isPassEqual?: boolean;
-  isLengthValid?: boolean
-}
+import { Validations } from "../types/UseInputProps";
 
 export const useValidation = (value: string, validations: Validations) => {
   const [isEmpty, setIsEmpty] = useState(true);

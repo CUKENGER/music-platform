@@ -30,7 +30,7 @@ export const VolumeBar = () => {
         value={volume}
         onChange={changeVolume}
         className={styles.input_volume}
-        style={{ '--value': `${volume}%` } as React.CSSProperties} // Простое вычисление напрямую
+        style={{ '--value': `${volume}%` } as React.CSSProperties}
       />
     </div>
   );

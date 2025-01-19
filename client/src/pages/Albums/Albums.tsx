@@ -1,15 +1,15 @@
-import { AlbumItem, useAlbumList } from "@/entities";
+import { AlbumItem, useGetAllAlbums } from "@/entities";
 import { PrivateRoutes } from "@/shared";
-import { ItemList } from "@/widgets";
 import styles from './Albums.module.scss'
+import { EntityList } from "@/widgets/EntityList/EntityList";
 
 export const Albums = () => {
   return (
-    <ItemList 
+    <EntityList 
+      EntityItem={AlbumItem}
+      getAll={useGetAllAlbums}
+      toCreate={PrivateRoutes.CREATE_ALBUM}
       className={styles.AlbumList}
-      useItemListHook={useAlbumList} 
-      ItemComponent={AlbumItem} 
-      createRoute={PrivateRoutes.CREATE_ALBUM} 
     />
   );
 }

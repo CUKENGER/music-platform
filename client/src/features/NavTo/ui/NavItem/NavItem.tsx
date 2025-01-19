@@ -1,6 +1,7 @@
 import { FC, memo } from "react";
 import styles from './NavItem.module.scss'
 import { useNavigate } from "react-router-dom";
+import { useNavBarStore } from "@/shared/model/NavBarStore";
 
 interface RouteItemProps{
   icon: string;
@@ -10,6 +11,8 @@ interface RouteItemProps{
 
 const RouteItem:FC<RouteItemProps> = ({icon, title, path}) => {
 
+  const {setIsMenuOpen} = useNavBarStore()
+
   const navigate = useNavigate()
 
   const pathName = window.location.pathname
@@ -17,6 +20,7 @@ const RouteItem:FC<RouteItemProps> = ({icon, title, path}) => {
   const handleClick = () => {
     if (path !==pathName) {
       navigate(path)
+      setIsMenuOpen(false)
     }
   }
 

@@ -1,7 +1,7 @@
 import styles from './AlbumComments.module.scss'
 import { FC, useMemo } from 'react'
-import { CloseIcon, Loader } from '@/shared'
-import { SelectFilter, useSelectFilterStore } from '@/features'
+import { CloseIcon, Loader, useSelectFilterStore } from '@/shared'
+import { SelectFilter} from '@/features'
 import { CommentItem, CommentSend, sortComments, useGetCommentsAlbum, useOpenCommentsStore } from '@/entities'
 import { AnimatePresence, motion } from 'framer-motion';
 

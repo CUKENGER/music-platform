@@ -2,9 +2,9 @@
 
 .comments {
   position: fixed;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  left: 200px;
+  width: calc(100vw - 200px);
+  height: calc(100vh - 15px);
   background-color: var(--bg);
   padding: 5px;
   display: flex;
@@ -45,6 +45,14 @@
   align-items: center;
   justify-content: center;
 }
+
+@media(max-width: 768px) {
+  .comments{
+    left: 0;
+    width: 100vw;
+  }
+} 
+
 
 
 

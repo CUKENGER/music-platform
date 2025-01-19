@@ -1,21 +1,24 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { CreateAlbumDto } from "./dto/create-album.dto";
+import * as fsNot from 'fs';
 import { ArtistService } from "models/artist/artist.service";
 import { AudioService } from "models/audioService/audioService.service";
-import { PrismaService } from "prisma/prisma.service";
+import { FileService, FileType } from "models/file/file.service";
 import * as path from 'path';
-import * as fs from 'fs/promises';
-import * as fsNot from 'fs'
+import { PrismaService } from "prisma/prisma.service";
+import { CreateAlbumDto } from "./dto/create-album.dto";
+import { UpdateAlbumDto, UpdateAlbumTracksDto } from "./dto/update-album.dto";
+import { IAlbum } from "./types/Album";
 
 @Injectable()
 export class AlbumHelperService {
   constructor(
     private artistService: ArtistService,
     private audioService: AudioService,
-    private prisma: PrismaService
+    private prisma: PrismaService,
+    private fileService: FileService
   ) { }
 
-  async findOrCreateArtist(dto: CreateAlbumDto, files, prisma): Promise<any> {
+  async findOrCreateArtist(dto: CreateAlbumDto, picture: Express.Multer.File | string, prisma): Promise<any> {
     let artist = await prisma.artist.findFirst({
       where: { name: dto.artist },
       include: { tracks: true, albums: true },
@@ -27,7 +30,7 @@ export class AlbumHelperService {
         genre: dto.genre,
         description: '',
       };
-      artist = await this.artistService.create(artistDto, files.picture);
+      artist = await this.artistService.create(artistDto, picture);
     }
     return artist;
   }
@@ -59,7 +62,7 @@ export class AlbumHelperService {
         data: {
           name: dto.track_names[i],
           artistId: artistId,
-          text: dto.track_texts[i],
+          text: dto.track_texts[i].trim() ? dto.track_texts[i] : 'Текст отсутствует',
           audio: tracksPath[i],
           picture: imagePath,
           genre: dto.genre,
@@ -73,9 +76,10 @@ export class AlbumHelperService {
   }
 
   async updateAlbumDuration(albumId: number, totalDuration: number, prisma): Promise<void> {
+    console.log('albumId', albumId)
     const formattedDuration = this.formatDuration(totalDuration);
     await prisma.album.update({
-      where: { id: albumId },
+      where: { id: Number(albumId) },
       data: { duration: formattedDuration },
     });
   }
@@ -88,7 +92,15 @@ export class AlbumHelperService {
 
   // to listen
   async getAlbumById(id: number) {
-    const album = await this.prisma.album.findUnique({ where: { id } });
+    const album = await this.prisma.album.findUnique({
+      where: { id },
+      include: {
+        tracks: true,
+        comments: true,
+        artist: true,
+        likedByUsers: true,
+      }
+    });
     if (!album) {
       throw new NotFoundException(`Album with id ${id} not found`);
     }
@@ -130,23 +142,23 @@ export class AlbumHelperService {
     try {
       if (picture) {
         const picturePath = path.resolve('static/', picture);
-        
+
         if (fsNot.existsSync(picturePath)) {
           fsNot.unlinkSync(picturePath);
         } else {
           console.log(`Файл с изображением не найден: ${picturePath}`);
         }
       }
-    } catch(e){
+    } catch (e) {
       console.error(`Error deleteAlbumPicture: ${e}`);
       throw new InternalServerErrorException(`Error deleteAlbumPicture: ${e}`)
     }
-    
+
   }
 
   private async deleteAlbumTracks(tracks) {
     try {
-      if(tracks) {
+      if (tracks) {
         for (const track of tracks) {
           if (track.audio) {
             const audioPath = path.resolve('static/', track.audio);
@@ -157,7 +169,7 @@ export class AlbumHelperService {
           await this.prisma.track.delete({ where: { id: track.id } });
         }
       }
-    } catch(e) {
+    } catch (e) {
       console.error(`Error deleteAlbumTracks: ${e}`);
       throw new InternalServerErrorException(`Error deleteAlbumTracks: ${e}`)
     }
@@ -165,12 +177,12 @@ export class AlbumHelperService {
 
   private async deleteAlbumComments(comments) {
     try {
-      if(comments) {
+      if (comments) {
         for (const comment of comments) {
           await this.prisma.comment.delete({ where: { id: comment.id } });
         }
       }
-    } catch(e) {
+    } catch (e) {
       console.error(`Error deleteAlbumComments: ${e}`);
       throw new InternalServerErrorException(`Error deleteAlbumComments: ${e}`)
     }
@@ -178,7 +190,6 @@ export class AlbumHelperService {
 
   // to likes
   async findUserByToken(token: string) {
-    console.log('token', token);
     const user = await this.prisma.user.findFirst({
       where: {
         tokens: {
@@ -195,7 +206,7 @@ export class AlbumHelperService {
   async getAlbumWithLikes(albumId: number) {
     const album = await this.prisma.album.findUnique({
       where: { id: albumId },
-      include: { likedByUsers: true },
+      include: { likedByUsers: true, tracks: true },
     });
     if (!album) throw new NotFoundException('Album not found');
     return album;
@@ -203,6 +214,7 @@ export class AlbumHelperService {
 
   async updateAlbumLikes(albumId: number, userId: number, increment: number) {
     await this.prisma.$transaction(async (prisma) => {
+
       await prisma.album.update({
         where: { id: albumId },
         data: {
@@ -215,6 +227,37 @@ export class AlbumHelperService {
     });
   }
 
+  async updateAlbumTracksLikes(albumId: number, userId: number, increment: number) {
+    try {
+      const tracks = await this.prisma.track.findMany({
+        where: { albumId },
+        include: { likedByUsers: true },
+      });
+
+      await this.prisma.$transaction(async (prisma) => {
+        for (const track of tracks) {
+          if (track.likedByUsers.some((likedUser) => likedUser.id === userId)) {
+            continue;
+          }
+
+          const currentLikes = track.likes;
+          const newLikes = increment > 0 ? currentLikes + increment : Math.max(currentLikes - 1, 0);
+
+          await prisma.track.update({
+            where: { id: track.id },
+            data: {
+              likedByUsers: { connect: { id: userId } },
+              likes: newLikes,
+            },
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error updating album tracks likes:', error);
+      throw error;
+    }
+  }
+
   async getAlbumWithLikeCount(albumId: number) {
     return await this.prisma.album.findUnique({
       where: { id: albumId },
@@ -225,18 +268,142 @@ export class AlbumHelperService {
     });
   }
 
-  validateLikeOperation(album, userId: number, isLike: boolean) {
+  validateLikeOperation(album: IAlbum, userId: number, isLike: boolean) {
     const isLiked = album.likedByUsers.some((likedUser) => likedUser.id === userId);
     if (isLike && isLiked) throw new BadRequestException('Album already liked by this user');
     if (!isLike && !isLiked) throw new BadRequestException('Album not liked by this user');
   }
 
-  handleLikeError(error: any, operation: string) {
+  handleLikeError(error: Error, operation: string) {
     console.error(`Error ${operation}:`, error);
     if (error instanceof NotFoundException || error instanceof BadRequestException) {
       throw error;
     } else {
       throw new InternalServerErrorException(`Error ${operation} to album`);
+    }
+  }
+
+  // to update
+
+  async findOrCreateArtistForUpdateAlbum(dto: Partial<UpdateAlbumDto>, picture: Express.Multer.File | string, prisma): Promise<any> {
+    let artist = await prisma.artist.findFirst({
+      where: { name: dto.artist },
+      include: { tracks: true, albums: true },
+    });
+
+    if (!artist) {
+      const artistDto = {
+        name: dto.artist,
+        genre: dto.genre,
+        description: '',
+      };
+      artist = await this.artistService.create(artistDto, picture);
+    }
+    return artist;
+  }
+
+  async handleDeletedTracks(dto: Partial<UpdateAlbumDto>, album: IAlbum) {
+    if (dto.deletedTracks && dto.deletedTracks.length > 0) {
+      const tracksToDelete = album.tracks.filter(track =>
+        dto.deletedTracks.some(deletedTrack => deletedTrack.id === track.id)
+      );
+      const tracksPathsToDelete = tracksToDelete.map(track => track.audio);
+      this.fileService.cleanupFiles(tracksPathsToDelete);
+
+      await this.prisma.track.deleteMany({
+        where: { id: { in: dto.deletedTracks.map(track => Number(track.id)) } },
+      });
+    }
+  }
+
+  async handleNewTracks(
+    id: number,
+    newTracksFiles: Express.Multer.File[], 
+    tracksDto: UpdateAlbumTracksDto[], 
+    albumToUpdate: IAlbum, 
+    dto: Partial<UpdateAlbumDto>, 
+    picturePath: string, 
+    prisma
+  ) {
+    if (!newTracksFiles?.length || !tracksDto) {
+      return;
+    }
+
+    try {
+      const tracksPath = await this.fileService.createTracks(newTracksFiles);
+      let totalDuration = 0;
+      const newTracksDto = tracksDto.filter(track => track.isNew === 'true');
+
+      console.log("newTracksDto", newTracksDto)
+
+      for (let i = 0; i < newTracksDto.length; i++) {
+        const duration = await this.audioService.getAudioDuration(tracksPath[i]);
+        totalDuration += await this.audioService.getAudioDurationInNum(tracksPath[i]);
+
+        await prisma.track.create({
+          data: {
+            name: newTracksDto[i].name,
+            audio: tracksPath[i],
+            picture: picturePath || albumToUpdate.picture,
+            genre: dto.genre || albumToUpdate.genre,
+            duration,
+            text: newTracksDto[i].text || 'Текст отсутствует',
+            artist: { connect: { id: albumToUpdate.artistId } },
+            album: { connect: { id } },
+          },
+        });
+      }
+
+      await this.updateAlbumDuration(albumToUpdate.id, totalDuration, prisma);
+      return tracksPath;
+    } catch (e) {
+      console.log('e', e)
+      throw e
+    }
+  }
+
+  async handleTrackUpdates(
+    tracksDto: UpdateAlbumTracksDto[], 
+    dto: Partial<UpdateAlbumDto>, 
+    albumToUpdate: IAlbum, 
+    prisma, 
+    tracksFiles: Express.Multer.File[]
+  ) {
+    if (!tracksDto?.length) return;
+
+    try {
+      const tracksToUpdate = tracksDto.filter(track =>
+        track.id &&
+        (track.isUpdated === 'true')
+      );
+
+      for (const trackDto of tracksToUpdate) {
+        let audioPath = null
+        const trackFile = tracksFiles.find(file => file.fieldname === `tracks[${trackDto.id}][audio]`);
+
+        if (trackFile) {
+          audioPath = await this.fileService.createFile(FileType.AUDIO, trackFile);
+          const oldTrack = await prisma.track.findUnique({
+            where: { id: Number(trackDto.id) },
+          })
+          this.fileService.cleanupFile(oldTrack.audio);
+        }
+        await prisma.track.update({
+          where: { id: Number(trackDto.id) },
+          data: {
+            name: trackDto.name,
+            text: trackDto.text,
+            genre: dto.genre || albumToUpdate.genre,
+            ...(audioPath && {
+              audio: audioPath,
+              duration: await this.audioService.getAudioDuration(audioPath)
+            })
+          }
+        });
+      }
+    } catch (e) {
+      console.error(`Error update tracks: ${e}`)
+      throw e
     }
   }
 }

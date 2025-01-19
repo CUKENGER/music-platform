@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { ForwardedRef, forwardRef, useState } from 'react';
 import styles from './AlbumItem.module.scss'
 import { ApiUrl, Menu, MenuItem, ModalContainer, useModal} from '@/shared';
 import { Link } from 'react-router-dom';
@@ -10,12 +10,12 @@ interface AlbumItemProps {
   itemList: IAlbum[];
 }
 
-export const AlbumItem:FC<AlbumItemProps> = ({item: album}) => {
+const AlbumItemComponent = ({ item: album }: AlbumItemProps, ref: ForwardedRef<HTMLDivElement>) => {
 
   const [isHover, setIsHover]= useState(false)
   const {hideModal, modal, showModal} = useModal()
   const {isAdmin} = useUserStore()
-  const {mutate: deleteAlbum} = useDeleteAlbum()
+  const {mutate: deleteAlbum} = useDeleteAlbum(album.id)
 
   const handleDelete = () => {
     deleteAlbum(album.id, {
@@ -34,6 +34,7 @@ export const AlbumItem:FC<AlbumItemProps> = ({item: album}) => {
 
   return (
     <div 
+      ref={ref}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
       className={styles.AlbumItem}
@@ -68,3 +69,5 @@ export const AlbumItem:FC<AlbumItemProps> = ({item: album}) => {
     </div>
   )
 }
+
+export const AlbumItem = forwardRef(AlbumItemComponent);

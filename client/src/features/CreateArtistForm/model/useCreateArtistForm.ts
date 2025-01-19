@@ -3,7 +3,6 @@ import { useInput, genres, useModal, PrivateRoutes } from "@/shared"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-
 interface ErrorResponse {
   response: {
     data: {
@@ -19,7 +18,7 @@ export const useCreateArtistForm = () => {
   const description = useInput('', { isEmpty: true })
   const [picture, setPicture] = useState<File | null>(null)
   const [options, setOptions] = useState(genres)
-  const {hideModal, modal, showModal} = useModal()
+  const { hideModal, modal, showModal } = useModal()
   const navigate = useNavigate()
 
   const hasData = !!(
@@ -29,7 +28,7 @@ export const useCreateArtistForm = () => {
     picture
   );
 
-  const {isPending: isLoading, mutate: createArtist} = useCreateArtist()
+  const { isPending: isLoading, mutate: createArtist } = useCreateArtist()
 
   const handleSubmit = () => {
     if (!hasData) {
@@ -46,17 +45,17 @@ export const useCreateArtistForm = () => {
 
     createArtist(artistDto, {
       onSuccess: (res) => {
-        showModal(`Артист ${res.name} успешно создан`,() => {
+        showModal(`Артист ${res.name} успешно создан`, () => {
           navigate(PrivateRoutes.ARTISTS)
         })
       },
       onError: (e: ErrorResponse | Error) => {
         if ('response' in e && e.response?.data?.message) {
           showModal(`Произошла ошибка: ${e.response.data.message}`);
-        } 
+        }
         else if (e instanceof Error) {
           showModal(`Произошла ошибка: ${e.message}`);
-        } 
+        }
         else {
           showModal('Произошла неизвестная ошибка');
         }
@@ -68,7 +67,7 @@ export const useCreateArtistForm = () => {
   return {
     name,
     description,
-    options, 
+    options,
     setOptions,
     genre,
     setPicture,

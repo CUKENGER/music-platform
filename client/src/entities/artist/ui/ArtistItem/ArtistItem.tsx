@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ForwardedRef, forwardRef } from 'react';
 import styles from './ArtistItem.module.scss'
 import { ApiUrl, LikeIcon, ListensIcon } from '@/shared';
 import { IArtist } from '@/entities';
@@ -9,13 +9,13 @@ interface ArtistItemProps {
   itemList: IArtist[]
 }
 
-export const ArtistItem: FC<ArtistItemProps> = ({item: artist}) => {
+const ArtistItemComponent = ({item: artist} : ArtistItemProps, ref: ForwardedRef<HTMLDivElement>) => {
 
   return (
-    <div className={styles.ArtistItem}>
+    <div ref={ref} className={styles.ArtistItem}>
       <Link to={`${artist.id}`}>
         <div className={styles.cover}>
-          <img className={styles.cover_img} src={ApiUrl + artist.picture}/>
+          <img src={ApiUrl + artist.picture}/>
         </div>
       </Link>
       <Link to={`${artist.id}`}>
@@ -35,3 +35,5 @@ export const ArtistItem: FC<ArtistItemProps> = ({item: artist}) => {
     </div>
   )
 }
+
+export const ArtistItem = forwardRef(ArtistItemComponent)

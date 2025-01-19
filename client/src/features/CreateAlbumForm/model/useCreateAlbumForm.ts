@@ -1,85 +1,68 @@
-import { TrackState, useCreateAlbum } from "@/entities";
-import { CreateAlbumDto } from "@/entities/album/types/Album";
-import { useModal, useInput, genres, useDebounce, PrivateRoutes } from "@/shared";
-import { useState } from "react";
+import { TrackState, useCreateAlbum, CreateAlbumDto } from "@/entities";
+import {PrivateRoutes, useDebounce, useModal } from "@/shared";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
+export type CreateAlbumInputs = {
+  name: string;
+  artist: string;
+  genre: string;
+  description: string;
+  cover?: File | null;
+  releaseDate: Date | string | undefined;
+  tracks?: TrackState[];
+}
+
 export const useCreateAlbumForm = () => {
-
-  const [tracks, setTracks] = useState<TrackState[]>([
-    { name: '', text: '', audio: null },
-  ]);
-
   const navigate = useNavigate()
 
   const { modal, showModal, hideModal } = useModal()
 
-  const name = useInput('', { isEmpty: true })
-  const artist = useInput('', { isEmpty: true })
-  const genre = useInput('', { isEmpty: true })
-  const description = useInput('', { isEmpty: true })
-  const [cover, setCover] = useState<File | null>(null)
-  const [options, setOptions] = useState(genres)
-  const [releaseDate, setReleaseDate] = useState<Date | undefined>(undefined)
+  const {
+    handleSubmit,
+    formState: {
+      isValid
+    },
+    setValue,
+    control,
+    getValues
+  } = useForm<CreateAlbumInputs>({});
+  const values = getValues();
 
-  const debouncedArtist = useDebounce(artist.value, 500);
+  const debouncedArtist = useDebounce(values.artist, 500);
 
   const { isPending, mutate: createAlbum } = useCreateAlbum()
 
-  const addTrackForm = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setTracks((prevTracks) => [...prevTracks, { name: '', text: '', audio: null }]);
-  };
-
-  const updateTrack = (index: number, field: keyof TrackState, value: string | File | null) => {
-    setTracks((prevTracks) => {
-      const newTracks = [...prevTracks];
-      newTracks[index] = {
-        ...newTracks[index],
-        [field]: value,
-      };
-      return newTracks;
-    });
-  };
-
-  const removeTrack = (index: number) => {
-    setTracks((prevTracks) => prevTracks.filter((_, i) => i !== index));
-  };
-
   const hasData = !!(
-    name.value.trim() &&
-    artist.value.trim() &&
-    genre.value.trim() &&
-    description.value.trim() &&
-    releaseDate &&
-    cover &&
-    tracks.length > 0 &&
-    tracks.every(track => track.name.trim() && track.text.trim() && track.audio)
+    values.name &&
+    values.artist &&
+    values.genre &&
+    values.releaseDate &&
+    values.cover &&
+    values.tracks?.length &&  values.tracks?.length > 0 &&
+    values.tracks.every(track => track.name.trim() && track.audio)
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit: SubmitHandler<CreateAlbumInputs> = (data) => {
     if (!hasData) {
       showModal('Заполните все данные, пожалуйста')
       return
     }
 
-    const track_names = tracks.map(track => track.name);
-    const track_texts = tracks.map(track => track.text);
+    const track_names = values.tracks?.map(track => track.name) || [];
+    const track_texts = values.tracks?.map(track => track.text) || [];
 
     const albumData: CreateAlbumDto = {
-      name: name.value,
-      artist: artist.value,
-      genre: genre.value,
-      description: description.value,
-      picture: cover as File,
-      tracks: tracks,
+      name: values.name,
+      artist: values.artist,
+      genre: values.genre,
+      description: values.description,
+      picture: values.cover as File,
+      tracks: values.tracks || [],
       track_names: track_names,
       track_texts: track_texts,
-      releaseDate: releaseDate?.toISOString()
+      releaseDate: values.releaseDate instanceof Date ? values.releaseDate.toISOString() : values.releaseDate as string
     };
-
 
     createAlbum(albumData, {
       onSuccess: (res) => {
@@ -91,25 +74,32 @@ export const useCreateAlbumForm = () => {
     });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (selectedFiles && selectedFiles.length > 0) {
+      const newTracks = Array.from(selectedFiles).map(file => ({
+        name: file.name.split('.').slice(0, -1).join('.').replace(/^[\d\s\-.,_]+/g, '').trim().replace(/^\w/, (c) => c.toUpperCase()),
+        text: '',
+        audio: file,
+      }));
+      setValue('tracks', newTracks);
+    }
+  };
+
+  const addTrackForm = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const prevTracks = getValues('tracks') || []
+    setValue('tracks', [...prevTracks, { name: '', text: '', audio: null }]);
+  };
+
   return {
     handleSubmit,
-    name,
-    artist,
-    description,
-    releaseDate,
-    setReleaseDate,
-    options, 
-    setOptions,
-    genre,
-    setCover,
-    cover,
-    tracks,
-    updateTrack,
-    removeTrack,
-    addTrackForm,
+    onSubmit,
     isPending,
     modal,
-    debouncedArtist,
-    hideModal
+    hideModal,
+    handleFileChange,
+    hasData,
+    debouncedArtist
   }
 }

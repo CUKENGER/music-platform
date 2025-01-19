@@ -26,8 +26,7 @@ export const useRegUser = () => {
 
   return useMutation<RegUserResponse, unknown, CreateUserDto>({
     mutationFn: regUser,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'], exact: true });
     },
     onError: (error: unknown) => {

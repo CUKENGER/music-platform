@@ -3,7 +3,7 @@ import { useState, useCallback, ChangeEvent } from "react";
 import usePlayerStore from "./PlayerStore";
 
 export const useVolumeBar = () => {
-  const audio = audioManager.audio;
+  const audio = audioManager.getAudio()
   const [isMute, setIsMute] = useState(false);
   const [prevVolume, setPrevVolume] = useState(50);
 
@@ -40,5 +40,5 @@ export const useVolumeBar = () => {
     isMute,
     volume,
     changeVolume,
-  };
+  };  
 };

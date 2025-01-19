@@ -1,8 +1,9 @@
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addLike, addListen, create, deleteLike, deleteTrack, getAll, getOne } from "./trackApi";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addLike, addListen, create, deleteLike, deleteTrack, getAll, getAllPopular, getAudioChunks, getLimitPopular, getOne } from "./trackApi";
 import { CreateTrackDto, ITrack } from "../types/Track";
 import { AxiosError } from "axios";
+import { useEffect, useState } from "react";
 
 export const useCreateTrack = () => {
   const queryClient = useQueryClient();
@@ -59,7 +60,7 @@ export const useAddLikeTrack = () => {
 
   return useMutation({
     mutationFn: (trackId: number) => addLike(trackId),
-    mutationKey: ['track', 'like'],
+    mutationKey: ['tracks', 'like'],
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['tracks'],
@@ -73,7 +74,7 @@ export const useAddListenTrack = () => {
 
   return useMutation({
     mutationFn: (trackId: number) => addListen(trackId),
-    mutationKey: ['track', 'listen'],
+    mutationKey: ['tracks', 'listen'],
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['tracks'],
@@ -82,24 +83,81 @@ export const useAddListenTrack = () => {
   });
 };
 
-export const useGetAllTracks = (page = 0, count = 20) => {
-  return useQuery({
-    queryKey: ['tracks', page],
-    queryFn: () => getAll( page, count ),
+// export const useGetAllTracks = (page = 0, count = 20) => {
+//   return useQuery({
+//     queryKey: ['tracks', page],
+//     queryFn: () => getAll( page, count ),
+//     placeholderData: (prev) => prev,
+//     staleTime: 1000 * 60 * 5,
+//   });
+// };
+
+export const useGetAllTracks = (sortBy: string) => {
+  return useInfiniteQuery({
+    queryKey: ['tracks', sortBy],
+    queryFn: ({ pageParam }) => getAll({ pageParam, sortBy }),
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.length ? pages.length : undefined
+    },
+    initialPageParam: 0,
     placeholderData: (prev) => prev,
-    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 };
 
 // placeholderData: (prev) => prev,
-
-
 export const useGetOneTrack = (trackId: number) => {
   return useQuery({
     queryKey: ['track', trackId],
     queryFn: () => getOne(trackId),
   });
 };
+
+export const useGetAudioChunks = (filename: string, start: number, end: number) => {
+  const [isRangeError, setIsRangeError] = useState(false);
+
+  useEffect(() => {
+    setIsRangeError(false);
+  }, [filename]);
+
+  return useQuery({
+    queryKey: ['audioChunks', filename, start, end],
+    queryFn: async () => {
+      try {
+        return await getAudioChunks(filename, start, end);
+      } catch (error) {
+        if (error instanceof Error && error.message === 'Range not satisfiable') {
+          setIsRangeError(true);
+          throw error;
+        }
+        throw error;
+      }
+    },
+    enabled: !!filename && !isRangeError,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: false
+  });
+};
+
+export const useGetLimitPopularTracks = () => {
+  return useQuery({
+    queryKey: ['tracks', 'limit_popular'],
+    queryFn: getLimitPopular,
+    placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetAllPopularTracks = () => {
+  return useQuery({
+    queryKey: ['tracks', 'all_popular'],
+    queryFn: getAllPopular,
+    placeholderData: (prev) => prev,
+    refetchOnWindowFocus: false,
+  });
+}
+
 
 
 

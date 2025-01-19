@@ -1,15 +1,6 @@
 import { ChangeEvent, useState } from "react";
-import  { useValidation, Validations } from "./useValidation";
-
-export interface UseInputProps extends Validations {
-  value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onBlur: () => void;
-  isDirty: boolean;
-  setValue: (s: string) => void;
-  isEmailValid: boolean;
-  isPassEqual: boolean;
-}
+import  { useValidation} from "./useValidation";
+import { Validations } from "../types/UseInputProps";
 
 export const useInput = (initialValue: string, validations: Validations, repeatValue?: string) => {
   const [value, setValue] = useState(initialValue);

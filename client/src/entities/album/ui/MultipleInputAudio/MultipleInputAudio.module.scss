@@ -1,0 +1,33 @@
+
+
+.inputAudio_container {
+  width: 50%;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.InputAudio {
+  display: none;
+}
+
+.LabelAudio {
+  padding: 10px;
+  color: var(--white);
+  background-color: var(--prm);
+  cursor: pointer;
+  display: flex;
+  border-radius: 10px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+  position: relative;
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: normal;
+  flex-wrap: wrap;
+}

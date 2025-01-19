@@ -2,9 +2,10 @@
 
 .track {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   color: var(--gray);
-  justify-content: space-between;
   padding: 10px;
   border-radius: 10px;
   cursor: pointer;
@@ -24,6 +25,7 @@
 .trackDetails{
   display: flex;
   column-gap: 30px;
+  align-items: center;
 }
 
 .trackListens{
@@ -41,13 +43,10 @@
 }
 
 .trackIndexPlay{
-  width: 40px;
-}
-
-.trackIndex{
-  width: 23px;
-  height: 23px;
-  padding-left: 5px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .trackPlay{

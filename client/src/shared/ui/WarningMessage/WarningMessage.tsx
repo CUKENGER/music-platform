@@ -10,7 +10,9 @@ export const WarningMessage:FC<WarningMessageProps> = ({text}) => {
   return (
     <div className={styles.WarningMessage}>
       <ExclamIcon isRed={true}/>
-      {text}
-      </div>
+      <p className={styles.text}>
+        {text}
+      </p>
+    </div>
   );
 };

@@ -4,7 +4,7 @@ import styles from './NavText.module.scss'
 
 export const NavText = () => {
 
-  const {activeTrack} = usePlayerStore()
+  const activeTrack = usePlayerStore(state => state.activeTrack)
   const lines = activeTrack?.text.split('\n')
 
   return (

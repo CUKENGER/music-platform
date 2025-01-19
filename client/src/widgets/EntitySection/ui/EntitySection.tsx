@@ -1,10 +1,13 @@
-import React from 'react';
 import styles from './EntitySection.module.scss';
 import { SectionArrow } from './assets/SectionArrow/SectionArrow';
 import { Btn } from '@/shared';
 import { useEntitySection } from '../model/useEntitySection';
 
-const EntitySection: React.FC = () => {
+interface EntitySectionProps{
+  title: string
+}
+
+const EntitySection = ({title} : EntitySectionProps) => {
   
   const {
     prevSlide,
@@ -18,8 +21,8 @@ const EntitySection: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <p>Title</p>
-        <div>
+        <p>{title}</p>
+        <div className={styles.controls_container}>
           <Btn small={true}>Ещё</Btn>
           <div className={styles.controls_arrows}>
             <SectionArrow
@@ -29,7 +32,7 @@ const EntitySection: React.FC = () => {
             />
             <SectionArrow
               onClick={nextSlide}
-              isDisabled={currentSlide >= totalSlides - slidesPerPage}
+              isDisabled={currentSlide >= Math.ceil(totalSlides - slidesPerPage)}
             />
           </div>
         </div>
@@ -38,7 +41,6 @@ const EntitySection: React.FC = () => {
       <div
         className={styles.slider}
         ref={sliderRef}
-        style={{ overflowX: 'scroll', scrollSnapType: 'x mandatory' }}
       >
         <div className={styles.slidesWrapper}>
           {[...Array(totalSlides)].map((_, index) => (

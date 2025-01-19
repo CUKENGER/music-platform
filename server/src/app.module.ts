@@ -18,6 +18,7 @@ import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AudioController } from 'models/audio/audio.controller';
+import { PlaylistModule } from 'models/playlist/playlist.module';
 
 @Module({
   imports: [
@@ -44,7 +45,8 @@ import { AudioController } from 'models/audio/audio.controller';
     LyricsModule,
     HttpModule,
     FileModule,
-    AudioModule
+    AudioModule,
+    PlaylistModule
   ],
   controllers: [AudioController],
   providers: [],

@@ -22,8 +22,12 @@ export class ArtistController {
 
   @Get()
   @ApiOperation({ summary: 'Получение всех артистов с пагинацией' })
-  async getAllCount(@Query('count', ParseIntPipe) count: number) {
-    return await this.artistService.getAllCount(count);
+  getAllPage(
+    @Query('page', ParseIntPipe) page: number = 0, 
+		@Query('count', ParseIntPipe) count: number = 20, 
+		@Query('sortBy') sortBy: string = 'Все',
+  ) {
+    return this.artistService.getAllPage(page, count, sortBy);
   }
 
   @Get('/all')

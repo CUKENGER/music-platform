@@ -42,7 +42,7 @@ export class FileService {
       return type + '/' + fileName;
     } catch (e) {
       console.error(`Error creating file: ${e.message}`);
-      throw new InternalServerErrorException('Failed to create file');
+      // throw new InternalServerErrorException('Failed to create file');
     }
   }
 
@@ -78,7 +78,7 @@ export class FileService {
     return tracksPaths;
   }
 
-  cleanupFiles(tracks: string[], coverPath: string): void {
+  cleanupFiles(tracks: string[], coverPath?: string): void {
     try {
       if (coverPath) {
         const fullCoverPath = path.resolve(__dirname, '../../../../static', coverPath);

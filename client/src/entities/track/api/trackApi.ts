@@ -1,13 +1,14 @@
 import { apiRequest, axiosInstance } from "@/shared"
 import { CreateTrackDto, ITrack } from "../types/Track";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
-export const getAll = async (page: number = 0, count: number = 20): Promise<ITrack[]> => {
+export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<ITrack[]> => {
   try {
     const response = await axiosInstance.get('tracks', {
       params: {
-        page: page,
-        count: count,
+        page: pageParam,
+        count: 20,
+        sortBy: sortBy,
       },
     });
     return response.data;
@@ -21,29 +22,29 @@ export const getAll = async (page: number = 0, count: number = 20): Promise<ITra
 };
 
 export const getOne = async (trackId: number): Promise<ITrack | null> => {
-  return apiRequest<ITrack>('get', `tracks/${trackId}`, {id: trackId});
+  return apiRequest<ITrack>('get', `tracks/${trackId}`, { id: trackId });
 }
 
 export const addLike = async (id: number): Promise<ITrack | null> => {
-  return apiRequest<ITrack>('post', `tracks/${id}/like`, {id});
+  return apiRequest<ITrack>('post', `tracks/${id}/like`, { id });
 }
 
 export const deleteLike = async (id: number): Promise<ITrack | null> => {
-  return apiRequest<ITrack>('delete', `tracks/${id}/like`, {id});
+  return apiRequest<ITrack>('delete', `tracks/${id}/like`, { id });
 }
 
 export const addListen = async (id: number): Promise<ITrack | null> => {
-  return apiRequest<ITrack>('post', `tracks/${id}/listen`, {id});
+  return apiRequest<ITrack>('post', `tracks/${id}/listen`, { id });
 }
 
 export const deleteTrack = async (id: number): Promise<ITrack> => {
-  return apiRequest<ITrack>('delete', `tracks/${id}`, {id});
+  return apiRequest<ITrack>('delete', `tracks/${id}`, { id });
 }
 
 export const create = async (trackInfo: CreateTrackDto): Promise<ITrack> => {
   try {
     const formData = new FormData();
-    
+
     formData.append('name', trackInfo.name);
     formData.append('artist', trackInfo.artist);
     formData.append('text', trackInfo.text);
@@ -67,4 +68,85 @@ export const create = async (trackInfo: CreateTrackDto): Promise<ITrack> => {
     }
   }
 };
+
+export const getAudioChunks = async (filename: string, start: number, end: number) => {
+  try {
+    const response = await axiosInstance.get(`/audio/${filename}`, {
+      headers: { Range: `bytes=${start}-${end}` },
+      responseType: 'arraybuffer',
+    });
+    const contentRange = response.headers['content-range'];
+    if (!contentRange) {
+      throw new Error('Content-Range header is missing');
+    }
+    const totalSize = contentRange.split('/')[1];
+    const fileSize = parseInt(totalSize, 10);
+    if ('x-chunk-duration' in response.headers && fileSize) {
+      const chunkDurationStr = response.headers['x-chunk-duration'];
+      const chunkDuration = parseInt(chunkDurationStr, 10);
+      return { data: response.data, chunkDuration, fileSize };
+    } else {
+      console.error('X-Chunk-Duration header missing');
+      return { data: response.data, chunkDuration: NaN };
+    }
+  } catch (e) {
+    console.log('error audioChunks get ', e)
+    if (e instanceof AxiosError && e.response?.status === 416) {
+      throw new Error('Range not satisfiable');
+    }
+    if (axios.isAxiosError(e)) {
+      throw e;
+    } else {
+      throw new Error('Неизвестная ошибка');
+    }
+  }
+}
+
+export const getLimitPopular = async (): Promise<ITrack[]> => {
+  try {
+    const response = await axiosInstance.get('tracks/limit_popular');
+    return response.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      throw e;
+    } else {
+      throw new Error('Неизвестная ошибка');
+    }
+  }
+}
+
+export const getAllPopular = async (): Promise<ITrack[]> => {
+  try {
+    const response = await axiosInstance.get('tracks/all_popular');
+    return response.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      throw e;
+    } else {
+      throw new Error('Неизвестная ошибка');
+    }
+  }
+}
+
+export const getLyrics = async (name: string, artist: string): Promise<string> => {
+  try {
+
+    let lyricsResponse
+
+    const response = await axiosInstance.get('lyrics/search', {
+      params: { track_name: name, artist_name: artist }
+    });
+
+    if (response.data.track_id) {
+      lyricsResponse = await axiosInstance.get(`lyrics?track_id=${response.data.track_id}`);
+    }
+    return lyricsResponse?.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      throw e;
+    } else {
+      throw new Error('Неизвестная ошибка');
+    }
+  }
+}
 

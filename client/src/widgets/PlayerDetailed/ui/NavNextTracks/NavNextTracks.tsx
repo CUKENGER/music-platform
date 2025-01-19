@@ -15,7 +15,6 @@ export const NavNextTracks = () => {
           values={activeTrackList}
           onReorder={(newValues: ITrack[]) => setActiveTrackList(newValues)}
         >
-
           {activeTrackList.map((track) => (
             <NavNextTrackItem
               key={track.id}

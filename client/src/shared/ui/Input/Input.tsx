@@ -1,50 +1,53 @@
-import { FC, InputHTMLAttributes, useCallback, useId } from 'react'
-import styles from './Input.module.scss'
+import { FC, InputHTMLAttributes, useCallback, useId, useState } from 'react';
 import { ExclamIcon } from '../assets/ExclamIcon/ExclamIcon';
 import { ClearIcon } from '../assets/ClearIcon/ClearIcon';
-import { UseInputProps } from '@/shared/hooks/useInput';
+import styles from './Input.module.scss';
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement>{
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
-  inputValue: UseInputProps
 }
 
-export const Input:FC<InputProps> = ({inputValue, placeholder, ...inputProps}) => {
-
-  const id = useId()
+export const Input: FC<InputProps> = ({ placeholder, ...props }) => {
+  const id = useId();
+  const [value, setValue] = useState(props.value);
 
   const handleClear = useCallback(() => {
-    if (inputValue.setValue) {
-      inputValue.setValue('');
+    if (props.onChange) {
+      const event = {
+        target: {
+          value: '',
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
+      props.onChange(event);
     }
-  }, [inputValue]);
-
-  if (!inputValue) {
-    console.error("Input component: 'inputValue' is undefined or null.");
-    return null;
-  }
+  }, [props]);
 
   return (
     <div className={styles.container}>
       <label htmlFor={`inputString-${id}`} className={styles.label}>
         {placeholder}
       </label>
-      {inputValue.isEmpty 
-      ? <div className={styles.exclam_container}>
-          <ExclamIcon/> 
+      {value === '' ? (
+        <div className={styles.exclam_container}>
+          <ExclamIcon />
         </div>
-      : <ClearIcon handleClear={handleClear} />
-      }
+      ) : (
+        <ClearIcon handleClear={handleClear} />
+      )}
       <input
         id={`inputString-${id}`}
         className={styles.input}
-        aria-invalid={inputValue.isEmpty}
+        aria-invalid={value === ''}
         aria-label={placeholder}
-        onBlur={inputValue.onBlur}
-        onChange={inputValue.onChange}
-        value={inputValue.value}
-        {...inputProps}
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+          if (props.onChange) {
+            props.onChange(e);
+          }
+        }}
+        {...props}
       />
     </div>
-  )
-}
+  );
+};

@@ -1,39 +1,15 @@
-import { TrackItem, useTrackList } from '@/entities';
-import { Loader, PrivateRoutes} from '@/shared';
-import { PageHeader } from '@/widgets';
+import { TrackItem, useGetAllTracks } from "@/entities"
+import { EntityList } from "@/widgets/EntityList/EntityList"
 import styles from './Tracks.module.scss'
+import { PrivateRoutes } from "@/shared"
 
 export const Tracks = () => {
-
-  const { items, isLoading, error, isError } = useTrackList();
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (isError) {
-    return <p>{error?.message}</p>;
-  }
-
   return (
-    // <ItemList 
-    //   className={styles.TrackList}
-    //   useItemListHook={useTrackList} 
-    //   ItemComponent={TrackItem} 
-    //   createRoute={PrivateRoutes.CREATE_TRACK} 
-    // />
-    <div className={styles.ItemList}>
-      <PageHeader toCreate={PrivateRoutes.CREATE_TRACK} />
-      <div className={styles.TrackList}>
-        {items.map((item) => (
-          <TrackItem
-            key={item.id}
-            itemList={items}
-            item={item}
-          />
-        ))}
-      </div>
-    </div>
-  );
+    <EntityList
+      EntityItem={TrackItem}
+      className={styles.TrackList}
+      getAll={useGetAllTracks}
+      toCreate={PrivateRoutes.CREATE_TRACK}
+    />
+  )
 }
-

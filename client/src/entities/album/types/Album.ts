@@ -1,4 +1,4 @@
-import { IArtist, ITrack, TrackState } from "@/entities";
+import { IArtist, IComment, ITrack, TrackState, TrackUpdateState } from "@/entities";
 
 export interface IAlbum {
   id: number;
@@ -12,6 +12,7 @@ export interface IAlbum {
   picture: string;
   releaseDate: string;
   duration: string;
+  comments: IComment[];
   tracks: [] | ITrack[]
 }
 
@@ -22,6 +23,19 @@ export interface CreateAlbumDto {
   tracks: TrackState[];
   track_names: string[];
   track_texts: string[]
+  genre: string
+  description: string;
+  releaseDate: string
+}
+
+export interface EditAlbumDto {
+  artist: string
+  name: string;
+  picture?: string | File | undefined | null;
+  tracks: TrackUpdateState[];
+  track_names: string[];
+  track_texts: string[];
+  deletedTracks: TrackUpdateState[];
   genre: string
   description: string;
   releaseDate: string

@@ -164,6 +164,11 @@
   align-items: center;
 }
 
+.edit_btn{
+  display: flex;
+  column-gap: 10px;
+}
+
 @media(max-width: 800px) {
   .albumTitle,
   .albumArtist {
@@ -179,6 +184,11 @@
 }
 
 @media(max-width: 500px) {
+
+  .albumInfo{
+    padding-bottom: 20px;
+  }
+
   .albumTitle,
   .albumArtist {
     font-size: 13px;

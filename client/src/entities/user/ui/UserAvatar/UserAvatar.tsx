@@ -42,9 +42,9 @@ export const UserAvatar: FC = () => {
         <div className={styles.name_container}>
           <p>{isLoading ? 'Loading...' : user?.username}</p>
         </div>
-      </div>
-      <div className={styles.menu}>
-        <Menu items={items} />
+        <div className={styles.menu}>
+          <Menu items={items} />
+        </div>  
       </div>
     </div>
   );

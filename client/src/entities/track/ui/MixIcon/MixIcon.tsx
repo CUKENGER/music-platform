@@ -5,7 +5,8 @@ import mixFillIcon from './assets/mixFillIcon.svg';
 import { ITrack, mixTracks, useActiveTrackListStore } from "@/entities";
 
 export const MixIcon = () => {
-  const { activeTrackList, setActiveTrackList } = useActiveTrackListStore();
+  const activeTrackList = useActiveTrackListStore(state => state.activeTrackList);
+  const setActiveTrackList = useActiveTrackListStore(state => state.setActiveTrackList);
 
   const [state, setState] = useState({
     prevTrackList: null as ITrack[] | null,
@@ -14,18 +15,18 @@ export const MixIcon = () => {
 
   const handleMix = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
-
+  
     if (activeTrackList) {
       setState((prevState) => {
         const { isMix, prevTrackList } = prevState;
-
+  
         if (isMix && prevTrackList) {
-          setActiveTrackList(prevTrackList);
+          setTimeout(() => setActiveTrackList(prevTrackList), 0);
           return { prevTrackList: null, isMix: false };
         } else {
           const mixedTrackList = !prevTrackList ? mixTracks(activeTrackList) : activeTrackList;
-          setActiveTrackList(mixedTrackList);
-
+          setTimeout(() => setActiveTrackList(mixedTrackList), 0);
+  
           return {
             prevTrackList: prevTrackList || activeTrackList,
             isMix: !isMix,

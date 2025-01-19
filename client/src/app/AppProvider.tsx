@@ -3,17 +3,15 @@ import { FC, ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
 
 interface AppProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
-export const AppProvider:FC<AppProviderProps> = ({children}) => {
+export const AppProvider: FC<AppProviderProps> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        {children}
-      </BrowserRouter>
+      <BrowserRouter>{children}</BrowserRouter>
     </QueryClientProvider>
-  )
-} 
+  );
+};

@@ -7,7 +7,7 @@ import { usePlayerStore } from "@/entities";
 import React from "react";
 
 export const PlayPauseBtn: FC = React.memo(() => {
-  const audio = audioManager.audio;
+  const audio = audioManager.getAudio()
 
   const pause = usePlayerStore(state => state.pause);
   const setPlay = usePlayerStore(state => state.setPlay);

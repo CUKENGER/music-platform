@@ -27,7 +27,7 @@
   width: 100%;
   flex-wrap: wrap;
   gap: 5px;
-  height: 200px;
+  max-height: 200px;
   overflow: hidden;
   overflow-y: auto;
 }

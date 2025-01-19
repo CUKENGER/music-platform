@@ -1,0 +1,57 @@
+
+.form{
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.container{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.inputs_container{
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.picture_container{
+  width: 40%;
+  height: 70%;
+  display: flex;
+  justify-content: center;
+}
+
+.picture_input_container{
+  width: 225px;
+  height: 225px;
+  object-fit: cover;
+}
+
+@media(max-width: 700px) {
+  .picture_container{
+    height: auto;
+  }
+}
+
+@media(max-width: 600px) {
+  .container{
+    flex-direction: column-reverse;
+    justify-content: baseline;
+    width: 100%;
+    row-gap: 10px;
+  }
+
+  .inputs_container,
+  .picture_container{
+    width: 100%;
+  }
+
+  .picture_input_container{
+    width: 190px;
+    height: 190px;
+  }
+}

@@ -1,33 +1,34 @@
-import { Input, useDebounce, UseInputProps } from '@/shared';
+import { Input, useDebounce} from '@/shared';
 import styles from './SearchArtistInput.module.scss';
-import { ChangeEvent, FC, useState } from 'react';
+import { ChangeEvent, Dispatch, FC, SetStateAction, useState } from 'react';
 import { useSearchArtists } from '@/entities';
 
 interface SearchArtistInputProps {
-  artist: UseInputProps;
+  artist: string;
+  setArtist: Dispatch<SetStateAction<string>>
 }
 
-export const SearchArtistInput: FC<SearchArtistInputProps> = ({ artist }) => {
+export const SearchArtistInput: FC<SearchArtistInputProps> = ({ artist, setArtist }) => {
   const [showResults, setShowResults] = useState(true)
 
-  const debouncedArtist = useDebounce(artist.value, 500);
+  const debouncedArtist = useDebounce(artist, 500);
   const { data: searchArtists } = useSearchArtists(debouncedArtist);
 
   const handleArtistChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newSearchArtist = e.target.value;
-    artist.setValue(newSearchArtist);
+    setArtist(newSearchArtist);
     setShowResults(true);
   };
 
   const handleArtistSelect = (selectedArtistName: string) => {
-    artist.setValue(selectedArtistName);
+    setArtist(selectedArtistName);
     setShowResults(false);
   };
 
   return (
     <div>
       <Input
-        inputValue={artist}
+        value={artist}
         onChange={handleArtistChange}
         placeholder="Введите или найдите исполнителя"
         className={`${styles.input} ${searchArtists && searchArtists.length > 0 && showResults ? styles.input_active : ''}`}

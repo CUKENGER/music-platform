@@ -10,6 +10,8 @@ import { UserService } from "models/user/user.service";
 import { RoleService } from "models/role/role.service";
 import { JwtService } from "@nestjs/jwt";
 import { FileService } from "models/file/file.service";
+import { TrackService } from "models/track/track.service";
+import { TrackHelperService } from "models/track/trackHelper.service";
 
 @Module({
     imports: [],
@@ -24,7 +26,10 @@ import { FileService } from "models/file/file.service";
         UserService,
         RoleService,
         JwtService,
-        FileService
+        FileService,
+        TrackService,
+        TrackHelperService,
+        AudioService
     ]
 })
 export class AlbumModule {}

@@ -33,6 +33,20 @@ export class TrackController {
 		return await this.trackService.create(dto, picture, audio)
 	}
 
+	@Get('limit_popular')
+	@ApiOperation({ summary: 'Получение популярных треков с ограничением' })
+	getLimitPopular() {
+		console.log('член')
+		return this.trackService.getLimitPopular();
+	}
+
+	@Get('all_popular')
+	@ApiOperation({ summary: 'Получение всех популярных треков' })
+	getAllPopular() {
+		console.log('член')
+		return this.trackService.getAllPopular();
+	}
+
 	@Get('search')
 	@ApiOperation({ summary: 'Поиск треков' })
 	searchByName(@Query('query') query: string,
@@ -49,8 +63,12 @@ export class TrackController {
 
 	@Get()
 	@ApiOperation({ summary: 'Получение всех треков с пагинацией' })
-	getAll(@Query('page', ParseIntPipe) page: number = 0, @Query('count', ParseIntPipe) count: number = 20) {
-		return this.trackService.getAll(page, count);
+	getAll(
+		@Query('page', ParseIntPipe) page: number = 0, 
+		@Query('count', ParseIntPipe) count: number = 20,
+		@Query('sortBy') sortBy: string = 'Все',
+	) {
+		return this.trackService.getAll(page, count, sortBy);
 	}
 
 	@Delete(':id')

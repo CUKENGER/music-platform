@@ -24,7 +24,7 @@
     height: 100%;
     border-radius: 10px;
     object-fit: cover;
-    transition: filter 0.3s ease;
+    transition: filter 0.2s ease;
 
     &:hover{
       filter: brightness(80%);
@@ -86,4 +86,32 @@
 .cover,
 .artist{
   cursor: pointer;
+}
+
+@media(max-width: 920px) {
+  .cover{
+    width: 150px;
+    height: 150px;
+  }
+
+  .name,
+  .artist{
+    max-width: 140px;
+  } 
+
+  .AlbumItem{
+    padding: 5px;
+  }
+}
+
+@media(max-width: 550px) {
+  .cover{
+    width: 120px;
+    height: 120px;
+  }
+
+  .name,
+  .artist{
+    max-width: 110px;
+  } 
 }

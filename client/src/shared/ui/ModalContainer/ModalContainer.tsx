@@ -1,6 +1,7 @@
 import { FC, ReactNode } from "react";
 import styles from './ModalContainer.module.scss'
-import krestIcon from './krest.svg'
+import closeIcon from './krest.svg'
+import { Btn } from "../Btn/Btn";
 
 interface ModalContainerProps {
   text: string | ReactNode;
@@ -23,22 +24,24 @@ export const ModalContainer: FC<ModalContainerProps> = ({ text, hideModal, onCli
 
   return (
     <div className={`${styles.overlay} ${styles.visible}`} onClick={handleClose}>
-      <div className={styles.container} onClick={handleNotClose}>
+      <div className={`${styles.container} ${styles.visible_container}`} onClick={handleNotClose}>
         <div className={styles.x_container}>
-          <img
-            className={styles.x_icon}
-            onClick={handleClose}
-            src={krestIcon}
-            alt='close'
-          />
+          <div className={styles.x_icon_container}>
+            <img
+              className={styles.x_icon}
+              onClick={handleClose}
+              src={closeIcon}
+              alt='close'
+            />
+          </div>
         </div>
         <div className={styles.main_container}>
           <p className={styles.text}>{text}</p>
         </div>
         <div className={styles.btn_container}>
-          <button onClick={handleClose}>
+          <Btn onClick={handleClose} small={true}>
             Закрыть
-          </button>
+          </Btn>
         </div>
       </div>
     </div>

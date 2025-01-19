@@ -2,15 +2,19 @@ import React, { FC, useCallback } from "react";
 import styles from './SwitchTrackBtns.module.scss';
 import nextBtnBg from './nextBtnBg.svg';
 import prevBtnBg from './prevBtnBg.svg';
-import { useActiveTrackListStore, usePlayerStore } from "@/entities";
+import { useActiveTrackListStore, usePlayerStore, useTrackTimeStore } from "@/entities";
+import { audioManager } from "@/shared";
+import useAudioChunkStore from "../../model/AudioChunkStore";
 
 interface SwitchTrackBtnsProps {
   isNextBtn: boolean;
 }
 
 export const SwitchTrackBtns: FC<SwitchTrackBtnsProps> = React.memo(({ isNextBtn }) => {
-  const activeTrack = usePlayerStore(state => state.activeTrack);
-  const setActiveTrack = usePlayerStore(state => state.setActiveTrack);
+  const chunkSize = 1000000
+  const {activeTrack, setPlay, setActiveTrack} = usePlayerStore()
+  const {setStart, setEnd, setLoadedTime} = useAudioChunkStore()
+  const setCurrentTime = useTrackTimeStore(state => state.setCurrentTime)
   const activeTrackList = useActiveTrackListStore(state => state.activeTrackList);
 
   const handleBtn = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
@@ -24,7 +28,14 @@ export const SwitchTrackBtns: FC<SwitchTrackBtnsProps> = React.memo(({ isNextBtn
 
       const nextTrack = activeTrackList[nextIndex];
       if (nextTrack) {
+        audioManager.cleanup();
+        audioManager.seekTo(0);
+        setCurrentTime(0)
+        setStart(0);
+        setEnd(chunkSize - 1);
+        setLoadedTime(0);
         setActiveTrack(nextTrack);
+        setPlay();
       }
     }
   }, [activeTrack, activeTrackList, isNextBtn, setActiveTrack]);

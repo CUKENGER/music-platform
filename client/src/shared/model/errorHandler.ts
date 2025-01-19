@@ -31,6 +31,6 @@ export const handleErrorHandler = (error: unknown, showModal: (message: string) 
       showModal("Произошла ошибка, повторите запрос позже.");
     }
   } else {
-    showModal("Произошла ошибка, повторите запрос позже.");
+    showModal("Произошла ошибка, повторите запрос позже. ");
   }
 };
