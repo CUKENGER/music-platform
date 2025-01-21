@@ -1,9 +1,9 @@
-import { audioManager, convertDurationToSeconds } from "@/shared";
 import { ChangeEvent, CSSProperties, useCallback, useEffect, useMemo, useState } from "react";
 import useTrackTimeStore from "./TrackTimeStore";
 import usePlayerStore from "./PlayerStore";
 import useActiveTrackListStore from "./ActiveTrackListStore";
 import useAudioChunkStore from "./AudioChunkStore";
+import { audioManager, convertDurationToSeconds } from "@/shared/model";
 
 export const useTrackProgress = () => {
   const chunkSize = 1000000;

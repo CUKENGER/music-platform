@@ -1,4 +1,4 @@
-import { audioManager } from "@/shared";
+import { audioManager } from "@/shared/model";
 import { ITrack } from "../types/Track";
 import useActiveTrackListStore from "./ActiveTrackListStore";
 import usePlayerStore from "./PlayerStore";
@@ -35,7 +35,7 @@ export const usePlayTrack = (track: ITrack, trackList?: ITrack[]) => {
       setActiveTrack(track);
       setPlay();
     }
-  }, [setActiveTrackList, trackList, activeTrack?.id, track, pause])
+  }, [setActiveTrackList, trackList, activeTrack?.id, track, pause, setActiveTrack, setEnd, setLoadedTime, setPause, setPlay, setStart])
 
   return {
     play

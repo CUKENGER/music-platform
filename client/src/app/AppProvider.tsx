@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { FC, ReactNode } from "react";
+import { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
 
 interface AppProviderProps {
@@ -8,7 +8,7 @@ interface AppProviderProps {
 
 const queryClient = new QueryClient();
 
-export const AppProvider: FC<AppProviderProps> = ({ children }) => {
+export const AppProvider = ({ children }: AppProviderProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>{children}</BrowserRouter>

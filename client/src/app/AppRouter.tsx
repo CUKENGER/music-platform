@@ -1,5 +1,5 @@
-import { useUserStore } from "@/entities";
-import { privateRoutes, publicRoutes } from "@/shared";
+import { useUserStore } from "@/entities/user";
+import { privateRoutes, publicRoutes } from "@/shared/consts";
 import { Route, Routes } from "react-router-dom";
 
 const AppRouter = () => {

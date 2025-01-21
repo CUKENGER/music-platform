@@ -17,6 +17,7 @@ export class ArtistController {
   ]))
   async create(@UploadedFiles() files, @Body() dto: CreateArtistDto) {
     const { picture } = files
+    console.log('files', files)
     return this.artistService.create(dto, picture)
   }
 

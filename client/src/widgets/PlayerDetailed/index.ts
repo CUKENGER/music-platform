@@ -1,0 +1,2 @@
+
+export {PlayerDetailed} from './ui'

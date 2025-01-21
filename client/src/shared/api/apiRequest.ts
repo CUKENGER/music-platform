@@ -1,38 +1,38 @@
-import axios from "axios";
-import axiosInstance from "./axiosInstance";
+import axios, { AxiosError, Method } from "axios";
+import { ErrorResponse } from "react-router-dom";
+import {axiosInstance} from "./axiosInstance";
 
-export const apiRequest = async <T>(
-  method: 'get' | 'post' | 'delete' | 'put',
+interface ApiRequestOptions<T = unknown> {
+  params?: Record<string, string | number | boolean>;
+  data?: T;
+  headers?: Record<string, string>;
+}
+
+export interface RequestError {
+  message: string;
+  error?: AxiosError<ErrorResponse>;
+}
+
+export const apiRequest = async <T, D = unknown>(
+  method: Method,
   url: string,
-  data?: unknown,
-  params?: Record<string, unknown>
+  options: ApiRequestOptions<D> = {}
 ): Promise<T> => {
   try {
-    let response;
-
-    switch (method) {
-      case 'get':
-        response = await axiosInstance.get<T>(url, { params });
-        break;
-      case 'post':
-        response = await axiosInstance.post<T>(url, data);
-        break;
-      case 'delete':
-        response = await axiosInstance.delete<T>(url, { params });
-        break;
-      case 'put':
-        response = await axiosInstance.put<T>(url, data);
-        break;
-      default:
-        throw new Error(`Unsupported method: ${method}`);
-    }
-
+    const response = await axiosInstance.request<T>({
+      method,
+      url,
+      params: options.params,
+      data: options.data,
+      headers: options.headers,
+    });
     return response.data;
-
   } catch (e) {
     if (axios.isAxiosError(e)) {
+      console.error('Axios error:', e.response?.data || e.message);
       throw e;
     } else {
+      console.error('Unknown error:', e);
       throw new Error('Неизвестная ошибка');
     }
   }

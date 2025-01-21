@@ -2,6 +2,6 @@
 
 export interface ModalState {
   isOpen: boolean;
-  message: string;
+  text: string;
   onClick?: () => void;
 }

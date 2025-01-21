@@ -1,15 +1,15 @@
 import axios from 'axios';
-import { ApiUrl } from '../consts/apiUrl';
 import Cookies from 'universal-cookie';
 import { useNavigate } from 'react-router-dom';
-import { useUserStore } from '@/entities';
-import { PublicRoutes } from '../consts/routes';
+import { API_URL } from '../consts/apiUrl';
+import { PUBLIC_ROUTES } from '../consts';
+import { useUserStore } from '@/entities/user';
 
 const accessToken = localStorage.getItem('token');
 
 // Создание экземпляра axios
-const axiosInstance = axios.create({
-  baseURL: ApiUrl,
+export const axiosInstance = axios.create({
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${accessToken}`
@@ -58,7 +58,7 @@ export const useAxiosInterceptor = () => {
           cookies.remove('refreshToken');
           localStorage.removeItem('token');
           setIsAuth(false);
-          navigate(PublicRoutes.LOGIN);
+          navigate(PUBLIC_ROUTES.LOGIN);
           return Promise.reject(e);
         }
       }
@@ -68,4 +68,4 @@ export const useAxiosInterceptor = () => {
   );
 };
 
-export default axiosInstance;
+//export default axiosInstance;

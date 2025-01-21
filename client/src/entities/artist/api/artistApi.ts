@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/shared";
+import { axiosInstance } from "@/shared/api";
 import { CreateArtistDto, IArtist } from "../types/Artist";
 import axios from "axios";
 

@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { checkUsername, getByEmail, getByToken, loginUser, logoutUser, refreshToken, regUser, resetPassword, sendEmail } from "./userApi";
 import { CreateUserDto, RegUserResponse, ResetPasswordDto, ResetPasswordResponse, SendEmailDto, SendEmailResponse } from "../types/User";
-import { handleErrorHandler, PublicRoutes } from "@/shared";
 import { useUserStore } from "../model/userStore";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
+import { handleErrorHandler } from "@/shared/model";
+import { PUBLIC_ROUTES } from "@/shared/consts";
 
 const invalidateUserQuery = (queryClient: ReturnType<typeof useQueryClient>) => {
   queryClient.invalidateQueries({
@@ -55,7 +56,7 @@ export const useGetByEmail = (email: string) => {
   return useQuery({
     queryFn: () => getByEmail(email),
     queryKey: ['user'],
-    
+
   });
 };
 
@@ -70,7 +71,7 @@ export const useGetByToken = () => {
 
 export const useLogoutUser = () => {
 
-  const {setIsAuth} = useUserStore()
+  const { setIsAuth } = useUserStore()
   const navigate = useNavigate()
 
   return useMutation({
@@ -79,7 +80,7 @@ export const useLogoutUser = () => {
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       setIsAuth(false);
-      navigate(PublicRoutes.LOGIN);
+      navigate(PUBLIC_ROUTES.LOGIN);
     },
     onError: (error) => {
       console.error('Ошибка при выходе:', error);
@@ -121,11 +122,11 @@ export const useSendEmail = () => {
   const queryClient = useQueryClient();
 
   return useMutation<
-  SendEmailResponse,  // Тип данных, возвращаемых функцией мутации
-  AxiosError,  // Тип ошибки, например, AxiosError
-  SendEmailDto,  // Тип переменных, которые передаются функции мутации (в вашем случае, email)
-  unknown   // Тип контекста
- >({ 
+    SendEmailResponse,  // Тип данных, возвращаемых функцией мутации
+    AxiosError,  // Тип ошибки, например, AxiosError
+    SendEmailDto,  // Тип переменных, которые передаются функции мутации (в вашем случае, email)
+    unknown   // Тип контекста
+  >({
     mutationFn: sendEmail,
     onSuccess: () => invalidateUserQuery(queryClient),
   });
@@ -138,8 +139,8 @@ export const useResetPassword = () => {
     ResetPasswordResponse,
     AxiosError,
     ResetPasswordDto,
-    unknown    
-  >({ 
+    unknown
+  >({
     mutationFn: resetPassword,
     onSuccess: () => invalidateUserQuery(queryClient),
   });

@@ -1,7 +1,6 @@
-import { apiRequest, axiosInstance } from "@/shared";
 import { CreateAlbumDto, EditAlbumDto, IAlbum } from "../types/Album";
-import { IComment } from "@/entities";
-import { CreateCommentDto } from "@/entities/comment/types/Comment";
+import { CreateCommentDto, IComment } from "@/entities/comment/types/Comment";
+import { apiRequest, axiosInstance } from "@/shared/api";
 import axios from "axios";
 
 export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<IAlbum[]> => {
@@ -24,28 +23,28 @@ export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<IAlb
 };
 
 export const getOne = async (id: number): Promise<IAlbum> => {
-  return apiRequest<IAlbum>('get', `albums/${id}`, { id });
+  return apiRequest<IAlbum>('get', `albums/${id}`, { params: { id } });
 }
 
 export const getComments = async (id: number): Promise<IComment[]> => {
-  return apiRequest<IComment[]>('get', `albums/${id}/comment`, { id });
+  return apiRequest<IComment[]>('get', `albums/${id}/comment`, { params: { id } });
 }
 
 export const addComment = async (dto: CreateCommentDto): Promise<IComment> => {
-  return apiRequest<IComment>('post', `albums/comment`, dto);
+  return apiRequest<IComment>('post', `albums/comment`, { data: dto });
 }
 
 export const addLike = async (id: number): Promise<IAlbum> => {
-  return apiRequest<IAlbum>('post', `albums/${id}/like`, { id });
+  return apiRequest<IAlbum>('post', `albums/${id}/like`, { params: { id } });
 }
 
 export const deleteLike = async (id: number): Promise<IAlbum> => {
-  return apiRequest<IAlbum>('delete', `albums/${id}/like`, { id });
+  return apiRequest<IAlbum>('delete', `albums/${id}/like`, { params: { id } });
 }
 
 export const deleteAlbum = async (id: number | undefined): Promise<IAlbum> => {
   if (!id) throw new Error('ID is required');
-  return apiRequest<IAlbum>('delete', `albums/${id}`, { id });
+  return apiRequest<IAlbum>('delete', `albums/${id}`, { params: { id } });
 }
 
 export const create = async (albumInfo: CreateAlbumDto) => {
@@ -137,7 +136,7 @@ export const updateAlbum = async (id: number | undefined, albumInfo: EditAlbumDt
       fd.append(`tracks[${index}][isUpdated]`, String(track?.isUpdated));
       fd.append(`tracks[${index}][id]`, track?.id?.toString() ?? '');
       if (track.audio) {
-        if(track.id) {
+        if (track.id) {
           fd.append(`tracks[${track.id}][audio]`, track.audio);
         } else {
           fd.append(`newTracks`, track.audio);
@@ -146,7 +145,7 @@ export const updateAlbum = async (id: number | undefined, albumInfo: EditAlbumDt
     });
 
     albumInfo.deletedTracks.forEach((track, index) => {
-      if(track.id) {
+      if (track.id) {
         fd.append(`deletedTracks[${index}][id]`, track.id.toString());
       }
     });

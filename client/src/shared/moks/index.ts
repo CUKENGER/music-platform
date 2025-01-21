@@ -1,0 +1,2 @@
+
+export {genres} from './genres'

@@ -1,7 +1,7 @@
-import { axiosInstance } from "@/shared";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../api/useUserApi";
 import { useUserStore } from "./userStore";
+import {axiosInstance} from "@/shared/api";
 
 export const useAuthInterceptor = () => {
   const { mutate: logout } = useLogout();

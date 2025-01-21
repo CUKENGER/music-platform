@@ -1,0 +1,58 @@
+
+services: 
+  client: 
+    build: 
+      context: ../client
+      dockerfile: ../dev-config/Dockerfile.client
+    ports: 
+      - "5173:5173"
+    environment:
+      - API_URL=${API_URL}
+    volumes:
+      - ../client:/usr/app
+    networks:
+      - music-platform-network
+    depends_on:
+      - server
+  server: 
+    build: 
+      context: ../server
+      dockerfile: ../dev-config/Dockerfile.server
+    ports: 
+      - "${SERVER_PORT}:5000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_ACCESS_SECRET_KEY=${JWT_ACCESS_SECRET_KEY}
+      - JWT_REFRESH_SECRET_KEY=${JWT_REFRESH_SECRET_KEY}
+      - LYRICS_API_KEY=${LYRICS_API_KEY}
+      - LYRICS_API_URL=${LYRICS_API_URL}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_APP_PASS=${SMTP_APP_PASS}
+    volumes:
+      - ../server:/usr/app
+    networks:
+      - music-platform-network
+    depends_on:
+      - db
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    ports: 
+      - "${DATABASE_PORT}:5432"
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - music-platform-network
+
+networks: 
+  music-platform-network:
+volumes: 
+  db:
+

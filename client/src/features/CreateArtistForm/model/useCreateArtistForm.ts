@@ -1,5 +1,7 @@
-import { useCreateArtist } from "@/entities"
-import { useInput, genres, useModal, PrivateRoutes } from "@/shared"
+import { useCreateArtist } from "@/entities/artist"
+import { PRIVATE_ROUTES } from "@/shared/consts"
+import { useInput, useModal } from "@/shared/hooks"
+import { genres } from "@/shared/moks"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -46,7 +48,7 @@ export const useCreateArtistForm = () => {
     createArtist(artistDto, {
       onSuccess: (res) => {
         showModal(`Артист ${res.name} успешно создан`, () => {
-          navigate(PrivateRoutes.ARTISTS)
+          navigate(PRIVATE_ROUTES.ARTISTS)
         })
       },
       onError: (e: ErrorResponse | Error) => {

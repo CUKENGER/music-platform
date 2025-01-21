@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState } from "react";
 import { ITrack } from "../types/Track";
 import { useDeleteTrack } from "../api/useTrackApi";
-import { useModal } from "@/shared";
+import { useModal } from "@/shared/hooks";
 import { usePlayTrack } from "./usePlayTrack";
 
 export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
@@ -16,7 +16,7 @@ export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
   const handleDelete = useCallback(
     async (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      await deleteTrack(track.id, {
+      deleteTrack(track.id, {
         onSuccess: (res) => showModal(`Трек ${res.name} успешно удален`),
         onError: (error) =>
           showModal(`Произошла ошибка при удалении: ${error}`),

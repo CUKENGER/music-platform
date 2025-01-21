@@ -1,11 +1,9 @@
-import { useAxiosInterceptor} from "@/shared";
+import { IUser, useUserStore } from "@/entities/user";
 import AppRouter from "./AppRouter";
 import styles from './BaseLayout.module.scss';
-import { IUser, useUserStore } from "@/entities";
 import { Header, Navbar, Player } from "@/widgets";
 import { useEffect } from "react";
-
-
+import { useAxiosInterceptor } from "@/shared/api";
 
 function BaseLayout() {
   const { isAuth, user, setIsAdmin } = useUserStore();

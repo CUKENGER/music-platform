@@ -1,0 +1,2 @@
+
+export { GoActivateWidget } from './ui'

@@ -1,5 +1,6 @@
-import { TrackState, useCreateAlbum, CreateAlbumDto } from "@/entities";
-import {PrivateRoutes, useDebounce, useModal } from "@/shared";
+import { CreateAlbumDto, useCreateAlbum } from "@/entities/album";
+import { TrackState } from "@/entities/track";
+import { PRIVATE_ROUTES } from "@/shared/consts";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -21,10 +22,10 @@ export const useCreateAlbumForm = () => {
   const {
     handleSubmit,
     formState: {
-      isValid
+      //isValid
     },
     setValue,
-    control,
+    //control,
     getValues
   } = useForm<CreateAlbumInputs>({});
   const values = getValues();
@@ -43,7 +44,7 @@ export const useCreateAlbumForm = () => {
     values.tracks.every(track => track.name.trim() && track.audio)
   );
 
-  const onSubmit: SubmitHandler<CreateAlbumInputs> = (data) => {
+  const onSubmit: SubmitHandler<CreateAlbumInputs> = () => {
     if (!hasData) {
       showModal('Заполните все данные, пожалуйста')
       return
@@ -66,7 +67,7 @@ export const useCreateAlbumForm = () => {
 
     createAlbum(albumData, {
       onSuccess: (res) => {
-        showModal(`Альбом ${res.name} успешно загружен`, () => navigate(PrivateRoutes.ALBUMS))
+        showModal(`Альбом ${res.name} успешно загружен`, () => navigate(PRIVATE_ROUTES.ALBUMS))
       },
       onError: (e) => {
         showModal(`Произошла ошибка при создании альбома ${e}`)

@@ -1,6 +1,8 @@
-import { useGetOneAlbum, useUpdateAlbum, TrackUpdateState } from "@/entities";
+import { useGetOneAlbum, useUpdateAlbum } from "@/entities/album";
 import { EditAlbumDto } from "@/entities/album/types/Album";
-import { PrivateRoutes, useDebounce, useModal } from "@/shared";
+import { TrackUpdateState } from "@/entities/track";
+import { PRIVATE_ROUTES } from "@/shared/consts";
+import { useDebounce, useModal } from "@/shared/hooks";
 import { useMemo } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -146,12 +148,12 @@ export const useEditAlbumForm = () => {
         {
           onSuccess: () => {
             showModal("Данные успешно отправлены", () =>
-              navigate(PrivateRoutes.ALBUMS + `/${id}`)
+              navigate(PRIVATE_ROUTES.ALBUMS + `/${id}`)
             );
           },
           onError: () => {
             showModal("Произошла ошибка, повторите позже", () =>
-              navigate(PrivateRoutes.ALBUMS + `/${id}`)
+              navigate(PRIVATE_ROUTES.ALBUMS + `/${id}`)
             );
           },
         }

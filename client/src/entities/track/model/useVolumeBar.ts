@@ -1,4 +1,4 @@
-import { audioManager } from "@/shared";
+import { audioManager } from "@/shared/model";
 import { useState, useCallback, ChangeEvent } from "react";
 import usePlayerStore from "./PlayerStore";
 

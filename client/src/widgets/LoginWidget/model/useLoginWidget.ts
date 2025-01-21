@@ -1,6 +1,6 @@
-import { useUserStore } from "@/entities";
-import { useLoginUser } from "@/entities/user/api/useUserApi";
-import { useModal, useInput, PrivateRoutes} from "@/shared";
+import { useLoginUser, useUserStore } from "@/entities/user";
+import { PRIVATE_ROUTES } from "@/shared/consts";
+import { useInput, useModal } from "@/shared/hooks";
 import { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ export const useLoginWidget = () => {
 
   const { setIsAuth, setUser } = useUserStore();
 
-  const {mutate: login, isPending: isLoading} = useLoginUser(showModal)
+  const { mutate: login, isPending: isLoading } = useLoginUser(showModal)
 
   const navigate = useNavigate();
 
@@ -20,11 +20,11 @@ export const useLoginWidget = () => {
     isLatin: true,
   });
 
-  const isActive = email.isEmpty || password.isEmpty;
+  const isValid = email.isEmpty || password.isEmpty;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (email.isEmpty || password.isEmpty) {
+    if (isValid) {
       showModal("Заполните все данные, пожалуйста");
       return;
     }
@@ -41,10 +41,10 @@ export const useLoginWidget = () => {
           localStorage.removeItem("refreshToken");
           localStorage.setItem("token", data.accessToken);
           localStorage.setItem("refreshToken", data.refreshToken);
-  
+
           setIsAuth(true);
           setUser(userDto);
-          navigate(PrivateRoutes.HOME);
+          navigate(PRIVATE_ROUTES.HOME);
         } else {
           console.error("Tokens were not provided");
           showModal("Вы не зарегистрированы");
@@ -58,7 +58,7 @@ export const useLoginWidget = () => {
     password,
     handleSubmit,
     isLoading,
-    isActive,
+    isValid,
     modal,
     hideModal,
   };
