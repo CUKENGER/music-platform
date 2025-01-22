@@ -1,13 +1,18 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import * as fsNot from 'fs';
-import { ArtistService } from "models/artist/artist.service";
-import { AudioService } from "models/audioService/audioService.service";
-import { FileService, FileType } from "models/file/file.service";
+import { ArtistService } from 'models/artist/artist.service';
+import { AudioService } from 'models/audioService/audioService.service';
+import { FileService, FileType } from 'models/file/file.service';
 import * as path from 'path';
-import { PrismaService } from "prisma/prisma.service";
-import { CreateAlbumDto } from "./dto/create-album.dto";
-import { UpdateAlbumDto, UpdateAlbumTracksDto } from "./dto/update-album.dto";
-import { IAlbum } from "./types/Album";
+import { PrismaService } from 'prisma/prisma.service';
+import { CreateAlbumDto } from './dto/create-album.dto';
+import { UpdateAlbumDto, UpdateAlbumTracksDto } from './dto/update-album.dto';
+import { IAlbum } from './types/Album';
 
 @Injectable()
 export class AlbumHelperService {
@@ -15,10 +20,14 @@ export class AlbumHelperService {
     private artistService: ArtistService,
     private audioService: AudioService,
     private prisma: PrismaService,
-    private fileService: FileService
-  ) { }
+    private fileService: FileService,
+  ) {}
 
-  async findOrCreateArtist(dto: CreateAlbumDto, picture: Express.Multer.File | string, prisma): Promise<any> {
+  async findOrCreateArtist(
+    dto: CreateAlbumDto,
+    picture: Express.Multer.File | string,
+    prisma,
+  ): Promise<any> {
     let artist = await prisma.artist.findFirst({
       where: { name: dto.artist },
       include: { tracks: true, albums: true },
@@ -35,7 +44,13 @@ export class AlbumHelperService {
     return artist;
   }
 
-  async createAlbum(dto: CreateAlbumDto, imagePath: string, artistId: number, albumType: string, prisma): Promise<any> {
+  async createAlbum(
+    dto: CreateAlbumDto,
+    imagePath: string,
+    artistId: number,
+    albumType: string,
+    prisma,
+  ): Promise<any> {
     return await prisma.album.create({
       data: {
         name: dto.name,
@@ -45,17 +60,28 @@ export class AlbumHelperService {
         createdAt: new Date(),
         description: dto.description,
         releaseDate: dto.releaseDate,
-        type: albumType
+        type: albumType,
       },
     });
   }
 
-  async createTracks(dto: CreateAlbumDto, tracksPath: string[], artistId: number, albumId: number, imagePath: string, prisma): Promise<number> {
+  async createTracks(
+    dto: CreateAlbumDto,
+    tracksPath: string[],
+    artistId: number,
+    albumId: number,
+    imagePath: string,
+    prisma,
+  ): Promise<number> {
     let totalDuration = 0;
 
     for (let i = 0; i < dto.track_names.length; i++) {
-      const duration = await this.audioService.getAudioDuration(path.resolve(__dirname, '../../../../', 'server/static', tracksPath[i]));
-      const durationInNum = await this.audioService.getAudioDurationInNum(path.resolve(__dirname, '../../../../', 'server/static', tracksPath[i]));
+      const duration = await this.audioService.getAudioDuration(
+        path.resolve(__dirname, '../../../../', 'server/static', tracksPath[i]),
+      );
+      const durationInNum = await this.audioService.getAudioDurationInNum(
+        path.resolve(__dirname, '../../../../', 'server/static', tracksPath[i]),
+      );
       totalDuration += durationInNum;
 
       await prisma.track.create({
@@ -76,7 +102,7 @@ export class AlbumHelperService {
   }
 
   async updateAlbumDuration(albumId: number, totalDuration: number, prisma): Promise<void> {
-    console.log('albumId', albumId)
+    console.log('albumId', albumId);
     const formattedDuration = this.formatDuration(totalDuration);
     await prisma.album.update({
       where: { id: Number(albumId) },
@@ -99,7 +125,7 @@ export class AlbumHelperService {
         comments: true,
         artist: true,
         likedByUsers: true,
-      }
+      },
     });
     if (!album) {
       throw new NotFoundException(`Album with id ${id} not found`);
@@ -122,7 +148,7 @@ export class AlbumHelperService {
       include: {
         artist: true,
         tracks: true,
-        comments: true
+        comments: true,
       },
     });
   }
@@ -151,9 +177,8 @@ export class AlbumHelperService {
       }
     } catch (e) {
       console.error(`Error deleteAlbumPicture: ${e}`);
-      throw new InternalServerErrorException(`Error deleteAlbumPicture: ${e}`)
+      throw new InternalServerErrorException(`Error deleteAlbumPicture: ${e}`);
     }
-
   }
 
   private async deleteAlbumTracks(tracks) {
@@ -171,7 +196,7 @@ export class AlbumHelperService {
       }
     } catch (e) {
       console.error(`Error deleteAlbumTracks: ${e}`);
-      throw new InternalServerErrorException(`Error deleteAlbumTracks: ${e}`)
+      throw new InternalServerErrorException(`Error deleteAlbumTracks: ${e}`);
     }
   }
 
@@ -184,7 +209,7 @@ export class AlbumHelperService {
       }
     } catch (e) {
       console.error(`Error deleteAlbumComments: ${e}`);
-      throw new InternalServerErrorException(`Error deleteAlbumComments: ${e}`)
+      throw new InternalServerErrorException(`Error deleteAlbumComments: ${e}`);
     }
   }
 
@@ -194,9 +219,9 @@ export class AlbumHelperService {
       where: {
         tokens: {
           some: {
-            accessToken: token
-          }
-        }
+            accessToken: token,
+          },
+        },
       },
     });
     if (!user) throw new NotFoundException('User not found');
@@ -214,13 +239,11 @@ export class AlbumHelperService {
 
   async updateAlbumLikes(albumId: number, userId: number, increment: number) {
     await this.prisma.$transaction(async (prisma) => {
-
       await prisma.album.update({
         where: { id: albumId },
         data: {
-          likedByUsers: increment > 0
-            ? { connect: { id: userId } }
-            : { disconnect: { id: userId } },
+          likedByUsers:
+            increment > 0 ? { connect: { id: userId } } : { disconnect: { id: userId } },
           likes: { increment },
         },
       });
@@ -285,7 +308,11 @@ export class AlbumHelperService {
 
   // to update
 
-  async findOrCreateArtistForUpdateAlbum(dto: Partial<UpdateAlbumDto>, picture: Express.Multer.File | string, prisma): Promise<any> {
+  async findOrCreateArtistForUpdateAlbum(
+    dto: Partial<UpdateAlbumDto>,
+    picture: Express.Multer.File | string,
+    prisma,
+  ): Promise<any> {
     let artist = await prisma.artist.findFirst({
       where: { name: dto.artist },
       include: { tracks: true, albums: true },
@@ -304,26 +331,26 @@ export class AlbumHelperService {
 
   async handleDeletedTracks(dto: Partial<UpdateAlbumDto>, album: IAlbum) {
     if (dto.deletedTracks && dto.deletedTracks.length > 0) {
-      const tracksToDelete = album.tracks.filter(track =>
-        dto.deletedTracks.some(deletedTrack => deletedTrack.id === track.id)
+      const tracksToDelete = album.tracks.filter((track) =>
+        dto.deletedTracks.some((deletedTrack) => deletedTrack.id === track.id),
       );
-      const tracksPathsToDelete = tracksToDelete.map(track => track.audio);
+      const tracksPathsToDelete = tracksToDelete.map((track) => track.audio);
       this.fileService.cleanupFiles(tracksPathsToDelete);
 
       await this.prisma.track.deleteMany({
-        where: { id: { in: dto.deletedTracks.map(track => Number(track.id)) } },
+        where: { id: { in: dto.deletedTracks.map((track) => Number(track.id)) } },
       });
     }
   }
 
   async handleNewTracks(
     id: number,
-    newTracksFiles: Express.Multer.File[], 
-    tracksDto: UpdateAlbumTracksDto[], 
-    albumToUpdate: IAlbum, 
-    dto: Partial<UpdateAlbumDto>, 
-    picturePath: string, 
-    prisma
+    newTracksFiles: Express.Multer.File[],
+    tracksDto: UpdateAlbumTracksDto[],
+    albumToUpdate: IAlbum,
+    dto: Partial<UpdateAlbumDto>,
+    picturePath: string,
+    prisma,
   ) {
     if (!newTracksFiles?.length || !tracksDto) {
       return;
@@ -332,9 +359,9 @@ export class AlbumHelperService {
     try {
       const tracksPath = await this.fileService.createTracks(newTracksFiles);
       let totalDuration = 0;
-      const newTracksDto = tracksDto.filter(track => track.isNew === 'true');
+      const newTracksDto = tracksDto.filter((track) => track.isNew === 'true');
 
-      console.log("newTracksDto", newTracksDto)
+      console.log('newTracksDto', newTracksDto);
 
       for (let i = 0; i < newTracksDto.length; i++) {
         const duration = await this.audioService.getAudioDuration(tracksPath[i]);
@@ -357,35 +384,34 @@ export class AlbumHelperService {
       await this.updateAlbumDuration(albumToUpdate.id, totalDuration, prisma);
       return tracksPath;
     } catch (e) {
-      console.log('e', e)
-      throw e
+      console.log('e', e);
+      throw e;
     }
   }
 
   async handleTrackUpdates(
-    tracksDto: UpdateAlbumTracksDto[], 
-    dto: Partial<UpdateAlbumDto>, 
-    albumToUpdate: IAlbum, 
-    prisma, 
-    tracksFiles: Express.Multer.File[]
+    tracksDto: UpdateAlbumTracksDto[],
+    dto: Partial<UpdateAlbumDto>,
+    albumToUpdate: IAlbum,
+    prisma,
+    tracksFiles: Express.Multer.File[],
   ) {
     if (!tracksDto?.length) return;
 
     try {
-      const tracksToUpdate = tracksDto.filter(track =>
-        track.id &&
-        (track.isUpdated === 'true')
-      );
+      const tracksToUpdate = tracksDto.filter((track) => track.id && track.isUpdated === 'true');
 
       for (const trackDto of tracksToUpdate) {
-        let audioPath = null
-        const trackFile = tracksFiles.find(file => file.fieldname === `tracks[${trackDto.id}][audio]`);
+        let audioPath = null;
+        const trackFile = tracksFiles.find(
+          (file) => file.fieldname === `tracks[${trackDto.id}][audio]`,
+        );
 
         if (trackFile) {
           audioPath = await this.fileService.createFile(FileType.AUDIO, trackFile);
           const oldTrack = await prisma.track.findUnique({
             where: { id: Number(trackDto.id) },
-          })
+          });
           this.fileService.cleanupFile(oldTrack.audio);
         }
         await prisma.track.update({
@@ -396,14 +422,14 @@ export class AlbumHelperService {
             genre: dto.genre || albumToUpdate.genre,
             ...(audioPath && {
               audio: audioPath,
-              duration: await this.audioService.getAudioDuration(audioPath)
-            })
-          }
+              duration: await this.audioService.getAudioDuration(audioPath),
+            }),
+          },
         });
       }
     } catch (e) {
-      console.error(`Error update tracks: ${e}`)
-      throw e
+      console.error(`Error update tracks: ${e}`);
+      throw e;
     }
   }
 }

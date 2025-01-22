@@ -1,4 +1,3 @@
-
 export interface UpdateAlbumDto {
   name?: string;
   genre?: string;
@@ -8,7 +7,7 @@ export interface UpdateAlbumDto {
   deletedTracks?: UpdateAlbumTracksDto[];
   artist?: string;
   track_names?: string[];
-  track_texts?: string[]
+  track_texts?: string[];
 }
 
 export interface UpdateAlbumTracksDto {

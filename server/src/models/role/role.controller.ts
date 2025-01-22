@@ -8,31 +8,29 @@ import { RolesGuard } from 'models/auth/roles.guard';
 @ApiTags('Roles')
 @Controller('role')
 export class RoleController {
+  constructor(private roleService: RoleService) {}
 
-  constructor (private roleService: RoleService) {}
-
-  @ApiOperation({summary: "Создание роли для пользователя"})
+  @ApiOperation({ summary: 'Создание роли для пользователя' })
   // @Roles("ADMIN")
   // @UseGuards(RolesGuard)
   @Post()
   async create(@Body() dto: RoleDto) {
-    return this.roleService.create(dto)
+    return this.roleService.create(dto);
   }
 
-  @ApiOperation({summary: "Получение всех ролей"})
-  @Roles("ADMIN")
+  @ApiOperation({ summary: 'Получение всех ролей' })
+  @Roles('ADMIN')
   @UseGuards(RolesGuard)
   @Get()
   async getAll() {
-    return this.roleService.getAll()
+    return this.roleService.getAll();
   }
 
-  @ApiOperation({summary: "Получение роли по значению"})
+  @ApiOperation({ summary: 'Получение роли по значению' })
   // @Roles("ADMIN")
   // @UseGuards(RolesGuard)
   @Get('/:value')
   async getByValue(@Param('value') value: string) {
-    return this.roleService.getByValue(value)
+    return this.roleService.getByValue(value);
   }
-
 }

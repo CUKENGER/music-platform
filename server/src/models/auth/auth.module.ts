@@ -10,21 +10,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { RoleModule } from 'models/role/role.module';
 
 @Module({
-  providers: [
-    AuthService, 
-    TokenService, 
-    MailService, 
-    PrismaService,
-    UserService,
-  ],
+  providers: [AuthService, TokenService, MailService, PrismaService, UserService],
   controllers: [AuthController],
-  imports: [
-    JwtModule,
-    RoleModule,
-    forwardRef(() => UserModule)
-  ],
-  exports: [
-    AuthService,
-  ]
+  imports: [JwtModule, RoleModule, forwardRef(() => UserModule)],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -1,6 +1,11 @@
-import { Injectable, BadRequestException, NotFoundException, InternalServerErrorException } from "@nestjs/common";
-import { PrismaService } from "prisma/prisma.service";
-import { CreateCommentDto } from "./dto/create-comment.dto";
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
+import { CreateCommentDto } from './dto/create-comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -16,13 +21,13 @@ export class CommentService {
       const comments = await this.prisma.comment.findMany({
         where: {
           ...whereCondition,
-          parentId: null
+          parentId: null,
         },
         include: {
           replies: {
             orderBy: {
-              createdAt: 'desc'
-            }
+              createdAt: 'desc',
+            },
           },
           likedByUsers: true,
         },
@@ -102,7 +107,7 @@ export class CommentService {
 
       return { message: 'Like added' };
     } catch (error) {
-      console.error(`Error adding like: ${error}`)
+      console.error(`Error adding like: ${error}`);
       throw new InternalServerErrorException('Error adding like');
     }
   }
@@ -135,7 +140,7 @@ export class CommentService {
 
       return { message: 'Like removed' };
     } catch (error) {
-      console.error(`Error deleting like: ${error}`)
+      console.error(`Error deleting like: ${error}`);
       throw new InternalServerErrorException(`Error deleting like: ${error}`);
     }
   }

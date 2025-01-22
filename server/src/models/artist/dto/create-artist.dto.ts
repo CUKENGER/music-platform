@@ -1,5 +1,5 @@
 export class CreateArtistDto {
-    name: string;
-    genre: string;
-    description: string;
+  name: string;
+  genre: string;
+  description: string;
 }

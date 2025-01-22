@@ -1,19 +1,22 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Token } from "@prisma/client";
-import { PrismaService } from "prisma/prisma.service";
+import { Token } from '@prisma/client';
+import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
 export class TokenService {
-
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   generateTokens(payload: any): { accessToken: string; refreshToken: string } {
-    const accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_ACCESS_SECRET_KEY });
-    const refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET_KEY });
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_ACCESS_SECRET_KEY,
+    });
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_REFRESH_SECRET_KEY,
+    });
     return { accessToken, refreshToken };
   }
 
@@ -34,14 +37,14 @@ export class TokenService {
   }
 
   async saveToken(
-    userId: number, 
-    refreshToken: string, 
-    accessToken: string, 
-    prisma: PrismaService
+    userId: number,
+    refreshToken: string,
+    accessToken: string,
+    prisma: PrismaService,
   ): Promise<Token> {
     try {
       const tokenData = await prisma.token.findFirst({ where: { userId } });
-  
+
       if (tokenData) {
         return await prisma.token.update({
           where: { id: tokenData.id },
@@ -63,12 +66,12 @@ export class TokenService {
       const token = await this.prisma.token.findUnique({
         where: { refreshToken },
       });
-  
+
       if (!token) {
         console.warn('Token not found, nothing to delete');
         return null;
       }
-  
+
       return await this.prisma.token.delete({
         where: { refreshToken },
       });

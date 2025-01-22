@@ -20,7 +20,7 @@ export class LoggingInterceptor implements NestInterceptor {
         this.logger.log(`Outgoing response: ${response.statusCode}`);
         // this.logger.log(`Response headers: ${JSON.stringify(response.getHeaders())}`);
         this.logger.log(`Request duration: ${duration}ms`);
-      })
+      }),
     );
   }
 }

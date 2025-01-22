@@ -8,7 +8,7 @@ import { AudioService } from 'models/audioService/audioService.service';
 import { Album, Artist, Track, User } from '@prisma/client';
 import { CommentService } from 'models/comment/comment.service';
 import { TrackHelperService } from './trackHelper.service';
-import * as path from "path";
+import * as path from 'path';
 
 @Injectable()
 export class TrackService {
@@ -17,8 +17,8 @@ export class TrackService {
     private readonly fileService: FileService,
     private readonly audioService: AudioService,
     private readonly commentService: CommentService,
-    private trackHelperService: TrackHelperService
-  ) { }
+    private trackHelperService: TrackHelperService,
+  ) {}
 
   async create(dto: CreateTrackDto, picture: Express.Multer.File, audio: Express.Multer.File) {
     if (!picture || !audio) {
@@ -28,11 +28,17 @@ export class TrackService {
     let audioPath: string;
     let imagePath: string;
     try {
-      audioPath = await this.fileService.createFile(FileType.AUDIO, audio)
-      imagePath = await this.fileService.createFile(FileType.IMAGE, picture)
-      console.log(`audioPath: ${audioPath}\n imagePath: ${imagePath}`)
-      const duration = await this.audioService.getAudioDuration(path.resolve(__dirname, '../../../../', 'server/static', audioPath));
-      const artist = await this.trackHelperService.getOrCreateArtist(dto.artist, dto.genre, picture);
+      audioPath = await this.fileService.createFile(FileType.AUDIO, audio);
+      imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
+      console.log(`audioPath: ${audioPath}\n imagePath: ${imagePath}`);
+      const duration = await this.audioService.getAudioDuration(
+        path.resolve(__dirname, '../../../../', 'server/static', audioPath),
+      );
+      const artist = await this.trackHelperService.getOrCreateArtist(
+        dto.artist,
+        dto.genre,
+        picture,
+      );
 
       const album = await this.prisma.album.create({
         data: {
@@ -61,7 +67,11 @@ export class TrackService {
 
       if (dto.featArtists && dto.featArtists.length > 0) {
         for (const featArtistName of dto.featArtists) {
-          const featuredArtist = await this.trackHelperService.getOrCreateArtist(featArtistName, dto.genre, picture);
+          const featuredArtist = await this.trackHelperService.getOrCreateArtist(
+            featArtistName,
+            dto.genre,
+            picture,
+          );
           await this.prisma.featuredArtist.create({
             data: {
               artistId: featuredArtist.id,
@@ -74,13 +84,15 @@ export class TrackService {
       return newTrack;
     } catch (error) {
       this.fileService.cleanupFile(imagePath);
-      this.fileService.cleanupFile(audioPath)
+      this.fileService.cleanupFile(audioPath);
       console.error('Error creating track:', error);
-      throw new Error(`Error creating track: ${error}`)
+      throw new Error(`Error creating track: ${error}`);
     }
   }
 
-  async getOne(id: number): Promise<Track & { likedByUsers: User[]; album: Album; artist: Artist }> {
+  async getOne(
+    id: number,
+  ): Promise<Track & { likedByUsers: User[]; album: Album; artist: Artist }> {
     const track = await this.prisma.track.findUnique({
       where: { id: Number(id) },
       include: {
@@ -132,7 +144,7 @@ export class TrackService {
         },
       });
     } catch (e) {
-      console.error(`Error get All:`, e)
+      console.error(`Error get All:`, e);
     }
   }
 
@@ -160,7 +172,7 @@ export class TrackService {
     id: number,
     newData: Partial<Track>,
     picture?: Express.Multer.File,
-    audio?: Express.Multer.File
+    audio?: Express.Multer.File,
   ): Promise<Track> {
     const entityToUpdate = await this.trackHelperService.findTrackById(id);
 
@@ -286,7 +298,7 @@ export class TrackService {
       return await this.prisma.track.findMany({
         take: 20,
         orderBy: {
-          listens: 'asc'
+          listens: 'asc',
         },
         include: {
           artist: true,
@@ -297,7 +309,7 @@ export class TrackService {
         },
       });
     } catch (e) {
-      console.error(`Error get limit popular tracks:`, e)
+      console.error(`Error get limit popular tracks:`, e);
     }
   }
 
@@ -311,16 +323,10 @@ export class TrackService {
           comments: true,
           likedByUsers: true,
           listenedByUsers: true,
-        }
-      })
+        },
+      });
     } catch (e) {
-      console.error('Error get all popular tracks:', e)
+      console.error('Error get all popular tracks:', e);
     }
   }
-
-
-
-
-
-
 }

@@ -1,14 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
-
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsString } from 'class-validator';
 
 export class BanUserDto {
-
-  @ApiProperty({example: "1", description: "Id user"})
+  @ApiProperty({ example: '1', description: 'Id user' })
   @IsNumber()
   readonly userId: number;
 
-  @ApiProperty({example: "Сказал нет", description: "Причина бана"})
+  @ApiProperty({ example: 'Сказал нет', description: 'Причина бана' })
   @IsString()
-  readonly banReason: string
+  readonly banReason: string;
 }

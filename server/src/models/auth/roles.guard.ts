@@ -1,20 +1,27 @@
-import { CanActivate, ExecutionContext, Injectable, ForbiddenException, UnauthorizedException, NotFoundException } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { PrismaService } from "prisma/prisma.service";
-import { ROLES_KEY } from "./rolesAuth.decorator";
-import { ApiError } from "exceptions/api.error";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+  UnauthorizedException,
+  NotFoundException,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { PrismaService } from 'prisma/prisma.service';
+import { ROLES_KEY } from './rolesAuth.decorator';
+import { ApiError } from 'exceptions/api.error';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private prisma: PrismaService
+    private prisma: PrismaService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
       context.getHandler(),
-      context.getClass()
+      context.getClass(),
     ]);
 
     if (!requiredRoles) {
@@ -38,17 +45,17 @@ export class RolesGuard implements CanActivate {
       where: {
         tokens: {
           some: {
-            accessToken: token
-          }
-        }
+            accessToken: token,
+          },
+        },
       },
       include: {
         roles: {
           include: {
-            role: true
-          }
-        }
-      }
+            role: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -59,8 +66,6 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('User does not have any roles');
     }
 
-    return user.roles.some(userRole => 
-      requiredRoles.includes(userRole.role.value)
-    );
+    return user.roles.some((userRole) => requiredRoles.includes(userRole.role.value));
   }
 }

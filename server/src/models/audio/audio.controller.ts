@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Res,
-  Req,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Param, Res, Req, HttpStatus } from '@nestjs/common';
 import { Response, Request } from 'express';
 import * as fs from 'fs';
 import { AudioService } from 'models/audioService/audioService.service';
@@ -13,10 +6,7 @@ import * as path from 'path';
 
 @Controller('audio')
 export class AudioController {
-
-  constructor(
-		private readonly audioService: AudioService,
-	) { }
+  constructor(private readonly audioService: AudioService) {}
 
   @Get(':filename')
   async streamAudio(
@@ -24,10 +14,15 @@ export class AudioController {
     @Res() res: Response,
     @Req() req: Request,
   ) {
-    console.log("Requested filename:", filename);
+    console.log('Requested filename:', filename);
 
     // Безопасное построение пути
-    const filePath = path.resolve(__dirname, '../../../../', 'server/static/audio', path.basename(filename));
+    const filePath = path.resolve(
+      __dirname,
+      '../../../../',
+      'server/static/audio',
+      path.basename(filename),
+    );
     console.log('Resolved filePath:', filePath);
 
     // Проверка существования файла
@@ -63,18 +58,21 @@ export class AudioController {
 
     // Проверка на корректность диапазона
     if (start >= fileSize || end >= fileSize || start >= end) {
-      return res.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).set({
-        'Content-Range': `bytes */${fileSize}`,
-      }).end();
+      return res
+        .status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE)
+        .set({
+          'Content-Range': `bytes */${fileSize}`,
+        })
+        .end();
     }
 
-    const chunkSize = (end - start) + 1;
+    const chunkSize = end - start + 1;
     console.log(`Streaming chunk from ${start} to ${end} (size: ${chunkSize} bytes)`);
 
-    const bitrate = await this.audioService.getAudioBitrate(filePath)
-    const chunkDurationSeconds = chunkSize / (bitrate / 8)
+    const bitrate = await this.audioService.getAudioBitrate(filePath);
+    const chunkDurationSeconds = chunkSize / (bitrate / 8);
     const chunkDurationInteger = Math.floor(chunkDurationSeconds);
-    console.log('chunkDurationSeconds', chunkDurationInteger)
+    console.log('chunkDurationSeconds', chunkDurationInteger);
 
     // Потоковое чтение файла
     const fileStream = fs.createReadStream(filePath, { start, end });
@@ -85,7 +83,7 @@ export class AudioController {
       'Accept-Ranges': 'bytes',
       'Content-Length': chunkSize,
       'Content-Type': 'audio/mpeg',
-      'X-Chunk-Duration': chunkDurationInteger.toString()
+      'X-Chunk-Duration': chunkDurationInteger.toString(),
     });
     console.log('Sent X-Chunk-Duration:', chunkDurationInteger.toString());
 

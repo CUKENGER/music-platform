@@ -1,18 +1,18 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaService } from "prisma/prisma.service";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Track } from "@prisma/client";
-import { JwtService } from "@nestjs/jwt";
-import { ArtistService } from "models/artist/artist.service";
+import { Track } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
+import { ArtistService } from 'models/artist/artist.service';
 
 @Injectable()
 export class TrackHelperService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private artistService: ArtistService
-  ) { }
+    private artistService: ArtistService,
+  ) {}
 
   async getOrCreateArtist(name: string, genre: string, picture) {
     let artist = await this.prisma.artist.findFirst({
@@ -33,12 +33,12 @@ export class TrackHelperService {
 
   // to delete
   async findTrackById(id: number) {
-    const track = await this.prisma.track.findFirst({ 
-      where: { id: Number(id) } ,
+    const track = await this.prisma.track.findFirst({
+      where: { id: Number(id) },
       include: {
         likedByUsers: true,
         album: true,
-        artist: true
+        artist: true,
       },
     });
     if (!track) {
@@ -51,18 +51,18 @@ export class TrackHelperService {
     if (track.picture) {
       const picturePath = path.resolve('static/', track.picture);
       console.log('picturePath', picturePath);
-      
+
       if (fs.existsSync(picturePath)) {
         fs.unlinkSync(picturePath);
       } else {
         console.log(`Файл с изображением не найден: ${picturePath}`);
       }
     }
-  
+
     if (track.audio) {
       const audioPath = path.resolve('static/', track.audio);
       console.log('audioPath', audioPath);
-  
+
       if (fs.existsSync(audioPath)) {
         fs.unlinkSync(audioPath);
       } else {
@@ -82,14 +82,13 @@ export class TrackHelperService {
   }
 
   async updateAlbumAndArtistListens(track, updateData: any) {
-
     if (track.album) {
       await this.prisma.album.update({
         where: { id: track.album.id },
         data: { listens: track.album.listens + 1 },
       });
     }
-    
+
     if (track.artist) {
       await this.prisma.artist.update({
         where: { id: track.artist.id },

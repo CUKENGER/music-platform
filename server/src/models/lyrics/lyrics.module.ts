@@ -1,12 +1,12 @@
-import { Module } from "@nestjs/common";
-import { LyricsController } from "./lyrics.controller";
-import { LyricsService } from "./lyrics.service";
-import { HttpModule } from "@nestjs/axios";
+import { Module } from '@nestjs/common';
+import { LyricsController } from './lyrics.controller';
+import { LyricsService } from './lyrics.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   providers: [LyricsService],
   controllers: [LyricsController],
   imports: [HttpModule],
-  exports: [LyricsService]
+  exports: [LyricsService],
 })
 export class LyricsModule {}

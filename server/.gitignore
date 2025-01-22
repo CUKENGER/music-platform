@@ -7,6 +7,9 @@ static/*
 /static/audio/*
 /static/image/*
 
+
+database_dump.sql
+
 # Logs
 logs
 *.log

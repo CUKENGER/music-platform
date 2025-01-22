@@ -8,12 +8,11 @@ import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-
   constructor(
     private prisma: PrismaService,
     private roleService: RoleService,
-    private jwtService: JwtService
-  ) { }
+    private jwtService: JwtService,
+  ) {}
 
   async getAll() {
     try {
@@ -24,13 +23,13 @@ export class UserService {
           likedArtists: true,
           likedTracks: true,
           listenedTracks: true,
-          tokens: true
+          tokens: true,
         },
       });
-      return users
+      return users;
     } catch (e) {
-      console.error(`Error getAll users: ${e}`)
-      throw new InternalServerErrorException("Error getAll users")
+      console.error(`Error getAll users: ${e}`);
+      throw new InternalServerErrorException('Error getAll users');
     }
   }
 
@@ -44,10 +43,10 @@ export class UserService {
           roles: true,
         },
       });
-      return users
+      return users;
     } catch (e) {
-      console.error(`Error search users: ${e}`)
-      throw new InternalServerErrorException("Error search users")
+      console.error(`Error search users: ${e}`);
+      throw new InternalServerErrorException('Error search users');
     }
   }
 
@@ -64,10 +63,10 @@ export class UserService {
           tokens: true,
         },
       });
-      return user
+      return user;
     } catch (e) {
-      console.error(`Error getByEmail user: ${e}`)
-      throw new InternalServerErrorException("Error getByEmail user")
+      console.error(`Error getByEmail user: ${e}`);
+      throw new InternalServerErrorException('Error getByEmail user');
     }
   }
 
@@ -82,27 +81,29 @@ export class UserService {
         likedArtists: true,
         likedTracks: true,
         listenedTracks: true,
-        tokens: true
+        tokens: true,
       },
     });
   }
 
   async getByToken(token: string) {
     try {
-      const payload = this.jwtService.verify(token, { secret: process.env.JWT_ACCESS_SECRET_KEY });
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_ACCESS_SECRET_KEY,
+      });
       const user = await this.prisma.user.findFirst({
         where: { id: payload.id },
         include: {
           roles: {
             include: {
-              role: true
-            }
+              role: true,
+            },
           },
           likedAlbums: true,
           likedArtists: true,
           likedTracks: true,
           listenedTracks: true,
-          likedComments: true
+          likedComments: true,
         },
       });
 
@@ -115,16 +116,15 @@ export class UserService {
       console.error(`Ошибка при поиске пользователя: ${error.message}`);
 
       if (error.name === 'TokenExpiredError') {
-        throw ApiError.UnauthorizedError()
+        throw ApiError.UnauthorizedError();
       }
 
       if (error.name === 'JsonWebTokenError') {
-        throw ApiError.UnauthorizedError()
+        throw ApiError.UnauthorizedError();
       }
 
       throw new InternalServerErrorException('Ошибка при поиске пользователя');
     }
-
   }
 
   async getByUsername(username: string) {
@@ -138,7 +138,7 @@ export class UserService {
         likedArtists: true,
         likedTracks: true,
         listenedTracks: true,
-        tokens: true
+        tokens: true,
       },
     });
   }
@@ -191,4 +191,3 @@ export class UserService {
     return !user;
   }
 }
-

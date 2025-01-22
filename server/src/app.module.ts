@@ -11,7 +11,7 @@ import { TokenModule } from 'models/token/token.module';
 import { TrackModule } from 'models/track/track.module';
 import { UserModule } from 'models/user/user.module';
 import { LyricsModule } from 'models/lyrics/lyrics.module';
-import { HttpModule} from '@nestjs/axios';
+import { HttpModule } from '@nestjs/axios';
 import { FileModule } from 'models/file/file.module';
 import { AudioModule } from 'models/audioService/audioService.module';
 import * as path from 'path';
@@ -22,16 +22,18 @@ import { PlaylistModule } from 'models/playlist/playlist.module';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 10,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
     ServeStaticModule.forRoot({
-      rootPath: path.resolve(__dirname, '..','static'),
+      rootPath: path.resolve(__dirname, '..', 'static'),
     }),
     JwtModule.register({
       secret: process.env.JWT_ACCESS_SECRET_KEY,
-      signOptions: {expiresIn: '24h'}
+      signOptions: { expiresIn: '24h' },
     }),
     PrismaModule,
     AuthModule,
@@ -46,15 +48,14 @@ import { PlaylistModule } from 'models/playlist/playlist.module';
     HttpModule,
     FileModule,
     AudioModule,
-    PlaylistModule
+    PlaylistModule,
   ],
   controllers: [AudioController],
   providers: [],
 })
-
-export class AppModule implements NestModule{
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-      consumer
+    consumer
       .apply(AuthMiddleware)
       .exclude(
         { path: 'auth/activate/:link', method: RequestMethod.GET },
@@ -64,13 +65,11 @@ export class AppModule implements NestModule{
         { path: 'auth/reset_password', method: RequestMethod.ALL },
         { path: 'user/check/:username', method: RequestMethod.POST },
         { path: 'user', method: RequestMethod.POST },
-        { path: 'image/(.*)', method: RequestMethod.ALL},
-        { path: 'audio/(.*)', method: RequestMethod.ALL},
-        { path: 'static/*', method: RequestMethod.ALL},
-        { path: '.favicon.ico', method: RequestMethod.GET }
+        { path: 'image/(.*)', method: RequestMethod.ALL },
+        { path: 'audio/(.*)', method: RequestMethod.ALL },
+        { path: 'static/*', method: RequestMethod.ALL },
+        { path: '.favicon.ico', method: RequestMethod.GET },
       )
-      .forRoutes(
-        { path: '*', method: RequestMethod.ALL }
-      )
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

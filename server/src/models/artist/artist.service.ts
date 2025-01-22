@@ -1,27 +1,32 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { CreateArtistDto } from "./dto/create-artist.dto";
-import { CreateArtistCommentDto } from "./dto/create-artistComment.dto";
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateArtistDto } from './dto/create-artist.dto';
+import { CreateArtistCommentDto } from './dto/create-artistComment.dto';
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { UpdateArtistDto } from "./dto/update-artist.dto";
-import { PrismaService } from "prisma/prisma.service";
-import { FileService, FileType } from "models/file/file.service";
+import { UpdateArtistDto } from './dto/update-artist.dto';
+import { PrismaService } from 'prisma/prisma.service';
+import { FileService, FileType } from 'models/file/file.service';
 
 @Injectable()
 export class ArtistService {
   constructor(
     private prisma: PrismaService,
     private fileService: FileService,
-  ) { }
+  ) {}
 
   async create(dto: CreateArtistDto, picture: Express.Multer.File | string) {
     await this.ensureArtistDoesNotExist(dto.name);
 
-    let imagePath
-    if(picture as Express.Multer.File) {
+    let imagePath;
+    if (picture as Express.Multer.File) {
       imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
     } else {
-      imagePath = picture
+      imagePath = picture;
     }
 
     return await this.prisma.artist.create({
@@ -31,12 +36,12 @@ export class ArtistService {
         likes: 0,
         picture: imagePath,
         tracks: { create: [] },
-        albums: { create: [] }
+        albums: { create: [] },
       },
       include: {
         tracks: true,
         albums: true,
-      }
+      },
     });
   }
 
@@ -46,8 +51,8 @@ export class ArtistService {
         comments: true,
         likedByUsers: true,
         albums: true,
-        tracks: true
-      }
+        tracks: true,
+      },
     });
   }
 
@@ -83,7 +88,7 @@ export class ArtistService {
         },
       });
     } catch (e) {
-      console.error(`Error get All artists:`, e)
+      console.error(`Error get All artists:`, e);
     }
   }
 
@@ -118,7 +123,7 @@ export class ArtistService {
         tracks: {
           take: 5,
           orderBy: {
-            listens : 'desc',
+            listens: 'desc',
           },
           include: {
             artist: true,
@@ -151,29 +156,28 @@ export class ArtistService {
   }
 
   async searchByName(name: string) {
-
     return await this.prisma.artist.findMany({
       where: {
         name: {
           contains: name,
-          mode: "insensitive"
-        }
+          mode: 'insensitive',
+        },
       },
       orderBy: {
-        name: 'asc'
-      }
-    })
+        name: 'asc',
+      },
+    });
   }
 
   async updateArtist(id: number, newData: Partial<UpdateArtistDto>, picture: Express.Multer.File) {
-    let imagePath
+    let imagePath;
     if (picture) {
-      console.log('picture', picture)
+      console.log('picture', picture);
       imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
       newData.picture = imagePath;
     }
 
-    console.log('newData', newData)
+    console.log('newData', newData);
 
     return await this.prisma.artist.update({
       where: { id },
@@ -187,7 +191,7 @@ export class ArtistService {
       include: {
         tracks: {
           orderBy: {
-            listens : 'desc',
+            listens: 'desc',
           },
           include: {
             artist: true,
@@ -207,7 +211,7 @@ export class ArtistService {
     return artist;
   }
 
-  // to create 
+  // to create
   private async ensureArtistDoesNotExist(name: string) {
     const existingArtist = await this.prisma.artist.findFirst({ where: { name } });
     if (existingArtist) {

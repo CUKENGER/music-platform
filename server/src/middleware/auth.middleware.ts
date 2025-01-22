@@ -29,11 +29,11 @@ export class AuthMiddleware implements NestMiddleware {
       }
 
       req.user = tokenData;
-      
+
       next();
     } catch (error) {
       console.error(`Error in AuthMiddleware: ${error.message}`);
-      
+
       next(new UnauthorizedException('User is not authorized'));
     }
   }

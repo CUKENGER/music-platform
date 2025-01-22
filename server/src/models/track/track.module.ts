@@ -14,15 +14,15 @@ import { ArtistService } from 'models/artist/artist.service';
   imports: [FileModule],
   controllers: [TrackController],
   providers: [
-    TrackService, 
-    PrismaService, 
+    TrackService,
+    PrismaService,
     FileService,
     AudioService,
     CommentService,
     JwtService,
     TrackHelperService,
-    ArtistService
+    ArtistService,
   ],
-  exports: [TrackService]
+  exports: [TrackService],
 })
 export class TrackModule {}

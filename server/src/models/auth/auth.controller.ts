@@ -12,16 +12,13 @@ class TokenResponse {
 }
 
 export interface ReqWithCookie extends Request {
-  cookies: any
+  cookies: any;
 }
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-
-  constructor(
-    private authService: AuthService,
-  ) { }
+  constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: 'Вход пользователя' })
   @ApiBody({ type: LoginUserDto })
@@ -45,7 +42,6 @@ export class AuthController {
     } catch (e) {
       next(e);
     }
-
   }
 
   @ApiOperation({ summary: 'Выход пользователя' })
@@ -95,7 +91,7 @@ export class AuthController {
   @Post('/reset_password')
   async resetPasswordCheck(@Body() dto: ResetPasswordDto) {
     await this.authService.resetPassword(dto);
-    return { message: 'Password reset successful' }
+    return { message: 'Password reset successful' };
   }
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
@@ -104,5 +100,4 @@ export class AuthController {
       httpOnly: true,
     });
   }
-
 }

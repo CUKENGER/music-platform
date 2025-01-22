@@ -18,13 +18,15 @@ export class LyricsService {
     };
 
     try {
-      const response = await this.httpService.get(`${this.BASE_URL}/track.search`, { params }).toPromise();
+      const response = await this.httpService
+        .get(`${this.BASE_URL}/track.search`, { params })
+        .toPromise();
       const trackInfo = response.data.message.body.track_list[0].track;
       return {
         track_id: trackInfo.track_id,
         track_name: trackInfo.track_name,
         artist_name: trackInfo.artist_name,
-        track_genre: trackInfo.track_genre ? trackInfo.track_genre : null
+        track_genre: trackInfo.track_genre ? trackInfo.track_genre : null,
       };
     } catch (error) {
       throw new NotFoundException(`Failed to search track: ${error.message}`);
@@ -39,7 +41,9 @@ export class LyricsService {
     };
 
     try {
-      const response = await this.httpService.get(`${this.BASE_URL}/track.lyrics.get`, { params }).toPromise();
+      const response = await this.httpService
+        .get(`${this.BASE_URL}/track.lyrics.get`, { params })
+        .toPromise();
       const lyrics = response.data.message.body.lyrics.lyrics_body;
       return lyrics.substring(0, lyrics.lastIndexOf('...')).trim();
     } catch (error) {
