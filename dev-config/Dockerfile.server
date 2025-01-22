@@ -1,14 +1,30 @@
 
-FROM node:18
+FROM node:20
 
 WORKDIR /usr/app
 
+RUN yarn cache clean
+
+RUN rm -rf node_modules yarn.lock
+
 COPY package*.json ./
+COPY yarn.lock ./
+
+RUN yarn global add @nestjs/cli
+
+RUN yarn install
 
 RUN yarn
+
+RUN yarn remove @prisma/client
+
+RUN yarn add @prisma/client
 
 COPY . . 
 
 RUN npx prisma generate
+CMD ["sh", "-c", "until pg_isready -h postgres -U user; do sleep 3; done && yarn start:dev"]
+# CMD ["yarn", "start:dev"]
 
-CMD ["yarn", "start:dev"]
+
+# systemctl stop postgresql / sudo service postgresql stop
