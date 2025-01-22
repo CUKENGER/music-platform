@@ -31,25 +31,25 @@ export const PopularAlbums = () => {
         breakpoint: 1680,
         settings: {
           slidesToShow: 7,
-        }
+        },
       },
       {
         breakpoint: 1500,
         settings: {
           slidesToShow: 6,
-        }
+        },
       },
       {
         breakpoint: 1310,
         settings: {
           slidesToShow: 5,
-        }
+        },
       },
       {
         breakpoint: 1120,
         settings: {
           slidesToShow: 4,
-        }
+        },
       },
       {
         breakpoint: 950,
@@ -57,7 +57,7 @@ export const PopularAlbums = () => {
           slidesToShow: 3,
           centerMode: true,
           centerPadding: '50px',
-        }
+        },
       },
       {
         breakpoint: 765,
@@ -65,7 +65,7 @@ export const PopularAlbums = () => {
           slidesToShow: 3,
           centerMode: true,
           centerPadding: '30px',
-        }
+        },
       },
       {
         breakpoint: 735,
@@ -73,7 +73,7 @@ export const PopularAlbums = () => {
           slidesToShow: 3,
           centerMode: true,
           centerPadding: '10px',
-        }
+        },
       },
       {
         breakpoint: 600,
@@ -81,7 +81,7 @@ export const PopularAlbums = () => {
           slidesToShow: 2,
           centerMode: true,
           centerPadding: '60px',
-        }
+        },
       },
       {
         breakpoint: 450,
@@ -89,7 +89,7 @@ export const PopularAlbums = () => {
           slidesToShow: 2,
           centerMode: true,
           centerPadding: '30px',
-        }
+        },
       },
       {
         breakpoint: 390,
@@ -97,7 +97,7 @@ export const PopularAlbums = () => {
           slidesToShow: 2,
           centerMode: true,
           centerPadding: '3%',
-        }
+        },
       },
       {
         breakpoint: 345,
@@ -105,7 +105,7 @@ export const PopularAlbums = () => {
           slidesToShow: 2,
           centerMode: true,
           centerPadding: '1%',
-        }
+        },
       },
       {
         breakpoint: 335,
@@ -113,9 +113,9 @@ export const PopularAlbums = () => {
           slidesToShow: 1,
           centerMode: true,
           centerPadding: '20%',
-        }
+        },
       },
-    ]
+    ],
   };
 
   if (error) {
@@ -134,19 +134,11 @@ export const PopularAlbums = () => {
         <div className={styles.controls}>
           <SectionArrow onClick={() => sliderRef?.current?.slickPrev()} left={true} />
           <SectionArrow onClick={() => sliderRef?.current?.slickNext()} />
-          <Btn small={true}>
-            Ещё
-          </Btn>
+          <Btn small={true}>Ещё</Btn>
         </div>
       </div>
       <Slider ref={sliderRef} {...settings}>
-        {data?.map((album) => (
-          <AlbumItem
-            item={album}
-            itemList={data}
-            key={album.id}
-          />
-        ))}
+        {data?.map((album) => <AlbumItem item={album} itemList={data} key={album.id} />)}
       </Slider>
     </div>
   );

@@ -1,6 +1,12 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+}
 
-
-.Layout{
+.Layout {
   background-color: #242424;
   padding: 20px;
   display: flex;
@@ -11,10 +17,9 @@
   max-width: 510px;
 }
 
-.title{
+.title {
   color: #fff;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
   text-align: center;
   user-select: none;
 }
-

@@ -1,5 +1,3 @@
-
-
 .AlbumItem {
   display: flex;
   flex-direction: column;
@@ -8,17 +6,17 @@
   width: fit-content;
   border-radius: 10px;
 
-  &:hover{
+  &:hover {
     background-color: var(--black-lt);
   }
-} 
+}
 
-.cover{
+.cover {
   width: 170px;
   height: 170px;
   border-radius: 10px;
   overflow: hidden;
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -26,44 +24,44 @@
     object-fit: cover;
     transition: filter 0.2s ease;
 
-    &:hover{
+    &:hover {
       filter: brightness(80%);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
   }
 }
 
-.main_info{
+.main_info {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  align-items: center;  
+  align-items: center;
 }
 
-.main_info_left{
+.main_info_left {
   display: flex;
   flex-direction: column;
   row-gap: 10px;
 }
 
-.menu{
+.menu {
   display: block;
 }
 
-.noMenu{
+.noMenu {
   display: none;
 }
 
-.artist{
+.artist {
   color: var(--gray);
 
-  &:hover{
+  &:hover {
     color: var(--white);
   }
 }
 
 .name,
-.artist{
+.artist {
   font-size: 13px;
   max-width: 160px;
   overflow: hidden;
@@ -71,47 +69,47 @@
   white-space: nowrap;
 }
 
-.name{
+.name {
   cursor: pointer;
   height: 18px;
   white-space: nowrap;
   width: fit-content;
 
-  &:hover{
+  &:hover {
     border-bottom: 1px solid var(--prm);
   }
 }
 
 .name,
 .cover,
-.artist{
+.artist {
   cursor: pointer;
 }
 
-@media(max-width: 920px) {
-  .cover{
+@media (max-width: 920px) {
+  .cover {
     width: 150px;
     height: 150px;
   }
 
   .name,
-  .artist{
+  .artist {
     max-width: 140px;
-  } 
+  }
 
-  .AlbumItem{
+  .AlbumItem {
     padding: 5px;
   }
 }
 
-@media(max-width: 550px) {
-  .cover{
+@media (max-width: 550px) {
+  .cover {
     width: 120px;
     height: 120px;
   }
 
   .name,
-  .artist{
+  .artist {
     max-width: 110px;
-  } 
+  }
 }

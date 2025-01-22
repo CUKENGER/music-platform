@@ -1,3 +1,1 @@
-
-
-export { EditAlbumForm } from './ui'
+export { EditAlbumForm } from './ui';

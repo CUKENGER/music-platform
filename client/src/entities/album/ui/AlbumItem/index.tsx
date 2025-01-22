@@ -1,5 +1,5 @@
 import { ForwardedRef, forwardRef, useState } from 'react';
-import styles from './AlbumItem.module.scss'
+import styles from './AlbumItem.module.scss';
 import { Link } from 'react-router-dom';
 import { useDeleteAlbum } from '../../api/useAlbumApi';
 import { IAlbum } from '../../types/Album';
@@ -15,26 +15,23 @@ interface AlbumItemProps {
 }
 
 const AlbumItemComponent = ({ item: album }: AlbumItemProps, ref: ForwardedRef<HTMLDivElement>) => {
-
-  const [isHover, setIsHover] = useState(false)
-  const { hideModal, modal, showModal } = useModal()
-  const { isAdmin } = useUserStore()
-  const { mutate: deleteAlbum } = useDeleteAlbum()
+  const [isHover, setIsHover] = useState(false);
+  const { hideModal, modal, showModal } = useModal();
+  const { isAdmin } = useUserStore();
+  const { mutate: deleteAlbum } = useDeleteAlbum();
 
   const handleDelete = () => {
     deleteAlbum(album.id, {
       onSuccess: (res) => {
-        showModal(`Альбом ${res?.name} успешно удален`)
+        showModal(`Альбом ${res?.name} успешно удален`);
       },
       onError: (e) => {
-        showModal(`Произошла ошибка при удалении: ${e}`)
-      }
-    })
-  }
+        showModal(`Произошла ошибка при удалении: ${e}`);
+      },
+    });
+  };
 
-  const items: MenuItem[] = [
-    { text: 'Удалить', onClick: handleDelete },
-  ];
+  const items: MenuItem[] = [{ text: 'Удалить', onClick: handleDelete }];
 
   return (
     <div
@@ -63,12 +60,9 @@ const AlbumItemComponent = ({ item: album }: AlbumItemProps, ref: ForwardedRef<H
           </div>
         )}
       </div>
-        <ModalContainer
-          modal={modal}
-          hideModal={hideModal}
-        />
+      <ModalContainer modal={modal} hideModal={hideModal} />
     </div>
-  )
-}
+  );
+};
 
 export const AlbumItem = forwardRef(AlbumItemComponent);

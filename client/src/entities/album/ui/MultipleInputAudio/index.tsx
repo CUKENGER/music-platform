@@ -1,14 +1,13 @@
-import { InputHTMLAttributes, useId } from 'react'
-import styles from './MultipleInputAudio.module.scss'
-import { Tooltip as ReactTooltip } from 'react-tooltip'
+import { InputHTMLAttributes, useId } from 'react';
+import styles from './MultipleInputAudio.module.scss';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 interface MultipleInputAudioProps extends InputHTMLAttributes<HTMLInputElement> {
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const MultipleInputAudio = ({ onChange, ...props }: MultipleInputAudioProps) => {
-
-  const id = useId()
+  const id = useId();
 
   return (
     <div className={styles.inputAudio_container}>
@@ -35,5 +34,5 @@ export const MultipleInputAudio = ({ onChange, ...props }: MultipleInputAudioPro
         delayShow={3000}
       />
     </div>
-  )
-}
+  );
+};

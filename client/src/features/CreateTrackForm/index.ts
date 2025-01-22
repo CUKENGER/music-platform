@@ -1,2 +1,1 @@
-
-export { CreateTrackForm } from './ui'
+export { CreateTrackForm } from './ui';

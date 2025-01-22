@@ -1,4 +1,3 @@
-
 interface ResponseError {
   response: {
     data: {
@@ -10,18 +9,15 @@ interface ResponseError {
 
 export const isResponseError = (error: unknown): error is ResponseError => {
   return (
-    typeof error === "object" &&
+    typeof error === 'object' &&
     error !== null &&
-    "response" in error &&
-    typeof (error as ResponseError).response === "object" &&
-    typeof (error as ResponseError).response.status === "number"
+    'response' in error &&
+    typeof (error as ResponseError).response === 'object' &&
+    typeof (error as ResponseError).response.status === 'number'
   );
 };
 
-export const handleAuthError = (
-  error: unknown,
-  showModal: (message: string) => void
-) => {
+export const handleAuthError = (error: unknown, showModal: (message: string) => void) => {
   if (isResponseError(error)) {
     const { status, data } = error.response;
 

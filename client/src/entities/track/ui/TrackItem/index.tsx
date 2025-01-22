@@ -13,9 +13,12 @@ interface TrackItemProps {
   needClick?: boolean;
 }
 
-const TrackItemComponent = ({ item: track, itemList: trackList, needDeleteIcon=true, needClick= true }: TrackItemProps, ref: ForwardedRef<HTMLDivElement>) => {
+const TrackItemComponent = (
+  { item: track, itemList: trackList, needDeleteIcon = true, needClick = true }: TrackItemProps,
+  ref: ForwardedRef<HTMLDivElement>,
+) => {
   const { play, handleDelete, isVisible, modal, hideModal } = useTrackItem(track, trackList);
-  const isAdmin = useUserStore(state => state.isAdmin);
+  const isAdmin = useUserStore((state) => state.isAdmin);
 
   return (
     <div
@@ -40,7 +43,7 @@ const TrackItemComponent = ({ item: track, itemList: trackList, needDeleteIcon=t
           </div>
         )}
       </div>
-        <ModalContainer hideModal={hideModal} modal={modal} />
+      <ModalContainer hideModal={hideModal} modal={modal} />
     </div>
   );
 };

@@ -1,2 +1,0 @@
-
-export { LoginLayout } from './ui'

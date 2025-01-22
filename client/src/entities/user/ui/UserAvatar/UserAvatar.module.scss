@@ -1,5 +1,4 @@
-
-.user_container{
+.user_container {
   display: flex;
   align-items: center;
   column-gap: 5px;
@@ -9,26 +8,26 @@
   width: 100%;
 }
 
-.user_avatar{
+.user_avatar {
   border-radius: 50%;
   width: 30px;
   height: 30px;
   background-color: var(--gray);
   cursor: pointer;
 
-  &:hover{
+  &:hover {
     transform: scale(1.02);
   }
 }
 
-.main_container{
+.main_container {
   display: grid;
   width: 100%;
   grid-template-columns: 30px 1fr 30px;
   align-items: center;
 }
 
-.name_container{
+.name_container {
   color: var(--gray);
   cursor: pointer;
   text-align: center;
@@ -37,23 +36,23 @@
   justify-content: center;
   max-width: 125px;
 
-  p{
+  p {
     overflow: hidden;
     max-width: 100px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  &:hover{
+  &:hover {
     color: var(--white);
   }
 }
 
-.menu{
+.menu {
   display: flex;
   justify-content: flex-end;
 }
 
-.dots{
+.dots {
   cursor: pointer;
 }

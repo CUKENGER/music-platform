@@ -1,32 +1,31 @@
-import { useCreateTrack } from "@/entities/track"
-import { API_URL, PRIVATE_ROUTES } from "@/shared/consts"
-import { useInput, useModal, useDebounce } from "@/shared/hooks"
-import { genres } from "@/shared/moks"
-import { axiosInstance } from "@/shared/api"
-import { AxiosError } from "axios"
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useCreateTrack } from '@/entities/track';
+import { API_URL, PRIVATE_ROUTES } from '@/shared/consts';
+import { useInput, useModal, useDebounce } from '@/shared/hooks';
+import { genres } from '@/shared/moks';
+import { axiosInstance } from '@/shared/api';
+import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const useCreateTrackForm = () => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const name = useInput('', {});
+  const artist = useInput('', {});
+  const text = useInput('', {});
+  const genre = useInput('', {});
 
-  const name = useInput('', {})
-  const artist = useInput('', {})
-  const text = useInput('', {})
-  const genre = useInput('', {})
+  const [options, setOptions] = useState(genres);
 
-  const [options, setOptions] = useState(genres)
+  const { hideModal, modal, showModal } = useModal();
 
-  const {hideModal, modal, showModal} = useModal()
-
-  const [audio, setAudio] = useState<File | null>(null)
-  const [cover, setCover] = useState<File | null>(null)
+  const [audio, setAudio] = useState<File | null>(null);
+  const [cover, setCover] = useState<File | null>(null);
 
   const debouncedName = useDebounce(name.value, 500);
   const debouncedArtist = useDebounce(artist.value, 500);
 
-  const {mutate: createTrack, isPending: isLoading,} = useCreateTrack()
+  const { mutate: createTrack, isPending: isLoading } = useCreateTrack();
 
   useEffect(() => {
     if (audio?.name) {
@@ -40,23 +39,25 @@ export const useCreateTrackForm = () => {
 
   useEffect(() => {
     const get = async () => {
-      if( debouncedArtist && debouncedName) {
+      if (debouncedArtist && debouncedName) {
         try {
           const response = await axiosInstance.get(API_URL + 'lyrics/search', {
-            params: {track_name: debouncedName, artist_name: debouncedArtist}
+            params: { track_name: debouncedName, artist_name: debouncedArtist },
           });
-          
+
           if (response.data.track_id) {
-            const lyricsResponse = await axiosInstance.get(API_URL + `lyrics?track_id=${response.data.track_id}`);
-            text.setValue(lyricsResponse.data)
+            const lyricsResponse = await axiosInstance.get(
+              API_URL + `lyrics?track_id=${response.data.track_id}`,
+            );
+            text.setValue(lyricsResponse.data);
           }
-        } catch(e) {
-          console.error('Error in get lyrics', e)
+        } catch (e) {
+          console.error('Error in get lyrics', e);
         }
       }
-    }
-    get()
-  }, [debouncedArtist, debouncedName])
+    };
+    get();
+  }, [debouncedArtist, debouncedName]);
 
   const hasData = !!(
     name.value.trim() &&
@@ -68,10 +69,9 @@ export const useCreateTrackForm = () => {
   );
 
   const handleSubmit = async () => {
-
-    if(!hasData) {
-      showModal('Заполните все данные, пожалуйста')
-      return
+    if (!hasData) {
+      showModal('Заполните все данные, пожалуйста');
+      return;
     }
 
     if (hasData) {
@@ -85,15 +85,17 @@ export const useCreateTrackForm = () => {
       };
       createTrack(trackInfo, {
         onSuccess: (response) => {
-          showModal(`Трек ${response.name} успешно загружен`, () => navigate(PRIVATE_ROUTES.TRACKS))
+          showModal(`Трек ${response.name} успешно загружен`, () =>
+            navigate(PRIVATE_ROUTES.TRACKS),
+          );
         },
         onError: (error: AxiosError) => {
-          console.error(`Ошибка при загрузке трека: `, error)
+          console.error(`Ошибка при загрузке трека: `, error);
           showModal(`Ошибка при загрузке трека: ${String(error.message)}`);
         },
-      })
-    } 
-  }
+      });
+    }
+  };
 
   return {
     name,
@@ -108,9 +110,8 @@ export const useCreateTrackForm = () => {
     audio,
     handleSubmit,
     isLoading,
-    hideModal, 
+    hideModal,
     modal,
-    hasData
-  }
-
-}
+    hasData,
+  };
+};

@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { ITrack } from "../types/Track";
+import { create } from 'zustand';
+import { ITrack } from '../types/Track';
 
 interface PlayerStore {
   volume: number;
@@ -18,28 +18,28 @@ const usePlayerStore = create<PlayerStore>((set, get) => ({
   activeTrack: null,
   pause: true,
   isMix: false,
-  
+
   setIsMix: (isMix: boolean) => {
     if (get().isMix !== isMix) {
       set({ isMix });
     }
   },
-  
+
   setActiveTrack: (track: ITrack) => {
     if (get().activeTrack?.id !== track.id) {
       set({ activeTrack: track });
     }
   },
-  
+
   setPlay: () => set({ pause: false }),
-  
+
   setPause: () => set({ pause: true }),
-  
+
   setVolume: (volume: number) => {
     if (get().volume !== volume) {
       set({ volume });
     }
-  }
+  },
 }));
 
 export default usePlayerStore;

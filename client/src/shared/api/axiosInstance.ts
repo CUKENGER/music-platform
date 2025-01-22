@@ -12,7 +12,7 @@ export const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${accessToken}`
+    Authorization: `Bearer ${accessToken}`,
   },
   withCredentials: true,
 });
@@ -25,28 +25,30 @@ export const useAxiosInterceptor = () => {
   const { setIsAuth } = useUserStore();
 
   axiosInstance.interceptors.request.use(
-    config => {
+    (config) => {
       const token = localStorage.getItem('token');
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
       }
       return config;
     },
-    error => Promise.reject(error)
+    (error) => Promise.reject(error),
   );
 
   axiosInstance.interceptors.response.use(
-    response => response,
-    async error => {
+    (response) => response,
+    async (error) => {
       const originalRequest = error.config;
 
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
-          const { data } = await axiosInstance.get('/auth/refresh', { withCredentials: true });
+          const { data } = await axiosInstance.get('/auth/refresh', {
+            withCredentials: true,
+          });
 
           localStorage.setItem('token', data.accessToken);
-          cookies.set('refreshToken', data.refreshToken, { 
+          cookies.set('refreshToken', data.refreshToken, {
             sameSite: 'strict',
             secure: true,
           });
@@ -64,7 +66,7 @@ export const useAxiosInterceptor = () => {
       }
 
       return Promise.reject(error);
-    }
+    },
   );
 };
 

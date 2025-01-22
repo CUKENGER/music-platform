@@ -1,6 +1,4 @@
-
-
-.container{
+.container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8,7 +6,6 @@
   height: 100vh;
   background-color: var(--bg);
 }
-
 
 .loader {
   width: 100px;
@@ -18,4 +15,8 @@
   border-color: var(--prm) #333333;
   animation: l1 1s infinite;
 }
-@keyframes l1 {to{transform: rotate(.5turn)}}
+@keyframes l1 {
+  to {
+    transform: rotate(0.5turn);
+  }
+}

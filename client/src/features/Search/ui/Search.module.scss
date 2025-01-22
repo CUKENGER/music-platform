@@ -1,17 +1,16 @@
-
-.input{
+.input {
   border-radius: 10px;
   background-color: var(--black-lt);
   height: 40px;
   width: 100%;
-  
-  &::placeholder{
+
+  &::placeholder {
     color: var(--gray);
   }
 }
 
-@media(max-width: 800px) {
-  .input{
+@media (max-width: 800px) {
+  .input {
     height: 30px;
     font-size: 12px;
   }

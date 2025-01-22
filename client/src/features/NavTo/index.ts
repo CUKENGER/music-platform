@@ -1,2 +1,1 @@
-
-export { NavTo } from './ui'
+export { NavTo } from './ui';

@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useState } from 'react';
 import styles from './Options.module.scss';
 
 interface OptionsProps {
@@ -7,7 +7,7 @@ interface OptionsProps {
 }
 
 export const Options = memo(({ options, currentOption }: OptionsProps) => {
-  const [fields, setFields] = useState(options)
+  const [fields, setFields] = useState(options);
   const [selectedOption, setSelectedOption] = useState<string | null>(currentOption ?? null);
 
   const handleOptionClick = (option: string) => {
@@ -38,11 +38,7 @@ export const Options = memo(({ options, currentOption }: OptionsProps) => {
       </div>
       <ul className={styles.options}>
         {fields.map((option, i) => (
-          <li
-            key={option + i}
-            className={styles.option}
-            onClick={() => handleOptionClick(option)}
-          >
+          <li key={option + i} className={styles.option} onClick={() => handleOptionClick(option)}>
             {option}
           </li>
         ))}

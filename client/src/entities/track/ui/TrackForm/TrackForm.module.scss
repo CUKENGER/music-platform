@@ -1,6 +1,4 @@
-
-
-.TrackForm{
+.TrackForm {
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -10,24 +8,24 @@
   padding: 5px;
 }
 
-.textInputContainer{
+.textInputContainer {
   display: flex;
   flex-direction: column;
   row-gap: 5px;
   width: 50%;
 }
 
-.InputAudio{
+.InputAudio {
   display: none;
 }
 
-.inputAudio_container{
+.inputAudio_container {
   width: 50%;
   display: flex;
   justify-content: center;
 }
 
-.LabelAudio{
+.LabelAudio {
   padding: 10px;
   color: var(--white);
   background-color: var(--prm);
@@ -41,23 +39,23 @@
   height: 100%;
   position: relative;
   word-wrap: break-word;
-  word-break: break-all; 
+  word-break: break-all;
   overflow-wrap: break-word;
-  white-space: normal; 
+  white-space: normal;
   flex-wrap: wrap;
 }
 
-.invalid{
+.invalid {
   background-color: var(--black-lt);
   border: 2px solid var(--prm);
 }
 
-.minusBtn{
+.minusBtn {
   width: 40px;
   height: 40px;
   cursor: pointer;
-  
-  img{
+
+  img {
     width: 100%;
     height: 100%;
   }
@@ -78,42 +76,42 @@
   min-height: 3lh;
 }
 
-.index{
+.index {
   padding: 10px;
   padding-right: 20px;
 }
 
-@media(max-width: 700px) {
+@media (max-width: 700px) {
   .LabelAudio,
-  .label_input{
+  .label_input {
     font-size: 12px;
   }
 }
 
-@media(max-width: 550px) {
+@media (max-width: 550px) {
   .LabelAudio,
-  .label_input{
+  .label_input {
     font-size: 11px;
   }
 
-  .LabelAudio{
+  .LabelAudio {
     width: 90%;
   }
 
-  .index{
+  .index {
     padding: 5px;
   }
 }
 
-@media(max-width: 430px) {
-  .TrackForm{
+@media (max-width: 430px) {
+  .TrackForm {
     justify-content: baseline;
     align-items: baseline;
     flex-direction: column;
     row-gap: 8px;
   }
 
-  .index{
+  .index {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -121,8 +119,7 @@
   }
 
   .textInputContainer,
-  .inputAudio_container{
+  .inputAudio_container {
     width: 100%;
   }
 }
-

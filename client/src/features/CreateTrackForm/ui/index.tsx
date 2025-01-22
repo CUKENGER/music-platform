@@ -1,10 +1,16 @@
-import { Btn, InputFile, InputForHook, ModalContainer, Options, TextareaForHook } from '@/shared/ui'
-import styles from './CreateTrackForm.module.scss'
-import { useCreateTrackForm } from '../model/useCreateTrackForm'
-import { SearchArtistInput } from '@/entities/artist'
+import {
+  Btn,
+  InputFile,
+  InputForHook,
+  ModalContainer,
+  Options,
+  TextareaForHook,
+} from '@/shared/ui';
+import styles from './CreateTrackForm.module.scss';
+import { useCreateTrackForm } from '../model/useCreateTrackForm';
+import { SearchArtistInput } from '@/entities/artist';
 
 export const CreateTrackForm = () => {
-
   const {
     name,
     artist,
@@ -20,32 +26,26 @@ export const CreateTrackForm = () => {
     isLoading,
     hasData,
     modal,
-    hideModal
-  } = useCreateTrackForm()
+    hideModal,
+  } = useCreateTrackForm();
 
   return (
     <>
-      <form className={styles.form} name='create_track'>
+      <form className={styles.form} name="create_track">
         <div className={styles.fields_container}>
-          <InputForHook
-            inputValue={name}
-            placeholder='Введите название'
-          />
+          <InputForHook inputValue={name} placeholder="Введите название" />
           <SearchArtistInput
             artist={artist.value}
             setArtist={artist.setValue}
-          //artist={artist}
+            //artist={artist}
           />
           <Options
             options={options}
-          //setOptions={setOptions}
-          //setValue={genre.setValue}
-          //value={genre.value}
+            //setOptions={setOptions}
+            //setValue={genre.setValue}
+            //value={genre.value}
           />
-          <TextareaForHook
-            placeholder='Введите текст песни'
-            inputValue={text}
-          />
+          <TextareaForHook placeholder="Введите текст песни" inputValue={text} />
         </div>
         <div className={styles.fields_upload_container}>
           <div className={styles.input_cover}>
@@ -71,14 +71,10 @@ export const CreateTrackForm = () => {
         isLoading={isLoading}
         disabled={!hasData}
         className={styles.upload_btn}
-
       >
         Отправить
       </Btn>
-      <ModalContainer
-        hideModal={hideModal}
-        modal={modal}
-      />
+      <ModalContainer hideModal={hideModal} modal={modal} />
     </>
-  )
-}
+  );
+};

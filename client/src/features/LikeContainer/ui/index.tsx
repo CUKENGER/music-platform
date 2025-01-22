@@ -1,9 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
-import { AxiosError } from "axios";
-import { ITrack } from "@/entities/track";
-import { IAlbum } from "@/entities/album";
-import { IArtist } from "@/entities/artist";
-import { LikeIcon } from "@/shared/ui";
+import { useEffect, useState, useCallback } from 'react';
+import { AxiosError } from 'axios';
+import { ITrack } from '@/entities/track';
+import { IAlbum } from '@/entities/album';
+import { IArtist } from '@/entities/artist';
+import { LikeIcon } from '@/shared/ui';
 
 interface LikeContainerProps {
   id: number;
@@ -15,14 +15,14 @@ interface LikeContainerProps {
   updateEntityState: (entity: ITrack | IAlbum | IArtist) => void;
 }
 
-export const LikeContainer = ({ 
-  id, 
-  initialLikes, 
-  isLikedInitially, 
-  onAddLike, 
-  onDeleteLike, 
-  refetchEntity, 
-  updateEntityState 
+export const LikeContainer = ({
+  id,
+  initialLikes,
+  isLikedInitially,
+  onAddLike,
+  onDeleteLike,
+  refetchEntity,
+  updateEntityState,
 }: LikeContainerProps) => {
   const [isLike, setIsLike] = useState<boolean>(isLikedInitially);
   const [localLikes, setLocalLikes] = useState<number>(initialLikes);
@@ -37,13 +37,15 @@ export const LikeContainer = ({
 
     const onSuccess = () => {
       setIsLike(!isLike);
-      setLocalLikes(prevLikes => isLike ? prevLikes - 1 : prevLikes + 1);
+      setLocalLikes((prevLikes) => (isLike ? prevLikes - 1 : prevLikes + 1));
 
-      refetchEntity(id).then(({ data }) => {
-        updateEntityState(data);
-      }).catch((error: AxiosError) => {
-        console.error('Error fetching updated entity:', error);
-      });
+      refetchEntity(id)
+        .then(({ data }) => {
+          updateEntityState(data);
+        })
+        .catch((error: AxiosError) => {
+          console.error('Error fetching updated entity:', error);
+        });
     };
 
     const onError = (error: AxiosError) => {
@@ -57,11 +59,5 @@ export const LikeContainer = ({
     }
   }, [id, isLike, onAddLike, onDeleteLike, refetchEntity, updateEntityState]);
 
-  return (
-    <LikeIcon 
-      isLike={isLike}
-      onClick={handleLike}
-      likes={localLikes}
-    />
-  );
+  return <LikeIcon isLike={isLike} onClick={handleLike} likes={localLikes} />;
 };

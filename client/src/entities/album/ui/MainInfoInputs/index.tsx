@@ -1,5 +1,5 @@
-import styles from './MainInfoInputs.module.scss'
-import Flatpickr from "react-flatpickr";
+import styles from './MainInfoInputs.module.scss';
+import Flatpickr from 'react-flatpickr';
 import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 import { IAlbum } from '../../types/Album';
 import { Input, InputFile, Options, Textarea } from '@/shared/ui';
@@ -14,11 +14,7 @@ interface MainInfoInputsProps {
   album: IAlbum | undefined;
 }
 
-export const MainInfoInputs = ({
-  control,
-  setValue,
-  album
-}: MainInfoInputsProps) => {
+export const MainInfoInputs = ({ control, setValue, album }: MainInfoInputsProps) => {
   return (
     <div className={styles.album_inputs}>
       <div className={styles.main_info_inputs}>
@@ -28,11 +24,7 @@ export const MainInfoInputs = ({
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Input
-                value={field.value}
-                onChange={field.onChange}
-                placeholder='Введите название'
-              />
+              <Input value={field.value} onChange={field.onChange} placeholder="Введите название" />
             )}
           />
           <Controller
@@ -40,10 +32,7 @@ export const MainInfoInputs = ({
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <SearchArtistInput
-                artist={field.value}
-                setArtist={field.onChange}
-              />
+              <SearchArtistInput artist={field.value} setArtist={field.onChange} />
             )}
           />
           <Controller
@@ -52,7 +41,7 @@ export const MainInfoInputs = ({
             rules={{ required: true }}
             render={({ field }) => (
               <Textarea
-                placeholder='Введите описание'
+                placeholder="Введите описание"
                 value={field.value}
                 onChange={field.onChange}
               />
@@ -68,12 +57,12 @@ export const MainInfoInputs = ({
                 className={styles.input_date}
                 data-enable-time
                 options={{
-                  dateFormat: "d-m-Y",
+                  dateFormat: 'd-m-Y',
                   maxDate: new Date(),
                   onChange: (selectedDates) => {
                     setValue('releaseDate', selectedDates[0]);
                   },
-                  defaultDate: field.value
+                  defaultDate: field.value,
                 }}
               />
             )}
@@ -82,12 +71,7 @@ export const MainInfoInputs = ({
             name="genre"
             control={control}
             rules={{ required: true }}
-            render={() => (
-              <Options
-                options={genres}
-                currentOption={album?.genre}
-              />
-            )}
+            render={() => <Options options={genres} currentOption={album?.genre} />}
           />
         </div>
       </div>
@@ -102,12 +86,12 @@ export const MainInfoInputs = ({
                 setFile={field.onChange}
                 fileName={'[eq'}
                 currentPicture={API_URL + album?.picture}
-                placeholder='Загрузите обложку альбома'
+                placeholder="Загрузите обложку альбома"
               />
             )}
           />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,10 +1,10 @@
-import styles from "./ClearIcon.module.scss"
-import crossBg from './crossBg.svg'
-import cn from 'classnames'
+import styles from './ClearIcon.module.scss';
+import crossBg from './crossBg.svg';
+import cn from 'classnames';
 
 interface ClearIconProps {
   handleClear: () => void;
-  className?: string
+  className?: string;
 }
 
 export const ClearIcon = ({ handleClear, className }: ClearIconProps) => {

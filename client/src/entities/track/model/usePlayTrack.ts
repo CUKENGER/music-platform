@@ -1,20 +1,19 @@
-import { audioManager } from "@/shared/model";
-import { ITrack } from "../types/Track";
-import useActiveTrackListStore from "./ActiveTrackListStore";
-import usePlayerStore from "./PlayerStore";
-import useAudioChunkStore from "./AudioChunkStore";
-import { useCallback } from "react";
-
+import { audioManager } from '@/shared/model';
+import { ITrack } from '../types/Track';
+import useActiveTrackListStore from './ActiveTrackListStore';
+import usePlayerStore from './PlayerStore';
+import useAudioChunkStore from './AudioChunkStore';
+import { useCallback } from 'react';
 
 export const usePlayTrack = (track: ITrack, trackList?: ITrack[]) => {
-  const chunkSize = 1000000
+  const chunkSize = 1000000;
 
-  const setActiveTrackList = useActiveTrackListStore(state => state.setActiveTrackList)
-  const {activeTrack, setPlay, setPause, pause, setActiveTrack} = usePlayerStore()
-  const {setStart, setEnd, setLoadedTime} = useAudioChunkStore()
+  const setActiveTrackList = useActiveTrackListStore((state) => state.setActiveTrackList);
+  const { activeTrack, setPlay, setPause, pause, setActiveTrack } = usePlayerStore();
+  const { setStart, setEnd, setLoadedTime } = useAudioChunkStore();
 
   const play = useCallback(() => {
-    if(trackList) {
+    if (trackList) {
       setActiveTrackList(trackList);
     }
     if (!audioManager.isAudioExist()) return;
@@ -35,9 +34,21 @@ export const usePlayTrack = (track: ITrack, trackList?: ITrack[]) => {
       setActiveTrack(track);
       setPlay();
     }
-  }, [setActiveTrackList, trackList, activeTrack?.id, track, pause, setActiveTrack, setEnd, setLoadedTime, setPause, setPlay, setStart])
+  }, [
+    setActiveTrackList,
+    trackList,
+    activeTrack?.id,
+    track,
+    pause,
+    setActiveTrack,
+    setEnd,
+    setLoadedTime,
+    setPause,
+    setPlay,
+    setStart,
+  ]);
 
   return {
-    play
-  }
-}
+    play,
+  };
+};

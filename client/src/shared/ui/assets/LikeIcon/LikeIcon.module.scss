@@ -1,6 +1,4 @@
-
-
-.LikeIcon{
+.LikeIcon {
   width: fit-content;
   height: fit-content;
   display: flex;
@@ -11,8 +9,8 @@
   img {
     width: 100%;
     height: 100%;
-    
-    &:hover{
+
+    &:hover {
       transform: scale(1.02);
     }
   }
@@ -21,13 +19,13 @@
     cursor: pointer;
     color: var(--gray);
 
-    &:hover{
+    &:hover {
       color: var(--white);
     }
   }
 }
 
-@media(max-width: 800px) {  
+@media (max-width: 800px) {
   .LikeIcon {
     width: 16px;
     height: 16px;

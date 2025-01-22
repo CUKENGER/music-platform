@@ -1,5 +1,3 @@
-
-
 .container {
   position: absolute;
   top: 50%;
@@ -38,7 +36,9 @@
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  transition:
+    opacity 0.3s ease-out,
+    visibility 0.3s ease-out;
   z-index: 1;
 }
 
@@ -47,8 +47,7 @@
   visibility: visible;
 }
 
-
-.main_container{
+.main_container {
   display: flex;
   width: 100%;
   padding: 0;
@@ -60,38 +59,36 @@
   text-align: center;
 }
 
-.text{
+.text {
   white-space: pre-wrap;
 }
 
-.x_container{
+.x_container {
   display: flex;
   width: 100%;
   justify-content: flex-end;
 }
 
-.btn_container{
+.btn_container {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
 }
 
-.x_icon_container{
+.x_icon_container {
   width: 25px;
   height: 25px;
 }
 
-.x_icon{
+.x_icon {
   cursor: pointer;
   width: 100%;
   height: 100%;
 }
 
-
-
-@media(max-width: 550px) {
-  .container{
+@media (max-width: 550px) {
+  .container {
     width: 90%;
   }
 }

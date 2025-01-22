@@ -1,8 +1,8 @@
 import { ReactNode, useRef, useState, useEffect } from 'react';
 import Slider from 'react-slick';
-import { useGetLimitPopularTracks } from "@/entities/track/api/useTrackApi";
+import { useGetLimitPopularTracks } from '@/entities/track/api/useTrackApi';
 import styles from './PopularTracks.module.scss';
-import { SectionArrow } from "@/widgets/EntitySection/ui/assets/SectionArrow/SectionArrow";
+import { SectionArrow } from '@/widgets/EntitySection/ui/assets/SectionArrow/SectionArrow';
 import { ITrack, TrackItem } from '@/entities/track';
 import { useWindowWidth } from '@/shared/hooks';
 import { Btn, Loader } from '@/shared/ui';
@@ -23,7 +23,7 @@ export const PopularTracks = () => {
   const [isFirstSlide, setIsFirstSlide] = useState(true);
   const [isLastSlide, setIsLastSlide] = useState(false);
 
-  const windowWidth = useWindowWidth()
+  const windowWidth = useWindowWidth();
 
   useEffect(() => {
     if (sliderRef.current) {
@@ -73,16 +73,16 @@ export const PopularTracks = () => {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
-        }
+        },
       },
       {
         breakpoint: 768,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-        }
-      }
-    ]
+        },
+      },
+    ],
   };
 
   if (error) {
@@ -99,11 +99,13 @@ export const PopularTracks = () => {
       <div className={styles.header}>
         <p className={styles.title}>Popular Tracks</p>
         <div className={styles.controls}>
-          <SectionArrow isDisabled={isFirstSlide} onClick={() => sliderRef?.current?.slickPrev()} left={true} />
+          <SectionArrow
+            isDisabled={isFirstSlide}
+            onClick={() => sliderRef?.current?.slickPrev()}
+            left={true}
+          />
           <SectionArrow isDisabled={isLastSlide} onClick={() => sliderRef?.current?.slickNext()} />
-          <Btn small={true}>
-            Ещё
-          </Btn>
+          <Btn small={true}>Ещё</Btn>
         </div>
       </div>
       <Slider ref={sliderRef} {...settings}>

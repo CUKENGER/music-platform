@@ -1,22 +1,21 @@
-import styles from './ArtistPage.module.scss'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
-import cn from 'classnames'
-import { useDeleteArtist, useGetOneArtist } from '@/entities/artist'
-import { API_URL, PRIVATE_ROUTES } from '@/shared/consts'
-import { Btn, LikeIcon, ListensIcon, Loader } from '@/shared/ui'
-import { ChildrenTrack } from '@/entities/track'
+import styles from './ArtistPage.module.scss';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import cn from 'classnames';
+import { useDeleteArtist, useGetOneArtist } from '@/entities/artist';
+import { API_URL, PRIVATE_ROUTES } from '@/shared/consts';
+import { Btn, LikeIcon, ListensIcon, Loader } from '@/shared/ui';
+import { ChildrenTrack } from '@/entities/track';
 
 export const ArtistPage = () => {
-
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
   const [hasGradient, setHasGradient] = useState(false);
-  const { id } = useParams()
-  const navigate = useNavigate()
+  const { id } = useParams();
+  const navigate = useNavigate();
   const descriptionRef = useRef<HTMLDivElement>(null);
-  
-  const { data: artist, isLoading, isError, error } = useGetOneArtist(Number(id))
-  const { mutate: deleteArtist } = useDeleteArtist(Number(id))
+
+  const { data: artist, isLoading, isError, error } = useGetOneArtist(Number(id));
+  const { mutate: deleteArtist } = useDeleteArtist(Number(id));
 
   useEffect(() => {
     if (descriptionRef.current) {
@@ -28,16 +27,16 @@ export const ArtistPage = () => {
   const handleDeleteArtist = () => {
     deleteArtist(undefined, {
       onSuccess: () => {
-        navigate(PRIVATE_ROUTES.ARTISTS)
+        navigate(PRIVATE_ROUTES.ARTISTS);
       },
       onError: (error: Error) => {
-        console.log(error)
-      }
-    })
-  }
+        console.log(error);
+      },
+    });
+  };
 
   if (isLoading) {
-    return <Loader />
+    return <Loader />;
   }
 
   if (isError) {
@@ -45,7 +44,7 @@ export const ArtistPage = () => {
       <div>
         <p>{error.message}</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -59,9 +58,7 @@ export const ArtistPage = () => {
             Удалить
           </Btn>
           <Link to={PRIVATE_ROUTES.ARTISTS + '/' + id + '/edit'}>
-            <Btn small={true}>
-              Изменить
-            </Btn>
+            <Btn small={true}>Изменить</Btn>
           </Link>
         </div>
       </div>
@@ -71,39 +68,29 @@ export const ArtistPage = () => {
         </div>
         <div className={styles.main_info}>
           <p className={styles.name}>{artist?.name}</p>
-          <div className={cn(
-            styles.artistDescription,
-            { [styles.expanded]: isExpanded },
-            { [styles.hasGradient]: hasGradient }
-          )}
+          <div
+            className={cn(
+              styles.artistDescription,
+              { [styles.expanded]: isExpanded },
+              { [styles.hasGradient]: hasGradient },
+            )}
             ref={descriptionRef}
           >
-            <p>
-              {artist?.description}
-            </p>
+            <p>{artist?.description}</p>
           </div>
-          {artist?.description && descriptionRef.current && descriptionRef.current.scrollHeight > 108 && (
-            <span
-              className={styles.showMoreBtn}
-              onClick={() => setIsExpanded((prev) => !prev)}
-            >
-              {isExpanded ? 'Показать меньше' : 'Показать еще'}
-            </span>
-          )}
+          {artist?.description &&
+            descriptionRef.current &&
+            descriptionRef.current.scrollHeight > 108 && (
+              <span className={styles.showMoreBtn} onClick={() => setIsExpanded((prev) => !prev)}>
+                {isExpanded ? 'Показать меньше' : 'Показать еще'}
+              </span>
+            )}
           <div className={styles.listens_container}>
-            <ListensIcon
-              className={styles.listens}
-              listens={artist?.listens}
-            />
+            <ListensIcon className={styles.listens} listens={artist?.listens} />
             <p>{artist?.genre}</p>
           </div>
-          <Btn 
-            small={true}
-            className={styles.like_btn}
-          >
-            <LikeIcon
-              likes={artist?.likes}
-            />
+          <Btn small={true} className={styles.like_btn}>
+            <LikeIcon likes={artist?.likes} />
           </Btn>
         </div>
       </div>
@@ -111,9 +98,7 @@ export const ArtistPage = () => {
         <div className={styles.header}>
           <p>Популярные треки</p>
           <Link to={'popular_tracks'}>
-            <Btn small={true}>
-              Ещё
-            </Btn>
+            <Btn small={true}>Ещё</Btn>
           </Link>
         </div>
         {artist?.tracks.map((track, index) => (
@@ -126,5 +111,5 @@ export const ArtistPage = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom'
-import styles from './PrivateNotFound.module.scss'
-import { PRIVATE_ROUTES } from '@/shared/consts'
-import { Btn } from '@/shared/ui'
+import { Link } from 'react-router-dom';
+import styles from './PrivateNotFound.module.scss';
+import { PRIVATE_ROUTES } from '@/shared/consts';
+import { Btn } from '@/shared/ui';
 
 export const PrivateNotFound = () => {
   return (
@@ -9,11 +9,9 @@ export const PrivateNotFound = () => {
       <div className={styles.container}>
         <p>Такой страницы не существует</p>
         <Link to={PRIVATE_ROUTES.HOME}>
-          <Btn>
-            На главную
-          </Btn>
+          <Btn>На главную</Btn>
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};

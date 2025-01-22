@@ -1,8 +1,8 @@
-import { handleAuthError, useCheckUsername, useRegUser } from "@/entities/user";
-import { PUBLIC_ROUTES } from "@/shared/consts";
-import { useInput, useModal } from "@/shared/hooks";
-import { FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { handleAuthError, useCheckUsername, useRegUser } from '@/entities/user';
+import { PUBLIC_ROUTES } from '@/shared/consts';
+import { useInput, useModal } from '@/shared/hooks';
+import { FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const useRegWidget = () => {
   const { hideModal, modal, showModal } = useModal();
@@ -14,7 +14,11 @@ export const useRegWidget = () => {
 
   const email = useInput('', { isEmpty: true, isEmail: true, isLatin: true });
   const password = useInput('', { isEmpty: true, isPasswordStrong: true, isLatin: true });
-  const repeatPassword = useInput('', { isEmpty: true, isPasswordStrong: true, isLatin: true }, password.value);
+  const repeatPassword = useInput(
+    '',
+    { isEmpty: true, isPasswordStrong: true, isLatin: true },
+    password.value,
+  );
   const username = useInput('', { isEmpty: true, isLatin: true, isLength: { min: 3, max: 16 } });
 
   const conditions = [
@@ -27,10 +31,10 @@ export const useRegWidget = () => {
     !email.isLatin,
     !password.isLatin,
     !username.isLatin,
-    !password.isPasswordStrong
+    !password.isPasswordStrong,
   ];
 
-  const isValid = conditions.some(condition => condition);
+  const isValid = conditions.some((condition) => condition);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,14 +59,14 @@ export const useRegWidget = () => {
           },
           onError: (error) => {
             handleAuthError(error, showModal);
-          }
+          },
         });
       },
       onError: (error) => {
         handleAuthError(error, showModal);
         showModal('Этот никнейм уже занят');
         console.error('Username check failed:', error);
-      }
+      },
     });
   };
 
@@ -75,6 +79,6 @@ export const useRegWidget = () => {
     isValid,
     isLoading,
     modal,
-    hideModal
+    hideModal,
   };
 };

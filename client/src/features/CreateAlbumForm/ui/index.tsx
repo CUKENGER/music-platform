@@ -1,6 +1,12 @@
-import { AlbumCommonForm, AlbumCoverInput, MainInfoInputs, MultipleInputAudio, TrackFormList } from '@/entities/album';
+import {
+  AlbumCommonForm,
+  AlbumCoverInput,
+  MainInfoInputs,
+  MultipleInputAudio,
+  TrackFormList,
+} from '@/entities/album';
 import { useCreateAlbumForm } from '../model/useCreateAlbumForm';
-import styles from './CreateAlbumForm.module.scss'
+import styles from './CreateAlbumForm.module.scss';
 import { PRIVATE_ROUTES } from '@/shared/consts';
 import { AddTrackIcon } from '@/shared/ui';
 
@@ -13,7 +19,7 @@ export const CreateAlbumForm = () => {
     hideModal,
     handleFileChange,
     hasData,
-    debouncedArtist
+    debouncedArtist,
   } = useCreateAlbumForm();
 
   return (
@@ -34,17 +40,10 @@ export const CreateAlbumForm = () => {
           setOptions={setOptions}
           genre={genre}
         />
-        <AlbumCoverInput
-          cover={cover}
-          setCover={setCover}
-        />
+        <AlbumCoverInput cover={cover} setCover={setCover} />
       </div>
       <MultipleInputAudio onChange={handleFileChange} />
-      <TrackFormList
-        tracks={tracks}
-        setTracks={setTracks}
-        debouncedArtist={debouncedArtist}
-      />
+      <TrackFormList tracks={tracks} setTracks={setTracks} debouncedArtist={debouncedArtist} />
       <AddTrackIcon onClick={addTrackForm} />
     </AlbumCommonForm>
   );

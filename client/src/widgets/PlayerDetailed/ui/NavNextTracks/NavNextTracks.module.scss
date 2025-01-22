@@ -1,6 +1,4 @@
-
-
-.navNextTracks_container{
+.navNextTracks_container {
   display: flex;
   flex-direction: column;
   row-gap: 5px;
@@ -9,8 +7,8 @@
   overflow-y: auto;
 }
 
-@media(max-width: 730px) {
-  .navNextTracks_container{
+@media (max-width: 730px) {
+  .navNextTracks_container {
     max-height: calc(100vh - 492px);
     width: 100%;
   }
@@ -28,8 +26,8 @@
 //   }
 // }
 
-@media(max-width: 350px) {
-  .container{
+@media (max-width: 350px) {
+  .container {
     max-height: calc(100vh - 330px);
   }
 }

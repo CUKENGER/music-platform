@@ -1,5 +1,3 @@
-
-
 .track {
   display: flex;
   align-items: center;
@@ -11,95 +9,91 @@
   cursor: pointer;
   height: 40px;
 
-  &:hover{
+  &:hover {
     background-color: var(--black-lt);
   }
 }
 
-.trackMainInfo{
+.trackMainInfo {
   display: flex;
   column-gap: 30px;
   align-items: center;
 }
 
-.trackDetails{
+.trackDetails {
   display: flex;
   column-gap: 30px;
   align-items: center;
 }
 
-.trackListens{
+.trackListens {
   display: flex;
   column-gap: 5px;
 
-  img{
+  img {
     width: 18px;
     height: 18px;
   }
 }
 
-.trackDuration{
+.trackDuration {
   font-size: 14px;
 }
 
-.trackIndexPlay{
+.trackIndexPlay {
   width: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.trackPlay{
+.trackPlay {
   width: 23px;
   height: 23px;
 
-  img{
+  img {
     width: 100%;
     height: 100%;
   }
 }
 
-.trackName{
+.trackName {
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-@media(max-width: 750px) {
-  .trackDuration{
+@media (max-width: 750px) {
+  .trackDuration {
     font-size: 12px;
   }
 }
 
-@media(max-width: 650px) {
-  .trackMainInfo{
+@media (max-width: 650px) {
+  .trackMainInfo {
     gap: 0;
   }
 }
 
-@media(max-width: 550px) {
-  .trackDuration{
+@media (max-width: 550px) {
+  .trackDuration {
     font-size: 10px;
   }
 }
 
-@media(max-width: 460px) {
-  .trackName{
+@media (max-width: 460px) {
+  .trackName {
     max-width: 150px;
   }
 
-  .trackIndexPlay{
+  .trackIndexPlay {
     width: 30px;
   }
 }
 
-@media(max-width: 360px) {
-  .trackName{
+@media (max-width: 360px) {
+  .trackName {
     max-width: 100px;
   }
 }
-
-
-
-

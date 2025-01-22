@@ -1,22 +1,37 @@
-import { DragDropContext, Draggable, DraggableProvided, Droppable, DroppableProvided, DropResult } from "react-beautiful-dnd"
-import { UseFormGetValues, UseFormSetValue } from "react-hook-form"
-import styles from './EditTrackFormList.module.scss'
-import { TrackForm, TrackUpdateState } from "@/entities/track";
-import { EditAlbumInputs } from "@/features/EditAlbumForm/model/useEditAlbumForm";
+import {
+  DragDropContext,
+  Draggable,
+  DraggableProvided,
+  Droppable,
+  DroppableProvided,
+  DropResult,
+} from 'react-beautiful-dnd';
+import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
+import styles from './EditTrackFormList.module.scss';
+import { TrackForm, TrackUpdateState } from '@/entities/track';
+import { EditAlbumInputs } from '@/features/EditAlbumForm/model/useEditAlbumForm';
 
 interface EditTrackFormListProps {
   tracks: TrackUpdateState[] | undefined;
   debouncedArtist: string;
   setValue: UseFormSetValue<EditAlbumInputs>;
-  getValues: UseFormGetValues<EditAlbumInputs>
+  getValues: UseFormGetValues<EditAlbumInputs>;
 }
 
-export const EditTrackFormList = ({ tracks, debouncedArtist, setValue, getValues }: EditTrackFormListProps) => {
-
-  const updateTrack = (index: number, field: keyof TrackUpdateState, value: string | File | null) => {
+export const EditTrackFormList = ({
+  tracks,
+  debouncedArtist,
+  setValue,
+  getValues,
+}: EditTrackFormListProps) => {
+  const updateTrack = (
+    index: number,
+    field: keyof TrackUpdateState,
+    value: string | File | null,
+  ) => {
     const prevTracks = getValues('tracks') || [];
     const updatedTracks = prevTracks.map((track, i) =>
-      i === index ? { ...track, [field]: value, isUpdated: true } : track
+      i === index ? { ...track, [field]: value, isUpdated: true } : track,
     );
     setValue('tracks', updatedTracks);
   };
@@ -24,7 +39,7 @@ export const EditTrackFormList = ({ tracks, debouncedArtist, setValue, getValues
   const removeTrack = (index: number) => {
     const prevTracks = getValues('tracks') || [];
     const [removedTrack] = prevTracks.splice(index, 1);
-    const prevDeletedTracks = getValues('deletedTracks') || []
+    const prevDeletedTracks = getValues('deletedTracks') || [];
     setValue('deletedTracks', [...prevDeletedTracks, removedTrack]);
     setValue('tracks', prevTracks);
   };
@@ -39,11 +54,11 @@ export const EditTrackFormList = ({ tracks, debouncedArtist, setValue, getValues
 
   const handleOnDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-    if(tracks) {
+    if (tracks) {
       const newTracks = Array.from(tracks);
       const [reorderedTrack] = newTracks.splice(result.source.index, 1);
       newTracks.splice(result.destination.index, 0, reorderedTrack);
-  
+
       updateTracks(newTracks);
     }
   };
@@ -85,5 +100,5 @@ export const EditTrackFormList = ({ tracks, debouncedArtist, setValue, getValues
         )}
       </Droppable>
     </DragDropContext>
-  )
-}
+  );
+};

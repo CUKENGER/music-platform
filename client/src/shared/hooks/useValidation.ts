@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Validations } from "../types/UseInputProps";
+import { useEffect, useState } from 'react';
+import { Validations } from '../types/UseInputProps';
 
 export const useValidation = (value: string, validations: Validations) => {
   const [isEmpty, setIsEmpty] = useState(true);
@@ -63,4 +63,3 @@ export const useValidation = (value: string, validations: Validations) => {
     isPassEqual,
   };
 };
-

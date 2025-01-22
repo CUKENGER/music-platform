@@ -13,11 +13,11 @@ export const TrackProgress = () => {
     changeCurrentTime,
     inputDurationStyle,
     hoverTimeStyle,
-    loadedTime
+    loadedTime,
   } = useTrackProgress();
 
-  const onMouseOver = handleMouseOver 
-  const onMouseLeave = handleMouseLeave
+  const onMouseOver = handleMouseOver;
+  const onMouseLeave = handleMouseLeave;
   const onMouseMove = useCallback(handleMouseMove, [handleMouseMove]);
   const onChangeTime = useCallback(changeCurrentTime, [changeCurrentTime, currentTime]);
 
@@ -44,8 +44,10 @@ export const TrackProgress = () => {
         className={styles.input_duration}
         style={inputDurationStyle}
       />
-      <div className={styles.loadedTime} style={{ width: `${(loadedTime / duration) * 100}%` }}>
-      </div>
+      <div
+        className={styles.loadedTime}
+        style={{ width: `${(loadedTime / duration) * 100}%` }}
+      ></div>
     </div>
   );
 };

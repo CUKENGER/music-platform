@@ -1,12 +1,12 @@
-import { InputFile } from '@/shared/ui'
-import styles from './AlbumCoverInput.module.scss'
+import { InputFile } from '@/shared/ui';
+import styles from './AlbumCoverInput.module.scss';
 
 interface AlbumCoverInputProps {
-  cover: File | null
-  setCover: React.Dispatch<React.SetStateAction<File | null>>
+  cover: File | null;
+  setCover: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
-export const AlbumCoverInput = ({cover, setCover}: AlbumCoverInputProps) => {
+export const AlbumCoverInput = ({ cover, setCover }: AlbumCoverInputProps) => {
   return (
     <div className={styles.AlbumCoverInput}>
       <div className={styles.container}>
@@ -14,9 +14,9 @@ export const AlbumCoverInput = ({cover, setCover}: AlbumCoverInputProps) => {
           isAudio={false}
           setFile={setCover}
           fileName={cover?.name}
-          placeholder='Загрузите обложку альбома'
+          placeholder="Загрузите обложку альбома"
         />
       </div>
     </div>
-  )
-}
+  );
+};

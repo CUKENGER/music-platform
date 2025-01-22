@@ -1,19 +1,24 @@
-import { TextareaHTMLAttributes, useEffect, useId, useRef } from "react";
+import { TextareaHTMLAttributes, useEffect, useId, useRef } from 'react';
 import styles from './TextareaForHook.module.scss';
-import { ClearIcon } from "../assets/ClearIcon/";
-import { ExclamIcon } from "../assets/ExclamIcon/";
-import cn from "classnames";
-import { UseInputProps } from "@/shared/types";
+import { ClearIcon } from '../assets/ClearIcon/';
+import { ExclamIcon } from '../assets/ExclamIcon/';
+import cn from 'classnames';
+import { UseInputProps } from '@/shared/types';
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   placeholder: string;
   inputValue: UseInputProps;
   classNameContainer?: string;
-  classNameTextarea?: string
+  classNameTextarea?: string;
 }
 
-export const TextareaForHook = ({ inputValue, placeholder, classNameContainer, classNameTextarea, ...props }: TextareaProps) => {
-
+export const TextareaForHook = ({
+  inputValue,
+  placeholder,
+  classNameContainer,
+  classNameTextarea,
+  ...props
+}: TextareaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -32,42 +37,34 @@ export const TextareaForHook = ({ inputValue, placeholder, classNameContainer, c
     }
   };
 
-  const id = useId()
+  const id = useId();
 
   const handleClear = () => {
     if (inputValue.setValue) {
-      inputValue.setValue('')
+      inputValue.setValue('');
     }
-  }
+  };
 
   return (
-    <div className={cn(
-      classNameContainer,
-      styles.container
-    )}>
-      <label className={styles.label} htmlFor={`textarea-${id}`}>{placeholder}</label>
+    <div className={cn(classNameContainer, styles.container)}>
+      <label className={styles.label} htmlFor={`textarea-${id}`}>
+        {placeholder}
+      </label>
       <textarea
         id={`textarea-${id}`}
         onChange={inputValue.onChange}
         value={inputValue.value}
         ref={textareaRef}
         onInput={handleInput}
-        className={cn(
-          classNameTextarea,
-          styles.textarea
-        )}
+        className={cn(classNameTextarea, styles.textarea)}
         onBlur={inputValue.onBlur}
         {...props}
-      >
-
-      </textarea>
-      {inputValue.isEmpty
-        ? (<div className={styles.exclam_container}>
+      ></textarea>
+      {inputValue.isEmpty ?
+        <div className={styles.exclam_container}>
           <ExclamIcon />
         </div>
-        )
-        : (<ClearIcon handleClear={handleClear} />)
-      }
+      : <ClearIcon handleClear={handleClear} />}
     </div>
   );
 };

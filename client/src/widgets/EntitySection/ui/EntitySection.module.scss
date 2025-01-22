@@ -1,6 +1,4 @@
-
-
-.container{
+.container {
   display: flex;
   flex-direction: column;
   row-gap: 10px;
@@ -8,7 +6,7 @@
   overflow: hidden;
 }
 
-.header{
+.header {
   display: flex;
   align-items: center;
   width: 100%;
@@ -35,13 +33,13 @@
   background-color: gray;
 }
 
-.controls_arrows{
+.controls_arrows {
   display: flex;
   align-items: center;
   column-gap: 5px;
 }
 
-.controls_container{
+.controls_container {
   display: flex;
   gap: 10px;
   flex-direction: row-reverse;

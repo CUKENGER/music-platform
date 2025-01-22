@@ -1,14 +1,26 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addComment, addLike, create, deleteAlbum, deleteLike, getAll, getAllPopular, getComments, getLimitPopular, getOne, updateAlbum } from "./albumApi";
-import { CreateAlbumDto, EditAlbumDto, IAlbum } from "../types/Album";
-import { CreateCommentDto, IComment } from "@/entities/comment/types/Comment";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  addComment,
+  addLike,
+  create,
+  deleteAlbum,
+  deleteLike,
+  getAll,
+  getAllPopular,
+  getComments,
+  getLimitPopular,
+  getOne,
+  updateAlbum,
+} from './albumApi';
+import { CreateAlbumDto, EditAlbumDto, IAlbum } from '../types/Album';
+import { CreateCommentDto, IComment } from '@/entities/comment/types/Comment';
 
 export const useGetAllAlbums = (sortBy: string) => {
   return useInfiniteQuery({
     queryKey: ['albums', sortBy],
     queryFn: ({ pageParam }) => getAll({ pageParam, sortBy }),
     getNextPageParam: (lastPage, pages) => {
-      return lastPage.length ? pages.length : undefined
+      return lastPage.length ? pages.length : undefined;
     },
     initialPageParam: 0,
     placeholderData: (prev) => prev,
@@ -18,7 +30,6 @@ export const useGetAllAlbums = (sortBy: string) => {
 };
 
 export const useCreateAlbum = () => {
-
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -29,11 +40,10 @@ export const useCreateAlbum = () => {
         queryKey: ['albums'],
       });
     },
-  })
-}
+  });
+};
 
 export const useGetOneAlbum = (id: number) => {
-
   return useQuery({
     queryKey: ['albums', id],
     queryFn: () => getOne(id),
@@ -43,7 +53,6 @@ export const useGetOneAlbum = (id: number) => {
 };
 
 export const useGetCommentsAlbum = (id: number) => {
-
   return useQuery({
     queryKey: ['albums', 'comments', id],
     queryFn: () => getComments(id),
@@ -54,24 +63,26 @@ export const useGetCommentsAlbum = (id: number) => {
 };
 
 export const useCreateAlbumComment = () => {
-
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (dto: CreateCommentDto) => addComment(dto),
     mutationKey: ['albums', 'comment', 'create'],
     onSuccess: (newComment) => {
-      queryClient.setQueryData(['albums', 'comments', newComment?.albumId], (oldComments: IComment[] | undefined) => {
-        return [...(oldComments || []), newComment];
-      });
+      queryClient.setQueryData(
+        ['albums', 'comments', newComment?.albumId],
+        (oldComments: IComment[] | undefined) => {
+          return [...(oldComments || []), newComment];
+        },
+      );
 
       queryClient.invalidateQueries({
         queryKey: ['albums', 'comments'],
         exact: false,
       });
     },
-  })
-}
+  });
+};
 
 export const useAddLikeAlbum = () => {
   const queryClient = useQueryClient();
@@ -153,5 +164,5 @@ export const useUpdateAlbum = () => {
         queryKey: ['albums'],
       });
     },
-  })
-}
+  });
+};

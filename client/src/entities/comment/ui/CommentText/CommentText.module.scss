@@ -1,11 +1,11 @@
-
-
 .commentTextContainer {
   max-width: 80%;
   position: relative;
   max-height: 120px;
   overflow: hidden;
-  transition: max-height 0.4s ease, opacity 0.4s ease; 
+  transition:
+    max-height 0.4s ease,
+    opacity 0.4s ease;
 }
 
 .expanded {
@@ -37,7 +37,7 @@
   white-space: normal;
   word-wrap: break-word;
   width: fit-content;
-  min-width: calc(10vw + 10px); 
+  min-width: calc(10vw + 10px);
   max-width: 100%;
   user-select: text;
 }
@@ -51,13 +51,13 @@
   width: 100%;
   color: var(--gray);
 
-  &:hover{
+  &:hover {
     color: var(--white);
   }
 }
 
-@media(max-width: 800px) {
-  .commentText{
+@media (max-width: 800px) {
+  .commentText {
     font-size: 12px;
   }
 }

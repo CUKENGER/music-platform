@@ -1,19 +1,17 @@
-
-
-.container{
+.container {
   display: flex;
   width: 100%;
   flex-direction: column;
   gap: 15px;
 }
 
-.main_container{
+.main_container {
   display: flex;
   width: 100%;
   column-gap: 50px;
 }
 
-.cover{
+.cover {
   width: 200px;
   height: 200px;
   border-radius: 50%;
@@ -26,7 +24,7 @@
   }
 }
 
-.main_info{
+.main_info {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -34,7 +32,7 @@
   color: var(--gray);
 }
 
-.listens_container{
+.listens_container {
   width: 100%;
   display: flex;
   align-items: center;
@@ -42,17 +40,17 @@
   column-gap: 100px;
 }
 
-.listens{
+.listens {
   width: 20px;
   height: 20px;
 }
 
-.name{
+.name {
   font-size: 20px;
   text-align: center;
 }
 
-.description{
+.description {
   font-size: 18px;
 }
 
@@ -61,7 +59,9 @@
   max-height: 108px;
   overflow: hidden;
   text-align: center;
-  transition: max-height 0.4s ease, opacity 0.4s ease; 
+  transition:
+    max-height 0.4s ease,
+    opacity 0.4s ease;
 
   p {
     margin: 0;
@@ -103,26 +103,26 @@
   width: 100%;
   color: var(--gray);
 
-  &:hover{
+  &:hover {
     color: var(--white);
   }
 }
 
-.like_btn{
+.like_btn {
   display: flex;
   width: 100%;
   justify-content: center;
   align-items: center;
 }
 
-.tracks{
+.tracks {
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 100%;
 }
 
-.header{
+.header {
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -131,58 +131,57 @@
   align-items: flex-end;
 }
 
-.header_btn{
+.header_btn {
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: center;
 }
 
-.edit_btn{
+.edit_btn {
   display: flex;
   column-gap: 10px;
 }
 
-
-@media(max-width: 920px) {
-  .name{
+@media (max-width: 920px) {
+  .name {
     font-size: 18px;
   }
 
-  .cover{
+  .cover {
     width: 180px;
     height: 180px;
   }
 }
 
-@media(max-width: 700px) {
-  .name{
+@media (max-width: 700px) {
+  .name {
     font-size: 16px;
   }
 
-  .cover{
+  .cover {
     width: 160px;
     height: 160px;
   }
 }
 
-@media(max-width: 550px) {
-  .name{
+@media (max-width: 550px) {
+  .name {
     font-size: 14px;
   }
 
-  .cover{
+  .cover {
     width: 140px;
     height: 140px;
   }
 }
 
-@media(max-width: 400px) {
-  .name{
+@media (max-width: 400px) {
+  .name {
     font-size: 12px;
   }
 
-  .cover{
+  .cover {
     width: 120px;
     height: 120px;
   }

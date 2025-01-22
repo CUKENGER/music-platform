@@ -1,8 +1,5 @@
-import { LoginWidget} from "@/widgets"
+import { LoginForm } from '@/widgets/LoginForm';
 
 export const Login = () => {
-
-  return (
-    <LoginWidget/>
-  )
-}
+  return <LoginForm />;
+};

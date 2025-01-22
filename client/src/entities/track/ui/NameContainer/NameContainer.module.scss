@@ -1,7 +1,4 @@
-
-
-
-.name_container{
+.name_container {
   display: flex;
   flex-direction: column;
   row-gap: 5px;
@@ -9,45 +6,45 @@
 }
 
 .name,
-.artist{
+.artist {
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.artist{
+.artist {
   color: var(--gray);
   cursor: pointer;
 
-  &:hover{
+  &:hover {
     color: var(--white);
   }
 }
 
-.name{
+.name {
   cursor: pointer;
   height: 18px;
   white-space: nowrap;
 
-  &:hover{
+  &:hover {
     border-bottom: 1px solid var(--prm);
   }
 }
 
-@media(max-width:650px) {
-  .name_container{
+@media (max-width: 650px) {
+  .name_container {
     font-size: 12px;
   }
 }
 
-@media(max-width:400px) {
+@media (max-width: 400px) {
   .name,
-  .artist{
+  .artist {
     width: 88px;
   }
 
-  .name_container{
+  .name_container {
     font-size: 10px;
   }
 }

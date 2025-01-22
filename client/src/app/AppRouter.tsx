@@ -1,28 +1,28 @@
-import { useUserStore } from "@/entities/user";
-import { privateRoutes, publicRoutes } from "@/shared/consts";
-import { Route, Routes } from "react-router-dom";
+import { useUserStore } from '@/entities/user';
+import { privateRoutes, publicRoutes } from '@/shared/consts';
+import { Route, Routes } from 'react-router-dom';
 
 const AppRouter = () => {
-
-  const {isAuth} = useUserStore()
+  const { isAuth } = useUserStore();
 
   return (
     <Routes>
-      {isAuth ? (
+      {isAuth ?
         privateRoutes.map((route) => (
           <Route
             key={route.path}
             path={route.exact ? route.path : `${route.path}/*`}
-            element={<route.component/>}
+            element={<route.component />}
           />
-        ))) : (
-        publicRoutes.map((route) => (
+        ))
+      : publicRoutes.map((route) => (
           <Route
             key={route.path}
             path={route.exact ? route.path : `${route.path}/*`}
-            element={<route.component/>}
+            element={<route.component />}
           />
-        )))}
+        ))
+      }
     </Routes>
   );
 };

@@ -1,11 +1,10 @@
 import { ITrack, useActiveTrackListStore } from '@/entities/track';
-import styles from './NavNextTracks.module.scss'
-import { Reorder } from "framer-motion";
+import styles from './NavNextTracks.module.scss';
+import { Reorder } from 'framer-motion';
 import { NavNextTrackItem } from '../NavNextTrackItem';
 
 export const NavNextTracks = () => {
-
-  const {activeTrackList, setActiveTrackList} = useActiveTrackListStore()
+  const { activeTrackList, setActiveTrackList } = useActiveTrackListStore();
 
   return (
     <div className={styles.navNextTracks_container}>
@@ -16,10 +15,7 @@ export const NavNextTracks = () => {
           onReorder={(newValues: ITrack[]) => setActiveTrackList(newValues)}
         >
           {activeTrackList.map((track) => (
-            <NavNextTrackItem
-              key={track.id}
-              track={track}
-            />
+            <NavNextTrackItem key={track.id} track={track} />
           ))}
         </Reorder.Group>
       )}

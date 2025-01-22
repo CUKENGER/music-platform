@@ -1,7 +1,5 @@
-import { GoActivateWidget } from "@/widgets"
+import { GoActivateWidget } from '@/widgets';
 
 export const GoActivation = () => {
-  return (
-    <GoActivateWidget/>
-  )
-}
+  return <GoActivateWidget />;
+};

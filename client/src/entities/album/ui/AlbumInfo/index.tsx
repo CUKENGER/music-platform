@@ -1,41 +1,46 @@
-import { Link, useNavigate } from 'react-router-dom'
-import styles from './AlbumInfo.module.scss'
-import {  useCallback, useEffect, useRef, useState } from 'react'
-import classNames from 'classnames'
+import { Link, useNavigate } from 'react-router-dom';
+import styles from './AlbumInfo.module.scss';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import classNames from 'classnames';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { IAlbum } from '../../types/Album';
 import { useOpenCommentsStore } from '@/entities/comment';
 import { useUserStore } from '@/entities/user';
-import { useAddLikeAlbum, useDeleteAlbum, useDeleteLikeAlbum, useGetOneAlbum } from '../../api/useAlbumApi';
+import {
+  useAddLikeAlbum,
+  useDeleteAlbum,
+  useDeleteLikeAlbum,
+  useGetOneAlbum,
+} from '../../api/useAlbumApi';
 import { API_URL, PRIVATE_ROUTES } from '@/shared/consts';
 import { Btn, LikeIcon, ListensIcon, Loader, Portal } from '@/shared/ui';
 import { ChildrenTrack } from '@/entities/track';
 import { AlbumComments } from '../AlbumComments';
 
 interface AlbumInfoProps {
-  album: IAlbum | null | undefined
+  album: IAlbum | null | undefined;
 }
 
 export const AlbumInfo = ({ album }: AlbumInfoProps) => {
-
-  const [isLike, setIsLike] = useState(false)
+  const [isLike, setIsLike] = useState(false);
   const [localLikes, setLocalLikes] = useState<number>(album?.likes ?? 0);
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
   const [hasGradient, setHasGradient] = useState(false);
 
-  const { isOpen: isCommentsOpen, setIsOpen: setIsCommentsOpen } = useOpenCommentsStore()
+  const { isOpen: isCommentsOpen, setIsOpen: setIsCommentsOpen } = useOpenCommentsStore();
   const { user } = useUserStore();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const { mutate: addLike } = useAddLikeAlbum()
-  const { mutate: deleteLike } = useDeleteLikeAlbum()
-  const { refetch, isLoading, isError } = useGetOneAlbum(album?.id ?? 1)
-  const { mutate: deleteAlbum } = useDeleteAlbum()
+  const { mutate: addLike } = useAddLikeAlbum();
+  const { mutate: deleteLike } = useDeleteLikeAlbum();
+  const { refetch, isLoading, isError } = useGetOneAlbum(album?.id ?? 1);
+  const { mutate: deleteAlbum } = useDeleteAlbum();
   const descriptionRef = useRef<HTMLDivElement>(null);
 
-  const formattedDate = album && format(new Date(album?.releaseDate), 'd MMMM yyyy', { locale: ru });
+  const formattedDate =
+    album && format(new Date(album?.releaseDate), 'd MMMM yyyy', { locale: ru });
 
   useEffect(() => {
     if (descriptionRef.current) {
@@ -46,7 +51,7 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
 
   useEffect(() => {
     if (user && album?.id) {
-      const albumId = album?.id
+      const albumId = album?.id;
       if (user.likedAlbums) {
         setIsLike(user.likedAlbums.some((album: IAlbum) => album?.id === albumId));
       }
@@ -66,23 +71,23 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
       deleteLike(album?.id, {
         onSuccess: () => {
           setIsLike(false);
-          setLocalLikes(prevLikes => prevLikes - 1);
+          setLocalLikes((prevLikes) => prevLikes - 1);
           refetch();
         },
         onError: (error) => {
           console.error('Error removing like:', error);
-        }
+        },
       });
     } else {
       addLike(album?.id, {
         onSuccess: () => {
           setIsLike(true);
-          setLocalLikes(prevLikes => prevLikes + 1);
-          refetch()
+          setLocalLikes((prevLikes) => prevLikes + 1);
+          refetch();
         },
         onError: (error) => {
           console.error('Error adding like:', error);
-        }
+        },
       });
     }
   }, [album?.id, isLike, deleteLike, addLike, refetch]);
@@ -90,16 +95,16 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
   const handleDeleteAlbum = () => {
     deleteAlbum(album?.id, {
       onSuccess: () => {
-        navigate(PRIVATE_ROUTES.ALBUMS + '/' + album?.id)
+        navigate(PRIVATE_ROUTES.ALBUMS + '/' + album?.id);
       },
       onError: (error) => {
         console.error('Error deleting album:', error);
-      }
-    })
-  }
+      },
+    });
+  };
 
   if (isLoading) {
-    return <Loader />
+    return <Loader />;
   }
 
   if (isError || !album) {
@@ -124,9 +129,7 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
             Удалить
           </Btn>
           <Link to={PRIVATE_ROUTES.ALBUMS + `/${album?.id}/edit`}>
-            <Btn small={true}>
-              Изменить
-            </Btn>
+            <Btn small={true}>Изменить</Btn>
           </Link>
         </div>
       </div>
@@ -137,72 +140,50 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
         <div className={styles.albumMainInfo}>
           <p className={styles.albumTitle}>{album?.name}</p>
           <p className={styles.albumArtist}>{album?.artist.name}</p>
-          <div className={classNames(
-            styles.albumDescription,
-            { [styles.expanded]: isExpanded },
-            { [styles.hasGradient]: hasGradient }
-          )}
+          <div
+            className={classNames(
+              styles.albumDescription,
+              { [styles.expanded]: isExpanded },
+              { [styles.hasGradient]: hasGradient },
+            )}
             ref={descriptionRef}
           >
-            <p>
-              {album?.description}
-            </p>
+            <p>{album?.description}</p>
           </div>
-          {album?.description && descriptionRef.current && descriptionRef.current.scrollHeight > 108 && (
-            <span
-              className={styles.showMoreBtn}
-              onClick={() => setIsExpanded((prev) => !prev)}
-            >
-              {isExpanded ? 'Показать меньше' : 'Показать еще'}
-            </span>
-          )}
+          {album?.description &&
+            descriptionRef.current &&
+            descriptionRef.current.scrollHeight > 108 && (
+              <span className={styles.showMoreBtn} onClick={() => setIsExpanded((prev) => !prev)}>
+                {isExpanded ? 'Показать меньше' : 'Показать еще'}
+              </span>
+            )}
           <p className={styles.albumGenre}>{album?.genre}</p>
           <div className={styles.listensContainer}>
-            <ListensIcon
-              className={styles.albumListens}
-              listens={album?.listens}
-            />
+            <ListensIcon className={styles.albumListens} listens={album?.listens} />
           </div>
           <div className={styles.albumMeta}>
             <p>{album?.duration}</p>
             <p>{formattedDate}</p>
           </div>
-          <Btn
-            className={styles.albumLikes}
-            small={true}
-            onClick={handleLike}
-          >
-            <LikeIcon
-              isLike={isLike}
-              likes={localLikes}
-              needStopPropagation={false}
-            />
+          <Btn className={styles.albumLikes} small={true} onClick={handleLike}>
+            <LikeIcon isLike={isLike} likes={localLikes} needStopPropagation={false} />
           </Btn>
         </div>
       </div>
       <div className={styles.trackList}>
         {album?.tracks.map((track, index) => (
-          <ChildrenTrack
-            trackList={album.tracks}
-            track={track}
-            trackIndex={index}
-            key={track.id}
-          />
+          <ChildrenTrack trackList={album.tracks} track={track} trackIndex={index} key={track.id} />
         ))}
       </div>
       <Btn small={true} onClick={() => setIsCommentsOpen(!isCommentsOpen)}>
         Комментарии
         <span>({album?.comments.length})</span>
       </Btn>
-      {
-        isCommentsOpen && (
-          <Portal selector="#portal-root" isOpen={isCommentsOpen}>
-            <AlbumComments
-              albumId={album?.id}
-            />
-          </Portal>
-        )
-      }
-    </div >
-  )
-}
+      {isCommentsOpen && (
+        <Portal selector="#portal-root" isOpen={isCommentsOpen}>
+          <AlbumComments albumId={album?.id} />
+        </Portal>
+      )}
+    </div>
+  );
+};

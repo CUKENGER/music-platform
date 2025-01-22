@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import styles from './Menu.module.scss'
-import dots from './dots_gray.svg'
-import dots_active from './dots_active.svg'
+import styles from './Menu.module.scss';
+import dots from './dots_gray.svg';
+import dots_active from './dots_active.svg';
 import { MenuItem } from '@/shared/types';
 
 interface MenuProps {
@@ -9,9 +9,8 @@ interface MenuProps {
 }
 
 export const Menu = ({ items }: MenuProps) => {
-
   const [isOpen, setIsOpen] = useState(false);
-  const [isHover, setIsHover] = useState(false)
+  const [isHover, setIsHover] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = () => {
@@ -20,7 +19,7 @@ export const Menu = ({ items }: MenuProps) => {
 
   const handleMenuItemClick = (onClick: (e?: React.MouseEvent) => void) => {
     return (e: React.MouseEvent) => {
-      e.stopPropagation()
+      e.stopPropagation();
       onClick(e);
       setIsOpen(false);
     };
@@ -65,5 +64,5 @@ export const Menu = ({ items }: MenuProps) => {
         </ul>
       )}
     </div>
-  )
-}
+  );
+};

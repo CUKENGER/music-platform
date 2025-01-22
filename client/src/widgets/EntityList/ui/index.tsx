@@ -12,24 +12,24 @@ interface EntityItemProps<T> {
 }
 
 interface EntityListProps<T> {
-  EntityItem: React.ForwardRefExoticComponent<React.RefAttributes<HTMLDivElement> & EntityItemProps<T>>;
+  EntityItem: React.ForwardRefExoticComponent<
+    React.RefAttributes<HTMLDivElement> & EntityItemProps<T>
+  >;
   getAll: (sortBy: string) => UseInfiniteQueryResult<InfiniteData<T[]>, unknown>;
   toCreate: string;
   className: string;
 }
 
-export const EntityList = <T extends { id: number }>({ EntityItem, getAll, toCreate, className }: EntityListProps<T>) => {
-  const selectedSort = useSelectFilterStore(state => state.selectedSort);
+export const EntityList = <T extends { id: number }>({
+  EntityItem,
+  getAll,
+  toCreate,
+  className,
+}: EntityListProps<T>) => {
+  const selectedSort = useSelectFilterStore((state) => state.selectedSort);
 
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    isLoading,
-  } = getAll(selectedSort);
+  const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isLoading } =
+    getAll(selectedSort);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastItemRef = useCallback(
@@ -43,7 +43,7 @@ export const EntityList = <T extends { id: number }>({ EntityItem, getAll, toCre
       });
       if (node) observer.current.observe(node);
     },
-    [isFetchingNextPage, fetchNextPage, hasNextPage]
+    [isFetchingNextPage, fetchNextPage, hasNextPage],
   );
 
   if (error) return 'An error has occurred: ' + error;
@@ -63,28 +63,15 @@ export const EntityList = <T extends { id: number }>({ EntityItem, getAll, toCre
             {page.map((item, i) => {
               if (page.length === i + 1) {
                 return (
-                  <EntityItem
-                    ref={lastItemRef}
-                    item={item}
-                    itemList={allItems}
-                    key={item.id}
-                  />
+                  <EntityItem ref={lastItemRef} item={item} itemList={allItems} key={item.id} />
                 );
               } else {
-                return (
-                  <EntityItem
-                    item={item}
-                    itemList={allItems}
-                    key={item.id}
-                  />
-                );
+                return <EntityItem item={item} itemList={allItems} key={item.id} />;
               }
             })}
           </React.Fragment>
         ))}
-        <div>
-          {isFetching && !isFetchingNextPage ? 'Fetching...' : null}
-        </div>
+        <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>
       </div>
     </div>
   );

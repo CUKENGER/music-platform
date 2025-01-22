@@ -1,6 +1,4 @@
-
-
-.WarningMessage{
+.WarningMessage {
   display: flex;
   align-items: center;
   column-gap: 5px;
@@ -9,12 +7,12 @@
   user-select: none;
 }
 
-.text{
+.text {
   word-break: break-all;
   width: fit-content;
 }
 
-.icon_container{
+.icon_container {
   height: 18px;
   width: 18px;
 }

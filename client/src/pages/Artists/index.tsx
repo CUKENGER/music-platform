@@ -1,5 +1,5 @@
 import { EntityList } from '@/widgets/EntityList';
-import styles from './Artists.module.scss'
+import styles from './Artists.module.scss';
 import { ArtistItem, useGetAllArtists } from '@/entities/artist';
 import { PRIVATE_ROUTES } from '@/shared/consts';
 
@@ -12,4 +12,4 @@ export const Artists = () => {
       className={styles.ArtistList}
     />
   );
-}
+};

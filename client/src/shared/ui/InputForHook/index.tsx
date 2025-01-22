@@ -1,17 +1,16 @@
-import { InputHTMLAttributes, useId } from 'react'
-import styles from './InputForHook.module.scss'
+import { InputHTMLAttributes, useId } from 'react';
+import styles from './InputForHook.module.scss';
 import { ExclamIcon } from '../assets/ExclamIcon/';
 import { ClearIcon } from '../assets/ClearIcon/';
 import { UseInputProps } from '@/shared/types';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
-  inputValue: UseInputProps
+  inputValue: UseInputProps;
 }
 
 export const InputForHook = ({ inputValue, placeholder, ...inputProps }: InputProps) => {
-
-  const id = useId()
+  const id = useId();
 
   const handleClear = () => {
     if (inputValue.setValue) {
@@ -29,12 +28,11 @@ export const InputForHook = ({ inputValue, placeholder, ...inputProps }: InputPr
       <label htmlFor={`inputString-${id}`} className={styles.label}>
         {placeholder}
       </label>
-      {inputValue.isEmpty
-        ? <div className={styles.exclam_container}>
+      {inputValue.isEmpty ?
+        <div className={styles.exclam_container}>
           <ExclamIcon />
         </div>
-        : <ClearIcon handleClear={handleClear} />
-      }
+      : <ClearIcon handleClear={handleClear} />}
       <input
         id={`inputString-${id}`}
         className={styles.input}
@@ -46,5 +44,5 @@ export const InputForHook = ({ inputValue, placeholder, ...inputProps }: InputPr
         {...inputProps}
       />
     </div>
-  )
-}
+  );
+};

@@ -1,2 +1,1 @@
-
-export {EntitySection} from './ui'
+export { EntitySection } from './ui';

@@ -1,22 +1,27 @@
 import { useInput, useModal } from '@/shared/hooks';
 import { IComment } from '../../types/Comment';
-import styles from './ReplyForm.module.scss'
-import {  useCallback } from 'react';
+import styles from './ReplyForm.module.scss';
+import { useCallback } from 'react';
 import { useCreateAlbumComment } from '@/entities/album';
 import { Btn, ModalContainer, TextareaForHook } from '@/shared/ui';
 
-interface ReplyFormProps{
+interface ReplyFormProps {
   comment: IComment;
   username: string | undefined;
   setIsReplying: (e: boolean) => void;
   refetchGetComments: () => void;
-  setIsReplyOpen: (e: boolean) => void
-} 
+  setIsReplyOpen: (e: boolean) => void;
+}
 
-export const ReplyForm= ({comment, username, setIsReplying, refetchGetComments, setIsReplyOpen}: ReplyFormProps) => {
-
-  const {modal, hideModal, showModal} = useModal()
-  const reply = useInput('', {})
+export const ReplyForm = ({
+  comment,
+  username,
+  setIsReplying,
+  refetchGetComments,
+  setIsReplyOpen,
+}: ReplyFormProps) => {
+  const { modal, hideModal, showModal } = useModal();
+  const reply = useInput('', {});
   const { mutate: addReply, isPending } = useCreateAlbumComment();
 
   const handleReplySubmit = useCallback(() => {
@@ -26,24 +31,25 @@ export const ReplyForm= ({comment, username, setIsReplying, refetchGetComments, 
     }
 
     addReply(
-      { 
-        parentId: comment.id, 
-        text: reply.value.trim(), 
-        username: username ?? '', 
-        albumId: Number(comment.albumId) },
+      {
+        parentId: comment.id,
+        text: reply.value.trim(),
+        username: username ?? '',
+        albumId: Number(comment.albumId),
+      },
       {
         onSuccess: () => {
           reply.setValue('');
           setIsReplying(false);
           refetchGetComments();
           showModal('Ваш ответ успешно отправлен');
-          setIsReplyOpen(true)
+          setIsReplyOpen(true);
         },
         onError: (error) => {
           showModal('Произошла непредвиденная ошибка, повторите позже');
           console.error('Ошибка при добавлении ответа:', error);
-        }
-      }
+        },
+      },
     );
   }, [reply.value, comment.id, addReply, refetchGetComments]);
 
@@ -51,22 +57,15 @@ export const ReplyForm= ({comment, username, setIsReplying, refetchGetComments, 
     <div className={styles.replyForm}>
       <TextareaForHook
         style={{
-          minHeight: "3lh"
+          minHeight: '3lh',
         }}
         inputValue={reply}
         placeholder="Введите ваш ответ"
       />
-      <Btn
-        isLoading={isPending}
-        small={true}
-        onClick={handleReplySubmit}
-      >
+      <Btn isLoading={isPending} small={true} onClick={handleReplySubmit}>
         Отправить
       </Btn>
-        <ModalContainer
-          modal={modal}
-          hideModal={hideModal}
-        />
+      <ModalContainer modal={modal} hideModal={hideModal} />
     </div>
-  )
-}
+  );
+};

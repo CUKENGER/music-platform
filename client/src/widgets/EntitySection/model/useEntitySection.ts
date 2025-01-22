@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 export const useEntitySection = () => {
   const [slidesPerPage, setSlidesPerPage] = useState(3);
@@ -60,6 +60,6 @@ export const useEntitySection = () => {
     nextSlide,
     totalSlides,
     slidesPerPage,
-    sliderRef
+    sliderRef,
   };
 };

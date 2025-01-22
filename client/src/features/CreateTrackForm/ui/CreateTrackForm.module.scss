@@ -1,6 +1,4 @@
-
-
-.form{
+.form {
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -9,14 +7,14 @@
   margin-bottom: 15px;
 }
 
-.fields_container{
+.fields_container {
   display: flex;
   flex-direction: column;
   row-gap: 10px;
   width: 50%;
 }
 
-.fields_upload_container{
+.fields_upload_container {
   display: flex;
   flex-direction: column;
   width: 50%;
@@ -24,63 +22,62 @@
   justify-content: space-between;
 }
 
-.input_cover{
+.input_cover {
   width: 250px;
   height: 250px;
 }
 
-.input_audio{
+.input_audio {
   width: 100%;
 }
 
-.upload_btn{
+.upload_btn {
   width: 100%;
 }
 
-@media(max-width: 900px) {
-
-  .fields_container{
+@media (max-width: 900px) {
+  .fields_container {
     width: auto;
   }
 
-  .fields_upload_container{
+  .fields_upload_container {
     width: auto;
   }
 
-  .input_cover{
+  .input_cover {
     width: 200px;
     height: 200px;
   }
 }
 
-@media(max-width: 700px) {
-  .input_cover{
+@media (max-width: 700px) {
+  .input_cover {
     width: 160px;
     height: 160px;
   }
 
-  .form{
+  .form {
     column-gap: 15px;
   }
 }
 
-@media(max-width: 530px) {
-  .input_cover{
+@media (max-width: 530px) {
+  .input_cover {
     width: 130px;
     height: 130px;
   }
 
-  .form{
+  .form {
     column-gap: 10px;
   }
 }
 
-@media(max-width: 450px) {
-  .form{
+@media (max-width: 450px) {
+  .form {
     flex-direction: column-reverse;
   }
-  
-  .fields_upload_container{
+
+  .fields_upload_container {
     row-gap: 10px;
     margin-bottom: 10px;
   }

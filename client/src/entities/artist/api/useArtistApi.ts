@@ -1,13 +1,21 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { create, getAll, getOne, getPopularTracks, search, deleteArtist, update } from "./artistApi";
-import { CreateArtistDto } from "../types/Artist";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  create,
+  getAll,
+  getOne,
+  getPopularTracks,
+  search,
+  deleteArtist,
+  update,
+} from './artistApi';
+import { CreateArtistDto } from '../types/Artist';
 
 export const useGetAllArtists = (sortBy: string) => {
   return useInfiniteQuery({
     queryKey: ['artists', sortBy],
     queryFn: ({ pageParam }) => getAll({ pageParam, sortBy }),
     getNextPageParam: (lastPage, pages) => {
-      return lastPage.length ? pages.length : undefined
+      return lastPage.length ? pages.length : undefined;
     },
     initialPageParam: 0,
     placeholderData: (prev) => prev,
@@ -16,7 +24,6 @@ export const useGetAllArtists = (sortBy: string) => {
 };
 
 export const useCreateArtist = () => {
-
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -27,11 +34,10 @@ export const useCreateArtist = () => {
         queryKey: ['artists'],
       });
     },
-  })
-}
+  });
+};
 
 export const useGetOneArtist = (id: number) => {
-
   return useQuery({
     queryKey: ['artists', id],
     queryFn: () => getOne(id),
@@ -42,9 +48,8 @@ export const useGetOneArtist = (id: number) => {
 };
 
 export const useGetArtistsPopularTracks = (id: number) => {
-
   return useQuery({
-    queryKey: ['artists',  id, 'popular_tracks'],
+    queryKey: ['artists', id, 'popular_tracks'],
     queryFn: () => getPopularTracks(id),
     // placeholderData: (prev) => prev,
     // placeholderData: keepPreviousData,
@@ -53,16 +58,14 @@ export const useGetArtistsPopularTracks = (id: number) => {
 };
 
 export const useSearchArtists = (name: string) => {
-
   return useQuery({
     queryKey: ['artists', name],
     queryFn: () => search(name),
-    enabled: !!name
+    enabled: !!name,
   });
 };
 
 export const useDeleteArtist = (id: number) => {
-
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -73,8 +76,8 @@ export const useDeleteArtist = (id: number) => {
         queryKey: ['artists'],
       });
     },
-  })
-}
+  });
+};
 
 export const useUpdateArtist = (id: number) => {
   const queryClient = useQueryClient();
@@ -87,5 +90,5 @@ export const useUpdateArtist = (id: number) => {
         queryKey: ['artists'],
       });
     },
-  })
-}
+  });
+};

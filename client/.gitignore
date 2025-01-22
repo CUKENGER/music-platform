@@ -9,6 +9,7 @@ lerna-debug.log*
 
 .devcontainer
 .github
+*.lock
 
 node_modules
 dist

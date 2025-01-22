@@ -1,4 +1,3 @@
-
 class AudioManager {
   private static instance: AudioManager;
   private _audio?: HTMLAudioElement;
@@ -9,14 +8,13 @@ class AudioManager {
   private isFirstChunk: boolean = true;
 
   private constructor() {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       this._audio = new Audio();
       this.mediaSource = new MediaSource();
 
       this._audio.src = URL.createObjectURL(this.mediaSource);
-      this._audio.volume = 1
-      this.mediaSource.addEventListener("sourceopen", this.onMediaSourceOpen);
-
+      this._audio.volume = 1;
+      this.mediaSource.addEventListener('sourceopen', this.onMediaSourceOpen);
     }
   }
 
@@ -54,12 +52,12 @@ class AudioManager {
   private updateAudioSource(): void {
     // console.log("sourceBuffer created:", this.sourceBuffer);
     // console.log("MediaSource readyState:", this.mediaSource.readyState);
-    if (this.mediaSource.readyState !== "open") {
+    if (this.mediaSource.readyState !== 'open') {
       // console.log("MediaSource is closed, can't append buffer.");
       return;
     }
     if (
-      this.mediaSource.readyState === "open" &&
+      this.mediaSource.readyState === 'open' &&
       this.sourceBuffer &&
       !this.sourceBuffer.updating &&
       !this.isBufferUpdating &&
@@ -71,8 +69,8 @@ class AudioManager {
         this.isBufferUpdating = true;
         // console.log("sourceBuffer before:", this.sourceBuffer);
         // console.log(
-          // "sourceBuffer updating before:",
-          // this.sourceBuffer.updating
+        // "sourceBuffer updating before:",
+        // this.sourceBuffer.updating
         // );
         this.sourceBuffer.appendBuffer(chunk);
         this.play();
@@ -85,17 +83,17 @@ class AudioManager {
   private onMediaSourceOpen = () => {
     // console.log("MediaSource opened");
     // console.log("MediaSource readyState:", this.mediaSource.readyState);
-    this.sourceBuffer = this.mediaSource.addSourceBuffer("audio/mpeg");
+    this.sourceBuffer = this.mediaSource.addSourceBuffer('audio/mpeg');
 
-    this.mediaSource.addEventListener("sourceended", () => {
+    this.mediaSource.addEventListener('sourceended', () => {
       // console.log("MediaSource ended.");
     });
-    this.mediaSource.addEventListener("error", (e) => {
-      console.error("MediaSource error:", e);
+    this.mediaSource.addEventListener('error', (e) => {
+      console.error('MediaSource error:', e);
     });
 
-    this.sourceBuffer.addEventListener("updateend", () => {
-      console.log("Updateend triggered");
+    this.sourceBuffer.addEventListener('updateend', () => {
+      console.log('Updateend triggered');
       this.isBufferUpdating = false;
       if (this.isFirstChunk) {
         this.isFirstChunk = false;
@@ -103,17 +101,15 @@ class AudioManager {
       }
       this.updateAudioSource();
     });
-    this.sourceBuffer.addEventListener("error", (e) => {
-      console.error("Error with source buffer:", e);
+    this.sourceBuffer.addEventListener('error', (e) => {
+      console.error('Error with source buffer:', e);
     });
 
     this.updateAudioSource();
   };
 
   public play(): void {
-    this._audio
-      ?.play()
-      .catch((err) => console.error("Error playing audio:", err));
+    this._audio?.play().catch((err) => console.error('Error playing audio:', err));
   }
 
   public pause(): void {
@@ -127,7 +123,7 @@ class AudioManager {
   }
 
   public cleanup(): void {
-    if (this.sourceBuffer && this.mediaSource.readyState === "open") {
+    if (this.sourceBuffer && this.mediaSource.readyState === 'open') {
       this.sourceBuffer.abort();
       // this.mediaSource.endOfStream()
     }
@@ -135,15 +131,14 @@ class AudioManager {
     this.isFirstChunk = true;
     this._audio?.pause();
     if (this._audio) {
-      this._audio.src = ""; 
+      this._audio.src = '';
       this.mediaSource = new MediaSource();
       this._audio.src = URL.createObjectURL(this.mediaSource);
-      this.mediaSource.addEventListener("sourceopen", this.onMediaSourceOpen);
+      this.mediaSource.addEventListener('sourceopen', this.onMediaSourceOpen);
     }
     // this._audio?.removeAttribute('src')
     // this._audio?.load()
   }
-
 }
 
 const audioManager = AudioManager.getInstance();

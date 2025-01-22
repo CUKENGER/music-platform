@@ -1,32 +1,25 @@
-import { FC, useState } from 'react'
-import styles from './CloseIcon.module.scss'
+import { FC, useState } from 'react';
+import styles from './CloseIcon.module.scss';
 import classNames from 'classnames';
-import closeIcon from './close_icon.svg'
-import closeIconActive from './close_icon_active.svg'
+import closeIcon from './close_icon.svg';
+import closeIconActive from './close_icon_active.svg';
 
-interface CloseIconProps{
+interface CloseIconProps {
   onClick?: () => void;
-  className?: string
+  className?: string;
 }
 
-export const CloseIcon: FC<CloseIconProps> = ({onClick, className}) => {
-
-  const [isHover, setIsHover] = useState(false)
+export const CloseIcon: FC<CloseIconProps> = ({ onClick, className }) => {
+  const [isHover, setIsHover] = useState(false);
 
   return (
-    <div 
+    <div
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      className={classNames(
-        className,
-        styles.CloseIcon
-      )}
+      className={classNames(className, styles.CloseIcon)}
       onClick={onClick}
     >
-      <img 
-        src={isHover ? closeIconActive : closeIcon} 
-        alt="close" 
-      />
+      <img src={isHover ? closeIconActive : closeIcon} alt="close" />
     </div>
-  )
-}
+  );
+};

@@ -1,19 +1,19 @@
-import { IArtist } from "@/entities/artist/types/Artist";
-import { IUser } from "@/entities/user/types/User";
+import { IArtist } from '@/entities/artist/types/Artist';
+import { IUser } from '@/entities/user/types/User';
 
 export interface ITrack {
   id: number;
-  name: string,
-  artist: IArtist,
-  text: string,
+  name: string;
+  artist: IArtist;
+  text: string;
   listens: number;
   likes: number;
   picture: string;
   audio: string;
-  comments: string[]; 
+  comments: string[];
   duration: string;
   genre: string;
-  likedByUsers: IUser[] | []
+  likedByUsers: IUser[] | [];
 }
 
 export interface CreateTrackDto {
@@ -22,7 +22,7 @@ export interface CreateTrackDto {
   text: string;
   genre: string;
   picture: File;
-  audio: File
+  audio: File;
 }
 
 export interface TrackUpdateState {
@@ -30,9 +30,9 @@ export interface TrackUpdateState {
   name: string;
   text: string;
   audio: File | null;
-  isUpdated: boolean,
+  isUpdated: boolean;
   isNew: boolean;
-  isExist: boolean
+  isExist: boolean;
 }
 
 export interface TrackState {

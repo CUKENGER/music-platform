@@ -1,2 +1,1 @@
-
-export {SelectFilter} from './ui'
+export { SelectFilter } from './ui';

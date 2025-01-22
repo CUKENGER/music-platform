@@ -1,7 +1,5 @@
-
-
-.container{
-max-height: calc(100vh - 190px);
+.container {
+  max-height: calc(100vh - 190px);
   overflow: hidden;
   overflow-y: auto;
 }
@@ -16,18 +14,18 @@ max-height: calc(100vh - 190px);
   color: var(--white);
 }
 
-.currentLine{
+.currentLine {
   color: var(--white);
 }
 
-@media(max-width: 730px) {
-  .container{
+@media (max-width: 730px) {
+  .container {
     max-height: calc(100vh - 492px);
   }
 }
 
-@media(max-width: 700px) {
-  .line{
+@media (max-width: 700px) {
+  .line {
     font-size: 14px;
   }
 }

@@ -1,24 +1,30 @@
-import { ChangeEvent, InputHTMLAttributes, useState } from "react";
-import styles from './InputFile.module.scss'
+import { ChangeEvent, InputHTMLAttributes, useState } from 'react';
+import styles from './InputFile.module.scss';
 
 interface InputAudioProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder: string;
-  fileName?: string
-  setFile: (file: File) => void
+  fileName?: string;
+  setFile: (file: File) => void;
   isAudio: boolean;
-  currentPicture?: string
+  currentPicture?: string;
 }
 
-export const InputFile = ({ placeholder, fileName, setFile, isAudio = true, currentPicture, ...defaultProps }: InputAudioProps) => {
-
-  const [uploadPicture, setUploadPicture] = useState<string>('')
+export const InputFile = ({
+  placeholder,
+  fileName,
+  setFile,
+  isAudio = true,
+  currentPicture,
+  ...defaultProps
+}: InputAudioProps) => {
+  const [uploadPicture, setUploadPicture] = useState<string>('');
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+    const files = e.target.files;
     if (files) {
-      setFile(files[0])
+      setFile(files[0]);
     }
-  }
+  };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -31,7 +37,7 @@ export const InputFile = ({ placeholder, fileName, setFile, isAudio = true, curr
       };
       reader.readAsDataURL(file);
     }
-  }
+  };
 
   return (
     <div className={styles.container}>
@@ -47,23 +53,12 @@ export const InputFile = ({ placeholder, fileName, setFile, isAudio = true, curr
         className={`${styles.label} ${fileName ? '' : styles.invalid}`}
         htmlFor={isAudio ? 'inputAudio' : 'inputImage'}
       >
-        {isAudio && fileName
-          ? fileName
-          : placeholder
-        }
+        {isAudio && fileName ? fileName : placeholder}
         {currentPicture && !uploadPicture && (
-          <img
-            className={styles.uploadPicture}
-            src={currentPicture}
-            alt="uploaded cover"
-          />
+          <img className={styles.uploadPicture} src={currentPicture} alt="uploaded cover" />
         )}
         {uploadPicture && (
-          <img
-            className={styles.uploadPicture}
-            src={uploadPicture}
-            alt="uploaded cover"
-          />
+          <img className={styles.uploadPicture} src={uploadPicture} alt="uploaded cover" />
         )}
       </label>
     </div>

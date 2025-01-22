@@ -1,4 +1,4 @@
-import styles from './MusicWaves.module.scss'
+import styles from './MusicWaves.module.scss';
 
 export const MusicWaves = () => {
   return (
@@ -7,5 +7,5 @@ export const MusicWaves = () => {
       <div className={styles.bar}></div>
       <div className={styles.bar}></div>
     </div>
-  )
-}
+  );
+};

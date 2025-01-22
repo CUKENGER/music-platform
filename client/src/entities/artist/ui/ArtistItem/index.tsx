@@ -1,5 +1,5 @@
 import { ForwardedRef, forwardRef } from 'react';
-import styles from './ArtistItem.module.scss'
+import styles from './ArtistItem.module.scss';
 import { Link } from 'react-router-dom';
 import { IArtist } from '../../types/Artist';
 import { API_URL } from '@/shared/consts';
@@ -7,16 +7,18 @@ import { LikeIcon, ListensIcon } from '@/shared/ui';
 
 interface ArtistItemProps {
   item: IArtist;
-  itemList: IArtist[]
+  itemList: IArtist[];
 }
 
-const ArtistItemComponent = ({item: artist} : ArtistItemProps, ref: ForwardedRef<HTMLDivElement>) => {
-
+const ArtistItemComponent = (
+  { item: artist }: ArtistItemProps,
+  ref: ForwardedRef<HTMLDivElement>,
+) => {
   return (
     <div ref={ref} className={styles.ArtistItem}>
       <Link to={`${artist.id}`}>
         <div className={styles.cover}>
-          <img src={API_URL + artist.picture}/>
+          <img src={API_URL + artist.picture} />
         </div>
       </Link>
       <Link to={`${artist.id}`}>
@@ -25,16 +27,11 @@ const ArtistItemComponent = ({item: artist} : ArtistItemProps, ref: ForwardedRef
         </div>
       </Link>
       <div className={styles.main_info}>
-        <ListensIcon
-          listens={artist.listens}
-        />
-        <LikeIcon
-          className={styles.likes}
-          likes={artist?.likes}
-        />
+        <ListensIcon listens={artist.listens} />
+        <LikeIcon className={styles.likes} likes={artist?.likes} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export const ArtistItem = forwardRef(ArtistItemComponent)
+export const ArtistItem = forwardRef(ArtistItemComponent);

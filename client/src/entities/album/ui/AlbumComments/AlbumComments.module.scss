@@ -1,5 +1,3 @@
-
-
 .comments {
   position: fixed;
   left: 200px;
@@ -13,7 +11,7 @@
   top: 0;
 }
 
-.commentsHeader{
+.commentsHeader {
   display: flex;
   width: 100%;
   align-items: center;
@@ -21,7 +19,7 @@
   padding: 0 15px;
 }
 
-.selectFilter{
+.selectFilter {
   width: fit-content;
 }
 
@@ -40,27 +38,15 @@
   overflow-y: auto;
 }
 
-.noComments{
+.noComments {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-@media(max-width: 768px) {
-  .comments{
+@media (max-width: 768px) {
+  .comments {
     left: 0;
     width: 100vw;
   }
-} 
-
-
-
-
-
-
-
-
-
-
-
-
+}

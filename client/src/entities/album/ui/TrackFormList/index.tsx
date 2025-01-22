@@ -1,32 +1,29 @@
-import { DroppableProvided, DropResult } from "react-beautiful-dnd"
-import { TrackForm, TrackState } from "@/entities/track"
-import { DragDropContext, Draggable, DraggableProvided, Droppable } from "react-beautiful-dnd"
-import styles from './TrackFormList.module.scss'
-import { Dispatch, SetStateAction } from "react"
+import { DroppableProvided, DropResult } from 'react-beautiful-dnd';
+import { TrackForm, TrackState } from '@/entities/track';
+import { DragDropContext, Draggable, DraggableProvided, Droppable } from 'react-beautiful-dnd';
+import styles from './TrackFormList.module.scss';
+import { Dispatch, SetStateAction } from 'react';
 
 interface TrackFormListProps {
-  tracks: TrackState[]
-  setTracks: Dispatch<SetStateAction<TrackState[]>>
-  debouncedArtist: string
+  tracks: TrackState[];
+  setTracks: Dispatch<SetStateAction<TrackState[]>>;
+  debouncedArtist: string;
 }
 
 export const TrackFormList = ({ tracks, setTracks, debouncedArtist }: TrackFormListProps) => {
-
   const updateTrack = (index: number, field: keyof TrackState, value: string | File | null) => {
-    setTracks(prevTracks => {
+    setTracks((prevTracks) => {
       if (prevTracks[index][field] === value) return prevTracks;
-      return prevTracks.map((track, i) =>
-        i === index ? { ...track, [field]: value } : track
-      );
+      return prevTracks.map((track, i) => (i === index ? { ...track, [field]: value } : track));
     });
   };
 
   const removeTrack = (index: number) => {
-    setTracks(prevTracks => prevTracks.map((track: TrackState, i: number) =>
-      i === index
-        ? { ...track }
-        : track
-    ).filter((i: number) => i !== index));
+    setTracks((prevTracks) =>
+      prevTracks
+        .map((track: TrackState, i: number) => (i === index ? { ...track } : track))
+        .filter((i: number) => i !== index),
+    );
   };
 
   const updateTracks = (newTracks: TrackState[]) => {
@@ -83,5 +80,5 @@ export const TrackFormList = ({ tracks, setTracks, debouncedArtist }: TrackFormL
         )}
       </Droppable>
     </DragDropContext>
-  )
-}
+  );
+};

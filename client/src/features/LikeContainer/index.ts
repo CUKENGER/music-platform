@@ -1,2 +1,1 @@
-
-export { LikeContainer } from './ui/'
+export { LikeContainer } from './ui/';

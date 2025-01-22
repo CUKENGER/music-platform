@@ -14,8 +14,8 @@ export const PlayerNameContainer = ({ name, artist }: PlayerNameContainerProps) 
 
   useEffect(() => {
     const checkOverflow = () => {
-      if(nameRef.current) {
-        setIsScrollName(nameRef.current.scrollWidth > nameRef.current.clientWidth)
+      if (nameRef.current) {
+        setIsScrollName(nameRef.current.scrollWidth > nameRef.current.clientWidth);
       }
       if (artistRef.current) {
         setIsScrollArtist(artistRef.current.scrollWidth > artistRef.current.clientWidth);
@@ -33,16 +33,10 @@ export const PlayerNameContainer = ({ name, artist }: PlayerNameContainerProps) 
   return (
     <div>
       <div className={styles.name_container}>
-        <p
-          ref={nameRef}
-          className={`${styles.name} ${isScrollName && styles.scroll}`}
-        >
+        <p ref={nameRef} className={`${styles.name} ${isScrollName && styles.scroll}`}>
           {name}
         </p>
-        <p
-          ref={artistRef}
-          className={`${styles.artist} ${isScrollArtist && styles.scroll}`}
-        >
+        <p ref={artistRef} className={`${styles.artist} ${isScrollArtist && styles.scroll}`}>
           {artist}
         </p>
       </div>

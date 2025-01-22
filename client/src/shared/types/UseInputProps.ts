@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent } from 'react';
 
 export interface Validations {
   isEmpty?: boolean;
@@ -8,7 +8,7 @@ export interface Validations {
   isLength?: { min: number; max: number };
   repeatPassword?: string;
   isPassEqual?: boolean;
-  isLengthValid?: boolean
+  isLengthValid?: boolean;
 }
 
 export interface UseInputProps extends Validations {

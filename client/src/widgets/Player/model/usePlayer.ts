@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useOpenPlayerStore } from "./openPlayerStore";
-import { useAddListenTrack, usePlayerStore } from "@/entities/track";
+import { useEffect, useState } from 'react';
+import { useOpenPlayerStore } from './openPlayerStore';
+import { useAddListenTrack, usePlayerStore } from '@/entities/track';
 
 export const usePlayer = () => {
   const activeTrack = usePlayerStore((state) => state.activeTrack);

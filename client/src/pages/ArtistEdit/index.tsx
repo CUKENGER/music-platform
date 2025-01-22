@@ -1,5 +1,5 @@
-import { EditArtistForm } from "@/features/EditArtistForm"
+import { EditArtistForm } from '@/features/EditArtistForm';
 
 export const ArtistEdit = () => {
-  return <EditArtistForm />
-}
+  return <EditArtistForm />;
+};

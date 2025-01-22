@@ -1,24 +1,36 @@
 import styles from './Player.module.scss';
 import { useEffect, useState } from 'react';
 import { useOpenPlayerStore } from '../../model/openPlayerStore';
-import { CurrentTimeContainer, MixIcon, PlayPauseBtn, SwitchTrackBtns, TrackProgress, useAddListenTrack, useAudioChunkStore, useGetAudioChunks, usePlayerStore, VolumeBar } from '@/entities/track';
+import {
+  CurrentTimeContainer,
+  MixIcon,
+  PlayPauseBtn,
+  SwitchTrackBtns,
+  TrackProgress,
+  useAddListenTrack,
+  useAudioChunkStore,
+  useGetAudioChunks,
+  usePlayerStore,
+  VolumeBar,
+} from '@/entities/track';
 import { audioManager, convertDurationToSeconds } from '@/shared/model';
 import { API_URL } from '@/shared/consts';
 import { PlayerNameContainer } from '../PlayerNameContainer';
 import { Portal } from '@/shared/ui';
 import { PlayerDetailed } from '@/widgets/PlayerDetailed';
-import openPlayerBtn from './assets/openPlayerBtn.svg'
+import openPlayerBtn from './assets/openPlayerBtn.svg';
 import { TrackLikeContainer } from '@/features/TrackLikeContainer';
 
 export const Player = () => {
-  const [localLoadedTime, setLocalLoadedTime] = useState(0)
+  const [localLoadedTime, setLocalLoadedTime] = useState(0);
   const [hasListen, setHasListen] = useState(false);
 
   const activeTrack = usePlayerStore((state) => state.activeTrack);
-  const { setLoadedTime, start, end, setFileSize, setIsChunkExist, setChunkDuration } = useAudioChunkStore()
+  const { setLoadedTime, start, end, setFileSize, setIsChunkExist, setChunkDuration } =
+    useAudioChunkStore();
   const { isOpen: isOpenPlayer, setIsOpen: setIsOpenPlayer } = useOpenPlayerStore();
 
-  const totalDuration = convertDurationToSeconds(activeTrack?.duration ?? '0:00')
+  const totalDuration = convertDurationToSeconds(activeTrack?.duration ?? '0:00');
 
   const filename = activeTrack?.audio.split('/').slice(1).join('') ?? '';
   const { data: audioChunks } = useGetAudioChunks(filename, start, end);
@@ -54,14 +66,14 @@ export const Player = () => {
       try {
         audioManager.appendAudioChunk(audioChunks.data);
         setFileSize(audioChunks?.fileSize);
-        setChunkDuration(audioChunks.chunkDuration)
-        const newLoadedTime = localLoadedTime + audioChunks.chunkDuration
-        setLoadedTime(newLoadedTime)
-        setLocalLoadedTime(newLoadedTime)
+        setChunkDuration(audioChunks.chunkDuration);
+        const newLoadedTime = localLoadedTime + audioChunks.chunkDuration;
+        setLoadedTime(newLoadedTime);
+        setLocalLoadedTime(newLoadedTime);
       } catch {
-        setIsChunkExist(false)
+        setIsChunkExist(false);
       } finally {
-        setIsChunkExist(true)
+        setIsChunkExist(true);
       }
     }
   }, [activeTrack, audioChunks, setFileSize, setIsChunkExist, setLoadedTime, totalDuration]);
@@ -69,7 +81,7 @@ export const Player = () => {
   useEffect(() => {
     if (activeTrack) {
       setLocalLoadedTime(0);
-      setLoadedTime(0)
+      setLoadedTime(0);
     }
   }, [activeTrack, setLoadedTime]);
 
@@ -77,29 +89,21 @@ export const Player = () => {
 
   return (
     <>
-      <div className={styles.container} >
-        <TrackProgress/>
+      <div className={styles.container}>
+        <TrackProgress />
         <div className={styles.main_container} onClick={handleOpen}>
           <div className={styles.main_info_container}>
             <div className={styles.cover_container}>
-              <img
-                src={API_URL + activeTrack?.picture}
-                alt="cover"
-              />
+              <img src={API_URL + activeTrack?.picture} alt="cover" />
             </div>
             <div className={styles.duration}>
-              <CurrentTimeContainer
-                duration={activeTrack?.duration}
-              />
+              <CurrentTimeContainer duration={activeTrack?.duration} />
             </div>
             <PlayerNameContainer
               name={activeTrack?.name}
               artist={activeTrack?.artist.name ?? 'Unknown artist'}
             />
-            <TrackLikeContainer
-              likes={activeTrack.likes}
-              id={activeTrack.id}
-            />
+            <TrackLikeContainer likes={activeTrack.likes} id={activeTrack.id} />
           </div>
           <div className={styles.play_btns}>
             <SwitchTrackBtns isNextBtn={false} />
@@ -111,15 +115,10 @@ export const Player = () => {
             <MixIcon />
             <VolumeBar />
             <div onClick={handleOpen}>
-              <img
-                className={styles.openBtn}
-                src={openPlayerBtn}
-                alt="openPlayerBtn"
-              />
+              <img className={styles.openBtn} src={openPlayerBtn} alt="openPlayerBtn" />
             </div>
           </div>
         </div>
-
       </div>
       {isOpenPlayer && (
         <Portal selector="#portal-root" isOpen={isOpenPlayer}>

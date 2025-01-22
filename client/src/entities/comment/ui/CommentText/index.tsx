@@ -1,16 +1,15 @@
-import cn from 'classnames'
-import styles from './CommentText.module.scss'
-import { useEffect, useRef, useState } from 'react'
+import cn from 'classnames';
+import styles from './CommentText.module.scss';
+import { useEffect, useRef, useState } from 'react';
 
 interface CommentTextProps {
-  text: string
+  text: string;
 }
 
 export const CommentText = ({ text }: CommentTextProps) => {
-
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [hasGradient, setHasGradient] = useState(false)
-  const textRef = useRef<HTMLDivElement>(null)
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [hasGradient, setHasGradient] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (textRef.current) {
@@ -25,30 +24,22 @@ export const CommentText = ({ text }: CommentTextProps) => {
         className={cn(
           styles.commentTextContainer,
           { [styles.expanded]: isExpanded },
-          { [styles.hasGradient]: hasGradient }
+          { [styles.hasGradient]: hasGradient },
         )}
         ref={textRef}
       >
-        <p className={styles.commentText}>
-          {text}
-        </p>
+        <p className={styles.commentText}>{text}</p>
       </div>
       {hasGradient && (
-        <span
-          className={styles.showMoreBtn}
-          onClick={() => setIsExpanded(true)}
-        >
+        <span className={styles.showMoreBtn} onClick={() => setIsExpanded(true)}>
           Показать еще
         </span>
       )}
       {isExpanded && (
-        <span
-          className={styles.showMoreBtn}
-          onClick={() => setIsExpanded(false)}
-        >
+        <span className={styles.showMoreBtn} onClick={() => setIsExpanded(false)}>
           Показать меньше
         </span>
       )}
     </>
-  )
-}
+  );
+};

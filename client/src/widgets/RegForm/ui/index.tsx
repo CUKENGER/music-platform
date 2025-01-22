@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom"
-import { useRegWidget } from "../model/useRegForm"
-import { Btn, EmailInput, ModalContainer, PasswordInput, UITextField } from "@/shared/ui"
-import { PUBLIC_ROUTES } from "@/shared/consts"
-import { LoginLayout } from "@/widgets/LoginLayout"
+import { LoginLayout } from '@/entities/user';
+import { PUBLIC_ROUTES } from '@/shared/consts';
+import { Btn, ModalContainer, UIPasswordInput, UITextField } from '@/shared/ui';
+import { Link } from 'react-router-dom';
+import { useRegWidget } from '../model/useRegForm';
+import cl from './index.module.scss';
 
 export const RegForm = () => {
   const {
@@ -14,80 +15,108 @@ export const RegForm = () => {
     isValid,
     isLoading,
     modal,
-    hideModal
-  } = useRegWidget()
+    hideModal,
+  } = useRegWidget();
 
   const usernameWarnings = [
-    { condition: username.isEmpty, text: "Поле должно быть заполнено" },
-    { condition: !username.isLatin, text: "Поля заполняются латиницей" },
-    { condition: !username.isLengthValid, text: "Длина никнейма должна быть от 3 до 16 символов" },
-  ]
+    {
+      condition: username?.isEmpty,
+      text: 'Поле должно быть заполнено',
+    },
+    {
+      condition: !username?.isLatin,
+      text: 'Поля заполняются латиницей',
+    },
+    {
+      condition: !username?.isLengthValid,
+      text: 'Длина никнейма должна быть от 3 до 16 символов',
+    },
+  ];
 
   const emailWarnings = [
-    { condition: email.isDirty && email.isEmpty, text: 'Поле должно быть заполнено' },
-    { condition: email.isDirty && !email.isEmailValid, text: 'Некорректный emall' },
-    { condition: email.isDirty && !email.isLatin, text: 'Поле заполняется латиницей' },
-  ]
+    {
+      condition: email?.isEmpty,
+      text: 'Поле должно быть заполнено',
+    },
+    { condition: !email?.isEmailValid, text: 'Некорректный email' },
+    {
+      condition: !email?.isLatin,
+      text: 'Поле заполняется латиницей',
+    },
+  ];
 
   const passwordWarnings = [
-    { condition: password.isDirty && password.isEmpty, text: 'Поле должно быть заполнено' },
-    { condition: password.isDirty && !password.isPasswordStrong, text: 'Пароль должен содержать минимум 8 символов, заглавные буквы и цифры' },
-    { condition: password.isDirty && !password.isLatin, text: "Поля заполняются латиницей" }
-  ]
+    {
+      condition: password?.isEmpty,
+      text: 'Поле должно быть заполнено',
+    },
+    {
+      condition: !password?.isPasswordStrong,
+      text: 'Пароль должен содержать минимум 8 символов, заглавные буквы и цифры',
+    },
+    {
+      condition: !password?.isLatin,
+      text: 'Поля заполняются латиницей',
+    },
+  ];
+
+  const repeatPasswordWarnings = [
+    {
+      condition: !repeatPassword?.isPassEqual,
+      text: 'Пароли не совпадают',
+    },
+  ];
+
   return (
     <>
-      <LoginLayout
-        handleSubmit={handleSubmit}
-        title='Welcome'
-      >
-
+      <LoginLayout handleSubmit={handleSubmit} title="Регистрация">
         <UITextField
           name="username"
-          value={username.value}
-          onChange={username.onChange}
           label="Введите никнейм"
           required
+          onChange={username.onChange}
+          value={username.value}
           warnings={usernameWarnings}
+          clearable
         />
-
-
-        <EmailInput
-          name='email'
-          placeholder='Введите email'
-          inputValue={email}
+        <UITextField
+          name="email"
+          type="email"
+          label="Введите email"
+          required
+          value={email.value}
+          onChange={email.onChange}
           warnings={emailWarnings}
+          clearable
         />
-        <PasswordInput
-          name='password'
-          inputValue={password}
-          placeholder='Введите пароль'
+        <UIPasswordInput
+          name="password"
+          label="Введите пароль"
+          required
+          value={password.value}
+          onChange={password.onChange}
           warnings={passwordWarnings}
+          clearable
         />
-        <PasswordInput
-          name='repeatPassword'
-          placeholder='Повторите пароль'
-          inputValue={repeatPassword}
-          warnings={[
-            { condition: !repeatPassword?.isPassEqual, message: "Пароли не совпадают" }
-          ]}
+        <UIPasswordInput
+          name="repeatPassword"
+          label="Повторите пароль"
+          required
+          value={repeatPassword.value}
+          onChange={repeatPassword.onChange}
+          warnings={repeatPasswordWarnings}
+          clearable
         />
-        <Btn
-          isLoading={isLoading}
-          disabled={isValid}
-          type='submit'
-        >
+        <Btn isLoading={isLoading} disabled={isValid} type="submit">
           Зарегистрироваться
         </Btn>
         <Link to={PUBLIC_ROUTES.LOGIN}>
-          <Btn>
+          <Btn variant="outlined" className={cl.link}>
             Авторизация
           </Btn>
         </Link>
       </LoginLayout>
-      <ModalContainer
-        modal={modal}
-        hideModal={hideModal}
-      />
+      <ModalContainer modal={modal} hideModal={hideModal} />
     </>
-  )
-}
+  );
+};

@@ -4,16 +4,11 @@ import styles from './VolumeBar.module.scss';
 import { useVolumeBar } from '../../model/useVolumeBar';
 
 export const VolumeBar = () => {
-  const {
-    handleMute,
-    isMute,
-    volume,
-    changeVolume,
-  } = useVolumeBar();
+  const { handleMute, isMute, volume, changeVolume } = useVolumeBar();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-  }
+    e.stopPropagation();
+  };
 
   return (
     <div className={styles.input_volume_container} onClick={handleClick}>

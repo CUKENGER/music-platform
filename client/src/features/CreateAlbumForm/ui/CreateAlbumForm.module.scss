@@ -1,16 +1,13 @@
-
-
 .album_inputs {
   display: flex;
   width: 100%;
   justify-content: space-between;
 }
 
-@media(max-width: 600px) {
+@media (max-width: 600px) {
   .album_inputs {
     justify-content: baseline;
     flex-direction: column-reverse;
     row-gap: 10px;
   }
 }
-

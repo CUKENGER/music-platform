@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './SelectFilter.module.scss';
 import DropDownArrow from './assets/DropDownArrow.svg';
 import DropDownArrowActive from './assets/DropDownArrowActive.svg';
@@ -7,7 +7,7 @@ import { useSelectFilterStore } from '@/shared/model';
 
 interface SelectFilterProps {
   options: string[];
-  className?: string
+  className?: string;
 }
 
 export const SelectFilter = ({ options, className }: SelectFilterProps) => {
@@ -41,11 +41,7 @@ export const SelectFilter = ({ options, className }: SelectFilterProps) => {
     <div
       ref={ref}
       onClick={toggleMenu}
-      className={classNames(
-        className,
-        isOpen && styles.container_active,
-        styles.container
-      )}
+      className={classNames(className, isOpen && styles.container_active, styles.container)}
     >
       <>
         <button className={isOpen ? styles.btn_active : styles.btn}>
@@ -59,11 +55,7 @@ export const SelectFilter = ({ options, className }: SelectFilterProps) => {
         {isOpen && (
           <ul className={styles.list_open}>
             {options.map((option) => (
-              <li
-                key={option}
-                className={styles.list_item}
-                onClick={() => handleSort(option)}
-              >
+              <li key={option} className={styles.list_item} onClick={() => handleSort(option)}>
                 {option}
               </li>
             ))}

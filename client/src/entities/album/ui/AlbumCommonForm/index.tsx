@@ -1,7 +1,7 @@
-import { FormEvent, ReactNode } from "react";
-import { Link } from "react-router-dom"
-import styles from './AlbumCommonForm.module.scss'
-import { Btn } from "@/shared/ui";
+import { FormEvent, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
+import styles from './AlbumCommonForm.module.scss';
+import { Btn } from '@/shared/ui';
 
 interface AlbumCommonFormProps {
   onSubmit: (e: FormEvent) => void;
@@ -11,7 +11,13 @@ interface AlbumCommonFormProps {
   hasData: boolean;
 }
 
-export const AlbumCommonForm = ({ onSubmit, backLink, children, isPending, hasData }: AlbumCommonFormProps) => {
+export const AlbumCommonForm = ({
+  onSubmit,
+  backLink,
+  children,
+  isPending,
+  hasData,
+}: AlbumCommonFormProps) => {
   return (
     <form className={styles.Form} onSubmit={onSubmit}>
       <Link to={backLink}>
@@ -22,5 +28,5 @@ export const AlbumCommonForm = ({ onSubmit, backLink, children, isPending, hasDa
         Загрузить
       </Btn>
     </form>
-  )
-}
+  );
+};

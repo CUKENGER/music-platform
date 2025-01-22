@@ -1,6 +1,4 @@
-
-
-.route_item{
+.route_item {
   display: flex;
   column-gap: 10px;
   justify-content: space-between;
@@ -9,21 +7,21 @@
   border-radius: 10px;
   cursor: pointer;
 
-  &:hover{
+  &:hover {
     background-color: var(--bg);
   }
 }
 
-.route_text{
+.route_text {
   font-size: 14px;
 }
 
-.route_item.active{
+.route_item.active {
   outline: 1px solid var(--prm);
   background-color: var(--bg);
 }
 
-.icon_container{
+.icon_container {
   width: 20px;
   height: 20px;
 
@@ -32,4 +30,3 @@
     height: 100%;
   }
 }
-

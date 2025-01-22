@@ -6,11 +6,11 @@ import { Input } from '@/shared/ui';
 
 interface SearchArtistInputProps {
   artist: string;
-  setArtist: Dispatch<SetStateAction<string>>
+  setArtist: Dispatch<SetStateAction<string>>;
 }
 
 export const SearchArtistInput = ({ artist, setArtist }: SearchArtistInputProps) => {
-  const [showResults, setShowResults] = useState(true)
+  const [showResults, setShowResults] = useState(true);
 
   const debouncedArtist = useDebounce(artist, 500);
   const { data: searchArtists } = useSearchArtists(debouncedArtist);

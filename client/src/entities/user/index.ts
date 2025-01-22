@@ -1,11 +1,11 @@
+export type { IUser } from './types/User';
 
-export type { IUser }from './types/User'
+export { useUserStore } from './model/userStore';
+export { handleAuthError } from './model/handleAuthError';
+export { useAuthInterceptor } from './model/useAuthInterceptor';
 
-export {useUserStore} from './model/userStore'
-export {handleAuthError} from './model/handleAuthError'
-export {useAuthInterceptor} from './model/useAuthInterceptor'
-
-export {UserAvatar} from './ui/UserAvatar'
+export { UserAvatar } from './ui/UserAvatar';
+export { LoginLayout } from './ui/LoginLayout';
 
 export {
   useGetByToken,
@@ -14,5 +14,4 @@ export {
   useRegUser,
   useCheckUsername,
   useLoginUser,
-} from './api/useUserApi'
-
+} from './api/useUserApi';

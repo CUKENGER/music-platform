@@ -1,33 +1,37 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
-import styles from './Btn.module.scss'
-import classNames from "classnames";
+import { ButtonHTMLAttributes, ReactNode } from 'react';
+import styles from './Btn.module.scss';
+import cn from 'classnames';
 
 interface BtnProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: string | ReactNode;
+  children: ReactNode;
   isSubmit?: boolean;
   isLoading?: boolean;
-  small?: boolean;
   className?: string;
+  size?: 's' | 'm' | 'l';
+  variant?: 'filled' | 'outlined';
 }
 
-export const Btn = ({ children, isLoading = false, small, className, ...rest }: BtnProps) => {
+export const Btn = ({
+  children,
+  isLoading = false,
+  className,
+  size = 'm',
+  variant = 'filled',
+  ...rest
+}: BtnProps) => {
   return (
-    <button className={classNames(
-      className,
-      styles.btn,
-      small && styles.small_btn,
-    )}
-      {...rest}>
-      {children}
-      {isLoading && (
-        <span
-          className={classNames(
-            styles.loader,
-            small && styles.small_loader
-          )}
-        >
-        </span>
+    <button
+      className={cn(
+        className,
+        styles.btn,
+        isLoading && styles.loading,
+        styles[size],
+        styles[variant],
       )}
+      {...rest}
+    >
+      {children}
+      {isLoading && <span className={cn(styles.loader, styles[size])}></span>}
     </button>
   );
 };

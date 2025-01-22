@@ -1,14 +1,14 @@
-import { create } from "zustand";
-import { ITrack } from "../types/Track";
+import { create } from 'zustand';
+import { ITrack } from '../types/Track';
 
-interface ActiveTrackLIstStore{
+interface ActiveTrackLIstStore {
   activeTrackList: ITrack[] | null;
-  setActiveTrackList: (trackList: ITrack[]) => void
+  setActiveTrackList: (trackList: ITrack[]) => void;
 }
 
 const useActiveTrackListStore = create<ActiveTrackLIstStore>((set) => ({
   activeTrackList: null,
-  setActiveTrackList: (trackList: ITrack[]) => set({activeTrackList: trackList})
+  setActiveTrackList: (trackList: ITrack[]) => set({ activeTrackList: trackList }),
 }));
 
-export default useActiveTrackListStore
+export default useActiveTrackListStore;

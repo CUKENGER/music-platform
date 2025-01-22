@@ -1,10 +1,9 @@
-
-export { EntitySection } from './EntitySection/ui'
-export { Header } from './Header/ui'
-export { Navbar } from './Navbar/ui'
-export { PageHeader } from './PageHeader/ui'
-export { LoginWidget } from './LoginWidget/ui'
-export { GoActivateWidget } from './GoActivateWidget/ui'
-export { Player } from './Player/ui/Player'
-export { LoginLayout } from './LoginLayout'
-export { RegForm } from './RegForm/ui'
+export { LoginLayout } from '../entities/user/ui/LoginLayout';
+export { EntitySection } from './EntitySection/ui';
+export { GoActivateWidget } from './GoActivateWidget/ui';
+export { Header } from './Header/ui';
+export { LoginForm } from './LoginForm/ui';
+export { Navbar } from './Navbar/ui';
+export { PageHeader } from './PageHeader/ui';
+export { Player } from './Player/ui/Player';
+export { RegForm } from './RegForm/ui';

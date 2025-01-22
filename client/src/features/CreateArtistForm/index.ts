@@ -1,2 +1,1 @@
-
-export { CreateArtistForm } from './ui'
+export { CreateArtistForm } from './ui';

@@ -1,6 +1,4 @@
-
-
-.LoginForm{
+.LoginForm {
   background-color: #242424;
   padding: 20px;
   display: flex;
@@ -11,22 +9,20 @@
   max-width: 510px;
 }
 
-.title{
+.title {
   color: #fff;
   margin-bottom: 40px;
   text-align: center;
   user-select: none;
 }
 
-.reg_btn{
+.reg_btn {
   width: 100%;
   background-color: var(--black-lt);
   border-radius: 10px;
 }
 
-.forgotPassword{
+.forgotPassword {
   color: var(--gray);
   font-size: 12px;
 }
-
-

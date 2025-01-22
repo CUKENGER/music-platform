@@ -1,5 +1,4 @@
-
-export type {IAlbum, CreateAlbumDto} from './types/Album'
+export type { IAlbum, CreateAlbumDto } from './types/Album';
 
 export {
   useGetAllAlbums,
@@ -9,17 +8,17 @@ export {
   useDeleteLikeAlbum,
   useGetCommentsAlbum,
   useCreateAlbumComment,
-  useDeleteAlbum, 
+  useDeleteAlbum,
   useGetAllPopularAlbums,
   useGetLimitPopularAlbums,
-  useUpdateAlbum
-} from './api/useAlbumApi'
+  useUpdateAlbum,
+} from './api/useAlbumApi';
 
-export {AlbumItem} from './ui/AlbumItem'
-export {AlbumInfo} from './ui/AlbumInfo'
-export {MainInfoInputs} from './ui/MainInfoInputs'
-export {AlbumCoverInput} from './ui/AlbumCoverInput'
-export {TrackFormList} from './ui/TrackFormList'
-export {MultipleInputAudio} from './ui/MultipleInputAudio'
-export {EditTrackFormList} from './ui/EditTrackFormList'
-export {AlbumCommonForm} from './ui/AlbumCommonForm'
+export { AlbumItem } from './ui/AlbumItem';
+export { AlbumInfo } from './ui/AlbumInfo';
+export { MainInfoInputs } from './ui/MainInfoInputs';
+export { AlbumCoverInput } from './ui/AlbumCoverInput';
+export { TrackFormList } from './ui/TrackFormList';
+export { MultipleInputAudio } from './ui/MultipleInputAudio';
+export { EditTrackFormList } from './ui/EditTrackFormList';
+export { AlbumCommonForm } from './ui/AlbumCommonForm';

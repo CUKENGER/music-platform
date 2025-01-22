@@ -1,4 +1,4 @@
-import styles from './SendEmail.module.scss'
+import styles from './SendEmail.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { FormEvent } from 'react';
@@ -8,29 +8,28 @@ import { PUBLIC_ROUTES } from '@/shared/consts';
 import { Btn, EmailInput, ModalContainer } from '@/shared/ui';
 
 export const SendEmail = () => {
+  const email = useInput('', { isEmpty: true, isEmail: true, isLatin: true });
+  const { hideModal, modal, showModal } = useModal();
+  const navigate = useNavigate();
 
-  const email = useInput("", { isEmpty: true, isEmail: true, isLatin: true });
-  const { hideModal, modal, showModal } = useModal()
-  const navigate = useNavigate()
-
-  const { mutate: sendEmail, isPending: isLoading } = useSendEmail()
+  const { mutate: sendEmail, isPending: isLoading } = useSendEmail();
 
   const isValid = email.isEmpty || !email.isEmailValid || !email.isLatin;
 
   const handleSend = () => {
     if (isValid) {
-      return
+      return;
     }
 
     const dto = {
-      email: email.value.trim()
-    }
+      email: email.value.trim(),
+    };
 
     sendEmail(dto, {
       onSuccess: () => {
         showModal(`Перейдите по ссылке из письма, отправленного на ${email.value}`, () => {
-          navigate(PUBLIC_ROUTES.LOGIN)
-        })
+          navigate(PUBLIC_ROUTES.LOGIN);
+        });
       },
       onError: (e: AxiosError) => {
         if (e.response && e.response.status === 404) {
@@ -38,19 +37,28 @@ export const SendEmail = () => {
         } else {
           showModal(`Произошла ошибка, повторите позже ${e.message}`);
         }
-      }
-    })
-  }
+      },
+    });
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-  }
+    e.preventDefault();
+  };
 
   const emailWarnings = [
-    { condition: email.isDirty && email.isEmpty, message: 'Поле должно быть заполнено' },
-    { condition: email.isDirty && !email.isEmailValid, message: 'Некорректный email' },
-    { condition: email.isDirty && !email.isLatin, message: 'Поле заполняется латиницей' },
-  ]
+    {
+      condition: email.isDirty && email.isEmpty,
+      message: 'Поле должно быть заполнено',
+    },
+    {
+      condition: email.isDirty && !email.isEmailValid,
+      message: 'Некорректный email',
+    },
+    {
+      condition: email.isDirty && !email.isLatin,
+      message: 'Поле заполняется латиницей',
+    },
+  ];
 
   return (
     <div className={styles.SendEmail}>
@@ -58,9 +66,9 @@ export const SendEmail = () => {
         <p className={styles.title}>Укажите Email</p>
         <p className={styles.text}>Введите свой email и вам придет ссылка для смены пароля</p>
         <EmailInput
-          name='email'
+          name="email"
           inputValue={email}
-          placeholder='Введите email'
+          placeholder="Введите email"
           warnings={emailWarnings}
         />
         <Btn
@@ -68,7 +76,7 @@ export const SendEmail = () => {
           disabled={isValid}
           small={true}
           onClick={handleSend}
-          type='submit'
+          type="submit"
         >
           Отправить
         </Btn>
@@ -78,10 +86,7 @@ export const SendEmail = () => {
           </Btn>
         </Link>
       </form>
-        <ModalContainer
-          modal={modal}
-          hideModal={hideModal}
-        />
+      <ModalContainer modal={modal} hideModal={hideModal} />
     </div>
-  )
-}
+  );
+};

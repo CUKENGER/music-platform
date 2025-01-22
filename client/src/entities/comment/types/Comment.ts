@@ -1,5 +1,3 @@
-
-
 export interface IComment {
   id: number;
   username: string;
@@ -22,5 +20,5 @@ export interface CreateCommentDto {
   username: string;
   text: string;
   albumId: number;
-  parentId?: number
+  parentId?: number;
 }

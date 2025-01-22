@@ -1,6 +1,6 @@
-import axios, { AxiosError, Method } from "axios";
-import { ErrorResponse } from "react-router-dom";
-import {axiosInstance} from "./axiosInstance";
+import axios, { AxiosError, Method } from 'axios';
+import { ErrorResponse } from 'react-router-dom';
+import { axiosInstance } from './axiosInstance';
 
 interface ApiRequestOptions<T = unknown> {
   params?: Record<string, string | number | boolean>;
@@ -16,7 +16,7 @@ export interface RequestError {
 export const apiRequest = async <T, D = unknown>(
   method: Method,
   url: string,
-  options: ApiRequestOptions<D> = {}
+  options: ApiRequestOptions<D> = {},
 ): Promise<T> => {
   try {
     const response = await axiosInstance.request<T>({

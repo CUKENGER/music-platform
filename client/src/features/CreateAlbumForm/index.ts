@@ -1,2 +1,1 @@
-
-export {CreateAlbumForm} from './ui'
+export { CreateAlbumForm } from './ui';

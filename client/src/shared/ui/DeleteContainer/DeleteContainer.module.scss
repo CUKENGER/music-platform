@@ -1,6 +1,4 @@
-
-
-.delete_container{
+.delete_container {
   width: 25px;
   height: 25px;
   cursor: pointer;
@@ -10,13 +8,13 @@
     height: 100%;
   }
 
-  &:hover{
+  &:hover {
     transform: scale(1.05);
   }
 }
 
-@media(max-width: 600px) {
-  .delete_container{
+@media (max-width: 600px) {
+  .delete_container {
     width: 20px;
     height: 20px;
   }

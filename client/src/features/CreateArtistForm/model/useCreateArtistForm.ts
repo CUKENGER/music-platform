@@ -1,27 +1,26 @@
-import { useCreateArtist } from "@/entities/artist"
-import { PRIVATE_ROUTES } from "@/shared/consts"
-import { useInput, useModal } from "@/shared/hooks"
-import { genres } from "@/shared/moks"
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useCreateArtist } from '@/entities/artist';
+import { PRIVATE_ROUTES } from '@/shared/consts';
+import { useInput, useModal } from '@/shared/hooks';
+import { genres } from '@/shared/moks';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ErrorResponse {
   response: {
     data: {
-      message: string
-    }
-  }
+      message: string;
+    };
+  };
 }
 
 export const useCreateArtistForm = () => {
-
-  const name = useInput('', { isEmpty: true })
-  const genre = useInput('', { isEmpty: true })
-  const description = useInput('', { isEmpty: true })
-  const [picture, setPicture] = useState<File | null>(null)
-  const [options, setOptions] = useState(genres)
-  const { hideModal, modal, showModal } = useModal()
-  const navigate = useNavigate()
+  const name = useInput('', { isEmpty: true });
+  const genre = useInput('', { isEmpty: true });
+  const description = useInput('', { isEmpty: true });
+  const [picture, setPicture] = useState<File | null>(null);
+  const [options, setOptions] = useState(genres);
+  const { hideModal, modal, showModal } = useModal();
+  const navigate = useNavigate();
 
   const hasData = !!(
     description.value.trim() &&
@@ -30,41 +29,38 @@ export const useCreateArtistForm = () => {
     picture
   );
 
-  const { isPending: isLoading, mutate: createArtist } = useCreateArtist()
+  const { isPending: isLoading, mutate: createArtist } = useCreateArtist();
 
   const handleSubmit = () => {
     if (!hasData) {
-      showModal('Заполните все данные, пожалуйста')
-      return
+      showModal('Заполните все данные, пожалуйста');
+      return;
     }
 
     const artistDto = {
       name: name.value.trim(),
       description: description.value.trim(),
       genre: genre.value.trim(),
-      picture: picture
-    }
+      picture: picture,
+    };
 
     createArtist(artistDto, {
       onSuccess: (res) => {
         showModal(`Артист ${res.name} успешно создан`, () => {
-          navigate(PRIVATE_ROUTES.ARTISTS)
-        })
+          navigate(PRIVATE_ROUTES.ARTISTS);
+        });
       },
       onError: (e: ErrorResponse | Error) => {
         if ('response' in e && e.response?.data?.message) {
           showModal(`Произошла ошибка: ${e.response.data.message}`);
-        }
-        else if (e instanceof Error) {
+        } else if (e instanceof Error) {
           showModal(`Произошла ошибка: ${e.message}`);
-        }
-        else {
+        } else {
           showModal('Произошла неизвестная ошибка');
         }
-      }
-    })
-
-  }
+      },
+    });
+  };
 
   return {
     name,
@@ -78,7 +74,6 @@ export const useCreateArtistForm = () => {
     isLoading,
     hasData,
     modal,
-    hideModal
-  }
-
-}
+    hideModal,
+  };
+};

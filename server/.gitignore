@@ -12,8 +12,6 @@ database_dump.sql
 
 yarn.lock
 
-
-
 # Logs
 logs
 *.log

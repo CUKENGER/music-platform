@@ -1,5 +1,5 @@
-import styles from './AlbumComments.module.scss'
-import { useMemo } from 'react'
+import styles from './AlbumComments.module.scss';
+import { useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CommentItem, CommentSend, sortComments, useOpenCommentsStore } from '@/entities/comment';
 import { useSelectFilterStore } from '@/shared/model';
@@ -8,14 +8,14 @@ import { CloseIcon, Loader } from '@/shared/ui';
 import { SelectFilter } from '@/features/SelectFilter';
 
 interface AlbumCommentsProps {
-  albumId: number | undefined
+  albumId: number | undefined;
 }
 
 export const AlbumComments = ({ albumId }: AlbumCommentsProps) => {
-  const { setIsOpen } = useOpenCommentsStore()
-  const { selectedSort } = useSelectFilterStore()
+  const { setIsOpen } = useOpenCommentsStore();
+  const { selectedSort } = useSelectFilterStore();
 
-  const { data: comments, isLoading, refetch } = useGetCommentsAlbum(albumId ?? 0)
+  const { data: comments, isLoading, refetch } = useGetCommentsAlbum(albumId ?? 0);
 
   const sortedComments = useMemo(() => {
     if (comments) {
@@ -26,28 +26,24 @@ export const AlbumComments = ({ albumId }: AlbumCommentsProps) => {
     }
   }, [selectedSort, comments]);
 
-
   if (isLoading) {
-    return <Loader />
+    return <Loader />;
   }
 
   return (
     <AnimatePresence>
       <motion.div
         className={styles.comments}
-        initial={{ y: "100%", opacity: 0, scale: 0.9 }}
+        initial={{ y: '100%', opacity: 0, scale: 0.9 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
-        exit={{ y: "100%", opacity: 0, scale: 0.9 }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
+        exit={{ y: '100%', opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.4, ease: 'easeInOut' }}
       >
         <div className={styles.commentsHeader}>
-          <CloseIcon
-            className={styles.closeIcon}
-            onClick={() => setIsOpen(false)}
-          />
+          <CloseIcon className={styles.closeIcon} onClick={() => setIsOpen(false)} />
           <SelectFilter
             className={styles.selectFilter}
-            options={['Все', "По дате", "Популярные"]}
+            options={['Все', 'По дате', 'Популярные']}
           />
         </div>
         <div className={styles.commentsList}>
@@ -56,18 +52,13 @@ export const AlbumComments = ({ albumId }: AlbumCommentsProps) => {
               Комментариев пока что нет, но вы можете оставить свой
             </div>
           )}
-          {sortedComments && sortedComments.map((comment) => (
-            <CommentItem
-              refetchGetComments={refetch}
-              key={comment.id}
-              comment={comment}
-            />
-          ))}
+          {sortedComments &&
+            sortedComments.map((comment) => (
+              <CommentItem refetchGetComments={refetch} key={comment.id} comment={comment} />
+            ))}
         </div>
-        <CommentSend
-          albumId={albumId}
-        />
+        <CommentSend albumId={albumId} />
       </motion.div>
     </AnimatePresence>
-  )
-}
+  );
+};

@@ -1,6 +1,4 @@
-
-
-.CreateArtistForm{
+.CreateArtistForm {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -8,40 +6,40 @@
   column-gap: 30px;
 }
 
-.main_container{
+.main_container {
   display: flex;
   width: 100%;
   justify-content: space-between;
 }
 
-.inputs_container{
+.inputs_container {
   width: 50%;
   display: flex;
   flex-direction: column;
   row-gap: 10px;
 }
 
-.picture_container{
+.picture_container {
   width: 40%;
   height: 70%;
   display: flex;
   justify-content: center;
 }
 
-.picture_input_container{
+.picture_input_container {
   width: 225px;
   height: 225px;
   object-fit: cover;
 }
 
-@media(max-width: 700px) {
-  .picture_container{
+@media (max-width: 700px) {
+  .picture_container {
     height: auto;
   }
 }
 
-@media(max-width: 600px) {
-  .main_container{
+@media (max-width: 600px) {
+  .main_container {
     flex-direction: column-reverse;
     justify-content: baseline;
     width: 100%;
@@ -49,11 +47,11 @@
   }
 
   .inputs_container,
-  .picture_container{
+  .picture_container {
     width: 100%;
   }
 
-  .picture_input_container{
+  .picture_input_container {
     width: 190px;
     height: 190px;
   }

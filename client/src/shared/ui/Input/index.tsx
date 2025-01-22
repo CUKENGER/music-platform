@@ -20,20 +20,18 @@ export const Input = ({ placeholder, ...props }: InputProps) => {
       } as React.ChangeEvent<HTMLInputElement>;
       props.onChange(event);
     }
-  }
+  };
 
   return (
     <div className={styles.container}>
       <label htmlFor={`inputString-${id}`} className={styles.label}>
         {placeholder}
       </label>
-      {value === '' ? (
+      {value === '' ?
         <div className={styles.exclam_container}>
           <ExclamIcon />
         </div>
-      ) : (
-        <ClearIcon handleClear={handleClear} />
-      )}
+      : <ClearIcon handleClear={handleClear} />}
       <input
         id={`inputString-${id}`}
         className={styles.input}

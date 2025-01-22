@@ -1,6 +1,4 @@
-
-
-.container{
+.container {
   display: flex;
   align-items: center;
   padding: 5px;
@@ -8,42 +6,42 @@
   justify-content: space-between;
   width: 100%;
 
-  &:hover{
+  &:hover {
     background-color: var(--black-lt);
   }
 }
 
-.reorder_item{
+.reorder_item {
   cursor: move;
   margin-top: 5px;
   border: 1px solid transparent;
 }
 
-.active{
+.active {
   border: 1px solid var(--prm);
   border-radius: 10px;
 }
 
-.left_container{
+.left_container {
   display: flex;
   align-items: center;
   column-gap: 10px;
 }
 
-.right_container{
+.right_container {
   display: flex;
   align-items: flex-end;
   height: 45px;
   padding-right: 5px;
 }
 
-.duration_container{
+.duration_container {
   font-size: 12px;
   color: var(--gray);
 }
 
-@media(max-width:400px){
-  .duration_container{
+@media (max-width: 400px) {
+  .duration_container {
     font-size: 10px;
   }
 }

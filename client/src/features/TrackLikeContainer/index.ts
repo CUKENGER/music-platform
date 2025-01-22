@@ -1,2 +1,1 @@
-
-export {TrackLikeContainer} from './ui'
+export { TrackLikeContainer } from './ui';

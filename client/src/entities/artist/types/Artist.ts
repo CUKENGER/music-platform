@@ -1,5 +1,5 @@
-import { IAlbum } from "@/entities/album/types/Album";
-import { ITrack } from "@/entities/track/types/Track";
+import { IAlbum } from '@/entities/album/types/Album';
+import { ITrack } from '@/entities/track/types/Track';
 
 export interface IArtist {
   id: number;
@@ -7,15 +7,15 @@ export interface IArtist {
   picture: string | File;
   listens: number;
   likes: number;
-  genre: string
-  description: string
+  genre: string;
+  description: string;
   albums: IAlbum[];
-  tracks: ITrack[]
+  tracks: ITrack[];
 }
 
 export interface CreateArtistDto {
   name: string;
   genre: string;
   description: string;
-  picture: File
+  picture: File;
 }

@@ -1,5 +1,3 @@
-
-
 .SendEmail {
   display: flex;
   align-items: center;
@@ -8,7 +6,7 @@
   width: 100%;
 }
 
-.container{
+.container {
   display: flex;
   flex-direction: column;
   row-gap: 15px;
@@ -19,13 +17,13 @@
   max-width: 510px;
 }
 
-.text{
+.text {
   font-size: 18px;
   text-align: center;
   color: var(--gray);
 }
 
-.title{
+.title {
   font-size: 20px;
   text-align: center;
   border-bottom: 1px solid var(--gray);
@@ -33,6 +31,6 @@
 }
 
 .link,
-.btn{
+.btn {
   width: 100%;
 }

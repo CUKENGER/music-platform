@@ -1,5 +1,4 @@
-import { IAlbum, IArtist, IComment, ITrack } from "@/entities";
-
+import { IAlbum, IArtist, IComment, ITrack } from '@/entities';
 
 export interface IUser {
   id?: number;
@@ -13,35 +12,35 @@ export interface IUser {
   roles?: Role[];
   userRoles?: string[];
   tokens?: string[];
-  likedTracks?: ITrack[] | []
-  likedAlbums?: IAlbum[]
-  likedArtists?: IArtist[]  ;
-  likedComments?: IComment[]
-  listenedTracks?: ITrack[] | []
+  likedTracks?: ITrack[] | [];
+  likedAlbums?: IAlbum[];
+  likedArtists?: IArtist[];
+  likedComments?: IComment[];
+  listenedTracks?: ITrack[] | [];
 }
 
-interface Role{
+interface Role {
   id: number;
   role: {
-    value: string
-  }
+    value: string;
+  };
 }
 
 export interface CreateUserDto {
   username: string;
   email: string;
-  password: string
+  password: string;
 }
 
 export interface LoginUserDto {
   email: string;
-  password: string
+  password: string;
 }
 
 export interface RegUserDto {
   id: number;
   isActivated: boolean;
-  email: string
+  email: string;
 }
 
 export interface RegUserResponse {
@@ -51,10 +50,10 @@ export interface RegUserResponse {
 }
 
 export interface CheckUsernameResponse {
-  available: boolean
+  available: boolean;
 }
 
-export interface SendEmailDto{
+export interface SendEmailDto {
   email: string;
 }
 
@@ -64,7 +63,7 @@ export interface SendEmailResponse {
 
 export interface ResetPasswordDto {
   token: string;
-  newPassword: string
+  newPassword: string;
 }
 
 export interface ResetPasswordResponse {

@@ -1,17 +1,21 @@
-import { TextareaHTMLAttributes, useCallback, useEffect, useId, useRef } from "react";
+import { TextareaHTMLAttributes, useCallback, useEffect, useId, useRef } from 'react';
 import styles from './Textarea.module.scss';
-import { ClearIcon } from "../assets/ClearIcon";
-import { ExclamIcon } from "../assets/ExclamIcon";
-import classNames from "classnames";
+import { ClearIcon } from '../assets/ClearIcon';
+import { ExclamIcon } from '../assets/ExclamIcon';
+import classNames from 'classnames';
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   placeholder?: string;
   classNameContainer?: string;
-  classNameTextarea?: string
+  classNameTextarea?: string;
 }
 
-export const Textarea = ({ placeholder, classNameContainer, classNameTextarea, ...props }: TextareaProps) => {
-
+export const Textarea = ({
+  placeholder,
+  classNameContainer,
+  classNameTextarea,
+  ...props
+}: TextareaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -30,7 +34,7 @@ export const Textarea = ({ placeholder, classNameContainer, classNameTextarea, .
     }
   };
 
-  const id = useId()
+  const id = useId();
 
   const handleClear = useCallback(() => {
     if (props.onChange) {
@@ -44,30 +48,22 @@ export const Textarea = ({ placeholder, classNameContainer, classNameTextarea, .
   }, [props]);
 
   return (
-    <div className={classNames(
-      classNameContainer,
-      styles.container
-    )}>
-      <label className={styles.label} htmlFor={`textarea-${id}`}>{placeholder}</label>
+    <div className={classNames(classNameContainer, styles.container)}>
+      <label className={styles.label} htmlFor={`textarea-${id}`}>
+        {placeholder}
+      </label>
       <textarea
         id={`textarea-${id}`}
         ref={textareaRef}
         onInput={handleInput}
-        className={classNames(
-          classNameTextarea,
-          styles.textarea
-        )}
+        className={classNames(classNameTextarea, styles.textarea)}
         {...props}
-      >
-
-      </textarea>
-      {props.value === ''
-        ? (<div className={styles.exclam_container}>
+      ></textarea>
+      {props.value === '' ?
+        <div className={styles.exclam_container}>
           <ExclamIcon />
         </div>
-        )
-        : (<ClearIcon handleClear={handleClear} />)
-      }
+      : <ClearIcon handleClear={handleClear} />}
     </div>
   );
 };

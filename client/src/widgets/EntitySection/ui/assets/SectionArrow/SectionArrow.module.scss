@@ -1,6 +1,4 @@
-
-
-.container{
+.container {
   display: flex;
   align-items: center;
   column-gap: 5px;
@@ -10,6 +8,6 @@
   }
 }
 
-.right{
+.right {
   transform: rotate(180deg);
 }

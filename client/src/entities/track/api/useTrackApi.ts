@@ -1,18 +1,24 @@
-
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addLike, addListen, create, deleteLike, deleteTrack, getAll, getAllPopular, getAudioChunks, getLimitPopular, getOne } from "./trackApi";
-import { CreateTrackDto, ITrack } from "../types/Track";
-import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  addLike,
+  addListen,
+  create,
+  deleteLike,
+  deleteTrack,
+  getAll,
+  getAllPopular,
+  getAudioChunks,
+  getLimitPopular,
+  getOne,
+} from './trackApi';
+import { CreateTrackDto, ITrack } from '../types/Track';
+import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
 
 export const useCreateTrack = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<
-    ITrack,
-    AxiosError,
-    CreateTrackDto
-  >({
+  return useMutation<ITrack, AxiosError, CreateTrackDto>({
     mutationFn: (trackInfo: CreateTrackDto) => create(trackInfo),
     mutationKey: ['track', 'create'],
     onSuccess: () => {
@@ -20,17 +26,13 @@ export const useCreateTrack = () => {
         queryKey: ['tracks'],
       });
     },
-  })
+  });
 };
 
 export const useDeleteTrack = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<
-    ITrack,
-    AxiosError,
-    number
-  >({
+  return useMutation<ITrack, AxiosError, number>({
     mutationFn: (trackId: number) => deleteTrack(trackId),
     mutationKey: ['track', 'delete'],
     onSuccess: () => {
@@ -97,7 +99,7 @@ export const useGetAllTracks = (sortBy: string) => {
     queryKey: ['tracks', sortBy],
     queryFn: ({ pageParam }) => getAll({ pageParam, sortBy }),
     getNextPageParam: (lastPage, pages) => {
-      return lastPage.length ? pages.length : undefined
+      return lastPage.length ? pages.length : undefined;
     },
     initialPageParam: 0,
     placeholderData: (prev) => prev,
@@ -136,7 +138,7 @@ export const useGetAudioChunks = (filename: string, start: number, end: number) 
     enabled: !!filename && !isRangeError,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    retry: false
+    retry: false,
   });
 };
 
@@ -156,8 +158,4 @@ export const useGetAllPopularTracks = () => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
   });
-}
-
-
-
-
+};

@@ -1,2 +1,1 @@
-
-export { GoActivateWidget } from './ui'
+export { GoActivateWidget } from './ui';

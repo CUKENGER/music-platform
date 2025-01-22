@@ -1,6 +1,6 @@
-import { apiRequest, axiosInstance } from "@/shared/api";
-import axios, { AxiosError } from "axios";
-import { CreateTrackDto, ITrack } from "../types/Track";
+import { apiRequest, axiosInstance } from '@/shared/api';
+import axios, { AxiosError } from 'axios';
+import { CreateTrackDto, ITrack } from '../types/Track';
 
 export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<ITrack[]> => {
   try {
@@ -9,9 +9,8 @@ export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<ITra
         page: pageParam,
         count: 20,
         sortBy: sortBy,
-      }
-    }
-    )
+      },
+    });
     return response.data;
   } catch (e) {
     if (axios.isAxiosError(e)) {
@@ -23,24 +22,26 @@ export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<ITra
 };
 
 export const getOne = async (trackId: number): Promise<ITrack | null> => {
-  return apiRequest<ITrack>('get', `tracks/${trackId}`, { params: {id: trackId} });
-}
+  return apiRequest<ITrack>('get', `tracks/${trackId}`, {
+    params: { id: trackId },
+  });
+};
 
 export const addLike = async (id: number): Promise<ITrack | null> => {
-  return apiRequest<ITrack>('post', `tracks/${id}/like`, { params: {id} });
-}
+  return apiRequest<ITrack>('post', `tracks/${id}/like`, { params: { id } });
+};
 
 export const deleteLike = async (id: number): Promise<ITrack | null> => {
-  return apiRequest<ITrack>('delete', `tracks/${id}/like`, {params: {id}  });
-}
+  return apiRequest<ITrack>('delete', `tracks/${id}/like`, { params: { id } });
+};
 
 export const addListen = async (id: number): Promise<ITrack | null> => {
-  return apiRequest<ITrack>('post', `tracks/${id}/listen`, { params: {id}});
-}
+  return apiRequest<ITrack>('post', `tracks/${id}/listen`, { params: { id } });
+};
 
 export const deleteTrack = async (id: number): Promise<ITrack> => {
-  return apiRequest<ITrack>('delete', `tracks/${id}`, { params: {id} });
-}
+  return apiRequest<ITrack>('delete', `tracks/${id}`, { params: { id } });
+};
 
 export const create = async (trackInfo: CreateTrackDto): Promise<ITrack> => {
   try {
@@ -52,7 +53,6 @@ export const create = async (trackInfo: CreateTrackDto): Promise<ITrack> => {
     formData.append('genre', trackInfo.genre);
     formData.append('picture', trackInfo.picture);
     formData.append('audio', trackInfo.audio);
-
 
     const response = await axiosInstance.post('/tracks', formData, {
       headers: {
@@ -91,7 +91,7 @@ export const getAudioChunks = async (filename: string, start: number, end: numbe
       return { data: response.data, chunkDuration: NaN };
     }
   } catch (e) {
-    console.log('error audioChunks get ', e)
+    console.log('error audioChunks get ', e);
     if (e instanceof AxiosError && e.response?.status === 416) {
       throw new Error('Range not satisfiable');
     }
@@ -101,7 +101,7 @@ export const getAudioChunks = async (filename: string, start: number, end: numbe
       throw new Error('Неизвестная ошибка');
     }
   }
-}
+};
 
 export const getLimitPopular = async (): Promise<ITrack[]> => {
   try {
@@ -114,7 +114,7 @@ export const getLimitPopular = async (): Promise<ITrack[]> => {
       throw new Error('Неизвестная ошибка');
     }
   }
-}
+};
 
 export const getAllPopular = async (): Promise<ITrack[]> => {
   try {
@@ -127,15 +127,14 @@ export const getAllPopular = async (): Promise<ITrack[]> => {
       throw new Error('Неизвестная ошибка');
     }
   }
-}
+};
 
 export const getLyrics = async (name: string, artist: string): Promise<string> => {
   try {
-
-    let lyricsResponse
+    let lyricsResponse;
 
     const response = await axiosInstance.get('lyrics/search', {
-      params: { track_name: name, artist_name: artist }
+      params: { track_name: name, artist_name: artist },
     });
 
     if (response.data.track_id) {
@@ -149,5 +148,4 @@ export const getLyrics = async (name: string, artist: string): Promise<string> =
       throw new Error('Неизвестная ошибка');
     }
   }
-}
-
+};

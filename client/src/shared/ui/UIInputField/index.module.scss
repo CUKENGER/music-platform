@@ -43,3 +43,29 @@
   right: 5px;
   transform: translateY(-50%);
 }
+
+.input:-webkit-autofill {
+  background-color: transparent !important;
+  color: var(--white) !important;
+  border: none !important;
+}
+
+.input:focus:-webkit-autofill {
+  background-color: #f0f0f0 !important;
+  color: var(--white) !important;
+}
+
+.input:autofill {
+  background-color: transparent !important;
+  color: var(--white) !important;
+}
+
+.input:focus:autofill {
+  background-color: var(--black-lt) !important;
+  color: var(--white) !important;
+}
+
+.input:-internal-autofill-selected {
+  background-color: #f0f0f0 !important;
+  color: var(--white) !important;
+}

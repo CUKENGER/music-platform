@@ -1,11 +1,15 @@
 import { Controller } from 'react-hook-form';
 import { useEditAlbumForm } from '../model/useEditAlbumForm';
-import { AlbumCommonForm, EditTrackFormList, MainInfoInputs, MultipleInputAudio } from '@/entities/album';
+import {
+  AlbumCommonForm,
+  EditTrackFormList,
+  MainInfoInputs,
+  MultipleInputAudio,
+} from '@/entities/album';
 import { PRIVATE_ROUTES } from '@/shared/consts';
 import { AddTrackIcon, ModalContainer } from '@/shared/ui';
 
 export const EditAlbumForm = () => {
-
   const {
     album,
     isPending,
@@ -19,7 +23,7 @@ export const EditAlbumForm = () => {
     debouncedArtist,
     modal,
     hideModal,
-  } = useEditAlbumForm()
+  } = useEditAlbumForm();
 
   return (
     <AlbumCommonForm
@@ -28,14 +32,10 @@ export const EditAlbumForm = () => {
       hasData={true}
       isPending={isPending}
     >
-      <MainInfoInputs
-        album={album}
-        control={control}
-        setValue={setValue}
-      />
+      <MainInfoInputs album={album} control={control} setValue={setValue} />
       <MultipleInputAudio onChange={handleFileChange} />
       <Controller
-        name='tracks'
+        name="tracks"
         control={control}
         render={({ field }) => (
           <EditTrackFormList
@@ -47,10 +47,7 @@ export const EditAlbumForm = () => {
         )}
       />
       <AddTrackIcon onClick={addTrackForm} />
-        <ModalContainer
-          modal={modal}
-          hideModal={hideModal}
-        />
+      <ModalContainer modal={modal} hideModal={hideModal} />
     </AlbumCommonForm>
-  )
-}
+  );
+};

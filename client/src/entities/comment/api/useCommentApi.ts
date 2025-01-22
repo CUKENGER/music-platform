@@ -1,6 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addLike, deleteLike } from "./commentApi";
-
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { addLike, deleteLike } from './commentApi';
 
 export const useAddLikeComment = () => {
   const queryClient = useQueryClient();

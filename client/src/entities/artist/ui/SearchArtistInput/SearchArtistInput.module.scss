@@ -1,23 +1,21 @@
-
-
-.input{
+.input {
   border: none;
 
   &:focus-within,
   &:focus-visible,
   &:focus,
-  &:hover{
+  &:hover {
     border: none;
     outline: none;
   }
 }
 
-.input_active{
+.input_active {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-.existing_artists{
+.existing_artists {
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -27,17 +25,17 @@
   background-color: var(--prm);
   overflow-y: auto;
 
-  &:last-child{
+  &:last-child {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
   }
 }
 
-.search_artist{
+.search_artist {
   padding: 8px;
   padding-left: 20px;
 
-  &:hover{
+  &:hover {
     background-color: var(--black-lt);
     cursor: pointer;
   }

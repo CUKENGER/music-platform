@@ -1,2 +1,1 @@
-
-export { PopularTracks } from './ui'
+export { PopularTracks } from './ui';

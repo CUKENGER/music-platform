@@ -1,21 +1,20 @@
-
-export {Profile} from './Profile'
-export {Albums} from './Albums'
-export {Artists} from './Artists'
-export {GoActivation} from './GoActivation'
-export {Home} from './Home'
-export {Login} from './Login'
-export {Tracks} from './Tracks'
-export {CreateTrack} from './CreateTrack'
-export {CreateAlbum} from './CreateAlbum'
-export {AlbumPage} from './AlbumPage'
-export {PrivateNotFound} from './PrivateNotFound'
-export {CreateArtist} from './CreateArtist'
-export {SendEmail} from './SendEmail'
-export {ResetPassword} from './ResetPassword'
-export {ArtistPage} from './ArtistPage'
-export {ArtistPopularTracks} from './ArtistPopularTracks'
-export {ArtistEdit} from './ArtistEdit'
-export {AlbumEdit} from './AlbumEdit'
-export {Registration} from './Registration'
-export {PublicNotFound} from './PublicNotFound'
+export { Profile } from './Profile';
+export { Albums } from './Albums';
+export { Artists } from './Artists';
+export { GoActivation } from './GoActivation';
+export { Home } from './Home';
+export { Login } from './Login';
+export { Tracks } from './Tracks';
+export { CreateTrack } from './CreateTrack';
+export { CreateAlbum } from './CreateAlbum';
+export { AlbumPage } from './AlbumPage';
+export { PrivateNotFound } from './PrivateNotFound';
+export { CreateArtist } from './CreateArtist';
+export { SendEmail } from './SendEmail';
+export { ResetPassword } from './ResetPassword';
+export { ArtistPage } from './ArtistPage';
+export { ArtistPopularTracks } from './ArtistPopularTracks';
+export { ArtistEdit } from './ArtistEdit';
+export { AlbumEdit } from './AlbumEdit';
+export { Registration } from './Registration';
+export { PublicNotFound } from './PublicNotFound';

@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 interface NavBarStore {
   isMenuOpen: boolean;
@@ -8,4 +8,4 @@ interface NavBarStore {
 export const useNavBarStore = create<NavBarStore>((set) => ({
   isMenuOpen: false,
   setIsMenuOpen: (isMenuOpen: boolean) => set({ isMenuOpen }),
-})) 
+}));

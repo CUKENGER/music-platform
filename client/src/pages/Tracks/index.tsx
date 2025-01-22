@@ -1,7 +1,7 @@
-import { EntityList } from '@/widgets/EntityList'
-import styles from './Tracks.module.scss'
-import { TrackItem, useGetAllTracks } from '@/entities/track'
-import { PRIVATE_ROUTES } from '@/shared/consts'
+import { EntityList } from '@/widgets/EntityList';
+import styles from './Tracks.module.scss';
+import { TrackItem, useGetAllTracks } from '@/entities/track';
+import { PRIVATE_ROUTES } from '@/shared/consts';
 
 export const Tracks = () => {
   return (
@@ -11,5 +11,5 @@ export const Tracks = () => {
       getAll={useGetAllTracks}
       toCreate={PRIVATE_ROUTES.CREATE_TRACK}
     />
-  )
-}
+  );
+};

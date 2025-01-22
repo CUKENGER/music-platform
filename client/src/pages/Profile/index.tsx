@@ -1,9 +1,3 @@
-
-
 export const Profile = () => {
-  return (
-    <div>
-      хуй
-    </div>
-  )
-}
+  return <div>хуй</div>;
+};

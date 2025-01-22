@@ -1,2 +1,1 @@
-
-export {PlayerDetailed} from './ui'
+export { PlayerDetailed } from './ui';

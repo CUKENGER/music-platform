@@ -1,3 +1,1 @@
-
-
-export { EntityList } from './ui'
+export { EntityList } from './ui';

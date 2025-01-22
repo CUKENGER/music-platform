@@ -1,4 +1,3 @@
-
 .container {
   display: inline-block;
   border-radius: 20px;
@@ -6,8 +5,8 @@
   height: 40px;
 }
 
-.container_active::after{
-  content: "";
+.container_active::after {
+  content: '';
   position: absolute;
   bottom: -50px;
   left: 0;
@@ -23,7 +22,8 @@
   color: var(--gray);
 }
 
-.btn,.btn_active{
+.btn,
+.btn_active {
   background-color: var(--prm);
   line-height: 40px;
   display: flex;
@@ -52,7 +52,7 @@
   z-index: 1;
 }
 
-.list_open{
+.list_open {
   width: 170px;
   position: absolute;
   border-bottom-left-radius: 20px;
@@ -75,16 +75,15 @@
   font-size: 14px;
   z-index: 1;
 
-  &:last-child{
+  &:last-child {
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
   }
 
-  &:last-child:hover{
+  &:last-child:hover {
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
   }
-
 }
 
 .list_item:hover,
@@ -98,63 +97,61 @@
   z-index: 1;
 }
 
-@media(max-width: 700px) {
-
-  .container{
-      height: auto;
+@media (max-width: 700px) {
+  .container {
+    height: auto;
   }
 
   .btn_text,
-  .list_item{
-      font-size: 12px;
+  .list_item {
+    font-size: 12px;
   }
 
   .btn,
-  .btn_active{
-      height: 30px;
-      line-height: 20px;
-      padding: 0 20px;
+  .btn_active {
+    height: 30px;
+    line-height: 20px;
+    padding: 0 20px;
   }
 
-  .list_item{
-      height: 30px;
+  .list_item {
+    height: 30px;
   }
 }
 
-@media(max-width: 650px) {
+@media (max-width: 650px) {
   .container,
   .btn,
   .btn_active,
-  .list_open{
-      width: 150px;
+  .list_open {
+    width: 150px;
   }
 }
 
-@media(max-width:400px){
-
+@media (max-width: 400px) {
   .btn,
-  .btn_active{
-      height: 27px;
+  .btn_active {
+    height: 27px;
   }
 
-  .list_item{
-      height: 25px;
+  .list_item {
+    height: 25px;
   }
 
   .container,
   .btn,
   .btn_active,
-  .list_open{
-      width: 100px;
+  .list_open {
+    width: 100px;
   }
 
   .btn_text,
-  .list_item{
-      font-size: 11px;
+  .list_item {
+    font-size: 11px;
   }
 
-  .btn_arrow{
-      height: 10px;
-      width: 15px;
+  .btn_arrow {
+    height: 10px;
+    width: 15px;
   }
 }

@@ -1,8 +1,7 @@
-import styles from './GoActivateWidget.module.scss'
-import { Link } from 'react-router-dom'
+import styles from './GoActivateWidget.module.scss';
+import { Link } from 'react-router-dom';
 
 export const GoActivateWidget = () => {
-
   return (
     <div className={styles.GoActivate}>
       <p>Вам на почту отправлено письмо.</p>
@@ -13,5 +12,5 @@ export const GoActivateWidget = () => {
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};

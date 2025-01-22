@@ -38,4 +38,3 @@ export const Portal: React.FC<PortalProps> = ({ children, isOpen, selector = '#p
 
   return isOpen ? ReactDOM.createPortal(children, el) : null;
 };
-

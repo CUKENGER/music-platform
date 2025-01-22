@@ -8,7 +8,7 @@ import { NavTo } from '@/features/NavTo';
 export const Navbar = () => {
   const { isMenuOpen, setIsMenuOpen } = useNavBarStore();
 
-  const windowWidth = useWindowWidth()
+  const windowWidth = useWindowWidth();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -30,11 +30,13 @@ export const Navbar = () => {
   return (
     <>
       {isMenuOpen && <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />}
-      <div className={`${styles.container} ${(windowWidth && (isMenuOpen || windowWidth > 768)) ? styles.open : ''}`} id='navbar'>
+      <div
+        className={`${styles.container} ${windowWidth && (isMenuOpen || windowWidth > 768) ? styles.open : ''}`}
+        id="navbar"
+      >
         <UserAvatar />
         <NavTo />
       </div>
     </>
   );
 };
-

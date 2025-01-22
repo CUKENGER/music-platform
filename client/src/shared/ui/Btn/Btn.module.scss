@@ -1,75 +1,103 @@
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  color: var(--gray);
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+  font-weight: 600;
 
+  &:hover {
+    color: var(--white);
+  }
 
+  &.s {
+    padding: 6px 12px;
+    font-size: 10px;
+    font-weight: 400;
+  }
 
-.btn{
-  height: 45px;
-  border-radius: 10px;
-  position: relative;
-}
+  &.m {
+    padding: 10px 20px;
+    font-size: 12px;
+  }
 
-.small_btn{
-  height: 32px;
-  border-radius: 10px;
-  position: relative;
+  &.l {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+
+  &.filled {
+    background-color: var(--prm);
+
+    &:hover {
+      background-color: #731404;
+    }
+  }
+
+  &.outlined {
+    background-color: transparent;
+    border: 2px solid var(--prm);
+
+    &:hover {
+      background-color: var(--prm);
+    }
+  }
+
+  &.loading {
+    position: relative;
+    pointer-events: none;
+  }
+
+  &:disabled {
+    background-color: var(--black-lt);
+  }
 }
 
 .loader {
-  width: 25px;
-  height: 25px;
   border-radius: 50%;
   display: inline-block;
   position: absolute;
   right: 10px;
-  bottom: 10px;
   border: 6px solid;
-  border-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.35) rgba(255, 255, 255, 0.5);
-  box-sizing: border-box;
+  border-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.35)
+    rgba(255, 255, 255, 0.5);
   animation: rotation 1s linear infinite;
-}
+  bottom: 4.5px;
+  transform: translateY(-50%);
 
-.small_loader{
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: inline-block;
-  position: absolute;
-  right: 10px;
-  bottom: 7px;
-  border: 6px solid;
-  border-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.35) rgba(255, 255, 255, 0.5);
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
+  &.s {
+    width: 20px;
+    height: 20px;
+    border: 5px solid;
+    bottom: 3.5px;
+    border-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.35)
+      rgba(255, 255, 255, 0.5);
+  }
+
+  &.m {
+    width: 25px;
+    height: 25px;
+  }
+
+  &.l {
+    width: 30px;
+    height: 30px;
+    border: 6px solid;
+    bottom: 5.5px;
+    border-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.35)
+      rgba(255, 255, 255, 0.5);
+  }
 }
 
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
-} 
-
-@media(max-width: 700px) {
-  .small_btn{
-    height: 25px;
-    font-size: 12px;
-    padding: 5px 10px;
-  }
 }
-
-@media(max-width: 600px) {
-  .btn{
-    height: 27px;
-    font-size: 12px;
-  } 
-}
-
-@media(max-width: 400px) {
-  .btn{
-    height: 23px;
-    font-size: 11px;
-    padding: 5px 10px;
-  }
-}
-

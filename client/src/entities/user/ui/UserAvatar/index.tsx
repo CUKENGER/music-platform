@@ -15,7 +15,7 @@ export const UserAvatar: FC = () => {
     logout();
     setIsAuth(false);
     navigate(PublicRoutes.LOGIN);
-  }, [logout, navigate, setIsAuth])
+  }, [logout, navigate, setIsAuth]);
 
   const items: MenuItem[] = [
     { text: 'Профиль', onClick: () => navigate(PrivateRoutes.PROFILE) },
@@ -25,10 +25,10 @@ export const UserAvatar: FC = () => {
   const { data: user, isLoading, error } = useGetByToken();
 
   useEffect(() => {
-    if( error) {
-      handleLogout()
+    if (error) {
+      handleLogout();
     }
-  }, [error, handleLogout])
+  }, [error, handleLogout]);
 
   useEffect(() => {
     if (user) {
@@ -45,7 +45,7 @@ export const UserAvatar: FC = () => {
         </div>
         <div className={styles.menu}>
           <Menu items={items} />
-        </div>  
+        </div>
       </div>
     </div>
   );

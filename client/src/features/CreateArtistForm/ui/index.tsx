@@ -1,11 +1,17 @@
-import styles from './CreateArtistForm.module.scss'
-import { Link } from 'react-router-dom'
-import { useCreateArtistForm } from '../model/useCreateArtistForm'
-import { Btn, InputFile, InputForHook, ModalContainer, Options, TextareaForHook } from '@/shared/ui'
-import { PRIVATE_ROUTES } from '@/shared/consts'
+import styles from './CreateArtistForm.module.scss';
+import { Link } from 'react-router-dom';
+import { useCreateArtistForm } from '../model/useCreateArtistForm';
+import {
+  Btn,
+  InputFile,
+  InputForHook,
+  ModalContainer,
+  Options,
+  TextareaForHook,
+} from '@/shared/ui';
+import { PRIVATE_ROUTES } from '@/shared/consts';
 
 export const CreateArtistForm = () => {
-
   const {
     name,
     description,
@@ -18,24 +24,16 @@ export const CreateArtistForm = () => {
     isLoading,
     hasData,
     modal,
-    hideModal
-  } = useCreateArtistForm()
+    hideModal,
+  } = useCreateArtistForm();
 
   return (
     <form className={styles.CreateArtistForm} onSubmit={handleSubmit}>
       <Link to={PRIVATE_ROUTES.ARTISTS}>
-        <Btn small={true}>
-          Назад
-        </Btn>
+        <Btn small={true}>Назад</Btn>
       </Link>
-      <InputForHook
-        inputValue={name}
-        placeholder='Введите имя исполнителя'
-      />
-      <TextareaForHook
-        inputValue={description}
-        placeholder='Введите описание исполнителя'
-      />
+      <InputForHook inputValue={name} placeholder="Введите имя исполнителя" />
+      <TextareaForHook inputValue={description} placeholder="Введите описание исполнителя" />
       <Options
         options={options}
         //setOptions={setOptions}
@@ -48,17 +46,10 @@ export const CreateArtistForm = () => {
         setFile={setPicture}
         fileName={picture?.name}
       />
-      <Btn
-        onClick={handleSubmit}
-        isLoading={isLoading}
-        disabled={!hasData}
-      >
+      <Btn onClick={handleSubmit} isLoading={isLoading} disabled={!hasData}>
         Отправить
       </Btn>
-        <ModalContainer
-          hideModal={hideModal}
-          modal={modal}
-        />
+      <ModalContainer hideModal={hideModal} modal={modal} />
     </form>
-  )
-}
+  );
+};

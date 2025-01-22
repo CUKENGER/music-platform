@@ -1,7 +1,4 @@
-
-
 .ListensIcon {
-
   display: flex;
   align-items: center;
   column-gap: 7px;
@@ -12,7 +9,7 @@
   }
 }
 
-@media(max-width: 800px) {  
+@media (max-width: 800px) {
   .ListensIcon {
     width: 16px;
     height: 16px;

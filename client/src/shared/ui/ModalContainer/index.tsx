@@ -1,6 +1,6 @@
 import { ModalState } from '@/shared/types';
-import styles from './ModalContainer.module.scss'
-import closeIcon from './krest.svg'
+import styles from './ModalContainer.module.scss';
+import closeIcon from './krest.svg';
 import { Btn } from '../Btn';
 
 interface ModalContainerProps {
@@ -9,7 +9,6 @@ interface ModalContainerProps {
 }
 
 export const ModalContainer = ({ hideModal, modal }: ModalContainerProps) => {
-
   const handleClose = () => {
     hideModal();
     if (modal.onClick) {
@@ -18,11 +17,11 @@ export const ModalContainer = ({ hideModal, modal }: ModalContainerProps) => {
   };
 
   const handleNotClose = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-  }
+    e.stopPropagation();
+  };
 
   if (!modal.isOpen) {
-    return null
+    return null;
   }
 
   return (
@@ -30,12 +29,7 @@ export const ModalContainer = ({ hideModal, modal }: ModalContainerProps) => {
       <div className={`${styles.container} ${styles.visible_container}`} onClick={handleNotClose}>
         <div className={styles.x_container}>
           <div className={styles.x_icon_container}>
-            <img
-              className={styles.x_icon}
-              onClick={handleClose}
-              src={closeIcon}
-              alt='close'
-            />
+            <img className={styles.x_icon} onClick={handleClose} src={closeIcon} alt="close" />
           </div>
         </div>
         <div className={styles.main_container}>

@@ -1,7 +1,5 @@
-import { CreateArtistForm } from "@/features/CreateArtistForm"
+import { CreateArtistForm } from '@/features/CreateArtistForm';
 
 export const CreateArtist = () => {
-  return (
-    <CreateArtistForm/>
-  )
-}
+  return <CreateArtistForm />;
+};

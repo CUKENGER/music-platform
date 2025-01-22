@@ -1,6 +1,4 @@
-
-
-.checkInput{
+.checkInput {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -8,21 +6,21 @@
   height: 100%;
 }
 
-.selectedOptions{
+.selectedOptions {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
   gap: 5px;
 }
 
-.selectedOption{
+.selectedOption {
   padding: 5px;
   border-radius: 10px;
   background-color: var(--prm);
   cursor: pointer;
 }
 
-.options{
+.options {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
@@ -32,7 +30,7 @@
   overflow-y: auto;
 }
 
-.option{
+.option {
   padding: 5px;
   border-radius: 10px;
   background-color: var(--black-lt);
@@ -41,26 +39,22 @@
   height: fit-content;
 }
 
-@media(max-width: 700px) {
+@media (max-width: 700px) {
   .option_text,
-  .option{
+  .option {
     font-size: 14px;
   }
 }
 
-@media(max-width: 550px) {
+@media (max-width: 550px) {
   .option_text,
-  .option{
+  .option {
     font-size: 12px;
   }
 }
 
-@media(max-width: 450px) {
-  .options{
+@media (max-width: 450px) {
+  .options {
     height: 120px;
   }
 }
-
-
-
-
