@@ -1,26 +1,27 @@
 import {
   BadRequestException,
+  ConflictException,
+  HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import * as uuid from 'uuid';
-import { TokenService } from '../token/token.service';
-import { MailService } from './mail.service';
-import { RegUserDto } from 'models/user/dto/regUser.dto';
-import { UserService } from 'models/user/user.service';
-import { PrismaService } from 'prisma/prisma.service';
-import { LoginUserDto } from 'models/user/dto/loginUser.dto';
-import { UserDto } from 'models/user/dto/user.dto';
 import { ApiError } from 'exceptions/api.error';
+import { LoginUserDto } from 'models/user/dto/loginUser.dto';
+import { RegUserDto } from 'models/user/dto/regUser.dto';
+import { UserDto } from 'models/user/dto/user.dto';
+import { UserService } from 'models/user/user.service';
+import { Logger } from 'nestjs-pino';
+import { PrismaService } from 'prisma/prisma.service';
+import { TokenService } from '../token/token.service';
 import { ResetPasswordDto, SendEmailDto } from './dto/resetPassword.dto';
+import { MailService } from './mail.service';
+import { PasswordService } from './password.service';
 
-export interface RegUserResponse {
+interface UserResponseWithTokens {
+  user: RegUserDto;
   accessToken: string;
   refreshToken: string;
-  user: RegUserDto;
 }
 
 @Injectable()
@@ -30,102 +31,134 @@ export class AuthService {
     private tokenService: TokenService,
     private mailService: MailService,
     private prisma: PrismaService,
-  ) {}
+    private passwordService: PasswordService,
+    private readonly logger: Logger,
+  ) { }
 
-  async login(dto: LoginUserDto): Promise<RegUserResponse> {
-    try {
-      const user = await this.getUserByEmail(dto.email);
-      await this.verifyPassword(dto.password, user.password);
+  async login(dto: LoginUserDto): Promise<UserResponseWithTokens> {
+    this.logger.log('AuthService login', { dto: dto });
+    const user = await this.userService.getByEmail(dto.email);
+    await this.passwordService.validatePassword(dto.password, user.password);
 
-      const userDto = new RegUserDto(user);
-      const tokens = await this.generateAndSaveTokens(userDto, this.prisma);
-
-      return {
-        ...tokens,
-        user: userDto,
-      };
-    } catch (e) {
-      if (e instanceof BadRequestException) {
-        throw new BadRequestException(`${e.message}`);
-      }
-      console.error(`Error login: ${e}`);
-      throw Error(e);
-    }
+    const userDto = new RegUserDto(user);
+    const tokens = await this.generateAndSaveTokens(userDto);
+    return {
+      ...tokens,
+      user: userDto,
+    };
   }
 
-  async registration(dto: UserDto): Promise<RegUserResponse> {
-    try {
-      return await this.prisma.$transaction(async (prisma: PrismaService) => {
-        await this.checkUserExists(dto.email, dto.username);
+  async registration(dto: UserDto): Promise<{ message: string }> {
+    this.logger.log(`UserService registration`,{dto: dto });
+    return await this.prisma.$transaction(async (prisma: PrismaService) => {
+      await this.checkUserExists(dto.email, dto.username);
 
-        const hashPassword = await bcrypt.hash(dto.password, 10);
-        const activationLink = uuid.v4();
+      const hashedPassword = await this.passwordService.generatePassword(dto.password);
 
-        let user;
-        if (dto.username === 'admin') {
-          user = await this.createAdmin(prisma, dto, hashPassword, activationLink);
-        } else {
-          user = await this.createUser(prisma, dto, hashPassword, activationLink);
-        }
+      const { activationExpiresAt, activationLink } =
+        this.mailService.generateActivationLinkAndExpires();
 
-        await this.mailService.sendActivationMail(
-          dto.email,
-          `${process.env.API_URL}/auth/activate/${activationLink}`,
+      if (dto.username === 'admin') {
+        await this.userService.createUserWithRole(
+          prisma,
+          dto,
+          'admin',
+          'admin role',
+          hashedPassword,
+          activationLink,
+          activationExpiresAt,
         );
+      } else {
+        await this.userService.createUserWithRole(
+          prisma,
+          dto,
+          'user',
+          'user role',
+          hashedPassword,
+          activationLink,
+          activationExpiresAt,
+        );
+      }
 
-        const userDto = new RegUserDto(user);
-        const tokens = await this.generateAndSaveTokens(userDto, prisma);
+      await this.mailService.sendActivationMail(
+        dto.email,
+        `${process.env.API_URL}/auth/activate/${activationLink}`,
+      );
 
-        return {
-          ...tokens,
-          user: userDto,
-        };
+      this.logger.log(`User created.`, {
+        service: 'AuthService',
+        method: 'registration',
+        username: dto.username,
+        email: dto.email,
       });
-    } catch (error) {
-      console.error('Error during registration:', error);
-      throw new BadRequestException('Registration failed');
-    }
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'User created. Please check your email to activate your account',
+        user: {
+          username: dto.username,
+          email: dto.email,
+        },
+      };
+    });
   }
 
   async logout(refreshToken: string) {
     try {
-      return await this.tokenService.removeToken(refreshToken);
+      this.logger.log(`AuthService logout`);
+      await this.tokenService.removeToken(refreshToken);
+      this.logger.log(`AuthService: logout successful for token ${refreshToken}`);
     } catch (e) {
-      throw new InternalServerErrorException(`Error logout: ${e}`);
+      this.logger.error(`AuthService: logout failed for token ${refreshToken}`, {
+        error: e.message,
+        stack: e.stack,
+      });
+      throw e;
     }
   }
 
-  async activate(activationLink: string): Promise<void> {
+  async activate(activationLink: string): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.prisma.user.findFirst({ where: { activationLink } });
     if (!user) {
-      throw new BadRequestException('Invalid activation link');
+      throw ApiError.BadRequest('Invalid activation link');
     }
 
     await this.prisma.user.update({
       where: { id: user.id },
       data: { isActivated: true },
     });
+
+    const userDto = {
+      id: user.id,
+      isActivated: true,
+      email: user.email,
+    };
+
+    const tokens = await this.generateAndSaveTokens(userDto);
+    return {
+      ...tokens,
+    };
   }
 
-  async refresh(refreshToken: string): Promise<RegUserResponse> {
+  async refresh(refreshToken: string): Promise<UserResponseWithTokens> {
     if (!refreshToken) {
       throw ApiError.UnauthorizedError();
     }
 
     const tokenData = this.tokenService.validateRefreshToken(refreshToken);
+    this.logger.log(`TokenData refresh`, { tokenData: tokenData });
     const tokenFromDb = await this.tokenService.findToken(refreshToken);
 
     if (!tokenData || !tokenFromDb) {
       throw ApiError.UnauthorizedError();
     }
 
-    const user = await this.prisma.user.findUnique({ where: { id: tokenData.id } });
+    const user = await this.prisma.user.findUnique({ where: { id: tokenData.payload.id } });
     if (!user) {
       throw ApiError.UnauthorizedError();
     }
 
     const userDto = new RegUserDto(user);
-    const tokens = await this.generateAndSaveTokens(userDto, this.prisma);
+    const tokens = await this.generateAndSaveTokens(userDto);
 
     return {
       ...tokens,
@@ -145,7 +178,7 @@ export class AuthService {
     const userDto = new RegUserDto(user);
 
     try {
-      const tokens = await this.generateAndSaveTokens(userDto, this.prisma);
+      const tokens = await this.generateAndSaveTokens(userDto);
 
       await this.mailService.sendResetMail(
         dto.email,
@@ -154,8 +187,8 @@ export class AuthService {
 
       return { message: 'Reset email sent successfully' };
     } catch (e) {
-      console.error(`Error resetPassword ${e}`);
-      throw new InternalServerErrorException(`Error resetPassword ${e}`);
+      this.logger.error({ service: 'AuthService', error: e }, `Error resetPassword ${e}`);
+      throw new e();
     }
   }
 
@@ -167,7 +200,7 @@ export class AuthService {
       throw new BadRequestException('User is not auth');
     }
 
-    const user = await this.prisma.user.findUnique({ where: { email: tokenData.email } });
+    const user = await this.prisma.user.findUnique({ where: { email: tokenData.payload.email } });
     if (!user) {
       throw new BadRequestException('User is not auth');
     }
@@ -183,117 +216,52 @@ export class AuthService {
       });
       return { message: 'Reset password successfully' };
     } catch (e) {
-      console.error(`Error resetPasswordCheck ${e}`);
-      throw new InternalServerErrorException(`Error resetPasswordCheck ${e}`);
+      this.logger.error(
+        { service: 'AuthService', method: 'resetPassword', error: e },
+        `Error resetPasswordCheck`,
+      );
+      throw new e();
     }
   }
 
   // Helper functions
 
-  private async getUserByEmail(email: string) {
-    const user = await this.prisma.user.findUnique({ where: { email: email } });
-    if (!user) {
-      throw new BadRequestException('User with this email not found');
-    }
-    return user;
-  }
-
-  private async verifyPassword(inputPassword: string, storedPassword: string) {
-    const isPassEquals = await bcrypt.compare(inputPassword, storedPassword);
-    if (!isPassEquals) {
-      throw new BadRequestException('Incorrect password');
-    }
-  }
-
   private async checkUserExists(email: string, username: string) {
-    const candidateEmail = await this.userService.getByEmail(email);
+    this.logger.log({ service: 'AuthService', method: 'chechUserExists', email, username });
+
+    const [candidateEmail, candidateUsername] = await Promise.all([
+      this.prisma.user.findUnique({
+        where: { email },
+      }),
+      this.prisma.user.findUnique({
+        where: { username },
+      }),
+    ]);
+
     if (candidateEmail) {
-      throw new BadRequestException('User with this email already exists');
+      this.logger.warn(
+        { service: 'AuthService', method: 'checkUserExists' },
+        `User with email ${email} already exists.`,
+      );
+      throw new ConflictException('User with this email already exists');
     }
 
-    const candidateUsername = await this.userService.getByUsername(username);
     if (candidateUsername) {
-      throw new BadRequestException('User with this username already exists');
+      this.logger.warn(
+        { service: 'AuthService', method: 'checkUserExists' },
+        `User with username ${username} already exists.`,
+      );
+      throw new ConflictException('User with this username already exists');
     }
+
+    this.logger.log(`No conflicts found for email and username, proceeding...`, {
+      service: 'AuthService',
+    });
   }
 
-  private async createUser(
-    prisma: PrismaService,
-    dto: UserDto,
-    hashPassword: string,
-    activationLink: string,
-  ) {
-    try {
-      let role = await prisma.role.findUnique({ where: { value: 'USER' } });
-
-      if (!role) {
-        role = await prisma.role.create({
-          data: { value: 'USER', description: 'Default user role' },
-        });
-      }
-
-      return await prisma.user.create({
-        data: {
-          email: dto.email,
-          password: hashPassword,
-          activationLink,
-          username: dto.username,
-          isActivated: false,
-          roles: {
-            create: {
-              role: {
-                connect: { id: role.id },
-              },
-            },
-          },
-        },
-      });
-    } catch (error) {
-      console.error('Error creating user:', error);
-      throw new BadRequestException('Failed to create user');
-    }
-  }
-
-  private async createAdmin(
-    prisma: PrismaService,
-    dto: UserDto,
-    hashPassword: string,
-    activationLink: string,
-  ) {
-    try {
-      let adminRole = await prisma.role.findUnique({ where: { value: 'ADMIN' } });
-
-      if (!adminRole) {
-        adminRole = await prisma.role.create({
-          data: { value: 'ADMIN', description: 'Admin role' },
-        });
-      }
-
-      return await prisma.user.create({
-        data: {
-          email: dto.email,
-          password: hashPassword,
-          activationLink,
-          username: dto.username,
-          isActivated: false,
-          roles: {
-            create: {
-              role: {
-                connect: { id: adminRole.id },
-              },
-            },
-          },
-        },
-      });
-    } catch (error) {
-      console.error('Error creating admin:', error);
-      throw new BadRequestException('Failed to create admin');
-    }
-  }
-
-  private async generateAndSaveTokens(userDto: RegUserDto, prisma) {
+  private async generateAndSaveTokens(userDto: RegUserDto) {
     const tokens = this.tokenService.generateTokens({ ...userDto });
-    await this.tokenService.saveToken(userDto.id, tokens.refreshToken, tokens.accessToken, prisma);
+    await this.tokenService.saveToken(userDto.id, tokens.refreshToken, tokens.accessToken);
     return tokens;
   }
 }

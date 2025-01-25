@@ -10,9 +10,7 @@ import {
   ParseIntPipe,
   UseInterceptors,
   Put,
-  InternalServerErrorException,
   Req,
-  UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';

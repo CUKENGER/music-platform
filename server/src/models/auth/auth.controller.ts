@@ -1,24 +1,24 @@
 import { Body, Controller, Get, Next, Param, Post, Req, Res } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { LoginUserDto } from 'models/user/dto/loginUser.dto';
 import { UserDto } from 'models/user/dto/user.dto';
 import { ResetPasswordDto, SendEmailDto } from './dto/resetPassword.dto';
+import { Logger } from 'nestjs-pino';
 
 class TokenResponse {
   @ApiProperty()
   token: string;
 }
 
-export interface ReqWithCookie extends Request {
-  cookies: any;
-}
-
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private readonly logger: Logger,
+  ) { }
 
   @ApiOperation({ summary: 'Вход пользователя' })
   @ApiBody({ type: LoginUserDto })
@@ -34,10 +34,9 @@ export class AuthController {
   @ApiBody({ type: UserDto })
   @ApiResponse({ status: 201, type: TokenResponse })
   @Post('/registration')
-  async registration(@Body() dto: UserDto, @Res() res: Response, @Next() next) {
+  async registration(@Body() dto: UserDto, @Res() res: Response, @Next() next: NextFunction) {
     try {
       const userData = await this.authService.registration(dto);
-      this.setRefreshTokenCookie(res, userData.refreshToken);
       return res.json(userData);
     } catch (e) {
       next(e);
@@ -45,23 +44,39 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Выход пользователя' })
+  @ApiResponse({ status: 200, description: 'Успешный выход' })
+  @ApiResponse({ status: 400, description: 'Неверный запрос' })
+  @ApiResponse({ status: 500, description: 'Ошибка сервера' })
   @Post('/logout')
-  async logout(@Req() req: ReqWithCookie, @Res() res: Response, @Next() next) {
+  async logout(@Req() req: Request, @Res() res: Response) {
     try {
+      this.logger.log(`AuthController logout`);
       const { refreshToken } = req.cookies;
-      const token = await this.authService.logout(refreshToken);
+      if (!refreshToken) {
+        this.logger.warn('AuthController: refreshToken is missing');
+        return res.status(400).json({ message: 'Refresh token is missing' });
+      }
+
+      await this.authService.logout(refreshToken);
       res.clearCookie('refreshToken');
-      return res.json(token);
+      return res.status(200).json({ message: 'Logged out successfully' });
     } catch (e) {
-      next(e);
+      this.logger.error(`AuthController: logout failed - ${e.message}`, e.stack);
+      throw e;
     }
   }
 
   @ApiOperation({ summary: 'Активация пользователя' })
   @Get('/activate/:link')
-  async activate(@Param('link') activationLink: string, @Res() res: Response, @Next() next) {
+  async activate(
+    @Param('link') activationLink: string,
+    @Res() res: Response,
+    @Next() next: NextFunction,
+  ) {
     try {
-      await this.authService.activate(activationLink);
+      const tokens = await this.authService.activate(activationLink);
+      this.logger.log(`AuthController activate`, { tokens: tokens });
+      this.setRefreshTokenCookie(res, tokens.refreshToken);
       return res.redirect(`${process.env.CLIENT_URL}/`);
     } catch (e) {
       next(e);
@@ -70,7 +85,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Обновление токена доступа' })
   @Get('/refresh')
-  async refresh(@Req() req: ReqWithCookie, @Res() res: Response, @Next() next) {
+  async refresh(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction) {
     try {
       const { refreshToken } = req.cookies;
       const tokenData = await this.authService.refresh(refreshToken);

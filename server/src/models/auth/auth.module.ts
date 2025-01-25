@@ -8,9 +8,10 @@ import { UserModule } from 'models/user/user.module';
 import { UserService } from 'models/user/user.service';
 import { JwtModule } from '@nestjs/jwt';
 import { RoleModule } from 'models/role/role.module';
+import { PasswordService } from './password.service';
 
 @Module({
-  providers: [AuthService, TokenService, MailService, PrismaService, UserService],
+  providers: [AuthService, TokenService, MailService, PrismaService, UserService, PasswordService],
   controllers: [AuthController],
   imports: [JwtModule, RoleModule, forwardRef(() => UserModule)],
   exports: [AuthService],

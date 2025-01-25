@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import * as uuid from 'uuid';
 
 @Injectable()
 export class MailService {
   private transporter: nodemailer.Transporter;
+  private readonly logger = new Logger(MailService.name, { timestamp: true })
 
   constructor() {
     this.transporter = nodemailer.createTransport({
@@ -18,11 +20,22 @@ export class MailService {
     });
   }
 
+  generateActivationLinkAndExpires(): {activationLink: string, activationExpiresAt: Date} {
+    const activationLink = uuid.v4();
+    const activationExpiresAt = new Date();
+    activationExpiresAt.setHours(activationExpiresAt.getHours() + 24);
+    return {
+      activationLink,
+      activationExpiresAt
+    }
+  }
+
   async sendActivationMail(to: string, link: string): Promise<void> {
+    this.logger.log(`sendActivationMail:`, { service: "MailService", mailTo: to })
     await this.transporter.sendMail({
       from: process.env.SMTP_USER,
       to,
-      subject: 'Активация аккаунта на твоем сайте',
+      subject: 'Активация аккаунта, Don`t reply',
       text: '',
       html: `
         <div>
@@ -37,7 +50,7 @@ export class MailService {
     await this.transporter.sendMail({
       from: process.env.SMTP_USER,
       to,
-      subject: 'Восстановление пароля на сайте MusicPlatform',
+      subject: 'Восстановление пароля на сайте MusicPlatform, Don`t reply',
       text: '',
       html: `
         <div>
