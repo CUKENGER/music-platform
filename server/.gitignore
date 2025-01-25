@@ -8,6 +8,8 @@ static/*
 /static/image/*
 
 
+.husky
+
 database_dump.sql
 
 yarn.lock

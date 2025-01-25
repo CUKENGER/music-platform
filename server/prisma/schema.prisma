@@ -1,258 +1,212 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+model Album {
+  id              Int              @id @default(autoincrement())
+  name            String
+  artistId        Int
+  genre           String
+  description     String
+  picture         String
+  createdAt       DateTime         @default(now())
+  listens         Int              @default(0)
+  likes           Int              @default(0)
+  releaseDate     String
+  duration        String           @default("0:00")
+  type            AlbumType        @default(ALBUM)
+  artist          Artist           @relation(fields: [artistId], references: [id])
+  comments        Comment[]        @relation("AlbumComments")
+  featuredArtists FeaturedArtist[] @relation("FeaturedArtistToAlbum")
+  tracks          Track[]
+  likedByUsers    User[]           @relation("LikedAlbums")
 }
 
-// Модель User
 model User {
-  id             Int     @id @default(autoincrement())
-  username       String  @unique
-  email          String  @unique
-  isActivated    Boolean @default(false)
-  password       String
-  activationLink String
-  banned         Boolean @default(false)
-  banReason      String?
-
-  roles  UserRole[] // Связь Many-to-Many через промежуточную модель
-  tokens Token[]
-
-  likedTracks   Track[]   @relation("LikedTracks")
-  likedAlbums   Album[]   @relation("LikedAlbums")
-  likedArtists  Artist[]  @relation("LikedArtists")
-  likedComments Comment[] @relation("LikedComments")
-
-  playlists       Playlist[] // Связь с плейлистами
+  id              Int             @id @default(autoincrement())
+  username        String          @unique
+  email           String          @unique
+  isActivated     Boolean         @default(false)
+  password        String
+  activationLink  String
+  activationExpiresAt DateTime?
+  banned          Boolean         @default(false)
+  banReason       String?
   listenedTracks  ListenedTrack[]
-  sharedPlaylists PlaylistShare[] // Плейлисты, с которыми пользователь поделился
-  // Лайки для плейлистов
+  playlists       Playlist[]
   likedPlaylists  PlaylistLike[]
+  sharedPlaylists PlaylistShare[]
+  tokens          Token[]
+  roles           UserRole[]
+  likedAlbums     Album[]         @relation("LikedAlbums")
+  likedArtists    Artist[]        @relation("LikedArtists")
+  likedComments   Comment[]       @relation("LikedComments")
+  likedTracks     Track[]         @relation("LikedTracks")
 }
 
-// Модель Playlist
-model Playlist {
-  id          Int      @id @default(autoincrement())
-  name        String // Название плейлиста
-  description String? // Описание плейлиста
-  picture     String? // Обложка плейлиста
-  isPrivate   Boolean  @default(false) // Приватный или публичный плейлист
-  listens     Int      @default(0) // Количество прослушиваний
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  ownerId Int // Владелец плейлиста
-  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-
-  tracks     PlaylistTrack[] // Связь Many-to-Many с треками через промежуточную модель
-  sharedWith PlaylistShare[] // Пользователи, с которыми поделились плейлистом
-  likes      PlaylistLike[] // Связь с лайками плейлиста
+model Artist {
+  id             Int              @id @default(autoincrement())
+  name           String
+  genre          String
+  description    String
+  createdAt      DateTime         @default(now())
+  listens        Int              @default(0)
+  likes          Int              @default(0)
+  picture        String?
+  albums         Album[]
+  comments       Comment[]        @relation("ArtistComments")
+  featuredTracks FeaturedArtist[] @relation("FeaturedArtistToArtist")
+  tracks         Track[]
+  likedByUsers   User[]           @relation("LikedArtists")
 }
 
-// Промежуточная модель для связи Many-to-Many (Playlist - Track)
-model PlaylistTrack {
-  id         Int @id @default(autoincrement())
-  playlistId Int // ID плейлиста
-  trackId    Int // ID трека
-  order      Int // Позиция трека в плейлисте
+model FeaturedArtist {
+  id       Int    @id @default(autoincrement())
+  artistId Int
+  trackId  Int?
+  albumId  Int?
+  album    Album? @relation("FeaturedArtistToAlbum", fields: [albumId], references: [id], map: "FK_FeaturedArtist_Album")
+  artist   Artist @relation("FeaturedArtistToArtist", fields: [artistId], references: [id], map: "FK_FeaturedArtist_ArtistForAlbums")
+  track    Track? @relation("FeaturedArtistToTrack", fields: [trackId], references: [id], map: "FK_FeaturedArtist_Track")
 
-  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
-  track    Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
-
-  @@unique([playlistId, trackId]) // Одна песня не может быть добавлена в плейлист дважды
-  @@index([playlistId, order]) // Индекс для быстрого поиска по порядку
+  @@unique([artistId, albumId])
+  @@unique([artistId, trackId])
 }
 
-// Новая модель для связи sharedWith (Playlist - User)
-model PlaylistShare {
-  id         Int @id @default(autoincrement())
-  playlistId Int // ID плейлиста
-  userId     Int // ID пользователя, с которым поделились
-
-  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([playlistId, userId]) // Одна и та же пара playlist-user не должна повторяться
+model Comment {
+  id           Int       @id @default(autoincrement())
+  username     String
+  text         String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  likes        Int       @default(0)
+  parentId     Int?
+  trackId      Int?
+  artistId     Int?
+  albumId      Int?
+  album        Album?    @relation("AlbumComments", fields: [albumId], references: [id])
+  artist       Artist?   @relation("ArtistComments", fields: [artistId], references: [id])
+  parent       Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies      Comment[] @relation("CommentReplies")
+  track        Track?    @relation("TrackComments", fields: [trackId], references: [id])
+  likedByUsers User[]    @relation("LikedComments")
 }
 
-// Новая модель для лайков (Playlist - User)
-model PlaylistLike {
-  id         Int @id @default(autoincrement())
-  playlistId Int // ID плейлиста
-  userId     Int // ID пользователя, поставившего лайк
-
-  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([playlistId, userId]) // Пользователь может лайкнуть плейлист только один раз
-}
-
-// Модель Track
-model Track {
-  id        Int      @id @default(autoincrement())
-  name      String
-  listens   Int      @default(0)
-  likes     Int      @default(0)
-  genre     String
-  duration  String
-  picture   String
-  audio     String
-  text      String
-  artistId  Int?
-  albumId   Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  artist Artist? @relation(fields: [artistId], references: [id])
-  album  Album?  @relation(fields: [albumId], references: [id])
-
-  likedByUsers    User[]          @relation("LikedTracks")
-  listenedByUsers ListenedTrack[]
-
-  comments        Comment[]        @relation("TrackComments")
-  playlistTracks  PlaylistTrack[] // Связь с плейлистами через PlaylistTrack
-  featuredArtists FeaturedArtist[] @relation("TrackFeaturedArtists")
-}
-
-// Промежуточная модель для связи Many-to-Many для последних прослушанных треков
 model ListenedTrack {
   id         Int      @id @default(autoincrement())
   userId     Int
   trackId    Int
   listenedAt DateTime @default(now())
-
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, trackId])
+}
+
+model Playlist {
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String?
+  picture     String?
+  isPrivate   Boolean         @default(false)
+  listens     Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  ownerId     Int
+  owner       User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  likes       PlaylistLike[]
+  sharedWith  PlaylistShare[]
+  tracks      PlaylistTrack[]
+}
+
+model PlaylistLike {
+  id         Int      @id @default(autoincrement())
+  playlistId Int
+  userId     Int
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, userId])
+}
+
+model PlaylistShare {
+  id         Int      @id @default(autoincrement())
+  playlistId Int
+  userId     Int
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, userId])
+}
+
+model PlaylistTrack {
+  id         Int      @id @default(autoincrement())
+  playlistId Int
+  trackId    Int
+  order      Int
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, trackId])
+  @@index([playlistId, order])
+}
+
+model Role {
+  id          Int        @id @default(autoincrement())
+  value       String     @unique
+  description String
+  userRoles   UserRole[]
+}
+
+model Token {
+  id           Int    @id @default(autoincrement())
+  refreshToken String @unique
+  accessToken  String
+  userId       Int
+  user         User   @relation(fields: [userId], references: [id])
+}
+
+model Track {
+  id              Int              @id @default(autoincrement())
+  name            String
+  listens         Int              @default(0)
+  likes           Int              @default(0)
+  genre           String
+  duration        String
+  picture         String
+  audio           String
+  text            String
+  artistId        Int?
+  albumId         Int?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  comments        Comment[]        @relation("TrackComments")
+  featuredArtists FeaturedArtist[] @relation("FeaturedArtistToTrack")
+  listenedByUsers ListenedTrack[]
+  playlistTracks  PlaylistTrack[]
+  album           Album?           @relation(fields: [albumId], references: [id])
+  artist          Artist?          @relation(fields: [artistId], references: [id])
+  likedByUsers    User[]           @relation("LikedTracks")
+}
+
+model UserRole {
+  id     Int  @id @default(autoincrement())
+  roleId Int
+  userId Int
+  role   Role @relation(fields: [roleId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+
+  @@unique([roleId, userId])
 }
 
 enum AlbumType {
   ALBUM
   SINGLE
   COLLECTION
-}
-
-// Модель Album
-model Album {
-  id          Int      @id @default(autoincrement())
-  name        String
-  artistId    Int
-  genre       String
-  description String
-  picture     String
-  createdAt   DateTime @default(now())
-  listens     Int      @default(0)
-  likes       Int      @default(0)
-  releaseDate String
-  duration    String   @default("0:00")
-
-  type AlbumType @default(ALBUM)
-
-  artist Artist  @relation(fields: [artistId], references: [id])
-  tracks Track[]
-
-  likedByUsers User[] @relation("LikedAlbums")
-
-  comments Comment[] @relation("AlbumComments")
-
-  featuredArtists FeaturedArtist[] @relation("AlbumFeaturedArtists")
-}
-
-// Модель Artist
-model Artist {
-  id          Int      @id @default(autoincrement())
-  name        String
-  genre       String
-  description String
-  createdAt   DateTime @default(now())
-  listens     Int      @default(0)
-  likes       Int      @default(0)
-  picture     String?
-
-  tracks Track[]
-  albums Album[]
-
-  likedByUsers User[] @relation("LikedArtists")
-
-  comments Comment[] @relation("ArtistComments")
-
-  featuredInTracks FeaturedArtist[] @relation("ArtistFeaturedInTracks")
-  featuredInAlbums FeaturedArtist[] @relation("ArtistFeaturedInAlbums") // Связь Many-to-Many с альбомами
-}
-
-model FeaturedArtist {
-  id       Int  @id @default(autoincrement())
-  artistId Int
-  trackId  Int?
-  albumId  Int?
-
-  artistForTracks Artist? @relation(name: "ArtistFeaturedInTracks", fields: [artistId], references: [id], map: "FK_FeaturedArtist_ArtistForTracks")
-  artistForAlbums Artist? @relation(name: "ArtistFeaturedInAlbums", fields: [artistId], references: [id], map: "FK_FeaturedArtist_ArtistForAlbums")
-  track           Track?  @relation(name: "TrackFeaturedArtists", fields: [trackId], references: [id], map: "FK_FeaturedArtist_Track")
-  album           Album?  @relation(name: "AlbumFeaturedArtists", fields: [albumId], references: [id], map: "FK_FeaturedArtist_Album")
-
-  @@unique([artistId, trackId])
-  @@unique([artistId, albumId])
-}
-
-// Остальные модели (UserRole, Role, Token, Comment) остаются без изменений
-
-// Модель Role
-model Role {
-  id          Int        @id @default(autoincrement())
-  value       String     @unique
-  description String
-  userRoles   UserRole[] // Связь Many-to-Many через промежуточную модель
-}
-
-// Промежуточная модель для связи Many-to-Many
-model UserRole {
-  id     Int @id @default(autoincrement())
-  roleId Int
-  userId Int
-
-  role Role @relation(fields: [roleId], references: [id])
-  user User @relation(fields: [userId], references: [id])
-
-  @@unique([roleId, userId])
-}
-
-// Модель Token
-model Token {
-  id           Int    @id @default(autoincrement())
-  refreshToken String @unique
-  accessToken  String
-  userId       Int
-
-  user User @relation(fields: [userId], references: [id])
-}
-
-// Модель Comment
-model Comment {
-  id        Int      @id @default(autoincrement())
-  username  String
-  text      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  likes     Int      @default(0)
-
-  parentId Int?
-  parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  trackId  Int?
-  artistId Int?
-  albumId  Int?
-
-  track  Track?  @relation("TrackComments", fields: [trackId], references: [id])
-  artist Artist? @relation("ArtistComments", fields: [artistId], references: [id])
-  album  Album?  @relation("AlbumComments", fields: [albumId], references: [id])
-
-  replies Comment[] @relation("CommentReplies")
-
-  likedByUsers User[] @relation("LikedComments")
 }
