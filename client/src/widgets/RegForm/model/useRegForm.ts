@@ -44,6 +44,7 @@ export const useRegWidget = () => {
       return;
     }
 
+    console.log('username.value', username.value)
     checkUsername(username.value, {
       onSuccess: () => {
         const userDto = {
@@ -54,8 +55,8 @@ export const useRegWidget = () => {
 
         regUser(userDto, {
           onSuccess: (response) => {
-            console.log('Registration successful:', response);
-            navigate(PUBLIC_ROUTES.ACTIVATION);
+            console.log('Registration successful:', response.message);
+            navigate(PUBLIC_ROUTES.ACTIVATION + `/${email.value}`);
           },
           onError: (error) => {
             handleAuthError(error, showModal);

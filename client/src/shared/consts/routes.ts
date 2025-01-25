@@ -38,7 +38,7 @@ export enum PRIVATE_ROUTES {
 export enum PUBLIC_ROUTES {
   LOGIN = '/',
   REGISTRATION = '/registration',
-  ACTIVATION = '/goActivate',
+  ACTIVATION = '/goActivate/:email',
   SEND_EMAIL = '/send_email',
   NOT_FOUND = '*',
 }
