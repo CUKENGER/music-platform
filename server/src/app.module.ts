@@ -19,9 +19,15 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AudioController } from 'models/audio/audio.controller';
 import { PlaylistModule } from 'models/playlist/playlist.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { UserCleanupService } from 'models/user/user-cleanup.service';
+import { LoggerModule } from 'nestjs-pino';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from 'exceptions/allExceptionFilter';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
@@ -34,6 +40,49 @@ import { PlaylistModule } from 'models/playlist/playlist.module';
     JwtModule.register({
       secret: process.env.JWT_ACCESS_SECRET_KEY,
       signOptions: { expiresIn: '24h' },
+    }),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport: {
+          targets: [
+            {
+              target: 'pino-pretty',
+              options: {
+                colorize: true,
+                colorizerFactory: true,
+                translateTime: 'HH:MM:ss.l',
+                ignore: 'pid,hostname',
+                // singleLine: true,
+              }
+            },
+            { target: 'pino/file', options: { destination: path.resolve(__dirname, '..', 'logs/app.log') }, level: 'debug' },
+          ]
+        },
+        level: 'debug',
+        customSuccessMessage: (req, res) => `✅ ${req.method} ${req.url} - ${res.statusCode}`,
+        customErrorMessage: (req, res, err) => `❌ ${req.method} ${req.url} - ${err.message}`,
+        customAttributeKeys: {
+          req: 'request',
+          res: 'response',
+          err: 'error',
+        },
+        serializers: {
+          req(req) {
+            return {
+              method: req.method,
+              url: req.url,
+              // headers: req.headers,
+              // body: req.raw.body,
+            };
+          },
+          res(res) {
+            return {
+              statusCode: res.statusCode,
+            };
+          },
+        },
+        redact: ['req.headers.authorization'],
+      },
     }),
     PrismaModule,
     AuthModule,
@@ -51,7 +100,7 @@ import { PlaylistModule } from 'models/playlist/playlist.module';
     PlaylistModule,
   ],
   controllers: [AudioController],
-  providers: [],
+  providers: [UserCleanupService, { provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

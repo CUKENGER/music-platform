@@ -1,28 +1,28 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger as defaultLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as compression from 'compression';
 import * as timeout from 'connect-timeout';
 import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
-import { AllExceptionsFilter } from 'exceptions/allExceptionFilter';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { Logger } from 'nestjs-pino';
+import { ApiError } from 'exceptions/api.error';
+import { AllExceptionsFilter } from 'exceptions/allExceptionFilter';
 
 dotenv.config();
 
-console.log('jfksdjkjkjkj');
-
 const start = async () => {
   try {
-    const PORT = parseInt(process.env.SERVER_PORT, 10) || 5000;
+    const PORT = Number(process.env.SERVER_PORT) || 5000;
     const app = await NestFactory.create(AppModule, {
-      logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+      bufferLogs: true
     });
-
+    const logger = app.get(Logger);
     app.enableCors({
       credentials: true,
-      origin: [process.env.CLIENT_URL, 'http://localhost:5173/', 'http://192.168.0.108:5173/'],
+      origin: [process.env.CLIENT_URL, 'http://localhost:5173/'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: [
         'Content-Type',
@@ -36,9 +36,9 @@ const start = async () => {
       exposedHeaders: ['X-Chunk-Duration', 'Content-Range'],
     });
     app.use((req, res, next) => {
-      console.log('Request:', req.method, req.url);
+      logger.debug(`Request: ${req.method} ${req.url}`, 'RequestLogger');
       res.on('finish', () => {
-        console.log('Response:', res.statusCode);
+        logger.debug(`Response: ${res.statusCode}`, 'ResponseLogger');
       });
       next();
     });
@@ -54,16 +54,37 @@ const start = async () => {
       .addTag('CUKENGER')
       .build();
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('/api/docs', app, document);
+    SwaggerModule.setup('/api/docs', app, document, {
+      jsonDocumentUrl: 'swagger/json',
+    });
+    app.useLogger(logger);
+    app.useGlobalInterceptors(new LoggingInterceptor(logger));
+    app.useGlobalPipes(new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        const formattedErrors = errors.map(err => {
+          const messages = Object.values(err.constraints || {});
+          return {
+            field: err.property.split(' '),
+            messages: messages.length ? messages : ['Unknown error'],
+          };
+        });
+        const response = {
+          message: `Validation failed`,
+          errors: formattedErrors
+        }
+        return ApiError.BadRequest(response.message, response.errors);
+      }
+    }));
+    app.useGlobalFilters(new AllExceptionsFilter(logger));
 
-    app.useGlobalInterceptors(new LoggingInterceptor());
-    app.useGlobalPipes(new ValidationPipe());
-    app.useGlobalFilters(new AllExceptionsFilter());
-
-    await app.listen(PORT, '0.0.0.0');
-    console.log(`server started at ${PORT}`);
+    await app.listen(PORT);
+    logger.log(`server started at ${PORT}`);
+    logger.log(`Application is running on: http://localhost:${PORT}`);
   } catch (e) {
-    console.log(e);
+    console.error('Error starts App', e);
+    defaultLogger.error('Error starts App', e);
   }
 };
 

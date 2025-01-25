@@ -8,11 +8,15 @@ export class ApiError extends Error {
     this.errors = errors;
   }
 
-  static UnauthorizedError() {
-    return new ApiError(401, 'User is not auth');
+  static UnauthorizedError(message?) {
+    return new ApiError(401, 'User is not auth', message);
   }
 
   static BadRequest(message, errors = []) {
     return new ApiError(400, message, errors);
+  }
+
+  static InternalServerError(message, errors = []) {
+    return new ApiError(500, message, errors)
   }
 }
