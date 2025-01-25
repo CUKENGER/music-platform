@@ -4,7 +4,9 @@ import { ApiError } from 'exceptions/api.error';
 import { AddRoleDto } from 'models/auth/dto/addRole.dto';
 import { BanUserDto } from 'models/auth/dto/banUser.dto';
 import { RoleService } from 'models/role/role.service';
+import { Logger } from 'nestjs-pino';
 import { PrismaService } from 'prisma/prisma.service';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -12,7 +14,8 @@ export class UserService {
     private prisma: PrismaService,
     private roleService: RoleService,
     private jwtService: JwtService,
-  ) {}
+    private readonly logger: Logger,
+  ) { }
 
   async getAll() {
     try {
@@ -28,8 +31,8 @@ export class UserService {
       });
       return users;
     } catch (e) {
-      console.error(`Error getAll users: ${e}`);
-      throw new InternalServerErrorException('Error getAll users');
+      this.logger.error(`Error getAll users: ${e}`);
+      throw ApiError.InternalServerError('Error getAll users', [e]);
     }
   }
 
@@ -45,13 +48,18 @@ export class UserService {
       });
       return users;
     } catch (e) {
-      console.error(`Error search users: ${e}`);
-      throw new InternalServerErrorException('Error search users');
+      this.logger.error(`Error search users: ${e}`);
+      throw ApiError.InternalServerError('Error search users', [e]);
     }
   }
 
   async getByEmail(email: string) {
     try {
+      this.logger.log('UserService getByEmail', {
+        service: 'UserService',
+        method: 'getByEmail',
+        email: email,
+      });
       const user = await this.prisma.user.findUnique({
         where: { email },
         include: {
@@ -63,10 +71,20 @@ export class UserService {
           tokens: true,
         },
       });
+      if (!user) {
+        this.logger.error('UserService getByEmail User with this email not found', {
+          email: email,
+        });
+        throw ApiError.BadRequest(`User with this email not found`);
+      }
       return user;
     } catch (e) {
-      console.error(`Error getByEmail user: ${e}`);
-      throw new InternalServerErrorException('Error getByEmail user');
+      this.logger.error(`UserService getByEmail error`, { e: e });
+      if (e instanceof ApiError) {
+        throw e;
+      } else {
+        throw new Error(`Unexpected error: ${e.message}`);
+      }
     }
   }
 
@@ -113,7 +131,7 @@ export class UserService {
 
       return user;
     } catch (error) {
-      console.error(`Ошибка при поиске пользователя: ${error.message}`);
+      this.logger.error(`Ошибка при поиске пользователя: ${error.message}`);
 
       if (error.name === 'TokenExpiredError') {
         throw ApiError.UnauthorizedError();
@@ -128,19 +146,23 @@ export class UserService {
   }
 
   async getByUsername(username: string) {
-    return this.prisma.user.findUnique({
-      where: {
-        username,
-      },
-      include: {
-        roles: true,
-        likedAlbums: true,
-        likedArtists: true,
-        likedTracks: true,
-        listenedTracks: true,
-        tokens: true,
-      },
-    });
+    try {
+      return this.prisma.user.findUnique({
+        where: {
+          username,
+        },
+        include: {
+          roles: true,
+          likedAlbums: true,
+          likedArtists: true,
+          likedTracks: true,
+          listenedTracks: true,
+          tokens: true,
+        },
+      });
+    } catch (e) {
+      this.logger.log(`Error: user with this username:${username} not found`, e.message);
+    }
   }
 
   async addRole(dto: AddRoleDto): Promise<void> {
@@ -176,18 +198,84 @@ export class UserService {
         data: { banned: true, banReason: dto.banReason },
       });
     } catch (error) {
-      console.error(`Ошибка при блокировке пользователя: ${error.message}`);
+      this.logger.error(`Ошибка при блокировке пользователя: ${error.message}`);
       throw new InternalServerErrorException('Ошибка при блокировке пользователя');
     }
   }
 
   async checkUsername(username: string): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({
+    this.logger.log(`UserService: Checking username availability for "${username}"`);
+
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { username },
+      });
+
+      return !user;
+    } catch (error) {
+      this.logger.error(
+        `UserService: Error checking username availability - ${error.message}`,
+        error.stack,
+      );
+      throw error; 
+    }
+  }
+  async deleteExpiredUsers(): Promise<number> {
+    const result = await this.prisma.user.deleteMany({
       where: {
-        username,
+        isActivated: false,
+        activationExpiresAt: { lt: new Date() },
       },
     });
 
-    return !user;
+    return result.count;
+  }
+
+  async createUserWithRole(
+    prisma: PrismaService,
+    dto: UserDto,
+    roleValue: string,
+    roleDescription: string,
+    hashPassword: string,
+    activationLink: string,
+    activationExpiresAt: Date,
+  ) {
+    const DEFAULT_ROLE_DESCRIPTION = 'description not specified';
+    let existingRole = await prisma.role.findUnique({ where: { value: roleValue } });
+
+    this.logger.log(
+      { service: 'UserService', method: 'createUser', roleValue: roleValue },
+      `find role:`,
+    );
+    if (!existingRole) {
+      this.logger.log(
+        { service: 'UserService', method: 'createUser' },
+        `role not found, create...`,
+      );
+      existingRole = await prisma.role.create({
+        data: {
+          value: roleValue,
+          description: roleDescription.trim() === '' ? DEFAULT_ROLE_DESCRIPTION : roleDescription,
+        },
+      });
+    }
+
+    await prisma.user.create({
+      data: {
+        email: dto.email,
+        password: hashPassword,
+        activationLink,
+        username: dto.username,
+        isActivated: false,
+        activationExpiresAt: activationExpiresAt,
+        roles: {
+          create: {
+            role: {
+              connect: { id: existingRole.id },
+            },
+          },
+        },
+      },
+    });
   }
 }
