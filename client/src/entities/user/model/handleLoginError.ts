@@ -18,9 +18,10 @@ export const isResponseError = (error: unknown): error is ResponseError => {
 };
 
 export const handleLoginErrorHandler = (error: unknown, showModal: (message: string) => void) => {
-  console.error('Operation failed:', error);
+  console.error('Operation failed: ', JSON.stringify(error));
 
   if (isResponseError(error)) {
+    console.log('error login status', error.response.status)
     if (error.response.status === 400) {
       showModal(error.response.data.message || 'Некорректные данные. Попробуйте еще раз.');
     } else if (error.response.status === 401) {

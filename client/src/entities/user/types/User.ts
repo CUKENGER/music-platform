@@ -1,4 +1,7 @@
-import { IAlbum, IArtist, IComment, ITrack } from '@/entities';
+import { IAlbum } from "@/entities/album";
+import { IArtist } from "@/entities/artist";
+import { IComment } from "@/entities/comment";
+import { ITrack } from "@/entities/track";
 
 export interface IUser {
   id?: number;
@@ -44,9 +47,22 @@ export interface RegUserDto {
 }
 
 export interface RegUserResponse {
-  user: RegUserDto;
+  statusCode: number;
+  message: string;
+  user: {
+    email: string;
+    username: string
+  }
+}
+
+export interface LoginUserResponse {
   accessToken: string;
   refreshToken: string;
+  user: {
+    id: number;
+    email: string;
+    isActivated: boolean;
+  }
 }
 
 export interface CheckUsernameResponse {

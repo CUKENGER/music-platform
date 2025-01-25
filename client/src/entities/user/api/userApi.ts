@@ -5,6 +5,7 @@ import {
   CreateUserDto,
   IUser,
   LoginUserDto,
+  LoginUserResponse,
   RegUserResponse,
   ResetPasswordDto,
   ResetPasswordResponse,
@@ -13,18 +14,7 @@ import {
 } from '../types/User';
 
 export const regUser = async (userDto: CreateUserDto): Promise<RegUserResponse> => {
-  // return apiRequest<RegUserResponse>('POST', 'user', { data: userDto });
-  try {
-    const response = await axiosInstance.post('user', { data: userDto });
-    return response.data;
-  } catch (e) {
-    if (axios.isAxiosError(e)) {
-      console.error('Error axios', e.message);
-      throw e;
-    } else {
-      throw new Error('Неизвестная ошибка');
-    }
-  }
+  return apiRequest<RegUserResponse>('POST', 'user', { data: userDto });
 };
 
 export const getByEmail = async (email: string): Promise<IUser> => {
@@ -39,19 +29,8 @@ export const getAll = async (): Promise<IUser[]> => {
   return apiRequest<IUser[]>('get', 'user');
 };
 
-export const loginUser = async (userDto: LoginUserDto): Promise<RegUserResponse> => {
-  // return apiRequest<RegUserResponse>('post', 'auth/login', { data: userDto });
-  try {
-    const response = await axiosInstance.post('auth/login', { data: userDto });
-    return response.data;
-  } catch (e) {
-    if (axios.isAxiosError(e)) {
-      console.error('Error axios', e.message);
-      throw e;
-    } else {
-      throw new Error('Неизвестная ошибка');
-    }
-  }
+export const loginUser = async (userDto: LoginUserDto): Promise<LoginUserResponse> => {
+  return apiRequest<LoginUserResponse>('post', 'auth/login', { data: userDto });
 };
 
 export const logoutUser = async (): Promise<string> => {
@@ -59,20 +38,18 @@ export const logoutUser = async (): Promise<string> => {
 };
 
 export const checkUsername = async (username: string): Promise<CheckUsernameResponse> => {
-  // return apiRequest<CheckUsernameResponse>('post', `user/check/${username}`, {
-  // data: username,
-  // });
-  try {
-    const response = await axiosInstance.post(`user/check/${username}`, { params: username });
-    return response.data;
-  } catch (e) {
-    if (axios.isAxiosError(e)) {
-      console.error('Error axios', e.message);
-      throw e;
-    } else {
-      throw new Error('Неизвестная ошибка');
-    }
-  }
+  return apiRequest<CheckUsernameResponse>('post', `user/check/${username}`)
+  // try {
+  //   const response = await axiosInstance.post(`user/check/${username}`, { params: username });
+  //   return response.data;
+  // } catch (e) {
+  //   if (axios.isAxiosError(e)) {
+  //     console.error('Error axios', e.message);
+  //     throw e;
+  //   } else {
+  //     throw new Error('Неизвестная ошибка');
+  //   }
+  // }
 };
 
 export const refreshToken = async (): Promise<RegUserResponse> => {

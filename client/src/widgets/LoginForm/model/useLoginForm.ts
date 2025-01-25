@@ -1,4 +1,5 @@
 import { useLoginUser, useUserStore } from '@/entities/user';
+import { handleLoginErrorHandler } from '@/entities/user/model/handleLoginError';
 import { PRIVATE_ROUTES } from '@/shared/consts';
 import { useInput, useModal } from '@/shared/hooks';
 import { FormEvent } from 'react';
@@ -24,7 +25,7 @@ export const useLoginWidget = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isValid) {
+    if (isValid || isLoading) {
       showModal('Заполните все данные, пожалуйста');
       return;
     }
@@ -50,6 +51,9 @@ export const useLoginWidget = () => {
           showModal('Вы не зарегистрированы');
         }
       },
+      onError: (error) => {
+        handleLoginErrorHandler(error, showModal)
+      }
     });
   };
 

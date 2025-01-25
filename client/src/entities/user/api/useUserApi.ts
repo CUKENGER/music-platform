@@ -2,6 +2,7 @@ import { PUBLIC_ROUTES } from '@/shared/consts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { handleLoginErrorHandler } from '../model/handleLoginError';
 import { useUserStore } from '../model/userStore';
 import {
   CreateUserDto,
@@ -22,7 +23,6 @@ import {
   resetPassword,
   sendEmail,
 } from './userApi';
-import { handleLoginErrorHandler } from '../model/handleLoginError';
 
 const invalidateUserQuery = (queryClient: ReturnType<typeof useQueryClient>) => {
   queryClient.invalidateQueries({
@@ -49,7 +49,7 @@ export const useRegUser = () => {
     },
     onError: (error: unknown) => {
       if (error instanceof Error) {
-        console.error('Error registering user:', error.message);
+        console.error('Error registering user:', error);
       } else {
         console.error('Unknown error:', error);
       }
@@ -64,6 +64,8 @@ export const useLoginUser = (showModal: (message: string) => void) => {
     mutationFn: loginUser,
     onSuccess: () => invalidateUserQuery(queryClient),
     onError: (error: unknown) => handleLoginErrorHandler(error, showModal),
+    retry: false,
+    throwOnError: true,
   });
 };
 
