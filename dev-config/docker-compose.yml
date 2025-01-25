@@ -1,25 +1,27 @@
-
-services: 
-  client: 
-    build: 
+services:
+  client:
+    build:
       context: ../client
       dockerfile: ../dev-config/Dockerfile.client
-    ports: 
+    container_name: music-platform-client
+    ports:
       - "5173:5173"
     environment:
       - API_URL=${API_URL}
     volumes:
       - ../client:/usr/app
+      - /usr/app/node_modules
     networks:
       - music-platform-network
     depends_on:
       - server
-  server: 
-    build: 
+  server:
+    build:
       context: ../server
       dockerfile: ../dev-config/Dockerfile.server
-    ports: 
-      - "${SERVER_PORT}:5000"
+    container_name: music-platform-server
+    ports:
+      - "5000:${SERVER_PORT}"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - JWT_ACCESS_SECRET_KEY=${JWT_ACCESS_SECRET_KEY}
@@ -33,26 +35,36 @@ services:
       - SMTP_APP_PASS=${SMTP_APP_PASS}
     volumes:
       - ../server:/usr/app
+      - /usr/app/node_modules
     networks:
       - music-platform-network
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     image: postgres:14.1-alpine
-    restart: always
-    ports: 
-      - "${DATABASE_PORT}:5432"
+    container_name: music-platform-db
+    # restart: always
+    ports:
+      - "5433:${DATABASE_PORT}"
     environment:
-      - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - DATABASE_NAME=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
     volumes:
       - db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
     networks:
       - music-platform-network
 
-networks: 
+networks:
   music-platform-network:
-volumes: 
+volumes:
   db:
-
