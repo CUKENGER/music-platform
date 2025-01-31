@@ -2,7 +2,7 @@ import styles from './MainInfoInputs.module.scss';
 import Flatpickr from 'react-flatpickr';
 import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 import { IAlbum } from '../../types/Album';
-import { Input, InputFile, Options, Textarea } from '@/shared/ui';
+import { InputFile, Options, UITextAreaField, UITextField } from '@/shared/ui';
 import { SearchArtistInput } from '@/entities/artist';
 import { genres } from '@/shared/moks';
 import { API_URL } from '@/shared/consts';
@@ -24,7 +24,11 @@ export const MainInfoInputs = ({ control, setValue, album }: MainInfoInputsProps
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Input value={field.value} onChange={field.onChange} placeholder="Введите название" />
+              <UITextField
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Введите название"
+              />
             )}
           />
           <Controller
@@ -32,7 +36,10 @@ export const MainInfoInputs = ({ control, setValue, album }: MainInfoInputsProps
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <SearchArtistInput artist={field.value} setArtist={field.onChange} />
+              <SearchArtistInput 
+                artist={field.value} 
+                onChange={field.onChange} 
+              />
             )}
           />
           <Controller
@@ -40,7 +47,7 @@ export const MainInfoInputs = ({ control, setValue, album }: MainInfoInputsProps
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Textarea
+              <UITextAreaField
                 placeholder="Введите описание"
                 value={field.value}
                 onChange={field.onChange}

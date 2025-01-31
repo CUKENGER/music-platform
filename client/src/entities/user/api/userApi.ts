@@ -1,5 +1,4 @@
-import { apiRequest, axiosInstance } from '@/shared/api';
-import axios from 'axios';
+import { apiRequest } from '@/shared/api';
 import {
   CheckUsernameResponse,
   CreateUserDto,
@@ -18,7 +17,11 @@ export const regUser = async (userDto: CreateUserDto): Promise<RegUserResponse> 
 };
 
 export const getByEmail = async (email: string): Promise<IUser> => {
-  return apiRequest<IUser>('GET', `user/${email}`, { data: email });
+  return apiRequest<IUser>('GET', `user/${email}`, { params: { email: email } });
+};
+
+export const getByid = async (id: number): Promise<IUser> => {
+  return apiRequest<IUser>('GET', `user/${id}`, { params: { id: id } });
 };
 
 export const getByToken = async (): Promise<IUser> => {

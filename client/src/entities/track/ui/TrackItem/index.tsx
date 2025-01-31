@@ -1,24 +1,27 @@
-import { ForwardedRef, forwardRef } from 'react';
+import { ForwardedRef, forwardRef, useState } from 'react';
 import styles from './TrackItem.module.scss';
 import { ITrack } from '../../types/Track';
 import { useTrackItem } from '../../model/useTrackItem';
-import { useUserStore } from '@/entities/user';
-import { CoverContainer, NameContainer } from '../..';
 import { DeleteContainer, ListensIcon, ModalContainer } from '@/shared/ui';
+import { useUserStore } from '@/entities/user';
+import { CoverContainer } from '../CoverContainer';
+import { NameContainer } from '../NameContainer';
 
 interface TrackItemProps {
   item: ITrack;
   itemList: ITrack[];
   needDeleteIcon?: boolean;
-  needClick?: boolean;
+	needClick?: boolean;
 }
 
 const TrackItemComponent = (
   { item: track, itemList: trackList, needDeleteIcon = true, needClick = true }: TrackItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  const { play, handleDelete, isVisible, modal, hideModal } = useTrackItem(track, trackList);
+	const { play, handleDelete, isVisible, modal, hideModal } = useTrackItem(track, trackList);
   const isAdmin = useUserStore((state) => state.isAdmin);
+
+	const {} = usePara
 
   return (
     <div

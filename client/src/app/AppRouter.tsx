@@ -15,7 +15,7 @@ const AppRouter = () => {
             element={<route.component />}
           />
         ))
-      : publicRoutes.map((route) => (
+        : publicRoutes.map((route) => (
           <Route
             key={route.path}
             path={route.exact ? route.path : `${route.path}/*`}

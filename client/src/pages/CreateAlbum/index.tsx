@@ -1,4 +1,4 @@
-import { CreateAlbumForm } from '@/features/CreateAlbumForm';
+import { CreateAlbumForm } from "@/features/NewCreateAlbumForm/ui";
 
 export const CreateAlbum = () => {
   return <CreateAlbumForm />;

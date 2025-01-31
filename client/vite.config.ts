@@ -13,4 +13,9 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  server: {
+    watch: {
+      usePolling: true,
+    },
+  },
 });

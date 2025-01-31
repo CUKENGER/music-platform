@@ -105,7 +105,7 @@ export const PopularTracks = () => {
             left={true}
           />
           <SectionArrow isDisabled={isLastSlide} onClick={() => sliderRef?.current?.slickNext()} />
-          <Btn small={true}>Ещё</Btn>
+          <Btn size='l'>Ещё</Btn>
         </div>
       </div>
       <Slider ref={sliderRef} {...settings}>

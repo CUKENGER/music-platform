@@ -1,5 +1,6 @@
-import { ChangeEvent, InputHTMLAttributes, useState } from 'react';
+import { ChangeEvent, InputHTMLAttributes, useId, useState } from 'react';
 import styles from './InputFile.module.scss';
+import { Btn } from '../Btn';
 
 interface InputAudioProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder: string;
@@ -64,3 +65,4 @@ export const InputFile = ({
     </div>
   );
 };
+

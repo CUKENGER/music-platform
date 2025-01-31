@@ -5,5 +5,5 @@ interface SearchProps {
 }
 
 export const Search = ({ placeholder }: SearchProps) => {
-  return <input name="main_input" className={styles.input} type="text" placeholder={placeholder} />;
+  return <input name="main_input" className={styles.input} type="search" placeholder={placeholder} />;
 };

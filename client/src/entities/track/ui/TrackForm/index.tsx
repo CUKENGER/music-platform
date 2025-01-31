@@ -1,7 +1,7 @@
 import styles from './TrackForm.module.scss';
 import { ChangeEvent, useEffect } from 'react';
 import minusBtnBg from './assets/minusBtnBg.svg';
-import { TrackState } from '../../types/Track';
+import { TrackUpdateState } from '../../types/Track';
 import { useDebounce } from '@/shared/hooks';
 import { getLyrics } from '../../api/trackApi';
 
@@ -12,7 +12,7 @@ interface TrackFormProps {
   removeTrack: () => void;
   trackIndex: number;
   fileName?: string;
-  track: TrackState;
+  track: TrackUpdateState;
   debouncedArtist: string;
 }
 
@@ -26,7 +26,7 @@ export const TrackForm = ({
   track,
   debouncedArtist,
 }: TrackFormProps) => {
-  const debouncedName = useDebounce(track.name, 500);
+  const debName = useDebounce(track.name, 500);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
@@ -49,7 +49,7 @@ export const TrackForm = ({
 
   useEffect(() => {
     const get = async () => {
-      const lyrics = await getLyrics(debouncedName, debouncedArtist);
+      const lyrics = await getLyrics(debName, debouncedArtist);
       if (lyrics) {
         setText(lyrics);
       } else {
@@ -57,13 +57,16 @@ export const TrackForm = ({
       }
     };
     get();
-  }, [debouncedName, debouncedArtist]);
+  }, [debName, debouncedArtist, setText]);
 
   return (
     <div className={styles.TrackForm}>
       <div className={styles.index}>{trackIndex + 1}</div>
       <div className={styles.textInputContainer}>
         <label className={styles.label_input}>Введите название</label>
+        <div>
+          <p></p>
+        </div>
         <input
           type="text"
           value={track.name}

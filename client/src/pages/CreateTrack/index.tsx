@@ -8,7 +8,7 @@ export const CreateTrack = () => {
     <div>
       <div>
         <Link to={PRIVATE_ROUTES.TRACKS}>
-          <Btn small={true}>Назад</Btn>
+          <Btn>Назад</Btn>
         </Link>
       </div>
       <CreateTrackForm />

@@ -15,6 +15,7 @@ import {
 import {
   checkUsername,
   getByEmail,
+  getByid,
   getByToken,
   loginUser,
   logoutUser,
@@ -47,13 +48,6 @@ export const useRegUser = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'], exact: true });
     },
-    onError: (error: unknown) => {
-      if (error instanceof Error) {
-        console.error('Error registering user:', error);
-      } else {
-        console.error('Unknown error:', error);
-      }
-    },
   });
 };
 
@@ -75,6 +69,13 @@ export const useGetByEmail = (email: string) => {
   return useQuery({
     queryFn: () => getByEmail(email),
     queryKey: ['user'],
+  });
+};
+
+export const useGetUserById = (id: number) => {
+  return useQuery({
+    queryFn: () => getByid(id),
+    queryKey: ['user', id],
   });
 };
 

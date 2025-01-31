@@ -1,4 +1,4 @@
-import { RegForm } from '@/widgets';
+import { RegForm } from "@/features/RegForm";
 
 export const Registration = () => {
   return <RegForm />;

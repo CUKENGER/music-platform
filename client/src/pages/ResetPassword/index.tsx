@@ -5,7 +5,7 @@ import { FormEvent } from 'react';
 import { useInput, useModal } from '@/shared/hooks';
 import { useResetPassword } from '@/entities/user';
 import { PUBLIC_ROUTES } from '@/shared/consts';
-import { Btn, ModalContainer, PasswordInput } from '@/shared/ui';
+import { Btn, ModalContainer } from '@/shared/ui';
 
 export const ResetPassword = () => {
   const { token } = useParams<{ token: string }>();
@@ -58,52 +58,21 @@ export const ResetPassword = () => {
     e.preventDefault();
   };
 
-  const passwordWarnings = [
-    {
-      condition: password.isDirty && password.isEmpty,
-      message: 'Поле должно быть заполнено',
-    },
-    {
-      condition: password.isDirty && !password.isPasswordStrong,
-      message: 'Пароль должен содержать минимум 8 символов, заглавные буквы и цифры',
-    },
-    {
-      condition: password.isDirty && !password.isLatin,
-      message: 'Поля заполняются латиницей',
-    },
-  ];
-
-  const repeatPasswordWarnings = [
-    { condition: !repeatPassword.isPassEqual, message: 'Пароли не совпадают' },
-  ];
-
   return (
     <div className={styles.ResetPassword}>
       <form className={styles.container} onSubmit={handleSubmit}>
         <p className={styles.title}>Смена пароля</p>
-        <PasswordInput
-          inputValue={password}
-          name="password"
-          placeholder="Введите новый пароль"
-          warnings={passwordWarnings}
-        />
-        <PasswordInput
-          inputValue={repeatPassword}
-          name="repeatPassword input"
-          placeholder="Повторите новый пароль"
-          warnings={repeatPasswordWarnings}
-        />
+       
         <Btn
           isLoading={isPending}
           disabled={!isValid}
-          small={true}
           onClick={handleSend}
           type="submit"
         >
           Сменить пароль
         </Btn>
         <Link to={PUBLIC_ROUTES.LOGIN} className={styles.link}>
-          <Btn small={true} className={styles.btn}>
+          <Btn className={styles.btn}>
             Назад
           </Btn>
         </Link>

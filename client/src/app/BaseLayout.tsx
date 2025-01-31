@@ -1,9 +1,11 @@
 import { IUser, useUserStore } from '@/entities/user';
+import { useAxiosInterceptor } from '@/shared/api';
+import { Header } from '@/widgets/Header';
+import { Navbar } from '@/widgets/Navbar';
+import { Player } from '@/widgets/Player';
+import { useEffect } from 'react';
 import AppRouter from './AppRouter';
 import styles from './BaseLayout.module.scss';
-import { Header, Navbar, Player } from '@/widgets';
-import { useEffect } from 'react';
-import { useAxiosInterceptor } from '@/shared/api';
 
 function BaseLayout() {
   const { isAuth, user, setIsAdmin } = useUserStore();
@@ -18,7 +20,7 @@ function BaseLayout() {
       const isAdmin = isUserAdmin(user);
       setIsAdmin(isAdmin);
     }
-  }, [user]);
+  }, [user, setIsAdmin]);
 
   useAxiosInterceptor();
 

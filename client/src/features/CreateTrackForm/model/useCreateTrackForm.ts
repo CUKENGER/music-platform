@@ -2,8 +2,6 @@ import { useCreateTrack } from '@/entities/track';
 import { API_URL, PRIVATE_ROUTES } from '@/shared/consts';
 import { useInput, useModal, useDebounce } from '@/shared/hooks';
 import { genres } from '@/shared/moks';
-import { axiosInstance } from '@/shared/api';
-import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,16 +26,6 @@ export const useCreateTrackForm = () => {
   const { mutate: createTrack, isPending: isLoading } = useCreateTrack();
 
   useEffect(() => {
-    if (audio?.name) {
-      const str = audio.name;
-      const word = str.split('.').slice(0, -1).join('.');
-      name.setValue(word);
-    } else {
-      name.setValue('');
-    }
-  }, [audio]);
-
-  useEffect(() => {
     const get = async () => {
       if (debouncedArtist && debouncedName) {
         try {
@@ -57,7 +45,7 @@ export const useCreateTrackForm = () => {
       }
     };
     get();
-  }, [debouncedArtist, debouncedName]);
+  }, [debouncedArtist, debouncedName, text]);
 
   const hasData = !!(
     name.value.trim() &&
@@ -101,17 +89,13 @@ export const useCreateTrackForm = () => {
     name,
     artist,
     options,
-    setOptions,
-    genre,
     text,
     setCover,
-    cover,
     setAudio,
-    audio,
     handleSubmit,
     isLoading,
-    hideModal,
-    modal,
     hasData,
+    modal,
+    hideModal,
   };
 };

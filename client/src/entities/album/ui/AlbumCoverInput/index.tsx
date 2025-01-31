@@ -1,4 +1,4 @@
-import { InputFile } from '@/shared/ui';
+import { InputImageFile } from '@/shared/ui';
 import styles from './AlbumCoverInput.module.scss';
 
 interface AlbumCoverInputProps {
@@ -10,10 +10,8 @@ export const AlbumCoverInput = ({ cover, setCover }: AlbumCoverInputProps) => {
   return (
     <div className={styles.AlbumCoverInput}>
       <div className={styles.container}>
-        <InputFile
-          isAudio={false}
+        <InputImageFile
           setFile={setCover}
-          fileName={cover?.name}
           placeholder="Загрузите обложку альбома"
         />
       </div>

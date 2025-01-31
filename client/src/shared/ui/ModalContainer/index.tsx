@@ -36,7 +36,7 @@ export const ModalContainer = ({ hideModal, modal }: ModalContainerProps) => {
           <p className={styles.text}>{modal.text}</p>
         </div>
         <div className={styles.btn_container}>
-          <Btn onClick={handleClose} small={true}>
+          <Btn onClick={handleClose}>
             Закрыть
           </Btn>
         </div>

@@ -3,7 +3,7 @@ import { IComment } from '../../types/Comment';
 import styles from './ReplyForm.module.scss';
 import { useCallback } from 'react';
 import { useCreateAlbumComment } from '@/entities/album';
-import { Btn, ModalContainer, TextareaForHook } from '@/shared/ui';
+import { Btn, ModalContainer, UITextAreaField } from '@/shared/ui';
 
 interface ReplyFormProps {
   comment: IComment;
@@ -55,14 +55,15 @@ export const ReplyForm = ({
 
   return (
     <div className={styles.replyForm}>
-      <TextareaForHook
+      <UITextAreaField
         style={{
           minHeight: '3lh',
         }}
-        inputValue={reply}
+        value={reply.value}
+        onChange={reply.onChange}
         placeholder="Введите ваш ответ"
       />
-      <Btn isLoading={isPending} small={true} onClick={handleReplySubmit}>
+      <Btn isLoading={isPending} onClick={handleReplySubmit}>
         Отправить
       </Btn>
       <ModalContainer modal={modal} hideModal={hideModal} />

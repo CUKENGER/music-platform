@@ -5,7 +5,7 @@ import sendIcon from '../assets/send.svg';
 import { useInput, useModal } from '@/shared/hooks';
 import { useUserStore } from '@/entities/user';
 import { useCreateAlbumComment } from '@/entities/album';
-import { ModalContainer, TextareaForHook } from '@/shared/ui';
+import { ModalContainer, UITextAreaField} from '@/shared/ui';
 
 interface CommentSendProps {
   albumId: number | undefined;
@@ -45,9 +45,10 @@ export const CommentSend = ({ albumId }: CommentSendProps) => {
 
   return (
     <div className={styles.commentAdd}>
-      <TextareaForHook
+      <UITextAreaField
         classNameContainer={styles.textarea}
-        inputValue={text}
+        value={text.value}
+        onChange={text.onChange}
         placeholder="Введите комментарий"
       />
       <div

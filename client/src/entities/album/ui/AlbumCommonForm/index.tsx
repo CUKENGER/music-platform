@@ -1,7 +1,5 @@
 import { FormEvent, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 import styles from './AlbumCommonForm.module.scss';
-import { Btn } from '@/shared/ui';
 
 interface AlbumCommonFormProps {
   onSubmit: (e: FormEvent) => void;
@@ -21,7 +19,7 @@ export const AlbumCommonForm = ({
   return (
     <form className={styles.Form} onSubmit={onSubmit}>
       <Link to={backLink}>
-        <Btn small={true}>Назад</Btn>
+        <Btn>Назад</Btn>
       </Link>
       {children}
       <Btn isLoading={isPending} type="submit" disabled={!hasData}>

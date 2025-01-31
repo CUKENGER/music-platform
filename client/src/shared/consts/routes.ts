@@ -29,7 +29,7 @@ export enum PRIVATE_ROUTES {
   CREATE_ARTIST = '/artists/create',
   ALBUMS = '/albums',
   ARTISTS = '/artists',
-  PROFILE = '/profile/:id',
+  PROFILE = '/profile',
   NOT_FOUND = '*',
   ARTIST_EDIT = '/artists/:id/edit',
   ALBUM_EDIT = '/albums/:id/edit',
@@ -38,7 +38,7 @@ export enum PRIVATE_ROUTES {
 export enum PUBLIC_ROUTES {
   LOGIN = '/',
   REGISTRATION = '/registration',
-  ACTIVATION = '/goActivate/:email',
+  ACTIVATION = '/goActivate',
   SEND_EMAIL = '/send_email',
   NOT_FOUND = '*',
 }
@@ -49,7 +49,7 @@ export const privateRoutes = [
   { path: PRIVATE_ROUTES.CREATE_TRACK, component: CreateTrack, exact: true },
   { path: PRIVATE_ROUTES.ALBUMS, component: Albums, exact: true },
   { path: PRIVATE_ROUTES.ARTISTS, component: Artists, exact: true },
-  { path: PRIVATE_ROUTES.PROFILE, component: Profile, exact: true },
+  { path: PRIVATE_ROUTES.PROFILE + '/:id', component: Profile, exact: true },
   { path: PRIVATE_ROUTES.CREATE_ALBUM, component: CreateAlbum, exact: true },
   { path: PRIVATE_ROUTES.NOT_FOUND, component: PrivateNotFound, exact: true },
   { path: PRIVATE_ROUTES.CREATE_ARTIST, component: CreateArtist, exact: true },
@@ -67,7 +67,7 @@ export const privateRoutes = [
 export const publicRoutes = [
   { path: PUBLIC_ROUTES.LOGIN, component: Login, exact: true },
   { path: PUBLIC_ROUTES.REGISTRATION, component: Registration, exact: true },
-  { path: PUBLIC_ROUTES.ACTIVATION, component: GoActivation, exact: true },
+  { path: PUBLIC_ROUTES.ACTIVATION + `/:email`, component: GoActivation, exact: true },
   { path: '/reset_password/:token', component: ResetPassword, exact: true },
   { path: PUBLIC_ROUTES.SEND_EMAIL, component: SendEmail, exact: true },
   { path: PUBLIC_ROUTES.NOT_FOUND, component: PublicNotFound, exact: true },

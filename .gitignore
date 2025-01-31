@@ -1,0 +1,6 @@
+
+
+./dev-config/.env
+./server/.husky
+./server/*.lock
+./client/*.lock

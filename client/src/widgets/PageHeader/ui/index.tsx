@@ -12,7 +12,7 @@ export const PageHeader = ({ toCreate }: PageHeaderProps) => {
     <div className={styles.page_header}>
       <SelectFilter options={['Все', 'Популярные', 'По алфавиту']} />
       <Link to={toCreate}>
-        <Btn small={true}>Загрузить</Btn>
+        <Btn>Загрузить</Btn>
       </Link>
     </div>
   );

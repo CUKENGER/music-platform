@@ -1,7 +1,7 @@
 import { PopularTracks } from '@/features/PopularTracks';
 import styles from './Home.module.scss';
 import { PopularAlbums } from '@/features/PopularAlbums';
-import { EntitySection } from '@/widgets';
+import { EntitySection } from '@/widgets/EntitySection';
 
 export const Home = () => {
   return (

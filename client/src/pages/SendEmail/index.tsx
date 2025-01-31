@@ -5,7 +5,7 @@ import { FormEvent } from 'react';
 import { useInput, useModal } from '@/shared/hooks';
 import { useSendEmail } from '@/entities/user';
 import { PUBLIC_ROUTES } from '@/shared/consts';
-import { Btn, EmailInput, ModalContainer } from '@/shared/ui';
+import { Btn, ModalContainer } from '@/shared/ui';
 
 export const SendEmail = () => {
   const email = useInput('', { isEmpty: true, isEmail: true, isLatin: true });
@@ -43,45 +43,24 @@ export const SendEmail = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  };
-
-  const emailWarnings = [
-    {
-      condition: email.isDirty && email.isEmpty,
-      message: 'Поле должно быть заполнено',
-    },
-    {
-      condition: email.isDirty && !email.isEmailValid,
-      message: 'Некорректный email',
-    },
-    {
-      condition: email.isDirty && !email.isLatin,
-      message: 'Поле заполняется латиницей',
-    },
-  ];
+  }
 
   return (
     <div className={styles.SendEmail}>
       <form className={styles.container} onSubmit={handleSubmit}>
         <p className={styles.title}>Укажите Email</p>
         <p className={styles.text}>Введите свой email и вам придет ссылка для смены пароля</p>
-        <EmailInput
-          name="email"
-          inputValue={email}
-          placeholder="Введите email"
-          warnings={emailWarnings}
-        />
+        
         <Btn
           isLoading={isLoading}
           disabled={isValid}
-          small={true}
           onClick={handleSend}
           type="submit"
         >
           Отправить
         </Btn>
         <Link to={PUBLIC_ROUTES.LOGIN} className={styles.link}>
-          <Btn small={true} className={styles.btn}>
+          <Btn className={styles.btn}>
             Назад
           </Btn>
         </Link>

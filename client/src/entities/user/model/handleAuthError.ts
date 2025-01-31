@@ -21,7 +21,6 @@ export const handleAuthError = (error: unknown, showModal: (message: string) => 
   if (isResponseError(error)) {
     const { status, data } = error.response;
 
-    console.log('status', status)
     if (status === 409) {
       if (data.message.includes('email')) {
         showModal('Этот email уже занят');

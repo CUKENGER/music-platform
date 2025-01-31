@@ -1,4 +1,4 @@
-import { LoginForm } from '@/widgets/LoginForm';
+import { LoginForm } from "@/features/LoginForm";
 
 export const Login = () => {
   return <LoginForm />;

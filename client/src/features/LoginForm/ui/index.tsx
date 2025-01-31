@@ -1,53 +1,67 @@
-import { FormEvent, ReactNode } from 'react';
-import styles from './LoginForm.module.scss';
-import { Link } from 'react-router-dom';
-import { UseInputProps } from '@/shared/types';
-import { Btn, EmailInput } from '@/shared/ui';
+import { LoginLayout } from '@/entities/user';
 import { PUBLIC_ROUTES } from '@/shared/consts';
+import { Btn, ModalContainer, UIPasswordInput, UITextField } from '@/shared/ui';
+import { Link } from 'react-router-dom';
+import { useLoginForm } from '../model/useLoginForm';
+import cl from './index.module.scss';
+import { Controller } from 'react-hook-form';
 
-interface LoginFormProps {
-  btnText: string;
-  handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
-  children?: ReactNode;
-  isLogin?: boolean;
-  email: UseInputProps;
-  password: UseInputProps;
-  needRepeatPassword?: boolean;
-  repeatPassword?: UseInputProps;
-  isLoading?: boolean;
-  isActiveBtn?: boolean;
-}
+export const LoginForm = () => {
+  const {
+    handleSubmit,
+    control,
+    errors,
+    isLoading,
+    isValid,
+    modal,
+    hideModal,
+  } = useLoginForm();
 
-export const LoginForm = ({
-  btnText,
-  handleSubmit,
-  children,
-  isLogin = true,
-  email,
-  password,
-  needRepeatPassword = false,
-  repeatPassword,
-  isLoading = false,
-  isActiveBtn = true,
-}: LoginFormProps) => {
   return (
-    <form className={styles.LoginForm} onSubmit={handleSubmit}>
-      <h1 className={styles.title}>Welcome</h1>
-      {children}
-      <EmailInput name="email" inputValue={email} placeholder="Введите email" />
-      {isLogin && (
-        <Link to={PublicRoutes.SEND_EMAIL}>
-          <span className={styles.forgotPassword}>Забыли пароль?</span>
-        </Link>
-      )}
-      <Btn isLoading={isLoading} disabled={isActiveBtn} type="submit">
-        {btnText}
-      </Btn>
-      <Link to={isLogin ? PUBLIC_ROUTES.REGISTRATION : PUBLIC_ROUTES.LOGIN}>
-        <Btn className={styles.reg_btn} type="button">
-          {isLogin ? 'Регистрация' : 'Авторизация'}
+    <>
+      <LoginLayout handleSubmit={handleSubmit} title="Вход">
+        <Controller
+          name="email"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <UITextField
+              {...field}
+              name="email"
+              label="Введите email"
+              required
+              aria-invalid={!!errors.email}
+              warnings={[{ condition: errors.email, text: errors.email?.message }]}
+              clearable
+            />
+          )}
+        />
+        <Controller
+          name="password"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <UIPasswordInput
+              {...field}
+              name="password"
+              label="Введите пароль"
+              required
+              aria-invalid={!!errors.password}
+              warnings={[{ condition: errors.password, text: errors.password?.message }]}
+              clearable
+            />
+          )}
+        />
+        <Btn isLoading={isLoading} disabled={!isValid} type="submit">
+          Зарегистрироваться
         </Btn>
-      </Link>
-    </form>
+        <Link to={PUBLIC_ROUTES.REGISTRATION}>
+          <Btn variant="outlined" className={cl.link}>
+            Регистрация
+          </Btn>
+        </Link>
+      </LoginLayout>
+      <ModalContainer modal={modal} hideModal={hideModal} />
+    </>
   );
 };

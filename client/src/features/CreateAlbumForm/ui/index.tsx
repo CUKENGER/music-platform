@@ -8,7 +8,6 @@ import {
 import { useCreateAlbumForm } from '../model/useCreateAlbumForm';
 import styles from './CreateAlbumForm.module.scss';
 import { PRIVATE_ROUTES } from '@/shared/consts';
-import { AddTrackIcon } from '@/shared/ui';
 
 export const CreateAlbumForm = () => {
   const {
@@ -20,6 +19,7 @@ export const CreateAlbumForm = () => {
     handleFileChange,
     hasData,
     debouncedArtist,
+    addTrackForm
   } = useCreateAlbumForm();
 
   return (
@@ -45,6 +45,7 @@ export const CreateAlbumForm = () => {
       <MultipleInputAudio onChange={handleFileChange} />
       <TrackFormList tracks={tracks} setTracks={setTracks} debouncedArtist={debouncedArtist} />
       <AddTrackIcon onClick={addTrackForm} />
+      <ModalContainer modal={modal} hideModal={hideModal} />
     </AlbumCommonForm>
   );
 };

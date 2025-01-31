@@ -1,17 +1,13 @@
-import { ChangeEvent, InputHTMLAttributes, useId, useState } from 'react';
+import { ChangeEvent, forwardRef, InputHTMLAttributes, useId, useState } from 'react';
 import cl from './index.module.scss';
 import cn from 'classnames';
 import { ExclamIcon } from '../assets/ExclamIcon';
 import { ClearIcon } from '../assets/ClearIcon';
 import { ShowPassIcon } from '../assets/ShowPassIcon';
-import { UILabelField } from '../UILabelField';
 import { WarningMessage } from '../WarningMessage';
 import { useDebounce } from '@/shared/hooks';
-
-interface Warning {
-  condition?: boolean;
-  text: string;
-}
+import { IWarning } from '@/shared/types';
+import { UILabel } from '../UILabel';
 
 interface UIPasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;
@@ -20,12 +16,12 @@ interface UIPasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
   clearable?: boolean;
   label?: string;
   id?: string;
-  warnings?: Warning[];
+  warnings?: IWarning[];
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const UIPasswordInput = ({
+export const UIPasswordInput = forwardRef<HTMLInputElement, UIPasswordInputProps>(({
   containerClassName,
   className,
   required,
@@ -36,7 +32,8 @@ export const UIPasswordInput = ({
   id,
   warnings,
   ...inputProps
-}: UIPasswordInputProps) => {
+}, ref
+) => {
   const [isShow, setIsShow] = useState(false);
 
   const debounceValue = useDebounce(value, 200);
@@ -59,7 +56,7 @@ export const UIPasswordInput = ({
   const defaultId = useId();
   return (
     <div className={cl.TextFieldContainer}>
-      {label && <UILabelField htmlFor={id ?? defaultId}>{label}</UILabelField>}
+      {label && <UILabel htmlFor={id ?? defaultId}>{label}</UILabel>}
       <div className={cn(containerClassName, cl.container)}>
         {value && (
           <div onClick={toggleShowPass} className={cl.showIcon} aria-hidden="true">
@@ -67,6 +64,7 @@ export const UIPasswordInput = ({
           </div>
         )}
         <input
+          ref={ref}
           id={id ?? defaultId}
           className={cn(className, cl.input)}
           value={value}
@@ -88,4 +86,7 @@ export const UIPasswordInput = ({
       )}
     </div>
   );
-};
+}
+)
+
+UIPasswordInput.displayName = "UIPasswordInput"

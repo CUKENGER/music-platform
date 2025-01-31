@@ -1,6 +1,7 @@
 import { CreateAlbumDto, useCreateAlbum } from '@/entities/album';
 import { TrackState } from '@/entities/track';
 import { PRIVATE_ROUTES } from '@/shared/consts';
+import { useDebounce, useModal } from '@/shared/hooks';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,15 +20,7 @@ export const useCreateAlbumForm = () => {
 
   const { modal, showModal, hideModal } = useModal();
 
-  const {
-    handleSubmit,
-    formState: {
-      //isValid
-    },
-    setValue,
-    //control,
-    getValues,
-  } = useForm<CreateAlbumInputs>({});
+  const { handleSubmit, setValue, getValues } = useForm<CreateAlbumInputs>({});
   const values = getValues();
 
   const debouncedArtist = useDebounce(values.artist, 500);
@@ -112,5 +105,6 @@ export const useCreateAlbumForm = () => {
     handleFileChange,
     hasData,
     debouncedArtist,
+    addTrackForm,
   };
 };

@@ -1,15 +1,51 @@
-.GoActivate {
+.goActivate {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: 24px;
   height: 100vh;
   flex-direction: column;
+  padding: 10px 25px;
 }
 
-.link {
-  padding: 6px 12px;
-  background-color: var(--prm);
-  font-size: 20px;
-  border-radius: 10px;
+.text {
+  padding: 0px 25px;
+  text-align: center;
+  white-space: wrap;
+}
+
+.email {
+  margin-top: 10px;
+  display: inline-block;
+  font-size: 16px;
+  padding: 5px 10px;
+  background-color: var(--black-lt);
+  border-radius: 8px;
+  border: 1px solid var(--prm);
+}
+
+.link_container {
+  margin-top: 10px;
+}
+
+@media (max-width: 720px) {
+  .goActivate {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 520px) {
+  .goActivate {
+    font-size: 14px;
+  }
+
+  .email {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .goActivate {
+    font-size: 12px;
+  }
 }

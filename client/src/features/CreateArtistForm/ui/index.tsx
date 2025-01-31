@@ -1,13 +1,11 @@
 import styles from './CreateArtistForm.module.scss';
-import { Link } from 'react-router-dom';
-import { useCreateArtistForm } from '../model/useCreateArtistForm';
 import {
   Btn,
-  InputFile,
-  InputForHook,
+  InputImageFile,
   ModalContainer,
   Options,
-  TextareaForHook,
+  UITextAreaField,
+  UITextField,
 } from '@/shared/ui';
 import { PRIVATE_ROUTES } from '@/shared/consts';
 
@@ -30,21 +28,19 @@ export const CreateArtistForm = () => {
   return (
     <form className={styles.CreateArtistForm} onSubmit={handleSubmit}>
       <Link to={PRIVATE_ROUTES.ARTISTS}>
-        <Btn small={true}>Назад</Btn>
+        <Btn>Назад</Btn>
       </Link>
-      <InputForHook inputValue={name} placeholder="Введите имя исполнителя" />
-      <TextareaForHook inputValue={description} placeholder="Введите описание исполнителя" />
+      <UITextField value={name.value} onChange={name.onChange} placeholder="Введите имя исполнителя" />
+      <UITextAreaField value={description.value} onChange={description.onChange} placeholder="Введите описание исполнителя" />
       <Options
         options={options}
         //setOptions={setOptions}
         //setValue={genre.setValue}
         //value={genre.value}
       />
-      <InputFile
-        isAudio={false}
+      <InputImageFile
         placeholder="Загрузите обложку исполнителя"
         setFile={setPicture}
-        fileName={picture?.name}
       />
       <Btn onClick={handleSubmit} isLoading={isLoading} disabled={!hasData}>
         Отправить

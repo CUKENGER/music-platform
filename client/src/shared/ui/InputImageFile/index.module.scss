@@ -1,0 +1,52 @@
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+.input {
+  display: none;
+}
+
+.label {
+  padding: 10px;
+  color: var(--white);
+  background-color: var(--black-lt);
+  border: 2px solid var(--prm);
+  cursor: pointer;
+  display: flex;
+  border-radius: 10px;
+  text-align: center;
+
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.uploadPicture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.reset_btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+@media (max-width: 700px) {
+  .label {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 550px) {
+  .label {
+    font-size: 11px;
+  }
+}

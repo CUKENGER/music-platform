@@ -4,8 +4,7 @@ import styles from './EditArtistForm.module.scss';
 import { useInput, useModal } from '@/shared/hooks';
 import { useGetOneArtist, useUpdateArtist } from '@/entities/artist';
 import { genres } from '@/shared/moks';
-import { API_URL, PRIVATE_ROUTES } from '@/shared/consts';
-import { Btn, Input, InputFile, ModalContainer, Options, Textarea } from '@/shared/ui';
+import { Btn, InputImageFile, ModalContainer, Options, UITextAreaField, UITextField } from '@/shared/ui';
 
 export const EditArtistForm = () => {
   const { id } = useParams();
@@ -52,26 +51,32 @@ export const EditArtistForm = () => {
   return (
     <form className={styles.form}>
       <Link to={`${PRIVATE_ROUTES.ARTISTS}/${id}`}>
-        <Btn small={true}>Назад</Btn>
+        <Btn>Назад</Btn>
       </Link>
       <div className={styles.container}>
         <div className={styles.inputs_container}>
-          <Input inputValue={name} placeholder="Введите имя исполнителя" />
-          <Textarea inputValue={description} placeholder="Введите описание исполнителя" />
+          <UITextField 
+            value={name.value}
+            onChange={name.onChange}
+            placeholder="Введите имя исполнителя" 
+          />
+          <UITextAreaField 
+            value={description.value}
+            onChange={description.onChange}
+            placeholder="Введите описание исполнителя" 
+          />
           <Options
             options={options}
-            setOptions={setOptions}
-            setValue={genre.setValue}
-            value={genre.value}
+            // setOptions={setOptions}
+            // setValue={genre.setValue}
+            // value={genre.value}
           />
         </div>
         <div className={styles.picture_container}>
           <div className={styles.picture_input_container}>
-            <InputFile
-              isAudio={false}
+            <InputImageFile
               placeholder="Загрузите обложку исполнителя"
               setFile={setPicture}
-              fileName={picture?.name}
               currentPicture={API_URL + artist?.picture}
             />
           </div>

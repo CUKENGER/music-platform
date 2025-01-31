@@ -1,13 +1,13 @@
 import { ChangeEvent, InputHTMLAttributes, useId } from 'react';
-import { UIInputField } from '../UIInputField';
-import { UILabelField } from '../UILabelField';
 import { WarningMessage } from '../WarningMessage';
 import cl from './index.module.scss';
 import { useDebounce } from '@/shared/hooks';
+import { UILabel } from '../UILabel';
+import { UIInput } from '../UIInput';
 
 interface Warning {
   condition?: boolean;
-  text: string;
+  text?: string;
 }
 
 interface UITextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -38,8 +38,8 @@ export const UITextField = ({
   const defaultId = useId();
   return (
     <div className={cl.container}>
-      {label && <UILabelField htmlFor={id ?? defaultId}>{label}</UILabelField>}
-      <UIInputField
+      {label && <UILabel htmlFor={id ?? defaultId}>{label}</UILabel>}
+      <UIInput
         id={id ?? defaultId}
         containerClassName={containerClassName}
         className={className}
