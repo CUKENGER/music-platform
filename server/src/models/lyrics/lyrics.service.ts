@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class LyricsService {
@@ -18,9 +19,9 @@ export class LyricsService {
     };
 
     try {
-      const response = await this.httpService
-        .get(`${this.BASE_URL}/track.search`, { params })
-        .toPromise();
+      const response = await lastValueFrom(
+        this.httpService.get(`${this.BASE_URL}/track.search`, { params }),
+      );
       const trackInfo = response.data.message.body.track_list[0].track;
       return {
         track_id: trackInfo.track_id,
@@ -41,9 +42,9 @@ export class LyricsService {
     };
 
     try {
-      const response = await this.httpService
-        .get(`${this.BASE_URL}/track.lyrics.get`, { params })
-        .toPromise();
+      const response = await lastValueFrom(
+        this.httpService.get(`${this.BASE_URL}/track.lyrics.get`, { params }),
+      );
       const lyrics = response.data.message.body.lyrics.lyrics_body;
       return lyrics.substring(0, lyrics.lastIndexOf('...')).trim();
     } catch (error) {

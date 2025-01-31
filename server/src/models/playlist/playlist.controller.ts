@@ -14,10 +14,14 @@ import { ApiHeader, ApiOperation } from '@nestjs/swagger';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AddTrackToPlaylistDto } from './dto/add-track-playlist.dto';
+import { Logger } from 'nestjs-pino';
 
 @Controller('playlists')
 export class PlaylistController {
-  constructor(private playlistService: PlaylistService) {}
+  constructor(
+    private playlistService: PlaylistService,
+    private readonly logger: Logger,
+  ) {}
 
   @Post()
   @ApiHeader({
@@ -32,7 +36,7 @@ export class PlaylistController {
 
   @Post('track')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'picture', maxCount: 1 }, { name: 'tracks' }]))
-  addTrackToPlaylist(@UploadedFiles() files, dto: AddTrackToPlaylistDto) {
+  addTrackToPlaylist(@UploadedFiles() files: File[], dto: AddTrackToPlaylistDto) {
     return this.playlistService.addTrackToPlaylist(dto, files);
   }
 
@@ -43,6 +47,7 @@ export class PlaylistController {
     @Query('count', ParseIntPipe) count: number = 20,
     @Query('sortBy') sortBy: string = 'Все',
   ) {
-    return this.playlistService.getAll(page, count, sortBy);
+    this.logger.log(`PlaylistController getAll page: ${page}, count: ${count}, sortBy: ${sortBy}`);
+    // return this.playlistService.getAll(page, count, sortBy);
   }
 }

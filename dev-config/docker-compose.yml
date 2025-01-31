@@ -3,7 +3,7 @@ services:
     build:
       context: ../client
       dockerfile: ../dev-config/Dockerfile.client
-    container_name: music-platform-client
+    container_name: mpclient
     ports:
       - "5173:5173"
     environment:
@@ -19,7 +19,7 @@ services:
     build:
       context: ../server
       dockerfile: ../dev-config/Dockerfile.server
-    container_name: music-platform-server
+    container_name: mpserver
     ports:
       - "5000:${SERVER_PORT}"
     environment:
@@ -43,7 +43,7 @@ services:
         condition: service_healthy
   db:
     image: postgres:14.1-alpine
-    container_name: music-platform-db
+    container_name: mpdb
     # restart: always
     ports:
       - "5433:${DATABASE_PORT}"

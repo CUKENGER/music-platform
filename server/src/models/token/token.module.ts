@@ -1,12 +1,20 @@
 import { Module } from '@nestjs/common';
-import { TokenService } from '../token/token.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'prisma/prisma.service';
+import { TokenRepository } from './token.repository';
+import { TokenPublicService } from './tokenPublic.service';
 
 @Module({
-  providers: [TokenService, JwtService, PrismaService],
+  providers: [
+    JwtService, 
+    TokenRepository,
+    TokenPublicService,
+  ],
   controllers: [],
-  imports: [JwtModule],
-  exports: [TokenService],
+  imports: [
+    JwtModule
+  ],
+  exports: [
+    TokenPublicService
+  ],
 })
 export class TokenModule {}

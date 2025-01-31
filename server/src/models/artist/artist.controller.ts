@@ -15,17 +15,23 @@ import { ArtistService } from './artist.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { CreateArtistCommentDto } from './dto/create-artistComment.dto';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
+import { Logger } from 'nestjs-pino';
+import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Controller('artists')
 export class ArtistController {
-  constructor(private readonly artistService: ArtistService) {}
+  constructor(
+    private readonly artistService: ArtistService,
+    private readonly logger: Logger,
+  ) {}
 
   @Post()
+  @ApiCreatedResponse()
   @UseInterceptors(FileFieldsInterceptor([{ name: 'picture', maxCount: 1 }]))
-  async create(@UploadedFiles() files, @Body() dto: CreateArtistDto) {
+  async create(@UploadedFiles() files: {picture: Express.Multer.File}, @Body() dto: CreateArtistDto) {
     const { picture } = files;
-    console.log('files', files);
+    this.logger.log('files', files);
     return this.artistService.create(dto, picture);
   }
 
@@ -78,17 +84,17 @@ export class ArtistController {
 
   @Post(':id/like')
   addLike(@Param('id', ParseIntPipe) id: number) {
-    return this.artistService.addLike(id);
+    return this.artistService.updateLike(id, true);
   }
 
   @Delete(':id/like')
   deleteLike(@Param('id', ParseIntPipe) id: number) {
-    return this.artistService.deleteLike(id);
+    return this.artistService.updateLike(id, false);
   }
 
   @Put(':id')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'picture', maxCount: 1 }]))
-  async updateArtist(@Param('id', ParseIntPipe) id, @Body() newData, @UploadedFiles() files) {
+  async updateArtist(@Param('id', ParseIntPipe) id: number, @Body() newData: Partial<UpdateArtistDto>, @UploadedFiles() files: {picture: Express.Multer.File}) {
     const picture = files?.picture ? files?.picture[0] : null;
     return this.artistService.updateArtist(id, newData, picture);
   }

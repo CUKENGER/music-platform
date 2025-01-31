@@ -17,12 +17,12 @@ const start = async () => {
   try {
     const PORT = Number(process.env.SERVER_PORT) || 5000;
     const app = await NestFactory.create(AppModule, {
-      bufferLogs: true
+      bufferLogs: true,
     });
     const logger = app.get(Logger);
     app.enableCors({
       credentials: true,
-      origin: [process.env.CLIENT_URL, 'http://localhost:5173/'],
+      origin: [process.env.CLIENT_URL || 'http://localhost:5173'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: [
         'Content-Type',
@@ -52,6 +52,17 @@ const start = async () => {
       .setDescription('Music platform for poor')
       .setVersion('1.0.0')
       .addTag('CUKENGER')
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          name: 'JWT',
+          description: 'Enter JWT token',
+          in: 'header',
+        },
+        'JWT-auth', 
+      )
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('/api/docs', app, document, {
@@ -59,24 +70,26 @@ const start = async () => {
     });
     app.useLogger(logger);
     app.useGlobalInterceptors(new LoggingInterceptor(logger));
-    app.useGlobalPipes(new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      exceptionFactory: (errors) => {
-        const formattedErrors = errors.map(err => {
-          const messages = Object.values(err.constraints || {});
-          return {
-            field: err.property.split(' '),
-            messages: messages.length ? messages : ['Unknown error'],
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        exceptionFactory: (errors) => {
+          const formattedErrors = errors.map((err) => {
+            const messages = Object.values(err.constraints || {});
+            return {
+              field: err.property.split(' '),
+              messages: messages.length ? messages : ['Unknown error'],
+            };
+          });
+          const response = {
+            message: `Validation failed`,
+            errors: formattedErrors,
           };
-        });
-        const response = {
-          message: `Validation failed`,
-          errors: formattedErrors
-        }
-        return ApiError.BadRequest(response.message, response.errors);
-      }
-    }));
+          return ApiError.BadRequest(response.message, response.errors);
+        },
+      }),
+    );
     app.useGlobalFilters(new AllExceptionsFilter(logger));
 
     await app.listen(PORT);

@@ -5,7 +5,6 @@ import {
   ParseIntPipe,
   Post,
   Req,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommentService } from './comment.service';

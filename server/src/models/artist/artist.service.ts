@@ -1,65 +1,44 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { CreateArtistCommentDto } from './dto/create-artistComment.dto';
-import * as path from 'path';
-import * as fs from 'fs/promises';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { PrismaService } from 'prisma/prisma.service';
-import { FileService, FileType } from 'models/file/file.service';
+import { FileService } from 'models/file/file.service';
+import { Logger } from 'nestjs-pino';
+import { ArtistRepository } from './artist.repository';
+import { Artist, Prisma } from '@prisma/client';
+import { CommentPublicService } from 'models/comment/comment.public';
+import { FileType } from 'models/file/types';
 
 @Injectable()
 export class ArtistService {
   constructor(
     private prisma: PrismaService,
     private fileService: FileService,
+    private artistRepository: ArtistRepository,
+    private readonly commentPublicService: CommentPublicService,
+    private logger: Logger,
   ) {}
 
-  async create(dto: CreateArtistDto, picture: Express.Multer.File | string) {
-    await this.ensureArtistDoesNotExist(dto.name);
-
-    let imagePath;
-    if (picture as Express.Multer.File) {
-      imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
-    } else {
-      imagePath = picture;
+  async create(dto: CreateArtistDto, picture: Express.Multer.File): Promise<Artist> {
+    const artist = await this.artistRepository.findByName(dto.name, this.prisma);
+    if (artist) {
+      throw new HttpException('Artist with this name already exist', HttpStatus.CONFLICT);
     }
 
-    return await this.prisma.artist.create({
-      data: {
-        ...dto,
-        listens: 0,
-        likes: 0,
-        picture: imagePath,
-        tracks: { create: [] },
-        albums: { create: [] },
-      },
-      include: {
-        tracks: true,
-        albums: true,
-      },
-    });
+    const imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
+
+    return await this.artistRepository.create(dto, imagePath, this.prisma);
   }
 
   async getAll() {
-    return await this.prisma.artist.findMany({
-      include: {
-        comments: true,
-        likedByUsers: true,
-        albums: true,
-        tracks: true,
-      },
-    });
+    return await this.artistRepository.getAll();
   }
 
   async getAllPage(page: number, count: number, sortBy: string) {
     const limit = count;
     const offset = page * limit;
-    let orderBy: any = {};
+    let orderBy: Record<string, 'asc' | 'desc'> = {};
 
     switch (sortBy) {
       case 'Все':
@@ -75,159 +54,81 @@ export class ArtistService {
         orderBy = { id: 'asc' };
     }
 
-    try {
-      return await this.prisma.artist.findMany({
-        skip: offset,
-        take: Number(limit),
-        orderBy: orderBy,
-        include: {
-          tracks: true,
-          albums: true,
-          comments: true,
-          likedByUsers: true,
-        },
-      });
-    } catch (e) {
-      console.error(`Error get All artists:`, e);
-    }
+    await this.artistRepository.getByPageCountOrder(offset, limit, orderBy);
   }
 
   async listen(id: number) {
-    const artist = await this.getArtistById(id);
-    return await this.prisma.artist.update({
-      where: { id },
-      data: { listens: artist.listens + 1 },
-    });
+    const artist = await this.validateArtist(id);
+    return await this.artistRepository.updateListen(id, artist);
   }
 
-  async addLike(id: number) {
-    const artist = await this.getArtistById(id);
-    return await this.prisma.artist.update({
-      where: { id },
-      data: { likes: artist.likes + 1 },
-    });
-  }
-
-  async deleteLike(id: number) {
-    const artist = await this.getArtistById(id);
-    return await this.prisma.artist.update({
-      where: { id },
-      data: { likes: artist.likes - 1 },
-    });
+  async updateLike(id: number, increment: boolean) {
+    const artist = await this.validateArtist(id);
+    const newLikes = increment ? artist.likes + 1 : Math.max(artist.likes - 1, 0);
+    return await this.artistRepository.updateLike(id, newLikes);
   }
 
   async getOne(id: number) {
-    return await this.prisma.artist.findUnique({
-      where: { id },
-      include: {
-        tracks: {
-          take: 5,
-          orderBy: {
-            listens: 'desc',
-          },
-          include: {
-            artist: true,
-            likedByUsers: true,
-            listenedByUsers: true,
-          },
-        },
-        albums: { include: { tracks: true } },
-      },
-    });
+    return await this.artistRepository.getOne(id);
   }
 
-  async addComment(dto: CreateArtistCommentDto) {
-    const artist = await this.getArtistById(dto.artistId);
-    return await this.prisma.comment.create({
-      data: { ...dto, artistId: dto.artistId },
-    });
+  async addComment(dto: CreateArtistCommentDto): Promise<Prisma.CommentGetPayload<{include: {parent: true, replies: true}}>> {
+    const artist = await this.validateArtist(dto.artistId);
+    this.logger.log('artist', artist);
+    return await this.commentPublicService.create(dto)
   }
 
   async delete(id: number) {
-    const artist = await this.getArtistById(id);
-    await this.removeArtistPicture(artist.picture);
+    const artist = await this.validateArtist(id);
 
-    await this.prisma.comment.deleteMany({ where: { artistId: id } });
+    if (artist.picture) {
+      this.removePicture(artist.picture);
+    }
+
+    await this.commentPublicService.deleteManyForArtist(id);
     await this.prisma.track.deleteMany({ where: { artistId: id } });
-    await this.prisma.album.deleteMany({ where: { artistId: id } });
-    await this.prisma.artist.delete({ where: { id } });
-
-    return artist;
   }
 
   async searchByName(name: string) {
-    return await this.prisma.artist.findMany({
-      where: {
-        name: {
-          contains: name,
-          mode: 'insensitive',
-        },
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    });
+    return await this.artistRepository.searchByName(name);
   }
 
   async updateArtist(id: number, newData: Partial<UpdateArtistDto>, picture: Express.Multer.File) {
-    let imagePath;
+    let imagePath: string;
     if (picture) {
-      console.log('picture', picture);
+      this.logger.log('picture', picture);
       imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
       newData.picture = imagePath;
     }
 
-    console.log('newData', newData);
+    this.logger.log('newData', newData);
 
-    return await this.prisma.artist.update({
-      where: { id },
-      data: { ...newData, picture: imagePath || undefined },
-    });
+    return await this.artistRepository.update(id, newData);
   }
 
   async getPopularTracks(id: number) {
-    return await this.prisma.artist.findUnique({
-      where: { id },
-      include: {
-        tracks: {
-          orderBy: {
-            listens: 'desc',
-          },
-          include: {
-            artist: true,
-            likedByUsers: true,
-            listenedByUsers: true,
-          },
-        },
-      },
-    });
+    return await this.artistRepository.getWithPopularTracks(id);
   }
 
-  private async getArtistById(id: number) {
-    const artist = await this.prisma.artist.findUnique({ where: { id } });
-    if (!artist) {
-      throw new NotFoundException(`Artist with id ${id} not found`);
-    }
-    return artist;
-  }
-
-  // to create
-  private async ensureArtistDoesNotExist(name: string) {
-    const existingArtist = await this.prisma.artist.findFirst({ where: { name } });
-    if (existingArtist) {
-      throw new ConflictException('Artist with this name already exists');
-    }
-  }
-
-  // to delete
-  private async removeArtistPicture(picturePath: string) {
+  private removePicture(picturePath: string) {
     if (picturePath) {
       try {
-        const resolvedPath = path.resolve('static/', picturePath);
-        await fs.unlink(resolvedPath);
+        this.fileService.cleanupFile(picturePath);
       } catch (error) {
-        console.error(`Error deleting picture: ${error.message}`);
+        this.logger.warn(`Error deleting picture: ${error.message}`);
       }
     }
+  }
+
+  private async validateArtist(id: number): Promise<Artist> {
+    if (id <= 0) {
+      throw new HttpException(`Invalid artist id: ${id}`, HttpStatus.BAD_REQUEST);
+    }
+
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
+    if (!artist) {
+      throw new HttpException(`Artist with id ${id} not found`, HttpStatus.NOT_FOUND);
+    }
+    return artist;
   }
 }

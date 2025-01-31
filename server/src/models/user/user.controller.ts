@@ -2,23 +2,24 @@ import {
   Body,
   Controller,
   Get,
-  Param,
-  Post,
   Headers,
-  UseGuards,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
-import { UserDto } from './dto/user.dto';
-import { UserService } from './user.service';
-import { ApiOperation, ApiResponse, ApiTags, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiBody, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
+import { AuthService } from 'models/auth/auth.service';
+import { AddRoleDto } from 'models/auth/dto/addRole.dto';
 import { BanUserDto } from 'models/auth/dto/banUser.dto';
 import { RolesGuard } from 'models/auth/roles.guard';
 import { Roles } from 'models/auth/rolesAuth.decorator';
-import { AddRoleDto } from 'models/auth/dto/addRole.dto';
-import { AuthService } from 'models/auth/auth.service';
-import { ApiHeader } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
+import { UserDto } from './dto/user.dto';
+import { UserService } from './user.service';
 
 @ApiTags('Users')
 @Controller('user')
@@ -26,7 +27,7 @@ export class UserController {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-    private readonly logger: Logger,
+    private readonly logger: Logger
   ) { }
 
   @ApiOperation({ summary: 'Создание пользователя' })
@@ -34,7 +35,7 @@ export class UserController {
   @HttpCode(HttpStatus.CREATED)
   @Post()
   create(@Body() dto: UserDto) {
-    console.log(
+    this.logger.log(
       { service: 'UserController', method: 'create', dto: dto },
       `UserController create`,
       dto,
@@ -66,7 +67,7 @@ export class UserController {
   @Roles('USER')
   @UseGuards(RolesGuard)
   @Get(':id')
-  getOne(@Param('id') id: number) {
+  getOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.getOne(id);
   }
 
@@ -112,7 +113,7 @@ export class UserController {
         `UserController: Error checking username availability - ${error.message}`,
         error.stack,
       );
-      throw error; 
+      throw error;
     }
   }
 }

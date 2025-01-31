@@ -16,7 +16,6 @@ COPY . .
 
 # Генерируем Prisma клиент после копирования кода
 RUN yarn prisma generate
-CMD ["yarn", "prisma", "generate"]
 
 # Открываем порт 5000
 EXPOSE 5000

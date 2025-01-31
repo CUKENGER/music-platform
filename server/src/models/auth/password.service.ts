@@ -5,7 +5,9 @@ import { Logger } from 'nestjs-pino';
 
 @Injectable()
 export class PasswordService {
-  constructor(private readonly logger: Logger) { }
+  constructor(
+    private readonly logger: Logger
+  ) { }
 
   private async generateSalt(): Promise<string> {
     this.logger.log(`PasswordService generateSalt`);

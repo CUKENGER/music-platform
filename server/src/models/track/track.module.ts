@@ -1,28 +1,34 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TrackController } from './track.controller';
 import { TrackService } from './track.service';
-import { PrismaService } from 'prisma/prisma.service';
-import { FileService } from 'models/file/file.service';
 import { FileModule } from 'models/file/file.module';
-import { AudioService } from 'models/audioService/audioService.service';
-import { CommentService } from 'models/comment/comment.service';
-import { JwtService } from '@nestjs/jwt';
 import { TrackHelperService } from './trackHelper.service';
-import { ArtistService } from 'models/artist/artist.service';
+import { TrackPublicService } from './track.public';
+import { ArtistModule } from 'models/artist/artist.module';
+import { CommentModule } from 'models/comment/comment.module';
+import { TrackRepository } from './track.repository';
+import { AudioModule } from 'models/audio/audio.module';
+import { AlbumModule } from 'models/album/album.module';
+import { FeaturedArtistModule } from 'models/featuredArtist/featuredArtist.module';
+import { UserModule } from 'models/user/user.module';
 
 @Module({
-  imports: [FileModule],
+  imports: [
+    FileModule, 
+    forwardRef(() => ArtistModule), 
+    CommentModule,
+    AudioModule,
+    forwardRef(() => AlbumModule),
+    FeaturedArtistModule,
+    UserModule,
+  ],
   controllers: [TrackController],
   providers: [
     TrackService,
-    PrismaService,
-    FileService,
-    AudioService,
-    CommentService,
-    JwtService,
     TrackHelperService,
-    ArtistService,
+    TrackPublicService,
+    TrackRepository
   ],
-  exports: [TrackService],
+  exports: [TrackPublicService],
 })
 export class TrackModule {}

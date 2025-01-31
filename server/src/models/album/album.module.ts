@@ -1,35 +1,26 @@
 import { Module } from '@nestjs/common';
 import { AlbumController } from './album.controller';
+import { AlbumPublicService } from './album.public';
 import { AlbumService } from './album.service';
-import { PrismaService } from 'prisma/prisma.service';
-import { ArtistService } from 'models/artist/artist.service';
-import { AudioService } from 'models/audioService/audioService.service';
-import { CommentService } from 'models/comment/comment.service';
-import { AlbumHelperService } from './albumHelper.service';
-import { UserService } from 'models/user/user.service';
-import { RoleService } from 'models/role/role.service';
-import { JwtService } from '@nestjs/jwt';
-import { FileService } from 'models/file/file.service';
-import { TrackService } from 'models/track/track.service';
-import { TrackHelperService } from 'models/track/trackHelper.service';
+import { FeaturedArtistModule } from 'models/featuredArtist/featuredArtist.module';
+import { TrackModule } from 'models/track/track.module';
+import { AlbumRepository } from './album.repository';
+import { FileModule } from 'models/file/file.module';
+import { ArtistModule } from 'models/artist/artist.module';
 
 @Module({
-  imports: [],
+  imports: [
+    FeaturedArtistModule,
+    TrackModule,
+    FileModule,
+    ArtistModule
+  ],
   controllers: [AlbumController],
   providers: [
-    PrismaService,
     AlbumService,
-    ArtistService,
-    AudioService,
-    CommentService,
-    AlbumHelperService,
-    UserService,
-    RoleService,
-    JwtService,
-    FileService,
-    TrackService,
-    TrackHelperService,
-    AudioService,
+    AlbumRepository,
+    AlbumPublicService,
   ],
+  exports: [AlbumPublicService],
 })
 export class AlbumModule {}

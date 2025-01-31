@@ -2,84 +2,62 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
-  InternalServerErrorException,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { ApiError } from 'exceptions/api.error';
+import { CommentRepository } from './comment.repository';
+import { Logger } from 'nestjs-pino';
+import { CommentWithLikes } from './types';
 
 @Injectable()
 export class CommentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly commentRepository: CommentRepository,
+    private readonly logger: Logger,
+  ) {}
 
-  async getCommentsByEntity(entityType: 'track' | 'artist' | 'album', entityId: any) {
+  async getCommentsByEntity(entityType: 'track' | 'artist' | 'album', entityId: { id: number }) {
     this.validateEntityType(entityType);
     const id = this.validateEntityId(entityId);
 
     const whereCondition = this.getWhereConditionByEntity(entityType, id);
 
     try {
-      const comments = await this.prisma.comment.findMany({
-        where: {
-          ...whereCondition,
-          parentId: null,
-        },
-        include: {
-          replies: {
-            orderBy: {
-              createdAt: 'desc',
-            },
-          },
-          likedByUsers: true,
-        },
-      });
-      return comments;
+      return await this.commentRepository.getMany(whereCondition);
     } catch (error) {
-      console.error('Error fetching comments:', error);
-      throw new InternalServerErrorException('Error fetching comments');
+      this.logger.error('Error fetching comments:', error);
+      throw ApiError.InternalServerError('Error fetching comments', error);
     }
   }
 
   async addCommentOrReply(dto: CreateCommentDto) {
-    const { parentId, username, text, trackId, artistId, albumId } = dto;
-
-    if (parentId) {
-      await this.ensureCommentExists(parentId);
+    if (dto.parentId) {
+      await this.ensureCommentExists(dto.parentId);
     }
 
     try {
-      const comment = await this.prisma.comment.create({
-        data: {
-          username,
-          text,
-          parentId,
-          trackId,
-          artistId,
-          albumId,
-        },
-        include: {
-          parent: true,
-          replies: true,
-        },
-      });
-
-      return comment;
+      return await this.commentRepository.create(dto);
     } catch (error) {
-      console.error('Error creating comment:', error);
-      throw new InternalServerErrorException('Error creating comment');
+      this.logger.error('Error creating comment:', error);
+      throw ApiError.InternalServerError('Error creating comment', error);
     }
   }
 
   async deleteCommentOrReply(commentId: number) {
-    const comment = await this.prisma.comment.findUnique({ where: { id: commentId } });
+    const comment = await this.commentRepository.isExist(commentId);
 
     if (!comment) {
       throw new NotFoundException('Comment not found');
     }
 
     try {
-      return await this.prisma.comment.delete({ where: { id: commentId } });
+      return await this.commentRepository.deleteComment(commentId);
     } catch (error) {
-      throw new InternalServerErrorException('Error deleting comment');
+      throw ApiError.InternalServerError('Error deleting comment', error);
     }
   }
 
@@ -87,28 +65,15 @@ export class CommentService {
     const user = await this.findUserByToken(token);
     const userId = Number(user.id);
     const comment = await this.ensureCommentExistsWithLikes(id);
-
-    const hasLiked = comment.likedByUsers.some((likedUser) => likedUser.id === userId);
-
-    if (hasLiked) {
-      throw new BadRequestException('User has already liked this comment');
+    if (this.hasUserLikedComment(comment, userId)) {
+      throw new HttpException('User has already liked this comment', HttpStatus.BAD_REQUEST);
     }
-
+    const newLikes = comment.likes + 1;
     try {
-      await this.prisma.comment.update({
-        where: { id },
-        data: {
-          likes: comment.likes + 1,
-          likedByUsers: {
-            connect: { id: userId },
-          },
-        },
-      });
-
-      return { message: 'Like added' };
+      return await this.commentRepository.updateLike(id, newLikes);
     } catch (error) {
-      console.error(`Error adding like: ${error}`);
-      throw new InternalServerErrorException('Error adding like');
+      this.logger.error(`Error adding like: ${error}`);
+      throw ApiError.InternalServerError('Error adding like', error);
     }
   }
 
@@ -116,33 +81,23 @@ export class CommentService {
     const user = await this.findUserByToken(token);
     const userId = Number(user.id);
     const comment = await this.ensureCommentExistsWithLikes(id);
-
-    const hasLiked = comment.likedByUsers.some((likedUser) => likedUser.id === userId);
-
-    if (!hasLiked) {
-      throw new BadRequestException('User has not liked this comment');
+    if (!this.hasUserLikedComment(comment, userId)) {
+      throw new HttpException('User has not liked this comment', HttpStatus.BAD_REQUEST);
     }
-
     if (comment.likes <= 0) {
-      throw new BadRequestException('Cannot remove like, no likes present');
+      throw ApiError.BadRequest('Cannot remove like, no likes present');
     }
-
+    const newLikes = comment.likes - 1;
     try {
-      await this.prisma.comment.update({
-        where: { id },
-        data: {
-          likes: comment.likes - 1,
-          likedByUsers: {
-            disconnect: { id: userId },
-          },
-        },
-      });
-
-      return { message: 'Like removed' };
+      return await this.commentRepository.updateLike(id, newLikes);
     } catch (error) {
-      console.error(`Error deleting like: ${error}`);
-      throw new InternalServerErrorException(`Error deleting like: ${error}`);
+      this.logger.error(`Error deleting like: ${error}`);
+      throw ApiError.InternalServerError(`Error deleting like: ${error}`, error);
     }
+  }
+
+  private hasUserLikedComment(comment: CommentWithLikes, userId: number): boolean {
+    return comment.likedByUsers.some((likedUser) => likedUser.id === userId);
   }
 
   // to getComments
@@ -152,7 +107,7 @@ export class CommentService {
     }
   }
 
-  private validateEntityId(entityId: any): number {
+  private validateEntityId(entityId: { id: number }): number {
     const id = entityId && typeof entityId === 'object' ? Number(entityId?.id) : Number(entityId);
 
     if (isNaN(id)) {
@@ -162,7 +117,10 @@ export class CommentService {
     return id;
   }
 
-  private getWhereConditionByEntity(entityType: string, id: number) {
+  private getWhereConditionByEntity(
+    entityType: string,
+    id: number,
+  ): { trackId: number } | { artistId: number } | { albumId: number } {
     switch (entityType) {
       case 'track':
         return { trackId: id };
@@ -176,22 +134,17 @@ export class CommentService {
   }
 
   // to add
-  private async ensureCommentExists(parentId: number) {
-    const parentComment = await this.prisma.comment.findUnique({
-      where: { id: parentId },
-    });
+  private async ensureCommentExists(parentId: number): Promise<void> {
+    const parentComment = await this.commentRepository.isExist(parentId);
 
     if (!parentComment) {
-      throw new NotFoundException('Parent comment not found');
+      throw new HttpException('Parent comment not found', HttpStatus.NOT_FOUND);
     }
   }
 
   // to likes
-  private async ensureCommentExistsWithLikes(id: number) {
-    const comment = await this.prisma.comment.findUnique({
-      where: { id },
-      include: { likedByUsers: true },
-    });
+  private async ensureCommentExistsWithLikes(id: number): Promise<CommentWithLikes> {
+    const comment = await this.commentRepository.isExist(id);
 
     if (!comment) {
       throw new NotFoundException('Comment not found');

@@ -1,5 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'; import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthMiddleware } from 'middleware/auth.middleware';
 import { AuthModule } from 'models/auth/auth.module';
@@ -13,7 +12,6 @@ import { UserModule } from 'models/user/user.module';
 import { LyricsModule } from 'models/lyrics/lyrics.module';
 import { HttpModule } from '@nestjs/axios';
 import { FileModule } from 'models/file/file.module';
-import { AudioModule } from 'models/audioService/audioService.module';
 import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -24,6 +22,9 @@ import { UserCleanupService } from 'models/user/user-cleanup.service';
 import { LoggerModule } from 'nestjs-pino';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from 'exceptions/allExceptionFilter';
+import { FeaturedArtistModule } from 'models/featuredArtist/featuredArtist.module';
+import { UserRoleModule } from 'models/userRole/userRole.module';
+import { AudioModule } from 'models/audio/audio.module';
 
 @Module({
   imports: [
@@ -98,9 +99,14 @@ import { AllExceptionsFilter } from 'exceptions/allExceptionFilter';
     FileModule,
     AudioModule,
     PlaylistModule,
+    FeaturedArtistModule,
+    UserRoleModule,
   ],
   controllers: [AudioController],
-  providers: [UserCleanupService, { provide: APP_FILTER, useClass: AllExceptionsFilter }],
+  providers: [
+    UserCleanupService, 
+    { provide: APP_FILTER, useClass: AllExceptionsFilter }
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
