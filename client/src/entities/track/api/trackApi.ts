@@ -54,6 +54,8 @@ export const create = async (trackInfo: CreateTrackDto): Promise<ITrack> => {
     formData.append('picture', trackInfo.picture);
     formData.append('audio', trackInfo.audio);
 
+    console.log('trackInfo', trackInfo);
+
     const response = await axiosInstance.post('/tracks', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

@@ -2,7 +2,8 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateTrackDto } from './dto/create-track.dto';
 import { CreateTrackCommentDto } from './dto/create-trackComment-dto';
 import { CreateReplyTrackCommentDto } from './dto/create-trackReplyComment.dto';
-import { PrismaService } from 'prisma/prisma.service'; import { FileService } from 'models/file/file.service';
+import { PrismaService } from 'prisma/prisma.service';
+import { FileService } from 'models/file/file.service';
 import { Track } from '@prisma/client';
 import { TrackHelperService } from './trackHelper.service';
 import * as path from 'path';
@@ -21,7 +22,7 @@ import { FeaturedArtistPublicService } from 'models/featuredArtist/featuredArtis
 export class TrackService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly fileService: FileService, 
+    private readonly fileService: FileService,
     private readonly audioService: AudioService,
     private readonly trackHelperService: TrackHelperService,
     private readonly artistPublicService: ArtistPublicService,
@@ -39,11 +40,12 @@ export class TrackService {
     let audioPath: string = '';
     let imagePath: string = '';
     try {
+      this.logger.log(`create track dto:`, { dto: dto });
       audioPath = await this.fileService.createFile(FileType.AUDIO, audio);
       imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
       this.logger.log(`audioPath: ${audioPath}\n imagePath: ${imagePath}`);
       const duration = await this.audioService.getAudioDuration(
-        path.resolve(STATIC_FILES_PATH, audioPath),
+        path.resolve(__dirname, '../../../static', audioPath),
       );
       const artist = await this.artistPublicService.findOrCreateArtist(
         { artist: dto.artist, genre: dto.genre },
@@ -55,7 +57,7 @@ export class TrackService {
         name: dto.name,
         description: '',
         releaseDate: new Date().toISOString(),
-      }
+      };
       const album = await this.albumPublicService.createSingleAlbum(
         albumDto,
         imagePath,
@@ -85,10 +87,10 @@ export class TrackService {
       return newTrack;
     } catch (error) {
       if (imagePath && fs.existsSync(imagePath)) {
-        this.fileService.cleanupFile(imagePath);
+        this.fileService.cleanupFile(FileType.IMAGE, imagePath);
       }
       if (audioPath && fs.existsSync(audioPath)) {
-        this.fileService.cleanupFile(audioPath);
+        this.fileService.cleanupFile(FileType.AUDIO, audioPath);
       }
       console.error('Error creating track:', error);
       throw ApiError.InternalServerError(`Error creating track: ${error}`, error);
@@ -236,7 +238,7 @@ export class TrackService {
 
   async getLimitPopular() {
     try {
-      return await this.trackRepository.getLimitPopular()
+      return await this.trackRepository.getLimitPopular();
     } catch (e) {
       console.error(`Error get limit popular tracks:`, e);
       throw ApiError.InternalServerError(`Error get limit popular tracks:`, e);
@@ -245,7 +247,7 @@ export class TrackService {
 
   async getAllPopular() {
     try {
-      return await this.trackRepository.getAllPopular() 
+      return await this.trackRepository.getAllPopular();
     } catch (e) {
       console.error('Error get all popular tracks:', e);
       throw ApiError.InternalServerError('Error get all popular tracks:', e);

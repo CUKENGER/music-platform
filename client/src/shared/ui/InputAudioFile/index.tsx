@@ -25,6 +25,7 @@ export const InputAudioFile = ({ fileName, setFile, ...defaultProps }: InputAudi
       setInputFileName(file.name);
       setFile(file);
     } else {
+      console.log('file null')
       setFile(null);
     }
     // if (defaultProps.onChange) {
@@ -51,7 +52,7 @@ export const InputAudioFile = ({ fileName, setFile, ...defaultProps }: InputAudi
       <label className={`${cl.label}`} htmlFor={`inputAudio-${id}`}>
         {fileName || inputFileName || defaultProps.placeholder || 'Выберите аудиофайл'}
       </label>
-      {fileName && <Btn onClick={handleReset}>Сбросить</Btn>}
+      {fileName || inputFileName &&  <Btn onClick={handleReset} className={cl.resetBtn}>Сбросить</Btn>}
     </div>
   );
 };

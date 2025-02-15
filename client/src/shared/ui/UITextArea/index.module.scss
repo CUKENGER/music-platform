@@ -21,6 +21,14 @@
   max-height: 300px;
   field-sizing: content;
   min-height: 5lh;
+  background-color: var(--black-lt);
+  font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+
+  &::placeholder {
+    font-family: 'Roboto';
+    font-size: 14px;
+  }
 }
 
 .icon_container {

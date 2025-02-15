@@ -20,8 +20,10 @@ export class ArtistPublicService {
 
     if (!artist) {
       const artistDto = {
-        name: dto.artist,
-        genre: dto.genre,
+        // name: dto.artist,
+        // genre: dto.genre,
+        name: 'fdsfdsfhj',
+        genre: 'dsfsdf',
         description: '',
       };
       artist = await this.artistRepository.create(artistDto, picture, prisma);

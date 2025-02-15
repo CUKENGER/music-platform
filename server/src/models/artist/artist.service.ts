@@ -113,7 +113,7 @@ export class ArtistService {
   private removePicture(picturePath: string) {
     if (picturePath) {
       try {
-        this.fileService.cleanupFile(picturePath);
+        this.fileService.cleanupFile(FileType.IMAGE, picturePath);
       } catch (error) {
         this.logger.warn(`Error deleting picture: ${error.message}`);
       }

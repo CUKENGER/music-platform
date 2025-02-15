@@ -55,6 +55,8 @@ export const Player = () => {
     };
   }, [activeTrack?.id, hasListen, addListen]);
 
+  console.log('apiUrl', API_URL + activeTrack?.picture);
+
   useEffect(() => {
     if (activeTrack?.id) {
       setHasListen(false);
@@ -85,7 +87,7 @@ export const Player = () => {
     }
   }, [activeTrack, setLoadedTime]);
 
-  if (!activeTrack) return null;
+  if (!activeTrack) return null
 
   return (
     <>

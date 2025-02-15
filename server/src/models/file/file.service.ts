@@ -1,10 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as uuid from 'uuid';
 import { Logger } from 'nestjs-pino';
 import { ApiError } from 'exceptions/api.error';
-import { STATIC_FILES_PATH } from 'constants/paths';
 import { FileType } from './types';
 
 interface FileBodyType {
@@ -14,73 +13,70 @@ interface FileBodyType {
 
 @Injectable()
 export class FileService {
+  private readonly basePath = path.resolve(__dirname, '../../../static');
   constructor(private readonly logger: Logger) {}
 
   async createFile(type: FileType, file: Express.Multer.File): Promise<string> {
     try {
       file = Array.isArray(file) ? file[0] : file;
-      this.logger.log('file createFile', file);
+      this.logger.log('Creating file', { originalname: file.originalname });
+
       if (!file || !file.originalname) {
         throw ApiError.BadRequest('File or originalname is missing');
       }
+
       const fileExtension = file.originalname.split('.').pop();
-      this.logger.log('fileExtension createFile', fileExtension);
-      const fileName = uuid.v4() + '.' + fileExtension;
-      this.logger.log('fileName createFile', fileName);
-      const filePath = path.resolve(STATIC_FILES_PATH, type);
-      this.logger.log('filePath createFile', filePath);
-      if (!fs.existsSync(filePath)) {
-        this.logger.log('filePath createFile', filePath);
-        fs.mkdirSync(filePath, { recursive: true });
-      }
-      await fs.promises.writeFile(path.resolve(filePath, fileName), file.buffer);
-      return type + '/' + fileName;
+      const fileName = `${uuid.v4()}.${fileExtension}`;
+      const filePath = this.getFilePath(type, fileName)
+
+      await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+      await fs.promises.writeFile(filePath, file.buffer);
+      this.logger.log('Creating file basePath', { basePath: this.basePath});
+      this.logger.log('Creating file return', { return: `${type}/${fileName}`});
+      return `${type}/${fileName}`;
     } catch (e) {
       this.logger.error(`Error creating file: ${file.originalname}, ${e.message}`);
       throw ApiError.InternalServerError('Failed to create file', e);
     }
   }
 
-  async createTracks(tracks: FileBodyType[]): Promise<string[]> {
-    const tracksPaths: string[] = [];
-    const trackPath = path.resolve(STATIC_FILES_PATH, 'audio');
-    if (!fs.existsSync(trackPath)) {
-      fs.mkdirSync(trackPath, { recursive: true });
-    }
-    for (const track of tracks) {
+  async createFiles(type: FileType, files: FileBodyType[]): Promise<string[]> {
+    const filePaths: string[] = [];
+    const filePath = this.getFilePath(type, '')
+
+    await fs.promises.mkdir(filePath, { recursive: true });
+
+    for (const file of files) {
       try {
-        if (!track || !track.originalname) {
-          throw new BadRequestException('Track file or originalname is missing');
+        if (!file || !file.originalname) {
+          throw ApiError.BadRequest('File or originalname is missing');
         }
-        const trackExtension = track.originalname.split('.').pop();
-        const trackName = uuid.v4() + '.' + trackExtension;
-        const fullTrackPath = path.resolve(trackPath, trackName);
 
-        await fs.promises.writeFile(fullTrackPath, track.buffer);
+        const fileExtension = file.originalname.split('.').pop();
+        const fileName = `${uuid.v4()}.${fileExtension}`;
+        const fullFilePath = this.getFilePath(type, fileName);
 
-        tracksPaths.push('audio/' + trackName);
+        await fs.promises.writeFile(fullFilePath, file.buffer);
+        filePaths.push(`audio/${fileName}`);
       } catch (e) {
-        console.error(`Error creating track: ${track.originalname}, ${e.message}`);
-        throw ApiError.InternalServerError('Failed to create track file');
+        console.error(`Error creating files: ${file.originalname}, ${e.message}`);
+        throw ApiError.InternalServerError('Failed to create files');
       }
     }
-
-    return tracksPaths;
+    return filePaths;
   }
 
-  cleanupFiles(tracks: string[], coverPath?: string): void {
+  cleanupFiles(tracksPaths: string[], coverPath?: string): void {
     try {
       if (coverPath) {
-        this.logger.log(`coverPath: ${coverPath}`);
-        const fullCoverPath = path.resolve(STATIC_FILES_PATH, coverPath);
-        this.logger.log(`fullCoverPath: ${fullCoverPath}`)
+        const fullCoverPath = this.getFilePath(FileType.IMAGE, coverPath);
         if (fs.existsSync(fullCoverPath)) {
           fs.unlinkSync(fullCoverPath);
         }
       }
 
-      tracks.forEach((track) => {
-        const fullTrackPath = path.resolve(STATIC_FILES_PATH, track);
+      tracksPaths.forEach((trackPath) => {
+        const fullTrackPath = this.getFilePath(FileType.AUDIO, trackPath)
         if (fs.existsSync(fullTrackPath)) {
           fs.unlinkSync(fullTrackPath);
         }
@@ -91,10 +87,10 @@ export class FileService {
     }
   }
 
-  cleanupFile(filePath: string): void {
+  cleanupFile(type: FileType, filePath: string): void {
     try {
       if (filePath) {
-        const fullCoverPath = path.resolve(STATIC_FILES_PATH, filePath);
+        const fullCoverPath = this.getFilePath(type, filePath)
         if (fs.existsSync(fullCoverPath)) {
           fs.unlinkSync(fullCoverPath);
         }
@@ -103,5 +99,9 @@ export class FileService {
       this.logger.warn(`Error cleaning up files: ${error.message}`);
       throw ApiError.InternalServerError('Failed to clean up files');
     }
+  }
+
+  private getFilePath(type: FileType, fileName: string): string {
+    return path.resolve(this.basePath, type, fileName);
   }
 }

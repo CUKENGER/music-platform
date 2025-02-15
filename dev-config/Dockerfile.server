@@ -14,6 +14,8 @@ RUN yarn install
 # Копируем весь проект после установки зависимостей
 COPY . . 
 
+RUN mkdir -p /usr/app/logs
+
 # Генерируем Prisma клиент после копирования кода
 RUN yarn prisma generate
 

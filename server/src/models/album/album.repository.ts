@@ -26,7 +26,7 @@ export class AlbumRepository {
         artist: { connect: { id: artistId } },
         picture: imagePath,
         createdAt: new Date(),
-        type: albumType as AlbumType,
+        type: AlbumType[albumType],
       },
     });
   }

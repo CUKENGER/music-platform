@@ -4,9 +4,10 @@ import styles from './Options.module.scss';
 interface OptionsProps {
   options: string[];
   currentOption?: string;
+  setOption: (option: string) => void
 }
 
-export const Options = memo(({ options, currentOption }: OptionsProps) => {
+export const Options = memo(({ options, currentOption, setOption }: OptionsProps) => {
   const [fields, setFields] = useState(options);
   const [selectedOption, setSelectedOption] = useState<string | null>(currentOption ?? null);
 
@@ -21,6 +22,7 @@ export const Options = memo(({ options, currentOption }: OptionsProps) => {
       setSelectedOption(option);
       setFields((prevOptions) => prevOptions.filter((item) => item !== option));
     }
+    setOption(option)
   };
 
   return (

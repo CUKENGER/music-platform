@@ -53,7 +53,7 @@ export const LoginForm = () => {
           )}
         />
         <Btn isLoading={isLoading} disabled={!isValid} type="submit">
-          Зарегистрироваться
+          Войти
         </Btn>
         <Link to={PUBLIC_ROUTES.REGISTRATION}>
           <Btn variant="outlined" className={cl.link}>

@@ -1,7 +1,7 @@
 
 .container {
   width: 100%;
-  height: 100%;
+  // height: 100%;
 }
 
 .input {
@@ -22,6 +22,11 @@
   width: 100%;
   height: 100%;
   position: relative;
+}
+
+.resetBtn {
+  margin-top: 10px;
+  width: 100%;
 }
 
 @media (max-width: 700px) {

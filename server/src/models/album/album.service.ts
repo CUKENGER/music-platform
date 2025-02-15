@@ -38,7 +38,7 @@ export class AlbumService {
     const transaction = this.prisma.$transaction(
       async (prisma) => {
         try {
-          tracksPath = await this.fileService.createTracks(tracksFiles);
+          tracksPath = await this.fileService.createFiles(FileType.AUDIO, tracksFiles);
           imagePath = await this.fileService.createFile(FileType.IMAGE, pictureFile);
 
           const albumType = this.determineAlbumType(dto);

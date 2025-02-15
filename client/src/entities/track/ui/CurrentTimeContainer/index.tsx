@@ -1,3 +1,4 @@
+import { convertDurationToTimeString } from '@/shared/model';
 import useTrackTimeStore from '../../model/TrackTimeStore';
 import styles from './CurrentTimeContainer.module.scss';
 

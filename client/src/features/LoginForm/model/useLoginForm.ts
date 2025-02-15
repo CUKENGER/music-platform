@@ -33,7 +33,8 @@ export const useLoginForm = () => {
   const handleFormSubmit = async (data: ILoginForm) => {
 
     const {email, password} = data
-    if (isValid || isLoading) {
+    if (!isValid) {
+      console.log('isValid');
       showModal('Заполните все данные, пожалуйста');
       return;
     }

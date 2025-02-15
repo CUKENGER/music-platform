@@ -114,8 +114,8 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .exclude(
         { path: 'auth/activate/:link', method: RequestMethod.GET },
-        { path: 'auth/login', method: RequestMethod.POST },
-        { path: 'auth/registration', method: RequestMethod.POST },
+        { path: 'auth/login', method: RequestMethod.ALL },
+        { path: 'auth/registration', method: RequestMethod.ALL },
         { path: 'auth/send_email', method: RequestMethod.ALL },
         { path: 'auth/reset_password', method: RequestMethod.ALL },
         { path: 'user/check/:username', method: RequestMethod.POST },

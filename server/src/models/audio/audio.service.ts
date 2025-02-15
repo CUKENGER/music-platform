@@ -4,7 +4,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as ffmpeg from 'fluent-ffmpeg';
 import { Logger } from 'nestjs-pino';
-import { STATIC_FILES_PATH } from 'constants/paths';
 
 @Injectable()
 export class AudioService {
@@ -87,7 +86,7 @@ export class AudioService {
   }
 
   async getFileMetadata(filename: string): Promise<{ filePath: string; fileSize: number } | null> {
-    const filePath = path.resolve(STATIC_FILES_PATH, 'audio', path.basename(filename));
+    const filePath = path.resolve(__dirname,'../../../static','audio', path.basename(filename));
     if (!fs.existsSync(filePath)) {
       return null;
     }
@@ -144,6 +143,6 @@ export class AudioService {
   }
 
   private resolveFilePath(filePath: string): string {
-    return path.resolve(STATIC_FILES_PATH, filePath);
+    return path.resolve(__dirname,'../../../static', filePath);
   }
 }

@@ -25,7 +25,9 @@ export class ArtistRepository {
   async create(dto: CreateArtistDto, imagePath: string, prisma: Prisma.TransactionClient): Promise<Prisma.ArtistGetPayload<{ select: { [K in keyof Required<Prisma.ArtistSelect>]: true } }>> {
     return await prisma.artist.create({
       data: {
-        ...dto,
+        name: dto.name,
+        genre: dto.genre,
+        description: dto.description,
         picture: imagePath,
       },
       include: {

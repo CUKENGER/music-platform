@@ -61,8 +61,13 @@ const start = async () => {
           description: 'Enter JWT token',
           in: 'header',
         },
-        'JWT-auth', 
+        // 'JWT-auth',
       )
+      .addSecurity('JWT-auth', {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      })
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('/api/docs', app, document, {

@@ -3,7 +3,7 @@ services:
     build:
       context: ../client
       dockerfile: ../dev-config/Dockerfile.client
-    container_name: mpclient
+    container_name: mp-client
     ports:
       - "5173:5173"
     environment:
@@ -12,14 +12,14 @@ services:
       - ../client:/usr/app
       - /usr/app/node_modules
     networks:
-      - music-platform-network
+      - mp-network
     depends_on:
       - server
   server:
     build:
       context: ../server
       dockerfile: ../dev-config/Dockerfile.server
-    container_name: mpserver
+    container_name: mp-server
     ports:
       - "5000:${SERVER_PORT}"
     environment:
@@ -32,18 +32,19 @@ services:
       - SMTP_PORT=${SMTP_PORT}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
-      - SMTP_APP_PASS=${SMTP_APP_PASS}
+      - API_URL=${API_URL}
     volumes:
       - ../server:/usr/app
       - /usr/app/node_modules
     networks:
-      - music-platform-network
+      - mp-network
     depends_on:
       db:
         condition: service_healthy
   db:
     image: postgres:14.1-alpine
-    container_name: mpdb
+    container_name: mp-db
+    hostname: "mp-db"
     # restart: always
     ports:
       - "5433:${DATABASE_PORT}"
@@ -62,9 +63,9 @@ services:
     tty: true
     stdin_open: true
     networks:
-      - music-platform-network
+      - mp-network
 
 networks:
-  music-platform-network:
+  mp-network:
 volumes:
   db:

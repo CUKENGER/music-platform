@@ -1,7 +1,9 @@
 import { useCreateTrack } from '@/entities/track';
+import { axiosInstance } from '@/shared/api';
 import { API_URL, PRIVATE_ROUTES } from '@/shared/consts';
 import { useInput, useModal, useDebounce } from '@/shared/hooks';
 import { genres } from '@/shared/moks';
+import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -51,7 +53,7 @@ export const useCreateTrackForm = () => {
     name.value.trim() &&
     text.value.trim() &&
     artist.value.trim() &&
-    genre.value.trim() &&
+    // genre.value.trim() &&
     audio &&
     cover
   );
@@ -71,6 +73,7 @@ export const useCreateTrackForm = () => {
         audio: audio,
         picture: cover,
       };
+      console.log('trackInfo', trackInfo)
       createTrack(trackInfo, {
         onSuccess: (response) => {
           showModal(`Трек ${response.name} успешно загружен`, () =>
@@ -90,6 +93,7 @@ export const useCreateTrackForm = () => {
     artist,
     options,
     text,
+    genre,
     setCover,
     setAudio,
     handleSubmit,

@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Next, Param, Post, Req, Res } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpStatus, Next, Param, Post, Req, Res } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { NextFunction, Request, Response } from 'express';
 import { LoginUserDto } from 'models/user/dto/loginUser.dto';
@@ -8,7 +17,6 @@ import { ResetPasswordDto, SendEmailDto } from './dto/resetPassword.dto';
 import { Logger } from 'nestjs-pino';
 
 class TokenResponse {
-  @ApiProperty()
   token: string;
 }
 
@@ -18,12 +26,59 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private readonly logger: Logger,
-  ) { }
+  ) {}
 
-  @ApiOperation({ summary: 'Вход пользователя' })
-  @ApiBody({ type: LoginUserDto })
-  @ApiResponse({ status: 200, type: TokenResponse })
-  @Post('/login')
+  @Post('login')
+  @ApiOperation({
+    summary: 'Аутенфикация пользователя',
+    description: 'Проверяет email и пароль, возвращает ',
+  })
+  @ApiBody({
+    description: 'Данные для аутенфикации',
+    required: true,
+    type: LoginUserDto,
+    examples: {
+      example1: {
+        summary: 'Пример запроса',
+        value: {
+          email: 'email@gmail.com',
+          password: 'Qwerty1234',
+        },
+      },
+    },
+  })
+  @ApiCreatedResponse({
+    description: 'Аутентификация прошла успешно',
+    example: {
+      accessToken:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ',
+      refreshToken:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ',
+      user: {
+        id: 1,
+        email: 'email@gmail.com',
+        isActivated: true,
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Некорректные данные',
+    schema: {
+      example: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'User not found',
+      },
+    },
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Внутренняя ошибка сервера',
+    schema: {
+      example: {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error login',
+      },
+    },
+  })
   async login(@Body() dto: LoginUserDto, @Res() res: Response) {
     const userData = await this.authService.login(dto);
     this.setRefreshTokenCookie(res, userData.refreshToken);

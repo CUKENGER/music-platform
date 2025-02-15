@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, useState } from 'react';
+import { ForwardedRef, forwardRef } from 'react';
 import styles from './TrackItem.module.scss';
 import { ITrack } from '../../types/Track';
 import { useTrackItem } from '../../model/useTrackItem';
@@ -20,8 +20,6 @@ const TrackItemComponent = (
 ) => {
 	const { play, handleDelete, isVisible, modal, hideModal } = useTrackItem(track, trackList);
   const isAdmin = useUserStore((state) => state.isAdmin);
-
-	const {} = usePara
 
   return (
     <div

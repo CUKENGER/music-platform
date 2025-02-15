@@ -11,14 +11,14 @@ import {
   UseInterceptors,
   Put,
   Req,
-  NotFoundException,
+  HttpStatus,
 } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateTrackCommentDto } from './dto/create-trackComment-dto';
 import { CreateReplyTrackCommentDto } from './dto/create-trackReplyComment.dto';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Track } from '@prisma/client';
 import { ApiError } from 'exceptions/api.error';
 
@@ -28,20 +28,72 @@ export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Post()
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Создание нового трека',
+    description: 'Создает новый трек с обложкой',
+  })
+  @ApiBody({
+    description: 'Данные для создания трека',
+    required: true,
+    type: CreateTrackDto,
+    examples: {
+      example1: {
+        summary: 'Пример запроса',
+        value: {
+          name: 'Track Yura',
+          text: 'Track text',
+          genre: 'Govnorock',
+          artist: 'Yura Hoy',
+        },
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiCreatedResponse({
+    description: 'Трек успешно создан',
+    example: {
+      id: 1,
+      name: 'Track Yura',
+      genre: 'Rock',
+      artist: 'Yura Hoy',
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Некорректные данные или файлы не найдены',
+    schema: {
+      example: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Audio and picture are require',
+      },
+    },
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Внутренняя ошибка сервера',
+    schema: {
+      example: {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Error creating track',
+      },
+    },
+  })
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'picture', maxCount: 1 },
       { name: 'audio', maxCount: 1 },
     ]),
   )
-  @ApiOperation({ summary: 'Создание трека' })
-  @ApiBody({ type: CreateTrackDto })
-  async create(@UploadedFiles() files, @Body() dto: CreateTrackDto) {
+  async create(
+    @UploadedFiles() files: { picture: Express.Multer.File; audio: Express.Multer.File },
+    @Body() dto: CreateTrackDto,
+  ) {
+    console.log('Received DTO:', dto);
     const { picture, audio } = files;
 
     if (!audio || !picture) {
-      throw new NotFoundException('Audio and picture are required');
+      throw ApiError.BadRequest('Audio and picture are required');
     }
+
     return await this.trackService.create(dto, picture, audio);
   }
 

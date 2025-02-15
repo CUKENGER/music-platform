@@ -18,6 +18,7 @@ export const CreateTrackForm = () => {
     artist,
     options,
     text,
+    genre,
     setCover,
     setAudio,
     handleSubmit,
@@ -30,6 +31,7 @@ export const CreateTrackForm = () => {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
+      console.log('file', file)
       if (file?.name) {
         const str = file.name;
         str
@@ -56,14 +58,14 @@ export const CreateTrackForm = () => {
           />
           <Options
             options={options}
-            //setOptions={setOptions}
+            setOption={genre.setValue}
             //setValue={genre.setValue}
             //value={genre.value}
           />
           <UITextAreaField
             value={text.value}
             onChange={text.onChange}
-            placeholder="Введите текст песни"
+            label="Введите текст песни"
           />
         </div>
         <div className={styles.fields_upload_container}>
@@ -75,7 +77,6 @@ export const CreateTrackForm = () => {
           </div>
           <div className={styles.input_audio}>
             <InputAudioFile
-              onChange={handleFileChange}
               placeholder="Загрузите аудиодорожку"
               setFile={setAudio}
             />
