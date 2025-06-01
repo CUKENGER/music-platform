@@ -4,3 +4,7 @@
 ./server/.husky
 ./server/*.lock
 ./client/*.lock
+
+./dev-config/logs
+./dev-config/logs/*
+
