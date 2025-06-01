@@ -16,7 +16,7 @@ export const EntitySection = ({ title }: EntitySectionProps) => {
       <div className={styles.header}>
         <p>{title}</p>
         <div className={styles.controls_container}>
-          <Btn small={true}>Ещё</Btn>
+          <Btn>Ещё</Btn>
           <div className={styles.controls_arrows}>
             <SectionArrow left={true} onClick={prevSlide} isDisabled={currentSlide === 0} />
             <SectionArrow

@@ -50,15 +50,15 @@ export const ArtistPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header_btn}>
-        <Btn small={true} onClick={() => navigate(-1)}>
+        <Btn onClick={() => navigate(-1)}>
           Назад
         </Btn>
         <div className={styles.edit_btn}>
-          <Btn small={true} onClick={handleDeleteArtist}>
+          <Btn onClick={handleDeleteArtist}>
             Удалить
           </Btn>
           <Link to={PRIVATE_ROUTES.ARTISTS + '/' + id + '/edit'}>
-            <Btn small={true}>Изменить</Btn>
+            <Btn>Изменить</Btn>
           </Link>
         </div>
       </div>
@@ -89,7 +89,7 @@ export const ArtistPage = () => {
             <ListensIcon className={styles.listens} listens={artist?.listens} />
             <p>{artist?.genre}</p>
           </div>
-          <Btn small={true} className={styles.like_btn}>
+          <Btn className={styles.like_btn}>
             <LikeIcon likes={artist?.likes} />
           </Btn>
         </div>
@@ -98,7 +98,7 @@ export const ArtistPage = () => {
         <div className={styles.header}>
           <p>Популярные треки</p>
           <Link to={'popular_tracks'}>
-            <Btn small={true}>Ещё</Btn>
+            <Btn>Ещё</Btn>
           </Link>
         </div>
         {artist?.tracks.map((track, index) => (

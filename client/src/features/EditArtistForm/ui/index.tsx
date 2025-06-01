@@ -5,6 +5,7 @@ import { useInput, useModal } from '@/shared/hooks';
 import { useGetOneArtist, useUpdateArtist } from '@/entities/artist';
 import { genres } from '@/shared/moks';
 import { Btn, InputImageFile, ModalContainer, Options, UITextAreaField, UITextField } from '@/shared/ui';
+import { PRIVATE_ROUTES, API_URL } from '@/shared/consts';
 
 export const EditArtistForm = () => {
   const { id } = useParams();
@@ -64,12 +65,6 @@ export const EditArtistForm = () => {
             value={description.value}
             onChange={description.onChange}
             placeholder="Введите описание исполнителя" 
-          />
-          <Options
-            options={options}
-            // setOptions={setOptions}
-            // setValue={genre.setValue}
-            // value={genre.value}
           />
         </div>
         <div className={styles.picture_container}>

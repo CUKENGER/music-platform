@@ -14,8 +14,6 @@ export const PlayerDetailed = () => {
 
   const [selectedNav, setSelectedNav] = useState<'text' | 'next' | 'related'>('text');
 
-  const hookForm = 75983;
-
   const handleNavChange = (nav: 'text' | 'next' | 'related') => {
     setSelectedNav(nav);
   };

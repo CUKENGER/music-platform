@@ -134,7 +134,7 @@ export const PopularAlbums = () => {
         <div className={styles.controls}>
           <SectionArrow onClick={() => sliderRef?.current?.slickPrev()} left={true} />
           <SectionArrow onClick={() => sliderRef?.current?.slickNext()} />
-          <Btn small={true}>Ещё</Btn>
+          <Btn>Ещё</Btn>
         </div>
       </div>
       <Slider ref={sliderRef} {...settings}>

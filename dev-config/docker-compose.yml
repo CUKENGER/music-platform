@@ -33,9 +33,11 @@ services:
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - API_URL=${API_URL}
+      - CLIENT_URL=${CLIENT_URL}
     volumes:
       - ../server:/usr/app
       - /usr/app/node_modules
+      - ./logs:/usr/app/logs
     networks:
       - mp-network
     depends_on:

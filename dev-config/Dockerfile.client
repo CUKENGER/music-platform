@@ -5,8 +5,8 @@ WORKDIR /usr/app
 
 COPY package*.json ./
 
-RUN yarn
+RUN npm ci
 
 COPY . . 
 
-CMD ["yarn", "dev", "--host"]
+CMD ["npm", "run", "dev"]

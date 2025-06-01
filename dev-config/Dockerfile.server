@@ -5,23 +5,21 @@ ENV NODE_ENV=development
 
 WORKDIR /usr/app
 
-# Копируем package.json и yarn.lock для кеширования
-COPY package.json yarn.lock ./
+# Копируем package.json для кеширования
+COPY package*.json ./
 
 # Устанавливаем зависимости
-RUN yarn install
+RUN npm ci
 
 # Копируем весь проект после установки зависимостей
 COPY . . 
 
-RUN mkdir -p /usr/app/logs
-
 # Генерируем Prisma клиент после копирования кода
-RUN yarn prisma generate
+RUN npx prisma generate
 
 # Открываем порт 5000
 EXPOSE 5000
 
 # Ждём, пока PostgreSQL будет доступен, затем запускаем сервер
-CMD ["yarn", "start:dev"]
+CMD ["sh", "-c", "npx prisma db push && npm run start:dev"]
 

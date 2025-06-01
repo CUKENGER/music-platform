@@ -59,7 +59,7 @@ export const useLoginUser = (showModal: (message: string) => void) => {
     onSuccess: () => invalidateUserQuery(queryClient),
     onError: (error: unknown) => handleLoginErrorHandler(error, showModal),
     retry: false,
-    throwOnError: true,
+    throwOnError: false,
   });
 };
 

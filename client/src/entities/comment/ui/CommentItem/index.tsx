@@ -90,7 +90,7 @@ export const CommentItem = ({ comment, refetchGetComments }: CommentItemProps) =
         <span onClick={() => setIsReplyOpen((prev) => !prev)} className={styles.repliesTitle}>
           Ответы {comment.replies.length}
         </span>
-        <Btn small={true} className={styles.commentBtn} onClick={handleOpenReplyForm}>
+        <Btn className={styles.commentBtn} onClick={handleOpenReplyForm}>
           Ответить
         </Btn>
       </div>

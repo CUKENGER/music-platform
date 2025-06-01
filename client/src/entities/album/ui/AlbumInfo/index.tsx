@@ -112,7 +112,7 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
       <div className={styles.albumNotFound}>
         <p>Альбом не найден или произошла ошибка.</p>
         <Link to={PRIVATE_ROUTES.ALBUMS}>
-          <Btn small={true}>Назад к альбомам</Btn>
+          <Btn>Назад к альбомам</Btn>
         </Link>
       </div>
     );
@@ -121,15 +121,15 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
   return (
     <div className={styles.albumInfo}>
       <div className={styles.header}>
-        <Btn small={true} onClick={() => navigate(-1)}>
+        <Btn onClick={() => navigate(-1)}>
           Назад
         </Btn>
         <div className={styles.edit_btn}>
-          <Btn small={true} onClick={handleDeleteAlbum}>
+          <Btn onClick={handleDeleteAlbum}>
             Удалить
           </Btn>
           <Link to={PRIVATE_ROUTES.ALBUMS + `/${album?.id}/edit`}>
-            <Btn small={true}>Изменить</Btn>
+            <Btn>Изменить</Btn>
           </Link>
         </div>
       </div>
@@ -175,7 +175,7 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
           <ChildrenTrack trackList={album.tracks} track={track} trackIndex={index} key={track.id} />
         ))}
       </div>
-      <Btn small={true} onClick={() => setIsCommentsOpen(!isCommentsOpen)}>
+      <Btn onClick={() => setIsCommentsOpen(!isCommentsOpen)}>
         Комментарии
         <span>({album?.comments.length})</span>
       </Btn>
