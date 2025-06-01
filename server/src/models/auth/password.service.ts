@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
+import { ERROR_CODES } from 'constants/errorCodes';
 import { ApiError } from 'exceptions/api.error';
 import { Logger } from 'nestjs-pino';
 
 @Injectable()
 export class PasswordService {
-  constructor(
-    private readonly logger: Logger
-  ) { }
+  constructor(private readonly logger: Logger) {}
 
   private async generateSalt(): Promise<string> {
     this.logger.log(`PasswordService generateSalt`);
@@ -33,12 +32,16 @@ export class PasswordService {
     }
   }
 
-  async validatePassword(password: string, storedPassword: string): Promise<void> {
+  async validatePassword(password: string, storedPassword: string): Promise<boolean> {
     this.logger.log(`PasswordService validatePassword`);
     const isEquals = await bcrypt.compare(password, storedPassword);
     if (!isEquals) {
-      throw ApiError.BadRequest('The provided password is incorrect');
+      throw ApiError.UnauthorizedError(
+        'The provided password is incorrect',
+        ERROR_CODES.INVALID_PASSWORD,
+      );
     }
+    return isEquals;
   }
 
   async generatePassword(password: string): Promise<string> {

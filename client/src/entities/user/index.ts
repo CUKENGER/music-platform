@@ -14,5 +14,5 @@ export {
   useRegUser,
   useCheckUsername,
   useLoginUser,
-  useGetUserById
+  useGetUserById,
 } from './api/useUserApi';

@@ -6,6 +6,7 @@ import { RegUserDto } from 'models/user/dto/regUser.dto';
 import { Logger } from 'nestjs-pino';
 import { TokenData } from './types';
 import { TokenRepository } from './token.repository';
+import { ERROR_CODES } from 'constants/errorCodes';
 
 @Injectable()
 export class TokenPublicService {
@@ -42,7 +43,9 @@ export class TokenPublicService {
       }
     } catch (e) {
       this.logger.error(`Error saving token: ${e.message} `);
-      throw ApiError.InternalServerError('Error saving token', [e]);
+      throw ApiError.InternalServerError('Error saving token', ERROR_CODES.INTERNAL_SERVER_ERROR, [
+        e,
+      ]);
     }
   }
 

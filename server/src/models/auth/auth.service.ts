@@ -17,6 +17,7 @@ import { MailService } from './mail.service';
 import { PasswordService } from './password.service';
 import { UserPublicService } from 'models/user/userPublic.service';
 import { TokenPublicService } from 'models/token/tokenPublic.service';
+import { ERROR_CODES } from 'constants/errorCodes';
 
 interface UserResponseWithTokens {
   user: RegUserDto;
@@ -38,7 +39,27 @@ export class AuthService {
   async login(dto: LoginUserDto): Promise<UserResponseWithTokens> {
     this.logger.log('AuthService login', { dto: dto });
     const user = await this.userPublicService.getByEmail(dto.email);
-    await this.passwordService.validatePassword(dto.password, user.password);
+    if (!user.isActivated) {
+      this.logger.error('Account not activated', { email: dto.email });
+      throw ApiError.Forbidden('Аккаунт не активирован', ERROR_CODES.ACCOUNT_NOT_ACTIVATED);
+    }
+
+    if (user.banned) {
+      this.logger.error('Account banned', { email: dto.email });
+      throw ApiError.Forbidden(
+        `Аккаунт заблокирован: ${user.banReason || 'Причина не указана'}`,
+        ERROR_CODES.ACCOUNT_BANNED,
+      );
+    }
+
+    const isPasswordValid = await this.passwordService.validatePassword(
+      dto.password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      this.logger.error('Invalid password', { email: dto.email });
+      throw ApiError.UnauthorizedError('Неверный пароль', ERROR_CODES.INVALID_PASSWORD);
+    }
 
     const userDto = new RegUserDto(user);
     const tokens = await this.generateAndSaveTokens(userDto);
@@ -119,7 +140,7 @@ export class AuthService {
     if (!user) {
       throw ApiError.BadRequest('Invalid activation link');
     }
-    await this.userPublicService.activate(user.id)
+    await this.userPublicService.activate(user.id);
     const userDto = {
       id: user.id,
       isActivated: true,

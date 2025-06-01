@@ -19,7 +19,10 @@ export const LoginForm = () => {
 
   return (
     <>
-      <LoginLayout handleSubmit={handleSubmit} title="Вход">
+      <LoginLayout
+        handleSubmit={handleSubmit}
+        title="Вход"
+      >
         <Controller
           name="email"
           control={control}
@@ -31,7 +34,7 @@ export const LoginForm = () => {
               label="Введите email"
               required
               aria-invalid={!!errors.email}
-              warnings={[{ condition: errors.email, text: errors.email?.message }]}
+              warnings={[{ condition: !!errors.email, text: errors.email?.message }]}
               clearable
             />
           )}
@@ -52,16 +55,26 @@ export const LoginForm = () => {
             />
           )}
         />
-        <Btn isLoading={isLoading} disabled={!isValid} type="submit">
+        <Btn
+          isLoading={isLoading}
+          disabled={!isValid}
+          type="submit"
+        >
           Войти
         </Btn>
         <Link to={PUBLIC_ROUTES.REGISTRATION}>
-          <Btn variant="outlined" className={cl.link}>
+          <Btn
+            variant="outlined"
+            className={cl.link}
+          >
             Регистрация
           </Btn>
         </Link>
       </LoginLayout>
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </>
   );
 };

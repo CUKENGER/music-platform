@@ -37,24 +37,19 @@ export class UserPublicService {
   }
 
   async getByEmail(email: string) {
-    try {
-      this.logger.log('UserService getByEmail', {
-        service: 'UserService',
-        method: 'getByEmail',
+    this.logger.log('UserService getByEmail', {
+      service: 'UserService',
+      method: 'getByEmail',
+      email: email,
+    });
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      this.logger.error('UserService getByEmail User with this email not found', {
         email: email,
       });
-      const user = await this.userRepository.findByEmail(email);
-      if (!user) {
-        this.logger.error('UserService getByEmail User with this email not found', {
-          email: email,
-        });
-        throw ApiError.BadRequest(`User with this email not found`);
-      }
-      return user;
-    } catch (e) {
-      this.logger.error(`UserService getByEmail error`, { error: e });
-      throw ApiError.InternalServerError(`UserService getByEmail error`, e);
+      throw ApiError.BadRequest('Пользователь с таким email не найден', 'USER_NOT_FOUND');
     }
+    return user;
   }
 
   async createUserWithRole(

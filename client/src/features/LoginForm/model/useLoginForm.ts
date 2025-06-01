@@ -1,11 +1,11 @@
 import { useLoginUser, useUserStore } from '@/entities/user';
 import { handleLoginErrorHandler } from '@/entities/user/model/handleLoginError';
-import { PRIVATE_ROUTES } from '@/shared/consts';
-import { useModal } from '@/shared/hooks';
+import { PRIVATE_ROUTES, PUBLIC_ROUTES } from '@/shared/consts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { loginSchema } from './loginSchema';
+import { useModal } from '@/shared/hooks';
 
 interface ILoginForm {
   email: string;
@@ -13,15 +13,14 @@ interface ILoginForm {
 }
 
 export const useLoginForm = () => {
-
   const {
     control,
     handleSubmit,
-    formState: {errors, isValid}
+    formState: { errors, isValid },
   } = useForm<ILoginForm>({
     resolver: yupResolver(loginSchema),
-    mode: "onChange"
-  })
+    mode: 'onChange',
+  });
   const { hideModal, modal, showModal } = useModal();
 
   const { setIsAuth, setUser } = useUserStore();
@@ -31,39 +30,36 @@ export const useLoginForm = () => {
   const navigate = useNavigate();
 
   const handleFormSubmit = async (data: ILoginForm) => {
+    const { email, password } = data;
 
-    const {email, password} = data
-    if (!isValid) {
-      console.log('isValid');
-      showModal('Заполните все данные, пожалуйста');
-      return;
-    }
+    login(
+      { email, password },
+      {
+        onSuccess: (data) => {
+          if (data.accessToken && data.refreshToken) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+            localStorage.setItem('token', data.accessToken);
+            localStorage.setItem('refreshToken', data.refreshToken);
 
-    login({email, password}, {
-      onSuccess: (data) => {
-        if (data.accessToken && data.refreshToken) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('refreshToken');
-          localStorage.setItem('token', data.accessToken);
-          localStorage.setItem('refreshToken', data.refreshToken);
-
-          setIsAuth(true);
-          setUser({email, password});
-          navigate(PRIVATE_ROUTES.HOME);
-        } else {
-          console.error('Tokens were not provided');
-          showModal('Вы не зарегистрированы');
-        }
+            setIsAuth(true);
+            setUser({ email });
+            navigate(PRIVATE_ROUTES.HOME);
+          } else {
+            console.error('Tokens were not provided');
+            showModal('Ошибка входа', () => navigate(PUBLIC_ROUTES.REGISTRATION));
+          }
+        },
+        onError: (error) => {
+          handleLoginErrorHandler(error, showModal);
+        },
       },
-      onError: (error) => {
-        handleLoginErrorHandler(error, showModal)
-      }
-    });
+    );
   };
 
   const onSubmit: SubmitHandler<ILoginForm> = (data) => {
-    handleFormSubmit(data)
-  }
+    handleFormSubmit(data);
+  };
 
   return {
     handleSubmit: handleSubmit(onSubmit),
@@ -72,6 +68,6 @@ export const useLoginForm = () => {
     modal,
     hideModal,
     control,
-    errors
+    errors,
   };
 };

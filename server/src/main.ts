@@ -10,6 +10,7 @@ import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { Logger } from 'nestjs-pino';
 import { ApiError } from 'exceptions/api.error';
 import { AllExceptionsFilter } from 'exceptions/allExceptionFilter';
+import { ERROR_CODES } from 'constants/errorCodes';
 
 dotenv.config();
 
@@ -91,7 +92,7 @@ const start = async () => {
             message: `Validation failed`,
             errors: formattedErrors,
           };
-          return ApiError.BadRequest(response.message, response.errors);
+          return ApiError.BadRequest(response.message, ERROR_CODES.BAD_REQUEST, response.errors);
         },
       }),
     );

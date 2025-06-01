@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { RoleDto } from './dto/role.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { ApiError } from 'exceptions/api.error';
+import { ERROR_CODES } from 'constants/errorCodes';
 
 @Injectable()
 export class RoleService {
@@ -17,7 +18,9 @@ export class RoleService {
       });
       return role;
     } catch (error) {
-      throw ApiError.InternalServerError('Error creating role', [error]);
+      throw ApiError.InternalServerError('Error creating role', ERROR_CODES.INTERNAL_SERVER_ERROR, [
+        error,
+      ]);
     }
   }
 
@@ -28,7 +31,11 @@ export class RoleService {
       });
       return roles;
     } catch (error) {
-      throw ApiError.InternalServerError('Error retrieving roles', [error]);
+      throw ApiError.InternalServerError(
+        'Error retrieving roles',
+        ERROR_CODES.INTERNAL_SERVER_ERROR,
+        [error],
+      );
     }
   }
 

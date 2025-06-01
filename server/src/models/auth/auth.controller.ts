@@ -1,20 +1,12 @@
-import { Body, Controller, Get, HttpStatus, Next, Param, Post, Req, Res } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBody,
-  ApiConsumes,
-  ApiCreatedResponse,
-  ApiInternalServerErrorResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Get, Next, Param, Post, Req, Res } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { NextFunction, Request, Response } from 'express';
 import { LoginUserDto } from 'models/user/dto/loginUser.dto';
 import { UserDto } from 'models/user/dto/user.dto';
 import { ResetPasswordDto, SendEmailDto } from './dto/resetPassword.dto';
 import { Logger } from 'nestjs-pino';
+import { ERROR_CODES } from 'constants/errorCodes';
 
 class TokenResponse {
   token: string;
@@ -31,7 +23,7 @@ export class AuthController {
   @Post('login')
   @ApiOperation({
     summary: 'Аутенфикация пользователя',
-    description: 'Проверяет email и пароль, возвращает ',
+    description: 'Проверяет email и пароль, возвращает токены и данные пользователя.',
   })
   @ApiBody({
     description: 'Данные для аутенфикации',
@@ -47,13 +39,11 @@ export class AuthController {
       },
     },
   })
-  @ApiCreatedResponse({
+  @ApiResponse({
     description: 'Аутентификация прошла успешно',
     example: {
-      accessToken:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ',
-      refreshToken:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ',
+      accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ',
+      refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ',
       user: {
         id: 1,
         email: 'email@gmail.com',
@@ -61,21 +51,63 @@ export class AuthController {
       },
     },
   })
-  @ApiBadRequestResponse({
-    description: 'Некорректные данные',
+  @ApiResponse({
+    status: 400,
+    description: 'Некорректные данные (например, пользователь не найден)',
     schema: {
       example: {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: 'User not found',
+        statusCode: 400,
+        message: 'Пользователь с таким email не найден',
+        code: ERROR_CODES.USER_NOT_FOUND,
+        errors: [],
       },
     },
   })
-  @ApiInternalServerErrorResponse({
+  @ApiResponse({
+    status: 401,
+    description: 'Неверный пароль',
+    schema: {
+      example: {
+        statusCode: 401,
+        message: 'Неверный пароль',
+        code: ERROR_CODES.INVALID_PASSWORD,
+        errors: [],
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Аккаунт не активирован или заблокирован',
+    schema: {
+      example: {
+        statusCode: 403,
+        message: 'Аккаунт не активирован',
+        code: ERROR_CODES.ACCOUNT_NOT_ACTIVATED,
+        errors: [],
+      },
+    },
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Слишком много попыток',
+    schema: {
+      example: {
+        statusCode: 429,
+        message: 'Слишком много попыток входа. Попробуйте позже.',
+        code: ERROR_CODES.TOO_MANY_REQUESTS,
+        errors: [],
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
     description: 'Внутренняя ошибка сервера',
     schema: {
       example: {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Error login',
+        statusCode: 500,
+        message: 'Ошибка при авторизации',
+        code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+        errors: [],
       },
     },
   })

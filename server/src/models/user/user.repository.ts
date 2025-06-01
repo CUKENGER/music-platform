@@ -119,15 +119,20 @@ export class UserRepository {
 
   async findByActivationLink(activationLink: string) {
     return await this.prisma.user.findFirst({
-      where: { activationLink },
+      where: {
+        activationLink,
+        activationExpiresAt: {
+          gte: new Date(),
+        },
+      },
     });
   }
 
   async activate(userId: number) {
     return await this.prisma.user.update({
-      where: {id: userId},
-      data: {isActivated: true},
-    })
+      where: { id: userId },
+      data: { isActivated: true },
+    });
   }
 
   async findByAccessToken(accessToken: string) {
@@ -135,10 +140,10 @@ export class UserRepository {
       where: {
         tokens: {
           some: {
-            accessToken
-          }
-        }
-      }
-    })
+            accessToken,
+          },
+        },
+      },
+    });
   }
 }

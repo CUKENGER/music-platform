@@ -1,4 +1,5 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'; import { JwtModule } from '@nestjs/jwt';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthMiddleware } from 'middleware/auth.middleware';
 import { AuthModule } from 'models/auth/auth.module';
@@ -54,10 +55,17 @@ import { AudioModule } from 'models/audio/audio.module';
                 translateTime: 'HH:MM:ss.l',
                 ignore: 'pid,hostname',
                 // singleLine: true,
-              }
+              },
             },
-            { target: 'pino/file', options: { destination: path.resolve(__dirname, '..', 'logs/app.log') }, level: 'debug' },
-          ]
+            {
+              target: 'pino/file',
+              options: {
+                destination: path.resolve(__dirname, '/usr/app/logs/app.log'),
+                mkdir: true,
+              },
+              level: 'error',
+            },
+          ],
         },
         level: 'debug',
         customSuccessMessage: (req, res) => `✅ ${req.method} ${req.url} - ${res.statusCode}`,
@@ -103,10 +111,7 @@ import { AudioModule } from 'models/audio/audio.module';
     UserRoleModule,
   ],
   controllers: [AudioController],
-  providers: [
-    UserCleanupService, 
-    { provide: APP_FILTER, useClass: AllExceptionsFilter }
-  ],
+  providers: [UserCleanupService, { provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
@@ -123,7 +128,7 @@ export class AppModule implements NestModule {
         { path: 'image/(.*)', method: RequestMethod.ALL },
         { path: 'audio/(.*)', method: RequestMethod.ALL },
         { path: 'static/*', method: RequestMethod.ALL },
-        { path: '.favicon.ico', method: RequestMethod.GET },
+        { path: '/favicon.ico', method: RequestMethod.GET },
       )
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }

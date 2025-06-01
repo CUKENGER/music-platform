@@ -21,72 +21,75 @@ interface UIPasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const UIPasswordInput = forwardRef<HTMLInputElement, UIPasswordInputProps>(({
-  containerClassName,
-  className,
-  required,
-  clearable,
-  value,
-  onChange,
-  label,
-  id,
-  warnings,
-  ...inputProps
-}, ref
-) => {
-  const [isShow, setIsShow] = useState(false);
+export const UIPasswordInput = forwardRef<HTMLInputElement, UIPasswordInputProps>(
+  (
+    {
+      containerClassName,
+      className,
+      required,
+      clearable,
+      value,
+      onChange,
+      label,
+      id,
+      warnings,
+      ...inputProps
+    },
+    ref,
+  ) => {
+    const [isShow, setIsShow] = useState(false);
 
-  const debounceValue = useDebounce(value, 200);
+    const debounceValue = useDebounce(value, 200);
 
-  const handleClear = () => {
-    const event = {
-      target: { value: '' },
-      nativeEvent: {},
-    } as ChangeEvent<HTMLInputElement>;
+    const handleClear = () => {
+      const event = {
+        target: { value: '' },
+        nativeEvent: {},
+      } as ChangeEvent<HTMLInputElement>;
 
-    if (onChange) {
-      onChange(event);
-    }
-  };
+      if (onChange) {
+        onChange(event);
+      }
+    };
 
-  const toggleShowPass = () => {
-    setIsShow((prev) => !prev);
-  };
+    const toggleShowPass = () => {
+      setIsShow((prev) => !prev);
+    };
 
-  const defaultId = useId();
-  return (
-    <div className={cl.TextFieldContainer}>
-      {label && <UILabel htmlFor={id ?? defaultId}>{label}</UILabel>}
-      <div className={cn(containerClassName, cl.container)}>
-        {value && (
-          <div onClick={toggleShowPass} className={cl.showIcon} aria-hidden="true">
-            <ShowPassIcon isShow={isShow} />
-          </div>
-        )}
-        <input
-          ref={ref}
-          id={id ?? defaultId}
-          className={cn(className, cl.input)}
-          value={value}
-          onChange={onChange}
-          required={required}
-          type={isShow ? 'text' : 'password'}
-          {...inputProps}
-        />
-        {clearable && value && <ClearIcon handleClear={handleClear} />}
-        {required && !value && <ExclamIcon className={cl.icon_container} />}
-      </div>
-      {warnings && debounceValue && (
-        <div className={cl.warnings_container}>
-          {warnings.map(
-            (warning, index) =>
-              warning.condition && <WarningMessage key={index} text={warning.text} />,
+    const defaultId = useId();
+    return (
+      <div className={cl.TextFieldContainer}>
+        {label && <UILabel htmlFor={id ?? defaultId}>{label}</UILabel>}
+        <div className={cn(containerClassName, cl.container)}>
+          {value && (
+            <div onClick={toggleShowPass} className={cl.showIcon} aria-hidden="true">
+              <ShowPassIcon isShow={isShow} />
+            </div>
           )}
+          <input
+            ref={ref}
+            id={id ?? defaultId}
+            className={cn(className, cl.input)}
+            value={value}
+            onChange={onChange}
+            required={required}
+            type={isShow ? 'text' : 'password'}
+            {...inputProps}
+          />
+          {clearable && value && <ClearIcon handleClear={handleClear} />}
+          {required && !value && <ExclamIcon className={cl.icon_container} />}
         </div>
-      )}
-    </div>
-  );
-}
-)
+        <div className={cl.warnings_container}>
+          {warnings &&
+            debounceValue &&
+            warnings.map(
+              (warning, index) =>
+                warning.condition && <WarningMessage key={index} text={warning.text} />,
+            )}
+        </div>
+      </div>
+    );
+  },
+);
 
-UIPasswordInput.displayName = "UIPasswordInput"
+UIPasswordInput.displayName = 'UIPasswordInput';

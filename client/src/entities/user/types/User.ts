@@ -1,13 +1,13 @@
-import { IAlbum } from "@/entities/album";
-import { IArtist } from "@/entities/artist";
-import { IComment } from "@/entities/comment";
-import { ITrack } from "@/entities/track";
+import { IAlbum } from '@/entities/album';
+import { IArtist } from '@/entities/artist';
+import { IComment } from '@/entities/comment';
+import { ITrack } from '@/entities/track';
 
 export interface IUser {
   id?: number;
   username?: string;
   email: string;
-  password: string;
+  password?: string;
   isActivated?: boolean;
   activationLink?: string;
   banned?: boolean;
@@ -51,8 +51,8 @@ export interface RegUserResponse {
   message: string;
   user: {
     email: string;
-    username: string
-  }
+    username: string;
+  };
 }
 
 export interface LoginUserResponse {
@@ -62,7 +62,7 @@ export interface LoginUserResponse {
     id: number;
     email: string;
     isActivated: boolean;
-  }
+  };
 }
 
 export interface CheckUsernameResponse {

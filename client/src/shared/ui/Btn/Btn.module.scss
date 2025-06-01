@@ -1,16 +1,12 @@
-
-
 .btn {
   border-radius: 8px;
   border: none;
   cursor: pointer;
   color: var(--gray);
-  transition:
-    background-color 0.3s,
-    border-color 0.3s;
   font-weight: 600;
-
-  &:hover {
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+  :hover {
     color: var(--white);
   }
 
@@ -40,6 +36,16 @@
   &.outlined {
     background-color: transparent;
     border: 2px solid var(--prm);
+    /* Уменьшаем padding, чтобы компенсировать border */
+    &.s {
+      padding: 4px 6px; /* 6px - 2px = 4px, 8px - 2px = 6px */
+    }
+    &.m {
+      padding: 6px 8px; /* 8px - 2px = 6px, 10px - 2px = 8px */
+    }
+    &.l {
+      padding: 8px 10px; /* 10px - 2px = 8px, 12px - 2px = 10px */
+    }
 
     &:hover {
       background-color: var(--prm);

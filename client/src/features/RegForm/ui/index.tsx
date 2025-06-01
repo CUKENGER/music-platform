@@ -25,6 +25,7 @@ export const RegForm = () => {
               aria-invalid={!!errors.username}
               warnings={[{ condition: !!errors.username, text: errors.username?.message }]}
               clearable
+							autoComplete='new-username'
             />
           )}
         />
@@ -39,8 +40,10 @@ export const RegForm = () => {
               type="email"
               label="Введите email"
               required
+              aria-invalid={!!errors.email}
               warnings={[{ condition: !!errors.email, text: errors.email?.message}]}
               clearable
+							autoComplete='new-email'
             />
           )}
         />
@@ -57,6 +60,7 @@ export const RegForm = () => {
               aria-invalid={!!errors.password}
               warnings={[{ condition: !!errors.password, text: errors.password?.message }]}
               clearable
+							autoComplete='new-password'
             />
           )}
         />
@@ -78,6 +82,7 @@ export const RegForm = () => {
                 },
               ]}
               clearable
+							autoComplete='new-repeat-password'
             />
           )}
         />
@@ -86,7 +91,7 @@ export const RegForm = () => {
         </Btn>
         <Link to={PUBLIC_ROUTES.LOGIN}>
           <Btn variant="outlined" className={cl.link}>
-            Авторизация
+						Войти 
           </Btn>
         </Link>
       </LoginLayout>

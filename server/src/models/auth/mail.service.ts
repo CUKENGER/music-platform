@@ -41,7 +41,7 @@ export class MailService {
   }
 
   async sendActivationMail(to: string, link: string): Promise<void> {
-    this.logger.log(`sendActivationMail:`, { service: 'MailService', mailTo: to });
+    this.logger.log(`sendActivationMail:`, { service: 'MailService', mailTo: to, link });
     await this.transporter.sendMail({
       from: `"Note Vomit" <${process.env.SMTP_USER}>`,
       to,

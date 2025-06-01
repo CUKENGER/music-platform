@@ -1,4 +1,5 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
+import { ERROR_CODES } from 'constants/errorCodes';
 import { ApiError } from 'exceptions/api.error';
 import { Request } from 'express';
 import { NextFunction } from 'express-serve-static-core';
@@ -24,7 +25,7 @@ export class AuthMiddleware implements NestMiddleware {
     this.logger.log(`AuthMiddleware authorizationHeader: ${authorizationHeader}`);
     if (!authorizationHeader) {
       this.logger.error(`Authorization header missing`);
-      throw ApiError.UnauthorizedError('Authorization header missing');
+      throw ApiError.UnauthorizedError('Authorization header missing', ERROR_CODES.UNAUTHORIZED);
     }
 
     const accessToken = authorizationHeader.split(' ')[1];
@@ -32,14 +33,14 @@ export class AuthMiddleware implements NestMiddleware {
     this.logger.log(`AuthMiddleware accessToken: ${accessToken}`);
     if (!accessToken) {
       this.logger.error(`Access token missing`);
-      throw ApiError.UnauthorizedError('Access token missing');
+      throw ApiError.UnauthorizedError('Access token missing', ERROR_CODES.UNAUTHORIZED);
     }
 
     const tokenData = this.tokenPublicService.validateAccessToken(accessToken);
     this.logger.log(`AuthMiddleware tokenData:`, { tokenData: tokenData });
     if (!tokenData) {
-     this.logger.error(`Invalid access token`);
-      throw ApiError.UnauthorizedError('Invalid access token');
+      this.logger.error(`Invalid access token`);
+      throw ApiError.UnauthorizedError('Invalid access token', ERROR_CODES.UNAUTHORIZED);
     }
 
     req.user = tokenData;
