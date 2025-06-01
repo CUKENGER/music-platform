@@ -6,9 +6,13 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import 'react-tooltip/dist/react-tooltip.css';
 import 'flatpickr/dist/flatpickr.min.css';
+import { ErrorBoundary } from './ErrorBoundary';
+import { ErrorPage } from './ErrorPage';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <AppProvider>
-    <BaseLayout />
+    <ErrorBoundary fallback={<ErrorPage />}>
+      <BaseLayout />
+    </ErrorBoundary>
   </AppProvider>,
 );
