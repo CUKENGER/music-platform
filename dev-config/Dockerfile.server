@@ -3,23 +3,25 @@ FROM node:20
 # Устанавливаем переменную окружения (development или production)
 ENV NODE_ENV=development
 
+RUN apt-get update && apt-get install -y ffmpeg
+
 WORKDIR /usr/app
 
+RUN npm install -g pnpm
+
 # Копируем package.json для кеширования
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
-# Устанавливаем зависимости
-RUN npm ci
-
+RUN pnpm install --frozen-lockfile
 # Копируем весь проект после установки зависимостей
 COPY . . 
 
 # Генерируем Prisma клиент после копирования кода
-RUN npx prisma generate
+RUN pnpm prisma generate
 
 # Открываем порт 5000
 EXPOSE 5000
 
 # Ждём, пока PostgreSQL будет доступен, затем запускаем сервер
-CMD ["sh", "-c", "npx prisma db push && npm run start:dev"]
+CMD ["sh", "-c", "pnpm prisma db push && pnpm run start:dev"]
 

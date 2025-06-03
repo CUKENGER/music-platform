@@ -1,0 +1,11 @@
+ignoredBuiltDependencies:
+  - '@nestjs/core'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@scarf/scarf'
+  - nestjs-pino
+  - prisma
+onlyBuiltDependencies:
+  - '@ffmpeg-installer/linux-x64'
+  - '@ffprobe-installer/linux-x64'
+  - sharp
