@@ -8,3 +8,50 @@
 ./dev-config/logs
 ./dev-config/logs/*
 
+dev-config/logs/app.log
+
+# Общие файлы и директории
+node_modules/
+*.log
+*.log.*
+.env
+.DS_Store
+*.bak
+*.swp
+*.tmp
+coverage/
+dist/
+build/
+
+# Для сервера (NestJS)
+server/dist/
+server/coverage/
+server/logs/
+server/static/hls/
+server/prisma/dev.db
+server/prisma/dev.db-journal
+
+# Для клиента (React)
+client/node_modules/
+client/build/
+client/dist/
+client/.env
+client/.env.local
+client/.env.development
+client/.env.production
+
+# pnpm
+pnpm-lock.yaml
+.pnpm-store/
+.pnpm-debug.log
+
+# Husky
+.husky/_
+
+# Временные файлы редакторов
+.idea/
+*.iml
+.vscode/
+*.sublime-project
+*.sublime-workspace
+

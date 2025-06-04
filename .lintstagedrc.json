@@ -1,0 +1,11 @@
+{
+  "server/**/*.{ts,js,json,md}": [
+    "pnpm --filter server lint",
+    "prettier --write"
+  ],
+  "client/**/*.{ts,tsx,js,jsx,json,md}": [
+    "pnpm --filter client lint",
+    "prettier --write"
+  ],
+  "*.{ts,tsx,js,jsx,json,md}": "prettier --write"
+}

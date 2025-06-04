@@ -93,7 +93,7 @@ importers:
         specifier: ^7.8.2
         version: 7.8.2
       sharp:
-        specifier: ^0.34.2
+        specifier: 0.34.2
         version: 0.34.2
       uuid:
         specifier: ^11.1.0

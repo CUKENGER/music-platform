@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "pnpm vite --host",
     "build": "pnpm tsc -b && vite build",
-    "lint": "pnpm eslint .",
     "preview": "pnpm vite preview",
-    "format": "pnpm prettier . --write"
+    "format": "pnpm prettier . --write",
+		"lint": "eslint \"src/**/*.{ts,tsx}\" --fix && prettier --write \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
