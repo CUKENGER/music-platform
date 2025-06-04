@@ -28,8 +28,15 @@ export const NavNextTrackItem = ({ track }: NavNextTrackItemProps) => {
     >
       <div className={styles.container}>
         <div className={styles.left_container}>
-          <CoverContainer handlePlay={play} track={track} />
-          <NameContainer artist={track.artist.name} name={track.name} artistId={track.artist.id} />
+          <CoverContainer
+            handlePlay={play}
+            track={track}
+          />
+          <NameContainer
+            artist={track.artist.name}
+            name={track.name}
+            artistId={track.artist.id}
+          />
         </div>
         <div className={styles.right_container}>
           <div className={styles.duration_container}>

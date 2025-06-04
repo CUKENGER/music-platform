@@ -29,7 +29,12 @@ export const Navbar = () => {
 
   return (
     <>
-      {isMenuOpen && <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />}
+      {isMenuOpen && (
+        <div
+          className={styles.overlay}
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
       <div
         className={`${styles.container} ${windowWidth && (isMenuOpen || windowWidth > 768) ? styles.open : ''}`}
         id="navbar"

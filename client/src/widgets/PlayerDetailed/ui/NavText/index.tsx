@@ -9,7 +9,10 @@ export const NavText = () => {
     <div className={styles.container}>
       {lines &&
         lines.map((line, index) => (
-          <p key={index} className={styles.line}>
+          <p
+            key={index}
+            className={styles.line}
+          >
             {line}
           </p>
         ))}

@@ -25,16 +25,26 @@ export const PlayerDetailed = () => {
   return (
     <div className={styles.main_container}>
       <div>
-        <CloseIcon className={styles.closeIcon} onClick={handleClose} />
+        <CloseIcon
+          className={styles.closeIcon}
+          onClick={handleClose}
+        />
       </div>
       <div className={styles.player_detailed}>
         <div className={styles.cover_container}>
           <div className={styles.cover_inner_container}>
-            <img className={styles.cover} src={API_URL + activeTrack?.picture} alt="cover" />
+            <img
+              className={styles.cover}
+              src={API_URL + activeTrack?.picture}
+              alt="cover"
+            />
           </div>
         </div>
         <div className={styles.main_nav_container}>
-          <NavItems selectedNav={selectedNav} onNavChange={handleNavChange} />
+          <NavItems
+            selectedNav={selectedNav}
+            onNavChange={handleNavChange}
+          />
           <div className={styles.info}>
             {selectedNav === 'text' && (
               <div className={styles.container}>
