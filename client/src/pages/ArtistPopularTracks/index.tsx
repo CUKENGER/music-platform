@@ -31,7 +31,12 @@ export const ArtistPopularTracks = () => {
         <span className={styles.count}>{artist?.tracks.length}</span>
       </div>
       {artist?.tracks.map((track, index) => (
-        <ChildrenTrack track={track} trackIndex={index} trackList={artist?.tracks} key={track.id} />
+        <ChildrenTrack
+          track={track}
+          trackIndex={index}
+          trackList={artist?.tracks}
+          key={track.id}
+        />
       ))}
     </div>
   );

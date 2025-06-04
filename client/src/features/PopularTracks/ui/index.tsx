@@ -104,13 +104,22 @@ export const PopularTracks = () => {
             onClick={() => sliderRef?.current?.slickPrev()}
             left={true}
           />
-          <SectionArrow isDisabled={isLastSlide} onClick={() => sliderRef?.current?.slickNext()} />
-          <Btn size='l'>Ещё</Btn>
+          <SectionArrow
+            isDisabled={isLastSlide}
+            onClick={() => sliderRef?.current?.slickNext()}
+          />
+          <Btn size="l">Ещё</Btn>
         </div>
       </div>
-      <Slider ref={sliderRef} {...settings}>
+      <Slider
+        ref={sliderRef}
+        {...settings}
+      >
         {groupedTracks.map((group, index) => (
-          <div key={index} className={styles.trackGroup}>
+          <div
+            key={index}
+            className={styles.trackGroup}
+          >
             {group.map((track) => (
               <TrackItem
                 key={track.id}

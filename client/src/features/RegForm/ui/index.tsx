@@ -11,7 +11,10 @@ export const RegForm = () => {
 
   return (
     <>
-      <LoginLayout handleSubmit={handleSubmit} title="Регистрация">
+      <LoginLayout
+        handleSubmit={handleSubmit}
+        title="Регистрация"
+      >
         <Controller
           name="username"
           control={control}
@@ -25,7 +28,7 @@ export const RegForm = () => {
               aria-invalid={!!errors.username}
               warnings={[{ condition: !!errors.username, text: errors.username?.message }]}
               clearable
-							autoComplete='new-username'
+              autoComplete="new-username"
             />
           )}
         />
@@ -41,9 +44,9 @@ export const RegForm = () => {
               label="Введите email"
               required
               aria-invalid={!!errors.email}
-              warnings={[{ condition: !!errors.email, text: errors.email?.message}]}
+              warnings={[{ condition: !!errors.email, text: errors.email?.message }]}
               clearable
-							autoComplete='new-email'
+              autoComplete="new-email"
             />
           )}
         />
@@ -60,7 +63,7 @@ export const RegForm = () => {
               aria-invalid={!!errors.password}
               warnings={[{ condition: !!errors.password, text: errors.password?.message }]}
               clearable
-							autoComplete='new-password'
+              autoComplete="new-password"
             />
           )}
         />
@@ -82,20 +85,30 @@ export const RegForm = () => {
                 },
               ]}
               clearable
-							autoComplete='new-repeat-password'
+              autoComplete="new-repeat-password"
             />
           )}
         />
-        <Btn isLoading={isLoading} disabled={!isValid} type="submit">
+        <Btn
+          isLoading={isLoading}
+          disabled={!isValid}
+          type="submit"
+        >
           Зарегистрироваться
         </Btn>
         <Link to={PUBLIC_ROUTES.LOGIN}>
-          <Btn variant="outlined" className={cl.link}>
-						Войти 
+          <Btn
+            variant="outlined"
+            className={cl.link}
+          >
+            Войти
           </Btn>
         </Link>
       </LoginLayout>
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </>
   );
 };

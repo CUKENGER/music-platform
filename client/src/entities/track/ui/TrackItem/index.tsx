@@ -11,14 +11,14 @@ interface TrackItemProps {
   item: ITrack;
   itemList: ITrack[];
   needDeleteIcon?: boolean;
-	needClick?: boolean;
+  needClick?: boolean;
 }
 
 const TrackItemComponent = (
   { item: track, itemList: trackList, needDeleteIcon = true, needClick = true }: TrackItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-	const { play, handleDelete, isVisible, modal, hideModal } = useTrackItem(track, trackList);
+  const { play, handleDelete, isVisible, modal, hideModal } = useTrackItem(track, trackList);
   const isAdmin = useUserStore((state) => state.isAdmin);
 
   return (
@@ -28,11 +28,21 @@ const TrackItemComponent = (
       onClick={needClick ? play : undefined}
     >
       <div className={styles.main_container}>
-        <CoverContainer handlePlay={play} track={track} />
-        <NameContainer name={track.name} artist={track.artist.name} artistId={track.artist.id} />
+        <CoverContainer
+          handlePlay={play}
+          track={track}
+        />
+        <NameContainer
+          name={track.name}
+          artist={track.artist.name}
+          artistId={track.artist.id}
+        />
       </div>
       <div className={styles.right_container}>
-        <ListensIcon className={styles.listens} listens={track.listens} />
+        <ListensIcon
+          className={styles.listens}
+          listens={track.listens}
+        />
         <div>
           <div className={styles.duration_container}>
             <p>{track.duration}</p>
@@ -44,7 +54,10 @@ const TrackItemComponent = (
           </div>
         )}
       </div>
-      <ModalContainer hideModal={hideModal} modal={modal} />
+      <ModalContainer
+        hideModal={hideModal}
+        modal={modal}
+      />
     </div>
   );
 };

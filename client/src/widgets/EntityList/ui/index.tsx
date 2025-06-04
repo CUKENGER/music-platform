@@ -63,10 +63,21 @@ export const EntityList = <T extends { id: number }>({
             {page.map((item, i) => {
               if (page.length === i + 1) {
                 return (
-                  <EntityItem ref={lastItemRef} item={item} itemList={allItems} key={item.id} />
+                  <EntityItem
+                    ref={lastItemRef}
+                    item={item}
+                    itemList={allItems}
+                    key={item.id}
+                  />
                 );
               } else {
-                return <EntityItem item={item} itemList={allItems} key={item.id} />;
+                return (
+                  <EntityItem
+                    item={item}
+                    itemList={allItems}
+                    key={item.id}
+                  />
+                );
               }
             })}
           </React.Fragment>

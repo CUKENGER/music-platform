@@ -66,7 +66,7 @@ export const CommentItem = ({ comment, refetchGetComments }: CommentItemProps) =
         onError: (error) => console.error('Error adding like:', error),
       });
     }
-  }, [comment.id, isLike, addLike, deleteLike, refetchGetComments, refetchUser]);
+  }, [setUser, comment.id, isLike, addLike, deleteLike, refetchGetComments, refetchUser]);
 
   const handleOpenReplyForm = () => {
     setIsReplying((prev) => !prev);
@@ -86,11 +86,21 @@ export const CommentItem = ({ comment, refetchGetComments }: CommentItemProps) =
       </div>
       <CommentText text={comment.text} />
       <div className={styles.commentFooter}>
-        <LikeIcon isLike={isLike} onClick={handleLike} likes={localLikes} />
-        <span onClick={() => setIsReplyOpen((prev) => !prev)} className={styles.repliesTitle}>
+        <LikeIcon
+          isLike={isLike}
+          onClick={handleLike}
+          likes={localLikes}
+        />
+        <span
+          onClick={() => setIsReplyOpen((prev) => !prev)}
+          className={styles.repliesTitle}
+        >
           Ответы {comment.replies.length}
         </span>
-        <Btn className={styles.commentBtn} onClick={handleOpenReplyForm}>
+        <Btn
+          className={styles.commentBtn}
+          onClick={handleOpenReplyForm}
+        >
           Ответить
         </Btn>
       </div>
@@ -106,7 +116,10 @@ export const CommentItem = ({ comment, refetchGetComments }: CommentItemProps) =
       {isReplyOpen && (
         <div className={styles.replyList}>
           {comment.replies.map((reply) => (
-            <ReplyItem key={reply.id} reply={reply} />
+            <ReplyItem
+              key={reply.id}
+              reply={reply}
+            />
           ))}
         </div>
       )}

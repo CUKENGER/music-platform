@@ -83,8 +83,15 @@ export const TrackLikeContainer = ({ id, likes }: TrackLikeContainerProps) => {
   );
 
   return (
-    <div className={styles.like_container} onClick={(e) => handleLike(e)}>
-      <img className={styles.like} src={isLike ? likeFillIcon : likeIcon} alt="like icon" />
+    <div
+      className={styles.like_container}
+      onClick={(e) => handleLike(e)}
+    >
+      <img
+        className={styles.like}
+        src={isLike ? likeFillIcon : likeIcon}
+        alt="like icon"
+      />
       <p className={styles.like_count}>{localLikes}</p>
     </div>
   );

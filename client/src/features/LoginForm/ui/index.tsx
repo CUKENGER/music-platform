@@ -7,15 +7,7 @@ import cl from './index.module.scss';
 import { Controller } from 'react-hook-form';
 
 export const LoginForm = () => {
-  const {
-    handleSubmit,
-    control,
-    errors,
-    isLoading,
-    isValid,
-    modal,
-    hideModal,
-  } = useLoginForm();
+  const { handleSubmit, control, errors, isLoading, isValid, modal, hideModal } = useLoginForm();
 
   return (
     <>

@@ -12,7 +12,6 @@ import { ArtistPublicService } from 'models/artist/artist.public';
 import { ApiError } from 'exceptions/api.error';
 import { AlbumPublicService } from 'models/album/album.public';
 import { Logger } from 'nestjs-pino';
-import { STATIC_FILES_PATH } from 'constants/paths';
 import { FileType } from 'models/file/types';
 import { TrackRepository } from './track.repository';
 import { AudioService } from 'models/audio/audio.service';
@@ -41,8 +40,11 @@ export class TrackService {
     let imagePath: string = '';
     try {
       this.logger.log(`create track dto:`, { dto: dto });
-      audioPath = await this.fileService.createFile(FileType.AUDIO, audio);
-      imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
+      audioPath = (await this.fileService.createFile(FileType.AUDIO, audio)) as string;
+      const imageResult = (await this.fileService.createFile(FileType.IMAGE, picture)) as {
+        paths: string[];
+      };
+			imagePath = imageResult.paths[0];
       this.logger.log(`audioPath: ${audioPath}\n imagePath: ${imagePath}`);
       const duration = await this.audioService.getAudioDuration(
         path.resolve(__dirname, '../../../static', audioPath),
@@ -158,10 +160,11 @@ export class TrackService {
   ): Promise<Track> {
     const entityToUpdate = await this.trackHelperService.findTrackById(id);
     if (picture) {
-      newData.picture = await this.fileService.createFile(FileType.IMAGE, picture);
+      const imageResult = await this.fileService.createFile(FileType.IMAGE, picture);
+			newData.picture = imageResult[0]
     }
     if (audio) {
-      const audioPath = await this.fileService.createFile(FileType.AUDIO, audio);
+      const audioPath = await this.fileService.createFile(FileType.AUDIO, audio) as string;
       newData.audio = audioPath;
       newData.duration = await this.audioService.getAudioDuration(audioPath);
     }

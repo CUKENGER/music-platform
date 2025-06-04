@@ -58,7 +58,7 @@ export const useEditAlbumForm = () => {
   const values = getValues();
   const isChanged = useMemo(() => {
     return isDirty || Object.keys(dirtyFields).length > 0 || touchedFields;
-  }, [isDirty, dirtyFields]);
+  }, [touchedFields, isDirty, dirtyFields]);
 
   const invalidNewTracks = values?.tracks?.some(
     (track) => track.isNew && (!track.name.trim() || !track.audio),

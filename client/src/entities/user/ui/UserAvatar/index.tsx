@@ -42,7 +42,9 @@ export const UserAvatar = () => {
       <div className={styles.main_container}>
         <div className={styles.user_avatar}></div>
         <div className={styles.name_container}>
-          <p onClick={() => navigate(PRIVATE_ROUTES.PROFILE + `/${user?.id}`)}>{isLoading ? 'Loading...' : user?.username}</p>
+          <p onClick={() => navigate(PRIVATE_ROUTES.PROFILE + `/${user?.id}`)}>
+            {isLoading ? 'Loading...' : user?.username}
+          </p>
         </div>
         <div className={styles.menu}>
           <Menu items={items} />

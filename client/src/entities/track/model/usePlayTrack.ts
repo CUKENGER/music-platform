@@ -1,54 +1,33 @@
-import { audioManager } from '@/shared/model';
+import { useCallback, useState } from 'react';
 import { ITrack } from '../types/Track';
-import useActiveTrackListStore from './ActiveTrackListStore';
 import usePlayerStore from './PlayerStore';
-import useAudioChunkStore from './AudioChunkStore';
-import { useCallback } from 'react';
+import audioManager from './AudioManager';
 
-export const usePlayTrack = (track: ITrack, trackList?: ITrack[]) => {
-  const chunkSize = 1000000;
+export const usePlayTrack = (track: ITrack) => {
+  const { setActiveTrack, activeTrack, setPlay, setPause } = usePlayerStore();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const filename = track.audio;
 
-  const setActiveTrackList = useActiveTrackListStore((state) => state.setActiveTrackList);
-  const { activeTrack, setPlay, setPause, pause, setActiveTrack } = usePlayerStore();
-  const { setStart, setEnd, setLoadedTime } = useAudioChunkStore();
+  const play = useCallback(async () => {
+    const isSameTrack = activeTrack?.id === track.id;
 
-  const play = useCallback(() => {
-    if (trackList) {
-      setActiveTrackList(trackList);
-    }
-    if (!audioManager.isAudioExist()) return;
-    if (activeTrack?.id === track.id) {
-      if (pause) {
-        audioManager.play();
-        setPlay();
-      } else {
+    if (isSameTrack) {
+      if (isPlaying) {
         audioManager.pause();
         setPause();
+      } else {
+        audioManager.play();
+        setPlay();
       }
+      setIsPlaying(!isPlaying);
     } else {
-      audioManager.cleanup();
-      audioManager.seekTo(0);
-      setStart(0);
-      setEnd(chunkSize - 1);
-      setLoadedTime(0);
+      // audioManager.cleanup(); // Очистка перед загрузкой нового трека
+      audioManager.loadHlsSource(`http://localhost:5000/${filename}/playlist.m3u8`);
       setActiveTrack(track);
       setPlay();
+      setIsPlaying(true);
     }
-  }, [
-    setActiveTrackList,
-    trackList,
-    activeTrack?.id,
-    track,
-    pause,
-    setActiveTrack,
-    setEnd,
-    setLoadedTime,
-    setPause,
-    setPlay,
-    setStart,
-  ]);
+  }, [filename, track, activeTrack, isPlaying, setActiveTrack, setPlay, setPause]);
 
-  return {
-    play,
-  };
+  return { play };
 };

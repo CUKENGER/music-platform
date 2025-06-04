@@ -41,7 +41,7 @@ export const logoutUser = async (): Promise<string> => {
 };
 
 export const checkUsername = async (username: string): Promise<CheckUsernameResponse> => {
-  return apiRequest<CheckUsernameResponse>('post', `user/check/${username}`)
+  return apiRequest<CheckUsernameResponse>('post', `user/check/${username}`);
   // try {
   //   const response = await axiosInstance.post(`user/check/${username}`, { params: username });
   //   return response.data;

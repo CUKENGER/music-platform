@@ -10,8 +10,14 @@ export const MenuIcon = () => {
   };
 
   return (
-    <div className={styles.MenuIcon} onClick={handleClick}>
-      <img src={menuIcon} alt="menu" />
+    <div
+      className={styles.MenuIcon}
+      onClick={handleClick}
+    >
+      <img
+        src={menuIcon}
+        alt="menu"
+      />
     </div>
   );
 };

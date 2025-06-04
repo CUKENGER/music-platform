@@ -1,6 +1,6 @@
-import { IArtist } from "@/entities/artist";
-import { IComment } from "@/entities/comment";
-import { ITrack, TrackState, TrackUpdateState } from "@/entities/track";
+import { IArtist } from '@/entities/artist';
+import { IComment } from '@/entities/comment';
+import { ITrack, TrackState, TrackUpdateState } from '@/entities/track';
 
 export interface IAlbum {
   id: number;

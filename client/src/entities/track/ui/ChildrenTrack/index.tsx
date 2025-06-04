@@ -64,7 +64,11 @@ export const ChildrenTrack = ({ track, trackIndex, trackList }: ChildrenTrackPro
         <p className={styles.trackName}>{track.name}</p>
       </div>
       <div className={styles.trackDetails}>
-        <LikeIcon isLike={isLike} likes={localLikes} onClick={() => handleLike(track.id)} />
+        <LikeIcon
+          isLike={isLike}
+          likes={localLikes}
+          onClick={() => handleLike(track.id)}
+        />
         <ListensIcon listens={track.listens} />
         <p className={styles.trackDuration}>{track.duration}</p>
       </div>

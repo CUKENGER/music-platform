@@ -15,7 +15,7 @@ export const useCreateTrackForm = () => {
   const text = useInput('', {});
   const genre = useInput('', {});
 
-  const [options, setOptions] = useState(genres);
+  const [options] = useState(genres);
 
   const { hideModal, modal, showModal } = useModal();
 
@@ -73,7 +73,7 @@ export const useCreateTrackForm = () => {
         audio: audio,
         picture: cover,
       };
-      console.log('trackInfo', trackInfo)
+      console.log('trackInfo', trackInfo);
       createTrack(trackInfo, {
         onSuccess: (response) => {
           showModal(`Трек ${response.name} успешно загружен`, () =>

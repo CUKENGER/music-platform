@@ -36,9 +36,9 @@ export const MainInfoInputs = ({ control, setValue, album }: MainInfoInputsProps
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <SearchArtistInput 
-                artist={field.value} 
-                onChange={field.onChange} 
+              <SearchArtistInput
+                artist={field.value}
+                onChange={field.onChange}
               />
             )}
           />
@@ -78,7 +78,12 @@ export const MainInfoInputs = ({ control, setValue, album }: MainInfoInputsProps
             name="genre"
             control={control}
             rules={{ required: true }}
-            render={() => <Options options={genres} currentOption={album?.genre} />}
+            render={() => (
+              <Options
+                options={genres}
+                currentOption={album?.genre}
+              />
+            )}
           />
         </div>
       </div>

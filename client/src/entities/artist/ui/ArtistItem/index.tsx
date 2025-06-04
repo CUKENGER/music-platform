@@ -15,7 +15,10 @@ const ArtistItemComponent = (
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
   return (
-    <div ref={ref} className={styles.ArtistItem}>
+    <div
+      ref={ref}
+      className={styles.ArtistItem}
+    >
       <Link to={`${artist.id}`}>
         <div className={styles.cover}>
           <img src={API_URL + artist.picture} />
@@ -28,7 +31,10 @@ const ArtistItemComponent = (
       </Link>
       <div className={styles.main_info}>
         <ListensIcon listens={artist.listens} />
-        <LikeIcon className={styles.likes} likes={artist?.likes} />
+        <LikeIcon
+          className={styles.likes}
+          likes={artist?.likes}
+        />
       </div>
     </div>
   );

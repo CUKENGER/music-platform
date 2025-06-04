@@ -18,7 +18,11 @@ export const EntitySection = ({ title }: EntitySectionProps) => {
         <div className={styles.controls_container}>
           <Btn>Ещё</Btn>
           <div className={styles.controls_arrows}>
-            <SectionArrow left={true} onClick={prevSlide} isDisabled={currentSlide === 0} />
+            <SectionArrow
+              left={true}
+              onClick={prevSlide}
+              isDisabled={currentSlide === 0}
+            />
             <SectionArrow
               onClick={nextSlide}
               isDisabled={currentSlide >= Math.ceil(totalSlides - slidesPerPage)}
@@ -27,7 +31,10 @@ export const EntitySection = ({ title }: EntitySectionProps) => {
         </div>
       </div>
 
-      <div className={styles.slider} ref={sliderRef}>
+      <div
+        className={styles.slider}
+        ref={sliderRef}
+      >
         <div className={styles.slidesWrapper}>
           {[...Array(totalSlides)].map((_, index) => (
             <div

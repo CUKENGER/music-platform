@@ -9,13 +9,22 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
+    dedupe: ['eventemitter3'],
   },
   build: {
     sourcemap: true,
   },
   server: {
+		allowedHosts: ['w3p1qao7o86c.share.zrok.io'],
     watch: {
       usePolling: true,
     },
   },
+	css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern' // or "modern"
+      }
+    }
+  }
 });

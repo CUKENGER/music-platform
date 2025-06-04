@@ -8,12 +8,14 @@ import {
   getAll,
   getAllPopular,
   getAudioChunks,
+  getFullAudio,
   getLimitPopular,
   getOne,
 } from './trackApi';
 import { CreateTrackDto, ITrack } from '../types/Track';
 import { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
+import { ChunkData } from '../model/AudioChunkLoader';
 
 export const useCreateTrack = () => {
   const queryClient = useQueryClient();
@@ -122,20 +124,27 @@ export const useGetAudioChunks = (filename: string, start: number, end: number) 
     setIsRangeError(false);
   }, [filename]);
 
-  return useQuery({
+  return useQuery<ChunkData>({
     queryKey: ['audioChunks', filename, start, end],
     queryFn: async () => {
-      try {
-        return await getAudioChunks(filename, start, end);
-      } catch (error) {
-        if (error instanceof Error && error.message === 'Range not satisfiable') {
-          setIsRangeError(true);
-          throw error;
-        }
-        throw error;
+      const result = await getAudioChunks(filename, start, end);
+      if (!result.fileSize) {
+        throw new Error('fileSize is missing');
       }
+      return result as ChunkData;
     },
     enabled: !!filename && !isRangeError,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    retry: false,
+  });
+};
+
+export const useGetFullAudio = (filename: string) => {
+  return useQuery({
+    queryKey: ['fullAudio', filename],
+    queryFn: () => getFullAudio(filename),
+    enabled: !!filename,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     retry: false,

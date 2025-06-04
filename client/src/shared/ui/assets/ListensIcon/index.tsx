@@ -11,7 +11,10 @@ interface ListensIconProps {
 export const ListensIcon: FC<ListensIconProps> = ({ listens, className }) => {
   return (
     <div className={classNames(className, styles.ListensIcon)}>
-      <img src={listensIcon} alt="listens" />
+      <img
+        src={listensIcon}
+        alt="listens"
+      />
       <p>{listens}</p>
     </div>
   );

@@ -44,8 +44,15 @@ export const MixIcon = () => {
   const currentIcon = useMemo(() => (state.isMix ? mixFillIcon : mixIcon), [state.isMix]);
 
   return (
-    <div className={styles.mix_container} onClick={handleMix}>
-      <img className={styles.mix_icon} src={currentIcon} alt="mix" />
+    <div
+      className={styles.mix_container}
+      onClick={handleMix}
+    >
+      <img
+        className={styles.mix_icon}
+        src={currentIcon}
+        alt="mix"
+      />
     </div>
   );
 };

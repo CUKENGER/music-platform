@@ -100,7 +100,10 @@ export const TrackForm = ({
         </label>
       </div>
       {trackIndex !== 0 ?
-        <div className={styles.minusBtn} onClick={removeTrack}>
+        <div
+          className={styles.minusBtn}
+          onClick={removeTrack}
+        >
           <img src={minusBtnBg} />
         </div>
       : <div className={styles.minusBtn}></div>}

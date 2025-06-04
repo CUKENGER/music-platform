@@ -17,12 +17,19 @@ export const AlbumCommonForm = ({
   hasData,
 }: AlbumCommonFormProps) => {
   return (
-    <form className={styles.Form} onSubmit={onSubmit}>
+    <form
+      className={styles.Form}
+      onSubmit={onSubmit}
+    >
       <Link to={backLink}>
         <Btn>Назад</Btn>
       </Link>
       {children}
-      <Btn isLoading={isPending} type="submit" disabled={!hasData}>
+      <Btn
+        isLoading={isPending}
+        type="submit"
+        disabled={!hasData}
+      >
         Загрузить
       </Btn>
     </form>

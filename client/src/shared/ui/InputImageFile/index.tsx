@@ -53,16 +53,34 @@ export const InputImageFile = ({
         accept={'image/*'}
         {...defaultProps}
       />
-      <label className={`${cl.label}`} htmlFor={`inputImage-${id}`}>
+      <label
+        className={`${cl.label}`}
+        htmlFor={`inputImage-${id}`}
+      >
         {currentPicture && !uploadPicture && (
-          <img className={cl.uploadPicture} src={currentPicture} alt="current cover" />
+          <img
+            className={cl.uploadPicture}
+            src={currentPicture}
+            alt="current cover"
+          />
         )}
         {uploadPicture && (
-          <img className={cl.uploadPicture} src={uploadPicture} alt="uploaded cover" />
+          <img
+            className={cl.uploadPicture}
+            src={uploadPicture}
+            alt="uploaded cover"
+          />
         )}
         {!currentPicture && !uploadPicture && <span>Выберите изображение</span>}
       </label>
-      {(currentPicture || uploadPicture) && <Btn onClick={handleReset} className={cl.reset_btn}>Сбросить</Btn>}
+      {(currentPicture || uploadPicture) && (
+        <Btn
+          onClick={handleReset}
+          className={cl.reset_btn}
+        >
+          Сбросить
+        </Btn>
+      )}
     </div>
   );
 };

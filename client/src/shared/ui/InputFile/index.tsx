@@ -1,6 +1,5 @@
-import { ChangeEvent, InputHTMLAttributes, useId, useState } from 'react';
+import { ChangeEvent, InputHTMLAttributes, useState } from 'react';
 import styles from './InputFile.module.scss';
-import { Btn } from '../Btn';
 
 interface InputAudioProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder: string;
@@ -56,13 +55,20 @@ export const InputFile = ({
       >
         {isAudio && fileName ? fileName : placeholder}
         {currentPicture && !uploadPicture && (
-          <img className={styles.uploadPicture} src={currentPicture} alt="uploaded cover" />
+          <img
+            className={styles.uploadPicture}
+            src={currentPicture}
+            alt="uploaded cover"
+          />
         )}
         {uploadPicture && (
-          <img className={styles.uploadPicture} src={uploadPicture} alt="uploaded cover" />
+          <img
+            className={styles.uploadPicture}
+            src={uploadPicture}
+            alt="uploaded cover"
+          />
         )}
       </label>
     </div>
   );
 };
-

@@ -29,14 +29,23 @@ export const ErrorPage: React.FC<ErrorPageProps> = ({ onReset, errorMessage }) =
         </p>
         <div className={styles.actions}>
           {onReset && (
-            <button className={styles.button} onClick={onReset}>
+            <button
+              className={styles.button}
+              onClick={onReset}
+            >
               Сбросить ошибку
             </button>
           )}
-          <button className={styles.button} onClick={handleReload}>
+          <button
+            className={styles.button}
+            onClick={handleReload}
+          >
             Перезагрузить страницу
           </button>
-          <button className={`${styles.button} ${styles.secondary}`} onClick={handleGoHome}>
+          <button
+            className={`${styles.button} ${styles.secondary}`}
+            onClick={handleGoHome}
+          >
             На главную
           </button>
         </div>

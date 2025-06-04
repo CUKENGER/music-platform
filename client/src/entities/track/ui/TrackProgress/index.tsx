@@ -24,7 +24,10 @@ export const TrackProgress = () => {
   return (
     <div className={styles.input_duration_container}>
       {hoverTime && (
-        <div className={styles.hover_time} style={hoverTimeStyle}>
+        <div
+          className={styles.hover_time}
+          style={hoverTimeStyle}
+        >
           {hoverTime}
         </div>
       )}

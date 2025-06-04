@@ -13,7 +13,10 @@ export const ExclamIcon = ({ isRed = true, className }: ExclamIconProps) => {
 
   return (
     <div className={cn(className, styles.ExclamIcon)}>
-      <img src={src} alt="exclam" />
+      <img
+        src={src}
+        alt="exclam"
+      />
     </div>
   );
 };

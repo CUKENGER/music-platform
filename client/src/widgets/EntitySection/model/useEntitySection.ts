@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useEntitySection = () => {
   const [slidesPerPage, setSlidesPerPage] = useState(3);
@@ -28,13 +28,13 @@ export const useEntitySection = () => {
     }
   };
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (sliderRef.current) {
       const slideWidth = sliderRef.current.offsetWidth / slidesPerPage;
       const newCurrentSlide = Math.round(sliderRef.current.scrollLeft / slideWidth);
       setCurrentSlide(newCurrentSlide);
     }
-  };
+  }, [slidesPerPage]);
 
   useEffect(() => {
     updateSlidesPerPage();
@@ -46,13 +46,14 @@ export const useEntitySection = () => {
   }, []);
 
   useEffect(() => {
-    if (sliderRef.current) {
-      sliderRef.current.addEventListener('scroll', handleScroll);
+    const slider = sliderRef.current;
+    if (slider) {
+      slider.addEventListener('scroll', handleScroll);
       return () => {
-        sliderRef.current?.removeEventListener('scroll', handleScroll);
+        slider.removeEventListener('scroll', handleScroll);
       };
     }
-  }, [slidesPerPage]);
+  }, [slidesPerPage, handleScroll]);
 
   return {
     prevSlide,

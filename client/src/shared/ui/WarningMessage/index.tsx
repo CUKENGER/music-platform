@@ -4,7 +4,7 @@ import { ExclamIcon } from '../assets/ExclamIcon/';
 interface WarningMessageProps {
   text?: string;
 }
- 
+
 export const WarningMessage = ({ text }: WarningMessageProps) => {
   return (
     <div className={styles.WarningMessage}>

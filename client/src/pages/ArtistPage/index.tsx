@@ -50,13 +50,9 @@ export const ArtistPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header_btn}>
-        <Btn onClick={() => navigate(-1)}>
-          Назад
-        </Btn>
+        <Btn onClick={() => navigate(-1)}>Назад</Btn>
         <div className={styles.edit_btn}>
-          <Btn onClick={handleDeleteArtist}>
-            Удалить
-          </Btn>
+          <Btn onClick={handleDeleteArtist}>Удалить</Btn>
           <Link to={PRIVATE_ROUTES.ARTISTS + '/' + id + '/edit'}>
             <Btn>Изменить</Btn>
           </Link>
@@ -81,12 +77,18 @@ export const ArtistPage = () => {
           {artist?.description &&
             descriptionRef.current &&
             descriptionRef.current.scrollHeight > 108 && (
-              <span className={styles.showMoreBtn} onClick={() => setIsExpanded((prev) => !prev)}>
+              <span
+                className={styles.showMoreBtn}
+                onClick={() => setIsExpanded((prev) => !prev)}
+              >
                 {isExpanded ? 'Показать меньше' : 'Показать еще'}
               </span>
             )}
           <div className={styles.listens_container}>
-            <ListensIcon className={styles.listens} listens={artist?.listens} />
+            <ListensIcon
+              className={styles.listens}
+              listens={artist?.listens}
+            />
             <p>{artist?.genre}</p>
           </div>
           <Btn className={styles.like_btn}>

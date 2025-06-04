@@ -29,8 +29,15 @@ export const PlayPauseBtn: FC = React.memo(() => {
   const btnIcon = pause ? playBtnBg : pauseBtnBg;
 
   return (
-    <div className={styles.circle} onClick={playBtn}>
-      <img src={btnIcon} className={styles.image} alt={pause ? 'Play' : 'Pause'} />
+    <div
+      className={styles.circle}
+      onClick={playBtn}
+    >
+      <img
+        src={btnIcon}
+        className={styles.image}
+        alt={pause ? 'Play' : 'Pause'}
+      />
     </div>
   );
 });

@@ -55,7 +55,11 @@ export const SelectFilter = ({ options, className }: SelectFilterProps) => {
         {isOpen && (
           <ul className={styles.list_open}>
             {options.map((option) => (
-              <li key={option} className={styles.list_item} onClick={() => handleSort(option)}>
+              <li
+                key={option}
+                className={styles.list_item}
+                onClick={() => handleSort(option)}
+              >
                 {option}
               </li>
             ))}

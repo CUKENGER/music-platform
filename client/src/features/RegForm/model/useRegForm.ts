@@ -59,7 +59,7 @@ export const useRegForm = () => {
   };
 
   return {
-    handleSubmit : handleSubmit(onSubmit),
+    handleSubmit: handleSubmit(onSubmit),
     control,
     errors,
     isLoading,

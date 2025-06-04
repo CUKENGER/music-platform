@@ -51,7 +51,17 @@ export const ReplyForm = ({
         },
       },
     );
-  }, [reply.value, comment.id, addReply, refetchGetComments]);
+  }, [
+    comment.albumId,
+    reply,
+    setIsReplyOpen,
+    setIsReplying,
+    showModal,
+    username,
+    comment.id,
+    addReply,
+    refetchGetComments,
+  ]);
 
   return (
     <div className={styles.replyForm}>
@@ -63,10 +73,16 @@ export const ReplyForm = ({
         onChange={reply.onChange}
         placeholder="Введите ваш ответ"
       />
-      <Btn isLoading={isPending} onClick={handleReplySubmit}>
+      <Btn
+        isLoading={isPending}
+        onClick={handleReplySubmit}
+      >
         Отправить
       </Btn>
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </div>
   );
 };

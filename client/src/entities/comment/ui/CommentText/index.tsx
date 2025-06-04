@@ -31,12 +31,18 @@ export const CommentText = ({ text }: CommentTextProps) => {
         <p className={styles.commentText}>{text}</p>
       </div>
       {hasGradient && (
-        <span className={styles.showMoreBtn} onClick={() => setIsExpanded(true)}>
+        <span
+          className={styles.showMoreBtn}
+          onClick={() => setIsExpanded(true)}
+        >
           Показать еще
         </span>
       )}
       {isExpanded && (
-        <span className={styles.showMoreBtn} onClick={() => setIsExpanded(false)}>
+        <span
+          className={styles.showMoreBtn}
+          onClick={() => setIsExpanded(false)}
+        >
           Показать меньше
         </span>
       )}

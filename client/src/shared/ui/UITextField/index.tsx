@@ -59,7 +59,12 @@ export const UITextField = forwardRef<HTMLInputElement, UITextFieldProps>(
             debounceValue &&
             warnings.map(
               (warning, index) =>
-                warning.condition && <WarningMessage key={index} text={warning.text} />,
+                warning.condition && (
+                  <WarningMessage
+                    key={index}
+                    text={warning.text}
+                  />
+                ),
             )}
         </div>
       </div>

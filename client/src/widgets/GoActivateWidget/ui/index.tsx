@@ -12,9 +12,7 @@ export const GoActivateWidget = () => {
       <p className={styles.email}>{email}</p>
       <div className={styles.link_container}>
         <Link to={'/registration'}>
-          <Btn>
-            Назад
-          </Btn>
+          <Btn>Назад</Btn>
         </Link>
       </div>
     </div>

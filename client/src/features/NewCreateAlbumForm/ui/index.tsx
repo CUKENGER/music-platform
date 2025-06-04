@@ -49,12 +49,19 @@ export const AlbumCommonForm = ({
   hasData,
 }: AlbumCommonFormProps) => {
   return (
-    <form className={styles.Form} onSubmit={onSubmit}>
+    <form
+      className={styles.Form}
+      onSubmit={onSubmit}
+    >
       <Link to={backLink}>
         <Btn>Назад</Btn>
       </Link>
       {children}
-      <Btn isLoading={isPending} type="submit" disabled={!hasData}>
+      <Btn
+        isLoading={isPending}
+        type="submit"
+        disabled={!hasData}
+      >
         Загрузить
       </Btn>
     </form>
@@ -144,9 +151,9 @@ export const CreateAlbumForm = () => {
             name="cover"
             control={control}
             render={({ field }) => (
-              <InputImageFile 
-                setFile={field.onChange} 
-                placeholder="Загрузите обложку альбома" 
+              <InputImageFile
+                setFile={field.onChange}
+                placeholder="Загрузите обложку альбома"
               />
             )}
           />
@@ -156,16 +163,19 @@ export const CreateAlbumForm = () => {
             name="tracks"
             control={control}
             render={({ field }) => (
-              <input 
-                type="file" 
-                id={'album-audio'} 
-                accept="audio/*" 
-                multiple 
-                {...field} 
+              <input
+                type="file"
+                id={'album-audio'}
+                accept="audio/*"
+                multiple
+                {...field}
               />
             )}
           />
-          <label htmlFor={`album-audio`} data-tooltip-id="downloadMultipleButton">
+          <label
+            htmlFor={`album-audio`}
+            data-tooltip-id="downloadMultipleButton"
+          >
             Загрузите аудиодорожки
           </label>
           <ReactTooltip
@@ -178,7 +188,10 @@ export const CreateAlbumForm = () => {
 
         <AddTrackIcon onClick={addTrackForm} />
       </FormProvider>
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </AlbumCommonForm>
   );
 };
@@ -198,7 +211,11 @@ export const TrackFormsList = () => {
             // className={styles.tracks_container}
           >
             {tracks.map((track, index) => (
-              <Draggable key={index} draggableId={index.toString()} index={index}>
+              <Draggable
+                key={index}
+                draggableId={index.toString()}
+                index={index}
+              >
                 {(provided: DraggableProvided) => (
                   <div
                     ref={provided.innerRef}
@@ -238,7 +255,12 @@ export const InputsContainer = () => {
         name="artist"
         control={control}
         rules={{ required: true }}
-        render={({ field }) => <SearchArtistInput artist={field.value} onChange={field.onChange} />}
+        render={({ field }) => (
+          <SearchArtistInput
+            artist={field.value}
+            onChange={field.onChange}
+          />
+        )}
       />
       <Controller
         name="description"

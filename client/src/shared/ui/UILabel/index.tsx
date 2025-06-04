@@ -8,14 +8,13 @@ interface UILabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   children?: ReactNode;
 }
 
-export const UILabel = ({
-  className,
-  htmlFor,
-  children,
-  ...labelProps
-}: UILabelProps) => {
+export const UILabel = ({ className, htmlFor, children, ...labelProps }: UILabelProps) => {
   return (
-    <label htmlFor={htmlFor} className={cn(className, cl.label)} {...labelProps}>
+    <label
+      htmlFor={htmlFor}
+      className={cn(className, cl.label)}
+      {...labelProps}
+    >
       {children}
     </label>
   );

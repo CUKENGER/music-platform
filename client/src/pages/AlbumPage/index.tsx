@@ -24,7 +24,10 @@ export const AlbumPage = () => {
   return (
     <>
       <AlbumInfo album={album} />
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </>
   );
 };

@@ -23,7 +23,11 @@ export const CoverContainer = ({ track, handlePlay }: CoverContainerProps) => {
       onMouseEnter={() => setShowPlayIcon(true)}
       onMouseLeave={() => setShowPlayIcon(false)}
     >
-      <img className={styles.cover} src={API_URL + track.picture} alt="cover icon" />
+      <img
+        className={styles.cover}
+        src={API_URL + track.picture}
+        alt="cover icon"
+      />
 
       {showPlayIcon && (
         <div
@@ -42,7 +46,13 @@ export const CoverContainer = ({ track, handlePlay }: CoverContainerProps) => {
               alt="play"
               onClick={handlePlay}
             />
-          : <img className={styles.play} src={playIcon} alt="play" onClick={handlePlay} />}
+          : <img
+              className={styles.play}
+              src={playIcon}
+              alt="play"
+              onClick={handlePlay}
+            />
+          }
         </div>
       )}
       {activeTrack?.id == track.id && !showPlayIcon && <MusicWaves />}

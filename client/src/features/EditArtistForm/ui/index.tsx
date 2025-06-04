@@ -3,8 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import styles from './EditArtistForm.module.scss';
 import { useInput, useModal } from '@/shared/hooks';
 import { useGetOneArtist, useUpdateArtist } from '@/entities/artist';
-import { genres } from '@/shared/moks';
-import { Btn, InputImageFile, ModalContainer, Options, UITextAreaField, UITextField } from '@/shared/ui';
+import { Btn, InputImageFile, ModalContainer, UITextAreaField, UITextField } from '@/shared/ui';
 import { PRIVATE_ROUTES, API_URL } from '@/shared/consts';
 
 export const EditArtistForm = () => {
@@ -19,7 +18,6 @@ export const EditArtistForm = () => {
   const genre = useInput(artist?.genre || '', { isEmpty: true });
   const description = useInput(artist?.description || '', { isEmpty: true });
   const [picture, setPicture] = useState<File | null>(null);
-  const [options, setOptions] = useState(genres);
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -56,15 +54,15 @@ export const EditArtistForm = () => {
       </Link>
       <div className={styles.container}>
         <div className={styles.inputs_container}>
-          <UITextField 
+          <UITextField
             value={name.value}
             onChange={name.onChange}
-            placeholder="Введите имя исполнителя" 
+            placeholder="Введите имя исполнителя"
           />
-          <UITextAreaField 
+          <UITextAreaField
             value={description.value}
             onChange={description.onChange}
-            placeholder="Введите описание исполнителя" 
+            placeholder="Введите описание исполнителя"
           />
         </div>
         <div className={styles.picture_container}>
@@ -77,10 +75,17 @@ export const EditArtistForm = () => {
           </div>
         </div>
       </div>
-      <Btn onClick={handleSubmit} isLoading={isLoading} disabled={!hasData}>
+      <Btn
+        onClick={handleSubmit}
+        isLoading={isLoading}
+        disabled={!hasData}
+      >
         Отправить
       </Btn>
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </form>
   );
 };

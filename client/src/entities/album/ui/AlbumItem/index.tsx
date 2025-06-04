@@ -60,7 +60,10 @@ const AlbumItemComponent = ({ item: album }: AlbumItemProps, ref: ForwardedRef<H
           </div>
         )}
       </div>
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </div>
   );
 };

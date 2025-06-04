@@ -26,6 +26,7 @@ import { AllExceptionsFilter } from 'exceptions/allExceptionFilter';
 import { FeaturedArtistModule } from 'models/featuredArtist/featuredArtist.module';
 import { UserRoleModule } from 'models/userRole/userRole.module';
 import { AudioModule } from 'models/audio/audio.module';
+import { ImageController } from 'models/image/ImageController';
 
 @Module({
   imports: [
@@ -38,6 +39,8 @@ import { AudioModule } from 'models/audio/audio.module';
     ]),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, '..', 'static'),
+      serveRoot: '/static',
+      exclude: ['/audio/(.*)', '/image/(.*)'],
     }),
     JwtModule.register({
       secret: process.env.JWT_ACCESS_SECRET_KEY,
@@ -110,7 +113,7 @@ import { AudioModule } from 'models/audio/audio.module';
     FeaturedArtistModule,
     UserRoleModule,
   ],
-  controllers: [AudioController],
+  controllers: [AudioController, ImageController],
   providers: [UserCleanupService, { provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
 export class AppModule implements NestModule {
@@ -127,7 +130,7 @@ export class AppModule implements NestModule {
         { path: 'user', method: RequestMethod.POST },
         { path: 'image/(.*)', method: RequestMethod.ALL },
         { path: 'audio/(.*)', method: RequestMethod.ALL },
-        { path: 'static/*', method: RequestMethod.ALL },
+        { path: 'static/(.*)', method: RequestMethod.ALL },
         { path: '/favicon.ico', method: RequestMethod.GET },
       )
       .forRoutes({ path: '*', method: RequestMethod.ALL });

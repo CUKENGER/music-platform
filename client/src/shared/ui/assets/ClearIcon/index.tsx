@@ -9,8 +9,14 @@ interface ClearIconProps {
 
 export const ClearIcon = ({ handleClear, className }: ClearIconProps) => {
   return (
-    <div onClick={handleClear} className={cn(className, styles.ClearIcon)}>
-      <img src={crossBg} alt="clear icon" />
+    <div
+      onClick={handleClear}
+      className={cn(className, styles.ClearIcon)}
+    >
+      <img
+        src={crossBg}
+        alt="clear icon"
+      />
     </div>
   );
 };

@@ -4,7 +4,7 @@ import styles from './Options.module.scss';
 interface OptionsProps {
   options: string[];
   currentOption?: string;
-  setOption: (option: string) => void
+  setOption: (option: string) => void;
 }
 
 export const Options = memo(({ options, currentOption, setOption }: OptionsProps) => {
@@ -22,7 +22,7 @@ export const Options = memo(({ options, currentOption, setOption }: OptionsProps
       setSelectedOption(option);
       setFields((prevOptions) => prevOptions.filter((item) => item !== option));
     }
-    setOption(option)
+    setOption(option);
   };
 
   return (
@@ -40,7 +40,11 @@ export const Options = memo(({ options, currentOption, setOption }: OptionsProps
       </div>
       <ul className={styles.options}>
         {fields.map((option, i) => (
-          <li key={option + i} className={styles.option} onClick={() => handleOptionClick(option)}>
+          <li
+            key={option + i}
+            className={styles.option}
+            onClick={() => handleOptionClick(option)}
+          >
             {option}
           </li>
         ))}

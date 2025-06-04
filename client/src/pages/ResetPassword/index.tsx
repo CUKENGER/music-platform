@@ -60,9 +60,12 @@ export const ResetPassword = () => {
 
   return (
     <div className={styles.ResetPassword}>
-      <form className={styles.container} onSubmit={handleSubmit}>
+      <form
+        className={styles.container}
+        onSubmit={handleSubmit}
+      >
         <p className={styles.title}>Смена пароля</p>
-       
+
         <Btn
           isLoading={isPending}
           disabled={!isValid}
@@ -71,13 +74,17 @@ export const ResetPassword = () => {
         >
           Сменить пароль
         </Btn>
-        <Link to={PUBLIC_ROUTES.LOGIN} className={styles.link}>
-          <Btn className={styles.btn}>
-            Назад
-          </Btn>
+        <Link
+          to={PUBLIC_ROUTES.LOGIN}
+          className={styles.link}
+        >
+          <Btn className={styles.btn}>Назад</Btn>
         </Link>
       </form>
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </div>
   );
 };

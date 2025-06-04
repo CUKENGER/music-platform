@@ -29,7 +29,10 @@ const RouteItem = ({ icon, title, path }: RouteItemProps) => {
       onClick={handleClick}
     >
       <div className={styles.icon_container}>
-        <img src={icon} alt="home" />
+        <img
+          src={icon}
+          alt="home"
+        />
       </div>
       <p className={styles.route_text}>{title}</p>
     </div>

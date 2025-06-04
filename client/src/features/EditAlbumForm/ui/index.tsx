@@ -32,7 +32,11 @@ export const EditAlbumForm = () => {
       hasData={true}
       isPending={isPending}
     >
-      <MainInfoInputs album={album} control={control} setValue={setValue} />
+      <MainInfoInputs
+        album={album}
+        control={control}
+        setValue={setValue}
+      />
       <MultipleInputAudio onChange={handleFileChange} />
       <Controller
         name="tracks"
@@ -47,7 +51,10 @@ export const EditAlbumForm = () => {
         )}
       />
       <AddTrackIcon onClick={addTrackForm} />
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </AlbumCommonForm>
   );
 };

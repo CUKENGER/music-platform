@@ -40,7 +40,10 @@ export const AlbumComments = ({ albumId }: AlbumCommentsProps) => {
         transition={{ duration: 0.4, ease: 'easeInOut' }}
       >
         <div className={styles.commentsHeader}>
-          <CloseIcon className={styles.closeIcon} onClick={() => setIsOpen(false)} />
+          <CloseIcon
+            className={styles.closeIcon}
+            onClick={() => setIsOpen(false)}
+          />
           <SelectFilter
             className={styles.selectFilter}
             options={['Все', 'По дате', 'Популярные']}
@@ -54,7 +57,11 @@ export const AlbumComments = ({ albumId }: AlbumCommentsProps) => {
           )}
           {sortedComments &&
             sortedComments.map((comment) => (
-              <CommentItem refetchGetComments={refetch} key={comment.id} comment={comment} />
+              <CommentItem
+                refetchGetComments={refetch}
+                key={comment.id}
+                comment={comment}
+              />
             ))}
         </div>
         <CommentSend albumId={albumId} />

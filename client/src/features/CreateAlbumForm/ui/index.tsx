@@ -19,7 +19,7 @@ export const CreateAlbumForm = () => {
     handleFileChange,
     hasData,
     debouncedArtist,
-    addTrackForm
+    addTrackForm,
   } = useCreateAlbumForm();
 
   return (
@@ -40,12 +40,22 @@ export const CreateAlbumForm = () => {
           setOptions={setOptions}
           genre={genre}
         />
-        <AlbumCoverInput cover={cover} setCover={setCover} />
+        <AlbumCoverInput
+          cover={cover}
+          setCover={setCover}
+        />
       </div>
       <MultipleInputAudio onChange={handleFileChange} />
-      <TrackFormList tracks={tracks} setTracks={setTracks} debouncedArtist={debouncedArtist} />
+      <TrackFormList
+        tracks={tracks}
+        setTracks={setTracks}
+        debouncedArtist={debouncedArtist}
+      />
       <AddTrackIcon onClick={addTrackForm} />
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </AlbumCommonForm>
   );
 };

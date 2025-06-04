@@ -59,5 +59,11 @@ export const LikeContainer = ({
     }
   }, [id, isLike, onAddLike, onDeleteLike, refetchEntity, updateEntityState]);
 
-  return <LikeIcon isLike={isLike} onClick={handleLike} likes={localLikes} />;
+  return (
+    <LikeIcon
+      isLike={isLike}
+      onClick={handleLike}
+      likes={localLikes}
+    />
+  );
 };

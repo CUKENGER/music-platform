@@ -11,7 +11,10 @@ export const VolumeBar = () => {
   };
 
   return (
-    <div className={styles.input_volume_container} onClick={handleClick}>
+    <div
+      className={styles.input_volume_container}
+      onClick={handleClick}
+    >
       <img
         onClick={handleMute}
         className={styles.volume_icon}

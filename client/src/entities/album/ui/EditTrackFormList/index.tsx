@@ -74,7 +74,11 @@ export const EditTrackFormList = ({
           >
             {tracks &&
               tracks.map((track, index) => (
-                <Draggable key={index} draggableId={index.toString()} index={index}>
+                <Draggable
+                  key={index}
+                  draggableId={index.toString()}
+                  index={index}
+                >
                   {(provided: DraggableProvided) => (
                     <div
                       ref={provided.innerRef}

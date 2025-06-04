@@ -7,8 +7,14 @@ interface DeleteContainerProps {
 
 export const DeleteContainer = ({ onClick }: DeleteContainerProps) => {
   return (
-    <div className={styles.delete_container} onClick={onClick}>
-      <img src={delete_icon} alt="delete" />
+    <div
+      className={styles.delete_container}
+      onClick={onClick}
+    >
+      <img
+        src={delete_icon}
+        alt="delete"
+      />
     </div>
   );
 };

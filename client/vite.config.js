@@ -9,6 +9,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  server: {
+		allowedHosts: ['w3p1qao7o86c.share.zrok.io'],
+  },
   build: {
     sourcemap: true,
   },

@@ -11,7 +11,7 @@ export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
 
   const { mutate: deleteTrack } = useDeleteTrack();
 
-  const { play } = usePlayTrack(track, trackList);
+  const { play } = usePlayTrack(track, showModal, trackList);
 
   const handleDelete = useCallback(
     async (e: React.MouseEvent<HTMLDivElement>) => {

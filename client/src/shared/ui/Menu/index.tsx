@@ -42,7 +42,10 @@ export const Menu = ({ items }: MenuProps) => {
   }, []);
 
   return (
-    <div className={styles.menu} ref={menuRef}>
+    <div
+      className={styles.menu}
+      ref={menuRef}
+    >
       <img
         src={isHover ? dots_active : dots}
         onMouseEnter={() => setIsHover(true)}

@@ -10,6 +10,43 @@ export class AudioController {
     private readonly logger: Logger,
   ) {}
 
+  @Get(':filename/full')
+  async getFullAudio(@Param('filename') filename: string, @Res() res: Response) {
+    this.logger.log(`Requested full audio file: ${filename}`);
+
+    try {
+      const fileMetadata = await this.audioService.getFileMetadata(filename);
+      if (!fileMetadata) {
+        return res.status(HttpStatus.NOT_FOUND).send('Audio file not found');
+      }
+
+      // Настраиваем заголовки ответа
+      res.set({
+        'Content-Length': fileMetadata.fileSize.toString(),
+        'Content-Type': 'audio/mpeg',
+        'Accept-Ranges': 'bytes',
+      });
+
+      // Устанавливаем статус 200 OK
+      res.status(HttpStatus.OK);
+
+      // Стримим весь файл
+      const fileStream = this.audioService.createFileStream(
+        fileMetadata.filePath,
+        0,
+        fileMetadata.fileSize - 1,
+      );
+      fileStream.pipe(res);
+
+      this.logger.log(
+        `Streaming full audio file: ${filename} (size: ${fileMetadata.fileSize} bytes)`,
+      );
+    } catch (e) {
+      this.logger.error(`Error streaming full audio file: ${e.message}`);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error streaming audio file');
+    }
+  }
+
   @Get(':filename')
   async streamAudio(
     @Param('filename') filename: string,
@@ -45,7 +82,7 @@ export class AudioController {
         'Content-Range': `bytes ${start}-${end}/${fileMetadata.fileSize}`,
         'Accept-Ranges': 'bytes',
         'Content-Length': chunkSize,
-        'Content-Type': 'audio/mpeg',
+        'Content-Type': filename.endsWith('.m4a') ? 'audio/mp4' : 'audio/mpeg',
         'X-Chunk-Duration': chunkDurationSeconds.toString(),
       });
 
@@ -58,74 +95,46 @@ export class AudioController {
 
       // Логируем успешное выполнение
       this.logger.log(`Streaming chunk from ${start} to ${end} (size: ${chunkSize} bytes)`);
-    } catch (e) {}
+    } catch (e) {
+      this.logger.error(`Error streaming audio: ${e.message}`);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error streaming audio');
+    }
+  }
 
-    // const fileSize = stat.size;
-    //
-    // // Проверка на наличие заголовка Range
-    // const range = req.headers.range;
-    // if (!range) {
-    //   throw new BadRequestException('Range header required');
-    // }
-    // this.logger.log('Range header:', req.headers.range);
-    //
-    // // Парсинг диапазона
-    // const parts = range.replace(/bytes=/, '').split('-');
-    // const start = parseInt(parts[0], 10);
-    // this.logger.log('start', start);
-    // let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-    // this.logger.log('end', end);
-    //
-    // if (start >= fileSize || end >= fileSize) {
-    //   res.status(416).send('Requested range not satisfiable');
-    //   return;
-    // }
-    //
-    // if (end > fileSize - 1) {
-    //   end = fileSize - 1;
-    // }
-    //
-    // // Проверка на корректность диапазона
-    // if (start >= fileSize || end >= fileSize || start >= end) {
-    //   return res
-    //     .status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE)
-    //     .set({
-    //       'Content-Range': `bytes */${fileSize}`,
-    //     })
-    //     .end();
-    // }
-    //
-    // const chunkSize = end - start + 1;
-    // this.logger.log(`Streaming chunk from ${start} to ${end} (size: ${chunkSize} bytes)`);
-    //
-    // const bitrate = await this.audioService.getAudioBitrate(filePath);
-    // const chunkDurationSeconds = chunkSize / (bitrate / 8);
-    // const chunkDurationInteger = Math.floor(chunkDurationSeconds);
-    // this.logger.log('chunkDurationSeconds', chunkDurationInteger);
-    //
-    // // Потоковое чтение файла
-    // const fileStream = fs.createReadStream(filePath, { start, end });
-    //
-    // // Отправка заголовков
-    // res.set({
-    //   'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-    //   'Accept-Ranges': 'bytes',
-    //   'Content-Length': chunkSize,
-    //   'Content-Type': 'audio/mpeg',
-    //   'X-Chunk-Duration': chunkDurationInteger.toString(),
-    // });
-    // this.logger.log('Sent X-Chunk-Duration:', chunkDurationInteger.toString());
-    //
-    // // Установка статуса 206 Partial Content
-    // res.status(HttpStatus.PARTIAL_CONTENT);
-    //
-    // // Обработка ошибок потока
-    // fileStream.on('error', (err) => {
-    //   this.logger.error('Error streaming audio file:', err);
-    //   res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error streaming audio file');
-    // });
-    //
-    // // Отправка данных через поток
-    // fileStream.pipe(res);
+  @Get(':filename/playlist.m3u8')
+  async getHlsPlaylist(@Param('filename') filename: string, @Res() res: Response) {
+    this.logger.log(`Requested HLS playlist for ${filename}`);
+    try {
+      const playlistPath = await this.audioService.getHlsPlaylistPath(filename);
+      res.set({
+        'Content-Type': 'application/vnd.apple.mpegurl',
+        'Access-Control-Allow-Origin': '*', // Настройте CORS по необходимости
+      });
+      res.sendFile(playlistPath);
+    } catch (e) {
+      this.logger.error(`Error serving HLS playlist: ${e.message}`);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error serving HLS playlist');
+    }
+  }
+
+  // Новый эндпоинт для HLS-сегментов
+  @Get(':filename/:segment')
+  async getHlsSegment(
+    @Param('filename') filename: string,
+    @Param('segment') segment: string,
+    @Res() res: Response,
+  ) {
+    this.logger.log(`Requested HLS segment ${segment} for ${filename}`);
+    try {
+      const segmentPath = await this.audioService.getHlsSegmentPath(filename, segment);
+      res.set({
+        'Content-Type': 'video/mp2t', // Для .ts сегментов
+        'Access-Control-Allow-Origin': '*', // Настройте CORS по необходимости
+      });
+      res.sendFile(segmentPath);
+    } catch (e) {
+      this.logger.error(`Error serving HLS segment: ${e.message}`);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error serving HLS segment');
+    }
   }
 }

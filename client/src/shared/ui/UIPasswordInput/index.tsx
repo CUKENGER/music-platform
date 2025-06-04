@@ -62,7 +62,11 @@ export const UIPasswordInput = forwardRef<HTMLInputElement, UIPasswordInputProps
         {label && <UILabel htmlFor={id ?? defaultId}>{label}</UILabel>}
         <div className={cn(containerClassName, cl.container)}>
           {value && (
-            <div onClick={toggleShowPass} className={cl.showIcon} aria-hidden="true">
+            <div
+              onClick={toggleShowPass}
+              className={cl.showIcon}
+              aria-hidden="true"
+            >
               <ShowPassIcon isShow={isShow} />
             </div>
           )}
@@ -84,7 +88,12 @@ export const UIPasswordInput = forwardRef<HTMLInputElement, UIPasswordInputProps
             debounceValue &&
             warnings.map(
               (warning, index) =>
-                warning.condition && <WarningMessage key={index} text={warning.text} />,
+                warning.condition && (
+                  <WarningMessage
+                    key={index}
+                    text={warning.text}
+                  />
+                ),
             )}
         </div>
       </div>

@@ -16,7 +16,10 @@ export const NameContainer = ({ name, artist, artistId }: NameContainerProps) =>
     <div>
       <div className={styles.name_container}>
         <p className={styles.name}>{name}</p>
-        <Link to={`/artists/${artistId}`} onClick={handleLinkClick}>
+        <Link
+          to={`/artists/${artistId}`}
+          onClick={handleLinkClick}
+        >
           <p className={styles.artist}>{artist}</p>
         </Link>
       </div>

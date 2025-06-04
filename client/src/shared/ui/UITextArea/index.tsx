@@ -26,7 +26,12 @@ export const UITextArea = forwardRef<HTMLTextAreaElement, UITextAreaProps>(
 
     return (
       <div className={cn(containerClassName, cl.container)}>
-        <textarea ref={ref} className={cn(className, cl.textarea)} required={required} {...inputProps} />
+        <textarea
+          ref={ref}
+          className={cn(className, cl.textarea)}
+          required={required}
+          {...inputProps}
+        />
         {clearable && inputProps.value && <ClearIcon handleClear={handleClear} />}
         {required && !inputProps.value && <ExclamIcon className={cl.icon_container} />}
       </div>

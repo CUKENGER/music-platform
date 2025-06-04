@@ -33,22 +33,35 @@ export class AlbumService {
     }
 
     let tracksPath: string[] = [];
-    let imagePath: string;
+    let imagePaths: string[] = [];
+    let mainImagePath: string;
 
     const transaction = this.prisma.$transaction(
       async (prisma) => {
         try {
           tracksPath = await this.fileService.createFiles(FileType.AUDIO, tracksFiles);
-          imagePath = await this.fileService.createFile(FileType.IMAGE, pictureFile);
+          const imageResult = await this.fileService.createFile(FileType.IMAGE, pictureFile);
+          if (typeof imageResult === 'object' && 'paths' in imageResult) {
+            imagePaths = imageResult.paths;
+            mainImagePath = imagePaths.find((p) => p.includes('-md.webp')) || imagePaths[0];
+          } else {
+            throw ApiError.InternalServerError('Expected paths array for image');
+          }
 
           const albumType = this.determineAlbumType(dto);
 
-          const artist = await this.artistPublicService.findOrCreateArtist(dto, imagePath, prisma);
-          const newAlbum = await this.albumRepository.create(dto, imagePath, artist.id, albumType, prisma)
+          const artist = await this.artistPublicService.findOrCreateArtist(dto, mainImagePath, prisma);
+          const newAlbum = await this.albumRepository.create(
+            dto,
+            mainImagePath,
+            artist.id,
+            albumType,
+            prisma,
+          );
           const totalDuration = await this.trackPublicService.createMultiple(
             dto,
             tracksPath,
-            imagePath,
+            mainImagePath,
             artist.id,
             newAlbum.id,
             prisma,
@@ -56,13 +69,13 @@ export class AlbumService {
 
           this.logger.debug('albumId', newAlbum.id);
           const formattedDuration = this.formatDuration(totalDuration);
-          await this.albumRepository.update(newAlbum.id, {duration: formattedDuration}, prisma)
+          await this.albumRepository.update(newAlbum.id, { duration: formattedDuration }, prisma);
 
           if (dto.featArtists && dto.featArtists.length > 0) {
             for (const featArtistName of dto.featArtists) {
               await this.featuredPublicArtistService.findOrCreateArtist(
                 { artist: featArtistName, genre: dto.genre },
-                imagePath,
+                mainImagePath,
                 newAlbum.id,
                 prisma,
               );
@@ -71,7 +84,7 @@ export class AlbumService {
 
           return { id: newAlbum.id, name: newAlbum.name };
         } catch (e) {
-          this.fileService.cleanupFiles(tracksPath, imagePath);
+          this.fileService.cleanupFiles(tracksPath, mainImagePath);
           console.log(`Error creating album: ${e.message}`);
           throw ApiError.InternalServerError(`Error creating album: ${e.message}`, e);
         }

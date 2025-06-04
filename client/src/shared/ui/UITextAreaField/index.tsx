@@ -5,7 +5,6 @@ import { useDebounce } from '@/shared/hooks';
 import { IWarning } from '@/shared/types';
 import { UILabel } from '../UILabel';
 import { UITextArea } from '../UITextArea';
-import cn from 'classnames';
 
 interface UITextAreaFieldProps extends InputHTMLAttributes<HTMLTextAreaElement> {
   containerClassName?: string;
@@ -55,7 +54,12 @@ export const UITextAreaField = forwardRef<HTMLTextAreaElement, UITextAreaFieldPr
           <div className={cl.warnings_container}>
             {warnings.map(
               (warning, index) =>
-                warning.condition && <WarningMessage key={index} text={warning.text} />,
+                warning.condition && (
+                  <WarningMessage
+                    key={index}
+                    text={warning.text}
+                  />
+                ),
             )}
           </div>
         )}

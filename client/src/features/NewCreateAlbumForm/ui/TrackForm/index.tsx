@@ -34,10 +34,10 @@ export const TrackForm = ({ trackIndex }: { trackIndex: number }) => {
           name="trackName"
           control={control}
           render={({ field }) => (
-            <UITextField 
-              {...field} 
-              name="trackName" 
-              label="Введите название" 
+            <UITextField
+              {...field}
+              name="trackName"
+              label="Введите название"
             />
           )}
         />
@@ -45,10 +45,10 @@ export const TrackForm = ({ trackIndex }: { trackIndex: number }) => {
           name="trackText"
           control={control}
           render={({ field }) => (
-            <UITextAreaField 
-              {...field} 
-              name="trackText" 
-              label="Введите текст" 
+            <UITextAreaField
+              {...field}
+              name="trackText"
+              label="Введите текст"
             />
           )}
         />
@@ -62,12 +62,18 @@ export const TrackForm = ({ trackIndex }: { trackIndex: number }) => {
           onChange={handleFileChange}
           name={`track-audio-${trackIndex}`}
         />
-        <label className={`${styles.LabelAudio}`} htmlFor={`track-audio-${trackIndex}`}>
+        <label
+          className={`${styles.LabelAudio}`}
+          htmlFor={`track-audio-${trackIndex}`}
+        >
           `Загрузите аудиодорожку`
         </label>
       </div>
       {trackIndex !== 0 ?
-        <div className={styles.minusBtn} onClick={removeTrack}>
+        <div
+          className={styles.minusBtn}
+          onClick={removeTrack}
+        >
           <img src={minusBtnBg} />
         </div>
       : <div className={styles.minusBtn}></div>}

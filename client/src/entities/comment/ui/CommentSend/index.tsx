@@ -5,7 +5,7 @@ import sendIcon from '../assets/send.svg';
 import { useInput, useModal } from '@/shared/hooks';
 import { useUserStore } from '@/entities/user';
 import { useCreateAlbumComment } from '@/entities/album';
-import { ModalContainer, UITextAreaField} from '@/shared/ui';
+import { ModalContainer, UITextAreaField } from '@/shared/ui';
 
 interface CommentSendProps {
   albumId: number | undefined;
@@ -57,9 +57,15 @@ export const CommentSend = ({ albumId }: CommentSendProps) => {
         onMouseLeave={() => setIsSendHover(false)}
         onClick={handleSend}
       >
-        <img src={isSendHover ? sendIconActive : sendIcon} alt="send" />
+        <img
+          src={isSendHover ? sendIconActive : sendIcon}
+          alt="send"
+        />
       </div>
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </div>
   );
 };

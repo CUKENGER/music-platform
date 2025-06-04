@@ -19,7 +19,10 @@ export const CloseIcon: FC<CloseIconProps> = ({ onClick, className }) => {
       className={classNames(className, styles.CloseIcon)}
       onClick={onClick}
     >
-      <img src={isHover ? closeIconActive : closeIcon} alt="close" />
+      <img
+        src={isHover ? closeIconActive : closeIcon}
+        alt="close"
+      />
     </div>
   );
 };

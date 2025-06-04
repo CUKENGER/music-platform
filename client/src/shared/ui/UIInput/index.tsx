@@ -29,7 +29,7 @@ export const UIInput = forwardRef<HTMLInputElement, UIInputProps>(
         <input
           ref={ref}
           required={required}
-					className={cn(className, cl.input, { [cl.error]: inputProps['aria-invalid'] === 'true' })}
+          className={cn(className, cl.input, { [cl.error]: inputProps['aria-invalid'] === 'true' })}
           {...inputProps}
         />
         {clearable && inputProps.value && <ClearIcon handleClear={handleClear} />}

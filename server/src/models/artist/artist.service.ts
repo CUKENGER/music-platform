@@ -26,7 +26,8 @@ export class ArtistService {
       throw new HttpException('Artist with this name already exist', HttpStatus.CONFLICT);
     }
 
-    const imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
+    const imageResult = await this.fileService.createFile(FileType.IMAGE, picture);
+		const imagePath = imageResult[0]
 
     return await this.artistRepository.create(dto, imagePath, this.prisma);
   }
@@ -97,7 +98,8 @@ export class ArtistService {
     let imagePath: string;
     if (picture) {
       this.logger.log('picture', picture);
-      imagePath = await this.fileService.createFile(FileType.IMAGE, picture);
+			const imageResult = await this.fileService.createFile(FileType.IMAGE, picture);
+			imagePath = imageResult[0]
       newData.picture = imagePath;
     }
 

@@ -121,13 +121,9 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
   return (
     <div className={styles.albumInfo}>
       <div className={styles.header}>
-        <Btn onClick={() => navigate(-1)}>
-          Назад
-        </Btn>
+        <Btn onClick={() => navigate(-1)}>Назад</Btn>
         <div className={styles.edit_btn}>
-          <Btn onClick={handleDeleteAlbum}>
-            Удалить
-          </Btn>
+          <Btn onClick={handleDeleteAlbum}>Удалить</Btn>
           <Link to={PRIVATE_ROUTES.ALBUMS + `/${album?.id}/edit`}>
             <Btn>Изменить</Btn>
           </Link>
@@ -135,7 +131,10 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
       </div>
       <div className={styles.albumDetails}>
         <div className={styles.albumCover}>
-          <img src={API_URL + album?.picture} alt={`${album?.name} cover`} />
+          <img
+            src={API_URL + album?.picture}
+            alt={`${album?.name} cover`}
+          />
         </div>
         <div className={styles.albumMainInfo}>
           <p className={styles.albumTitle}>{album?.name}</p>
@@ -153,26 +152,45 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
           {album?.description &&
             descriptionRef.current &&
             descriptionRef.current.scrollHeight > 108 && (
-              <span className={styles.showMoreBtn} onClick={() => setIsExpanded((prev) => !prev)}>
+              <span
+                className={styles.showMoreBtn}
+                onClick={() => setIsExpanded((prev) => !prev)}
+              >
                 {isExpanded ? 'Показать меньше' : 'Показать еще'}
               </span>
             )}
           <p className={styles.albumGenre}>{album?.genre}</p>
           <div className={styles.listensContainer}>
-            <ListensIcon className={styles.albumListens} listens={album?.listens} />
+            <ListensIcon
+              className={styles.albumListens}
+              listens={album?.listens}
+            />
           </div>
           <div className={styles.albumMeta}>
             <p>{album?.duration}</p>
             <p>{formattedDate}</p>
           </div>
-          <Btn className={styles.albumLikes} small={true} onClick={handleLike}>
-            <LikeIcon isLike={isLike} likes={localLikes} needStopPropagation={false} />
+          <Btn
+            className={styles.albumLikes}
+            small={true}
+            onClick={handleLike}
+          >
+            <LikeIcon
+              isLike={isLike}
+              likes={localLikes}
+              needStopPropagation={false}
+            />
           </Btn>
         </div>
       </div>
       <div className={styles.trackList}>
         {album?.tracks.map((track, index) => (
-          <ChildrenTrack trackList={album.tracks} track={track} trackIndex={index} key={track.id} />
+          <ChildrenTrack
+            trackList={album.tracks}
+            track={track}
+            trackIndex={index}
+            key={track.id}
+          />
         ))}
       </div>
       <Btn onClick={() => setIsCommentsOpen(!isCommentsOpen)}>
@@ -180,7 +198,10 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
         <span>({album?.comments.length})</span>
       </Btn>
       {isCommentsOpen && (
-        <Portal selector="#portal-root" isOpen={isCommentsOpen}>
+        <Portal
+          selector="#portal-root"
+          isOpen={isCommentsOpen}
+        >
           <AlbumComments albumId={album?.id} />
         </Portal>
       )}

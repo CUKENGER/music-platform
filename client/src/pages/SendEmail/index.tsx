@@ -43,14 +43,17 @@ export const SendEmail = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  }
+  };
 
   return (
     <div className={styles.SendEmail}>
-      <form className={styles.container} onSubmit={handleSubmit}>
+      <form
+        className={styles.container}
+        onSubmit={handleSubmit}
+      >
         <p className={styles.title}>Укажите Email</p>
         <p className={styles.text}>Введите свой email и вам придет ссылка для смены пароля</p>
-        
+
         <Btn
           isLoading={isLoading}
           disabled={isValid}
@@ -59,13 +62,17 @@ export const SendEmail = () => {
         >
           Отправить
         </Btn>
-        <Link to={PUBLIC_ROUTES.LOGIN} className={styles.link}>
-          <Btn className={styles.btn}>
-            Назад
-          </Btn>
+        <Link
+          to={PUBLIC_ROUTES.LOGIN}
+          className={styles.link}
+        >
+          <Btn className={styles.btn}>Назад</Btn>
         </Link>
       </form>
-      <ModalContainer modal={modal} hideModal={hideModal} />
+      <ModalContainer
+        modal={modal}
+        hideModal={hideModal}
+      />
     </div>
   );
 };

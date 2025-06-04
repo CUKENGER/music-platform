@@ -1,22 +1,28 @@
-
+import Hls from 'hls.js';
 
 class AudioManager {
   private static instance: AudioManager;
   private _audio?: HTMLAudioElement;
-  private chunkQueue: Array<ArrayBuffer> = [];
-  private mediaSource: MediaSource = new MediaSource();
-  private sourceBuffer?: SourceBuffer;
-  private isBufferUpdating: boolean = false;
-  private isFirstChunk: boolean = true;
+  private hls?: Hls;
+  private onTimeUpdateCallback?: (currentTime: number) => void;
+  private onBufferUpdateCallback?: (loadedTime: number) => void;
 
   private constructor() {
-    if (typeof window !== 'undefined') {
-      this._audio = new Audio();
-      this.mediaSource = new MediaSource();
+    if (typeof window === 'undefined') {
+      console.warn('Окружение window недоступно');
+      return;
+    }
 
-      this._audio.src = URL.createObjectURL(this.mediaSource);
-      this._audio.volume = 1;
-      this.mediaSource.addEventListener('sourceopen', this.onMediaSourceOpen);
+    this._audio = new Audio();
+    this._audio.volume = 1;
+    this._audio.addEventListener('timeupdate', this.handleTimeUpdate);
+
+    if (Hls.isSupported()) {
+      this.hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: true,
+      });
+      this.hls.on(Hls.Events.BUFFER_APPENDED, this.handleBufferAppended);
     }
   }
 
@@ -39,79 +45,56 @@ class AudioManager {
     return this._audio?.currentTime;
   }
 
+  public getDuration(): number | undefined {
+    return this._audio?.duration;
+  }
+
+  public getLoadedTime(): number | undefined {
+    if (!this._audio || !this._audio.buffered.length) return 0;
+    return this._audio.buffered.end(this._audio.buffered.length - 1);
+  }
+
+  public setTimeUpdateCallback(callback: (currentTime: number) => void): void {
+    this.onTimeUpdateCallback = callback;
+  }
+
+  public setBufferUpdateCallback(callback: (loadedTime: number) => void): void {
+    this.onBufferUpdateCallback = callback;
+  }
+
   public seekTo(time: number): void {
     if (this._audio) {
       this._audio.currentTime = time;
     }
   }
 
-  public appendAudioChunk(data: ArrayBuffer): void {
-    this.chunkQueue.push(data);
-    // console.log("chunkQueue", this.chunkQueue);
-    this.updateAudioSource();
-  }
-
-  private updateAudioSource(): void {
-    // console.log("sourceBuffer created:", this.sourceBuffer);
-    // console.log("MediaSource readyState:", this.mediaSource.readyState);
-    if (this.mediaSource.readyState !== 'open') {
-      // console.log("MediaSource is closed, can't append buffer.");
+  public loadHlsSource(url: string): void {
+    if (!this._audio) {
+      console.error('Аудио элемент не инициализирован');
       return;
     }
-    if (
-      this.mediaSource.readyState === 'open' &&
-      this.sourceBuffer &&
-      !this.sourceBuffer.updating &&
-      !this.isBufferUpdating &&
-      this.chunkQueue.length > 0
-    ) {
-      const chunk = this.chunkQueue.shift();
-      // console.log("chunk", chunk);
-      if (chunk) {
-        this.isBufferUpdating = true;
-        // console.log("sourceBuffer before:", this.sourceBuffer);
-        // console.log(
-        // "sourceBuffer updating before:",
-        // this.sourceBuffer.updating
-        // );
-        this.sourceBuffer.appendBuffer(chunk);
+
+    if (this.hls && Hls.isSupported()) {
+      this.hls.loadSource(url);
+      this.hls.attachMedia(this._audio);
+      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
         this.play();
-        // console.log("sourceBuffer", this.sourceBuffer);
-        // console.log("sourceBuffer updating after:", this.sourceBuffer.updating);
-      }
+      });
+      this.hls.on(Hls.Events.ERROR, (event, data) => {
+        console.error('HLS error:', data);
+      });
+    } else if (this._audio.canPlayType('application/vnd.apple.mpegurl')) {
+      this._audio.src = url;
+      this.play();
+    } else {
+      console.error('HLS не поддерживается ни через hls.js, ни нативно');
     }
   }
 
-  private onMediaSourceOpen = () => {
-    // console.log("MediaSource opened");
-    // console.log("MediaSource readyState:", this.mediaSource.readyState);
-    this.sourceBuffer = this.mediaSource.addSourceBuffer('audio/mpeg');
-
-    this.mediaSource.addEventListener('sourceended', () => {
-      // console.log("MediaSource ended.");
-    });
-    this.mediaSource.addEventListener('error', (e) => {
-      console.error('MediaSource error:', e);
-    });
-
-    this.sourceBuffer.addEventListener('updateend', () => {
-      console.log('Updateend triggered');
-      this.isBufferUpdating = false;
-      if (this.isFirstChunk) {
-        this.isFirstChunk = false;
-        this.play();
-      }
-      this.updateAudioSource();
-    });
-    this.sourceBuffer.addEventListener('error', (e) => {
-      console.error('Error with source buffer:', e);
-    });
-
-    this.updateAudioSource();
-  };
-
   public play(): void {
-    this._audio?.play().catch((err) => console.error('Error playing audio:', err));
+    if (this._audio) {
+      this._audio.play().catch((err) => console.error('Ошибка воспроизведения:', err));
+    }
   }
 
   public pause(): void {
@@ -125,22 +108,30 @@ class AudioManager {
   }
 
   public cleanup(): void {
-    if (this.sourceBuffer && this.mediaSource.readyState === 'open') {
-      this.sourceBuffer.abort();
-      // this.mediaSource.endOfStream()
+    if (this.hls) {
+      this.hls.destroy();
+      this.hls = undefined;
     }
-    this.chunkQueue = [];
-    this.isFirstChunk = true;
-    this._audio?.pause();
     if (this._audio) {
+      this._audio.pause();
       this._audio.src = '';
-      this.mediaSource = new MediaSource();
-      this._audio.src = URL.createObjectURL(this.mediaSource);
-      this.mediaSource.addEventListener('sourceopen', this.onMediaSourceOpen);
+      this._audio.load();
+      this._audio.removeEventListener('timeupdate', this.handleTimeUpdate);
     }
-    // this._audio?.removeAttribute('src')
-    // this._audio?.load()
   }
+
+  private handleTimeUpdate = (): void => {
+    if (this.onTimeUpdateCallback && this._audio) {
+      this.onTimeUpdateCallback(this._audio.currentTime);
+    }
+  };
+
+  private handleBufferAppended = (): void => {
+    if (this.onBufferUpdateCallback && this._audio) {
+      const loadedTime = this.getLoadedTime() || 0;
+      this.onBufferUpdateCallback(loadedTime);
+    }
+  };
 }
 
 const audioManager = AudioManager.getInstance();
