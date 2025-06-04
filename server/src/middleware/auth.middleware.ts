@@ -22,7 +22,6 @@ export class AuthMiddleware implements NestMiddleware {
 
     const authorizationHeader = req.headers.authorization;
 
-    this.logger.log(`AuthMiddleware authorizationHeader: ${authorizationHeader}`);
     if (!authorizationHeader) {
       this.logger.error(`Authorization header missing`);
       throw ApiError.UnauthorizedError('Authorization header missing', ERROR_CODES.UNAUTHORIZED);
@@ -30,14 +29,12 @@ export class AuthMiddleware implements NestMiddleware {
 
     const accessToken = authorizationHeader.split(' ')[1];
 
-    this.logger.log(`AuthMiddleware accessToken: ${accessToken}`);
     if (!accessToken) {
       this.logger.error(`Access token missing`);
       throw ApiError.UnauthorizedError('Access token missing', ERROR_CODES.UNAUTHORIZED);
     }
 
     const tokenData = this.tokenPublicService.validateAccessToken(accessToken);
-    this.logger.log(`AuthMiddleware tokenData:`, { tokenData: tokenData });
     if (!tokenData) {
       this.logger.error(`Invalid access token`);
       throw ApiError.UnauthorizedError('Invalid access token', ERROR_CODES.UNAUTHORIZED);

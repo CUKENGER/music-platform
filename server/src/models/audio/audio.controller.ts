@@ -101,22 +101,6 @@ export class AudioController {
     }
   }
 
-  @Get(':filename/playlist.m3u8')
-  async getHlsPlaylist(@Param('filename') filename: string, @Res() res: Response) {
-    this.logger.log(`Requested HLS playlist for ${filename}`);
-    try {
-      const playlistPath = await this.audioService.getHlsPlaylistPath(filename);
-      res.set({
-        'Content-Type': 'application/vnd.apple.mpegurl',
-        'Access-Control-Allow-Origin': '*', // Настройте CORS по необходимости
-      });
-      res.sendFile(playlistPath);
-    } catch (e) {
-      this.logger.error(`Error serving HLS playlist: ${e.message}`);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error serving HLS playlist');
-    }
-  }
-
   // Новый эндпоинт для HLS-сегментов
   @Get(':filename/:segment')
   async getHlsSegment(
@@ -135,6 +119,42 @@ export class AudioController {
     } catch (e) {
       this.logger.error(`Error serving HLS segment: ${e.message}`);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error serving HLS segment');
+    }
+  }
+
+  @Get(':filename/master.m3u8')
+  async getMasterHlsPlaylist(@Param('filename') filename: string, @Res() res: Response) {
+    this.logger.log(`Requested HLS master playlist for ${filename}`);
+    try {
+      const playlistPath = await this.audioService.getHlsPlaylistPath(filename);
+      res.set({
+        'Content-Type': 'application/vnd.apple.mpegurl',
+        'Access-Control-Allow-Origin': '*',
+      });
+      res.sendFile(playlistPath);
+    } catch (e) {
+      this.logger.error(`Error serving HLS master playlist: ${e.message}`);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error serving HLS master playlist');
+    }
+  }
+
+  @Get(':filename/:playlist')
+  async getHlsPlaylist(
+    @Param('filename') filename: string,
+    @Param('playlist') playlist: string,
+    @Res() res: Response,
+  ) {
+    this.logger.log(`Requested HLS playlist ${playlist} for ${filename}`);
+    try {
+      const playlistPath = await this.audioService.getHlsSubPlaylistPath(filename, playlist);
+      res.set({
+        'Content-Type': 'application/vnd.apple.mpegurl',
+        'Access-Control-Allow-Origin': '*',
+      });
+      res.sendFile(playlistPath);
+    } catch (e) {
+      this.logger.error(`Error serving HLS playlist: ${e.message}`);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error serving HLS playlist');
     }
   }
 }

@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import { ApiError } from './api.error';
 import { ERROR_CODES, ErrorCodeType } from 'constants/errorCodes';
@@ -20,7 +20,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof ApiError) {
       status = exception.status;
       message = exception.message;
-      code = exception.code; // Используем code из ApiError
+      code = exception.code;
       errors = exception.errors;
     } else if (exception instanceof HttpException) {
       status = exception.getStatus();
@@ -30,41 +30,31 @@ export class AllExceptionsFilter implements ExceptionFilter {
         : typeof exceptionResponse === 'object' && 'message' in exceptionResponse ?
           (exceptionResponse.message as string)
         : message;
+      code = status === 404 ? ERROR_CODES.USER_NOT_FOUND : status === 401 ? ERROR_CODES.INVALID_CREDENTIALS : code;
     } else if (exception instanceof Error) {
       message = exception.message;
     }
 
-    this.logger.error({
-      message: 'Unhandled Exception',
-      error: message,
-      code,
-      stack: exception instanceof Error ? exception.stack : null,
-      method: request.method,
-      url: request.url,
-      body: this.sanitizeRequestBody(request.body),
-    });
+    // Специальная обработка для favicon.ico
+    if (request.url === '/favicon.ico' && exception instanceof NotFoundException) {
+      status = HttpStatus.NOT_FOUND;
+      message = 'Favicon not found';
+      code = 'NOT_FOUND';
+    }
+
+    const logMessage = `${request.method} ${request.url} failed: ${message} (code: ${code})`;
+    this.logger.error(logMessage, exception instanceof Error ? exception.stack : undefined);
 
     const responseBody = {
       statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      method: request.method,
       message,
       code,
       ...(errors && typeof errors === 'object' ? { errors } : {}),
     };
 
     response.status(status).json(responseBody);
-  }
-
-  private sanitizeRequestBody(body: Record<string, unknown>): Record<string, unknown> {
-    // Скрываем чувствительные данные
-    const sensitiveFields = ['password', 'creditCardNumber'];
-    const sanitizedBody = { ...body };
-
-    sensitiveFields.forEach((field) => {
-      if (sanitizedBody[field]) {
-        sanitizedBody[field] = '***REDACTED***';
-      }
-    });
-
-    return sanitizedBody;
   }
 }

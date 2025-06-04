@@ -168,6 +168,7 @@ export class AuthService {
     }
     const userDto = new RegUserDto(user);
     const tokens = await this.generateAndSaveTokens(userDto);
+		await this.tokenPublicService.removeToken(refreshToken);
     return {
       ...tokens,
       user: userDto,

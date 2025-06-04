@@ -15,48 +15,12 @@ export class AudioService {
 
   async generateHlsSegments(filename: string): Promise<{ playlistPath: string }> {
     const cleanFilename = filename.startsWith('audio/') ? filename.replace('audio/', '') : filename;
-    const segmentDir = this.resolveFilePath(`hls/${cleanFilename}`);
-    const playlistPath = path.join(segmentDir, 'playlist.m3u8');
-
-    if (fs.existsSync(playlistPath)) {
-      this.logger.log(`Using cached HLS segments for ${filename}`);
-      return { playlistPath };
+    const masterPlaylistPath = this.resolveFilePath(`hls/${cleanFilename}/master.m3u8`);
+    if (!fs.existsSync(masterPlaylistPath)) {
+      throw new NotFoundException(`HLS master playlist not found: ${filename}`);
     }
-
-    await fs.promises.mkdir(segmentDir, { recursive: true });
-
-    const inputPath = this.resolveFilePath(`audio/${cleanFilename}`);
-    if (!fs.existsSync(inputPath)) {
-      throw new NotFoundException(`Audio file not found: ${filename}`);
-    }
-
-    await new Promise<void>((resolve, reject) => {
-      ffmpeg(inputPath)
-        .inputFormat(cleanFilename.endsWith('.m4a') ? 'mp4' : path.extname(cleanFilename).slice(1))
-        .outputOptions([
-          '-hls_time 4',
-          '-hls_list_size 0',
-          '-hls_segment_type mpegts',
-          '-hls_segment_filename',
-          `${segmentDir}/%03d.ts`,
-          '-f hls',
-          '-loglevel verbose',
-        ])
-        .output(playlistPath)
-        .on('end', () => {
-          this.logger.log(`HLS segments generated for ${filename}`);
-          resolve();
-        })
-        .on('error', (err) => {
-          this.logger.error(`Error generating HLS segments: ${err.message}`);
-          reject(
-            new InternalServerErrorException(`Failed to generate HLS segments: ${err.message}`),
-          );
-        })
-        .run();
-    });
-
-    return { playlistPath };
+    this.logger.log(`Using existing HLS master playlist for ${filename}`);
+    return { playlistPath: masterPlaylistPath };
   }
 
   async getFileMetadata(filename: string): Promise<{ filePath: string; fileSize: number } | null> {
@@ -130,28 +94,25 @@ export class AudioService {
 
   async getHlsPlaylistPath(filename: string): Promise<string> {
     const { playlistPath } = await this.generateHlsSegments(filename);
-    if (!fs.existsSync(playlistPath)) {
-      throw new NotFoundException(`HLS playlist not found: ${filename}`);
-    }
     return playlistPath;
   }
 
   async getHlsSegmentPath(filename: string, segment: string): Promise<string> {
     const cleanFilename = filename.startsWith('audio/') ? filename.replace('audio/', '') : filename;
-    this.logger.log('cleanFilename', cleanFilename);
-    const segmentDir = this.resolveFilePath(`hls/${cleanFilename}`);
-    this.logger.log('segmentDir', segmentDir);
-    const segmentPath = path.join(segmentDir, segment);
-    this.logger.log('segmentPath', segmentPath);
-    this.logger.log('Проверяю путь к сегменту:', {
-      segmentPath,
-      exists: fs.existsSync(segmentPath),
-    });
+    const segmentPath = this.resolveFilePath(`hls/${cleanFilename}/${segment}`);
     if (!fs.existsSync(segmentPath)) {
-      this.logger.error('Сегмент не найден:', { segmentPath });
-      throw new NotFoundException(`HLS сегмент не найден: ${segment}`);
+      throw new NotFoundException(`HLS segment not found: ${segment}`);
     }
     return segmentPath;
+  }
+
+  async getHlsSubPlaylistPath(filename: string, playlist: string): Promise<string> {
+    const cleanFilename = filename.startsWith('audio/') ? filename.replace('audio/', '') : filename;
+    const playlistPath = this.resolveFilePath(`hls/${cleanFilename}/${playlist}`);
+    if (!fs.existsSync(playlistPath)) {
+      throw new NotFoundException(`HLS playlist not found: ${playlist}`);
+    }
+    return playlistPath;
   }
 
   async cleanupHlsSegments(filename: string): Promise<void> {

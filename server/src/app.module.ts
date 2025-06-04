@@ -40,7 +40,7 @@ import { ImageController } from 'models/image/ImageController';
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, '..', 'static'),
       serveRoot: '/static',
-      exclude: ['/audio/(.*)', '/image/(.*)'],
+      exclude: ['/audio/:path*', '/image/:path*'],
     }),
     JwtModule.register({
       secret: process.env.JWT_ACCESS_SECRET_KEY,
@@ -56,7 +56,11 @@ import { ImageController } from 'models/image/ImageController';
                 colorize: true,
                 colorizerFactory: true,
                 translateTime: 'HH:MM:ss.l',
-                ignore: 'pid,hostname',
+                ignore: 'pid,hostname, req.headers,context, request, req',
+                errorProps: 'message,code,stack', // Выводим только нужные поля
+                errorLikeObjectKeys: ['err', 'error'], // Обрабатываем error
+                // messageFormat: '{msg} [{req.method} {req.url} - {res.statusCode}]',
+                messageFormat: '{msg} {requestInfo}',
                 // singleLine: true,
               },
             },
@@ -74,24 +78,30 @@ import { ImageController } from 'models/image/ImageController';
         customSuccessMessage: (req, res) => `✅ ${req.method} ${req.url} - ${res.statusCode}`,
         customErrorMessage: (req, res, err) => `❌ ${req.method} ${req.url} - ${err.message}`,
         customAttributeKeys: {
-          req: 'request',
+          // req: 'req',
           res: 'response',
           err: 'error',
         },
+        // serializers: {
+        //   req(req) {
+        //     return {
+        //       method: req.method,
+        //       url: req.url,
+        //       // headers: req.headers,
+        //       // body: req.raw.body,
+        //     };
+        //   },
+        //   res(res) {
+        //     return {
+        //       statusCode: res.statusCode,
+        //     };
+        //   },
+        //   request: () => undefined,
+        // },
         serializers: {
-          req(req) {
-            return {
-              method: req.method,
-              url: req.url,
-              // headers: req.headers,
-              // body: req.raw.body,
-            };
-          },
-          res(res) {
-            return {
-              statusCode: res.statusCode,
-            };
-          },
+          req: () => undefined, // Отключаем req
+          res: () => undefined, // Отключаем res, так как statusCode уже в messageFormat
+          request: () => undefined,
         },
         redact: ['req.headers.authorization'],
       },
