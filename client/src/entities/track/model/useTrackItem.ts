@@ -4,14 +4,14 @@ import { useDeleteTrack } from '../api/useTrackApi';
 import { useModal } from '@/shared/hooks';
 import { usePlayTrack } from './usePlayTrack';
 
-export const useTrackItem = (track: ITrack, trackList: ITrack[]) => {
+export const useTrackItem = (track: ITrack) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const { showModal, modal, hideModal } = useModal();
 
   const { mutate: deleteTrack } = useDeleteTrack();
 
-  const { play } = usePlayTrack(track, showModal, trackList);
+  const { play } = usePlayTrack(track);
 
   const handleDelete = useCallback(
     async (e: React.MouseEvent<HTMLDivElement>) => {

@@ -18,7 +18,7 @@ const TrackItemComponent = (
   { item: track, itemList: trackList, needDeleteIcon = true, needClick = true }: TrackItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  const { play, handleDelete, isVisible, modal, hideModal } = useTrackItem(track, trackList);
+  const { play, handleDelete, isVisible, modal, hideModal } = useTrackItem(track);
   const isAdmin = useUserStore((state) => state.isAdmin);
 
   return (

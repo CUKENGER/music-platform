@@ -86,7 +86,6 @@ export class FileService {
     const cleanFilename = fileName;
     const segmentDir = this.getFilePath(FileType.HLS, cleanFilename);
     const masterPlaylistPath = path.join(segmentDir, 'master.m3u8');
-    const lowQualityPlaylist = path.join(segmentDir, 'low.m3u8');
     const highQualityPlaylist = path.join(segmentDir, 'high.m3u8');
 
     await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
@@ -117,25 +116,11 @@ export class FileService {
           .save(filePath);
       });
 
-      // Шаг 2: Генерируем HLS-сегменты
       await new Promise<void>((resolve, reject) => {
         ffmpeg(filePath)
           .inputFormat('mp4')
-          .output(lowQualityPlaylist)
           .output(highQualityPlaylist)
           .outputOptions([
-            // Низкое качество (128 кбит/с)
-            '-map 0:a',
-            '-c:a aac',
-            '-b:a 128k',
-            '-hls_time 6',
-            '-hls_list_size 0',
-            '-hls_segment_type mpegts',
-            '-hls_segment_filename',
-            `${segmentDir}/low_%03d.ts`,
-            '-hls_playlist_type vod',
-            '-master_pl_name master.m3u8',
-            // Высокое качество (256 кбит/с)
             '-map 0:a',
             '-c:a aac',
             '-b:a 256k',
@@ -155,13 +140,10 @@ export class FileService {
             // Создаём мастер-плейлист
             const masterPlaylistContent = `#EXTM3U
 #EXT-X-VERSION:3
-#EXT-X-STREAM-INF:BANDWIDTH=128000,CODECS="mp4a.40.2"
-low.m3u8
 #EXT-X-STREAM-INF:BANDWIDTH=256000,CODECS="mp4a.40.2"
 high.m3u8`;
             fs.writeFileSync(masterPlaylistPath, masterPlaylistContent);
             this.logger.log(`Master playlist created`, { fileName });
-            // Проверка метрик
             ffmpeg.ffprobe(filePath, (err, metadata) => {
               if (!err) {
                 this.logger.log(`File metrics`, {
@@ -173,16 +155,18 @@ high.m3u8`;
             });
             fs.readdir(segmentDir, (err, files) => {
               if (!err) {
-                const lowTsFiles = files.filter(
-                  (f) => f.startsWith('low_') && f.endsWith('.ts'),
-                ).length;
                 const highTsFiles = files.filter(
                   (f) => f.startsWith('high_') && f.endsWith('.ts'),
                 ).length;
-                this.logger.log(
-                  `Generated ${lowTsFiles} low-quality and ${highTsFiles} high-quality HLS segments`,
-                  { fileName },
-                );
+                this.logger.log(`Generated ${highTsFiles} high-quality HLS segments`, { fileName });
+                // Проверка размера сегментов
+                files
+                  .filter((f) => f.endsWith('.ts'))
+                  .forEach((file) => {
+                    const filePath = path.join(segmentDir, file);
+                    const stats = fs.statSync(filePath);
+                    this.logger.log(`Segment ${file} size: ${stats.size / 1024} KB`);
+                  });
               }
             });
             resolve();

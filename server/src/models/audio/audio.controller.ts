@@ -2,6 +2,7 @@ import { Controller, Get, Param, Res, Req, HttpStatus, BadRequestException } fro
 import { Response, Request } from 'express';
 import { Logger } from 'nestjs-pino';
 import { AudioService } from './audio.service';
+import * as crypto from 'crypto';
 
 @Controller('audio')
 export class AudioController {
@@ -11,7 +12,11 @@ export class AudioController {
   ) {}
 
   @Get(':filename/full')
-  async getFullAudio(@Param('filename') filename: string, @Res() res: Response) {
+  async getFullAudio(
+    @Param('filename') filename: string,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
     this.logger.log(`Requested full audio file: ${filename}`);
 
     try {
@@ -20,17 +25,22 @@ export class AudioController {
         return res.status(HttpStatus.NOT_FOUND).send('Audio file not found');
       }
 
-      // Настраиваем заголовки ответа
+      // Генерируем ETag на основе имени файла и размера
+      const eTag = `"${crypto.createHash('md5').update(`${filename}-${fileMetadata.fileSize}`).digest('hex')}"`;
+      if (req.headers['if-none-match'] === eTag) {
+        return res.status(HttpStatus.NOT_MODIFIED).end();
+      }
+
       res.set({
         'Content-Length': fileMetadata.fileSize.toString(),
         'Content-Type': 'audio/mpeg',
         'Accept-Ranges': 'bytes',
+        'Cache-Control': 'public, max-age=86400', // Кэш на 24 часа
+        'ETag': eTag,
       });
 
-      // Устанавливаем статус 200 OK
       res.status(HttpStatus.OK);
 
-      // Стримим весь файл
       const fileStream = this.audioService.createFileStream(
         fileMetadata.filePath,
         0,
@@ -60,40 +70,41 @@ export class AudioController {
       if (!fileMetadata) {
         return res.status(HttpStatus.NOT_FOUND).send('Audio file not found');
       }
-
-      // Обрабатываем заголовок Range
       const range = req.headers.range;
       if (!range) {
         throw new BadRequestException('Range header required');
       }
 
-      // Получаем диапазон для стриминга
       const { start, end, chunkSize } = this.audioService.calculateRange(
         range,
         fileMetadata.fileSize,
       );
 
-      // Получаем битрейт и длительность чанка
       const bitrate = await this.audioService.getAudioBitrate(fileMetadata.filePath);
       const chunkDurationSeconds = this.audioService.calculateChunkDuration(chunkSize, bitrate);
 
-      // Настраиваем заголовки ответа
+      // Генерируем ETag для чанка
+      const eTag = `"${crypto.createHash('md5').update(`${filename}-${start}-${end}`).digest('hex')}"`;
+      if (req.headers['if-none-match'] === eTag) {
+        return res.status(HttpStatus.NOT_MODIFIED).end();
+      }
+
       res.set({
         'Content-Range': `bytes ${start}-${end}/${fileMetadata.fileSize}`,
         'Accept-Ranges': 'bytes',
-        'Content-Length': chunkSize,
+        'Content-Length': chunkSize.toString(),
         'Content-Type': filename.endsWith('.m4a') ? 'audio/mp4' : 'audio/mpeg',
         'X-Chunk-Duration': chunkDurationSeconds.toString(),
+        'Cache-Control': 'public, max-age=86400', // Кэш на 24 часа
+        ETag: eTag,
+        'Access-Control-Allow-Origin': '*',
       });
 
-      // Устанавливаем статус 206 Partial Content
       res.status(HttpStatus.PARTIAL_CONTENT);
 
-      // Стримим файл
       const fileStream = this.audioService.createFileStream(fileMetadata.filePath, start, end);
       fileStream.pipe(res);
 
-      // Логируем успешное выполнение
       this.logger.log(`Streaming chunk from ${start} to ${end} (size: ${chunkSize} bytes)`);
     } catch (e) {
       this.logger.error(`Error streaming audio: ${e.message}`);
@@ -101,20 +112,29 @@ export class AudioController {
     }
   }
 
-  // Новый эндпоинт для HLS-сегментов
   @Get(':filename/:segment')
   async getHlsSegment(
     @Param('filename') filename: string,
     @Param('segment') segment: string,
     @Res() res: Response,
+    @Req() req: Request,
   ) {
     this.logger.log(`Requested HLS segment ${segment} for ${filename}`);
     try {
       const segmentPath = await this.audioService.getHlsSegmentPath(filename, segment);
+      // Генерируем ETag на основе имени сегмента
+      const eTag = `"${crypto.createHash('md5').update(`${filename}-${segment}`).digest('hex')}"`;
+      if (req.headers['if-none-match'] === eTag) {
+        return res.status(HttpStatus.NOT_MODIFIED).end();
+      }
+
       res.set({
-        'Content-Type': 'video/mp2t', // Для .ts сегментов
-        'Access-Control-Allow-Origin': '*', // Настройте CORS по необходимости
+        'Content-Type': 'video/mp2t',
+        'Cache-Control': 'public, max-age=86400', // Кэш на 24 часа
+        'ETag': eTag,
+        'Access-Control-Allow-Origin': '*',
       });
+
       res.sendFile(segmentPath);
     } catch (e) {
       this.logger.error(`Error serving HLS segment: ${e.message}`);
@@ -123,14 +143,28 @@ export class AudioController {
   }
 
   @Get(':filename/master.m3u8')
-  async getMasterHlsPlaylist(@Param('filename') filename: string, @Res() res: Response) {
+  async getMasterHlsPlaylist(
+    @Param('filename') filename: string,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
     this.logger.log(`Requested HLS master playlist for ${filename}`);
     try {
       const playlistPath = await this.audioService.getHlsPlaylistPath(filename);
+
+      // Генерируем ETag на основе имени плейлиста
+      const eTag = `"${crypto.createHash('md5').update(`${filename}-master.m3u8`).digest('hex')}"`;
+      if (req.headers['if-none-match'] === eTag) {
+        return res.status(HttpStatus.NOT_MODIFIED).end();
+      }
+
       res.set({
         'Content-Type': 'application/vnd.apple.mpegurl',
+        'Cache-Control': 'no-cache', // Проверяем актуальность
+        'ETag': eTag,
         'Access-Control-Allow-Origin': '*',
       });
+
       res.sendFile(playlistPath);
     } catch (e) {
       this.logger.error(`Error serving HLS master playlist: ${e.message}`);
@@ -143,12 +177,21 @@ export class AudioController {
     @Param('filename') filename: string,
     @Param('playlist') playlist: string,
     @Res() res: Response,
+    @Req() req: Request,
   ) {
     this.logger.log(`Requested HLS playlist ${playlist} for ${filename}`);
     try {
       const playlistPath = await this.audioService.getHlsSubPlaylistPath(filename, playlist);
+      // Генерируем ETag на основе имени плейлиста
+      const eTag = `"${crypto.createHash('md5').update(`${filename}-${playlist}`).digest('hex')}"`;
+      if (req.headers['if-none-match'] === eTag) {
+        return res.status(HttpStatus.NOT_MODIFIED).end();
+      }
+
       res.set({
         'Content-Type': 'application/vnd.apple.mpegurl',
+        'Cache-Control': 'no-cache', // Проверяем актуальность
+        'ETag': eTag,
         'Access-Control-Allow-Origin': '*',
       });
       res.sendFile(playlistPath);

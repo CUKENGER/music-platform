@@ -16,7 +16,6 @@ export {
   useDeleteTrack,
   useGetAllTracks,
   useGetOneTrack,
-  useGetAudioChunks,
   useGetAllPopularTracks,
   useGetLimitPopularTracks,
 } from './api/useTrackApi';

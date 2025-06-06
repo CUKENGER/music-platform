@@ -7,15 +7,12 @@ import {
   deleteTrack,
   getAll,
   getAllPopular,
-  getAudioChunks,
   getFullAudio,
   getLimitPopular,
   getOne,
 } from './trackApi';
 import { CreateTrackDto, ITrack } from '../types/Track';
 import { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
-import { ChunkData } from '../model/AudioChunkLoader';
 
 export const useCreateTrack = () => {
   const queryClient = useQueryClient();
@@ -78,27 +75,18 @@ export const useAddListenTrack = () => {
 
   return useMutation({
     mutationFn: (trackId: number) => addListen(trackId),
-    mutationKey: ['tracks', 'listen'],
+    mutationKey: ['tracksList', 'listen'],
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['tracks'],
+        queryKey: ['tracksList'],
       });
     },
   });
 };
 
-// export const useGetAllTracks = (page = 0, count = 20) => {
-//   return useQuery({
-//     queryKey: ['tracks', page],
-//     queryFn: () => getAll( page, count ),
-//     placeholderData: (prev) => prev,
-//     staleTime: 1000 * 60 * 5,
-//   });
-// };
-
 export const useGetAllTracks = (sortBy: string) => {
   return useInfiniteQuery({
-    queryKey: ['tracks', sortBy],
+    queryKey: ['tracksList', sortBy],
     queryFn: ({ pageParam }) => getAll({ pageParam, sortBy }),
     getNextPageParam: (lastPage, pages) => {
       return lastPage.length ? pages.length : undefined;
@@ -114,29 +102,6 @@ export const useGetOneTrack = (trackId: number) => {
   return useQuery({
     queryKey: ['track', trackId],
     queryFn: () => getOne(trackId),
-  });
-};
-
-export const useGetAudioChunks = (filename: string, start: number, end: number) => {
-  const [isRangeError, setIsRangeError] = useState(false);
-
-  useEffect(() => {
-    setIsRangeError(false);
-  }, [filename]);
-
-  return useQuery<ChunkData>({
-    queryKey: ['audioChunks', filename, start, end],
-    queryFn: async () => {
-      const result = await getAudioChunks(filename, start, end);
-      if (!result.fileSize) {
-        throw new Error('fileSize is missing');
-      }
-      return result as ChunkData;
-    },
-    enabled: !!filename && !isRangeError,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    retry: false,
   });
 };
 

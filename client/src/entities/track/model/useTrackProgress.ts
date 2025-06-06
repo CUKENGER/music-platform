@@ -9,6 +9,7 @@ export const useTrackProgress = () => {
   const [hoverTime, setHoverTime] = useState<string | null>(null);
 
   console.log('currentTime', currentTime);
+  console.log('loadedTime', loadedTime);
 
   useEffect(() => {
     audioManager.setTimeUpdateCallback((time) => {

@@ -30,7 +30,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         : typeof exceptionResponse === 'object' && 'message' in exceptionResponse ?
           (exceptionResponse.message as string)
         : message;
-      code = status === 404 ? ERROR_CODES.USER_NOT_FOUND : status === 401 ? ERROR_CODES.INVALID_CREDENTIALS : code;
+      code = status === 404 ? ERROR_CODES.NOT_FOUND : status === 401 ? ERROR_CODES.INVALID_CREDENTIALS : code;
     } else if (exception instanceof Error) {
       message = exception.message;
     }
