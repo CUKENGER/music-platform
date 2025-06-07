@@ -1,4 +1,4 @@
-import Hls, { ErrorData, Events, Level, FragBufferedData, ManifestParsedData } from 'hls.js';
+import Hls, { ErrorData, Events, Level, FragBufferedData } from 'hls.js';
 
 class AudioManager {
   private static instance: AudioManager;
@@ -147,17 +147,33 @@ class AudioManager {
 
   public async play(): Promise<void> {
     if (this._audio) {
-      this.checkBufferAndLoad();
+      console.log(
+        'play: Начало воспроизведения, src=',
+        this._audio.src,
+        'paused=',
+        this._audio.paused,
+        'readyState=',
+        this._audio.readyState,
+      );
+      this.checkBufferAndLoad(); // Проверка буфера и загрузка сегментов, если нужно
       try {
-        await this.waitForCanPlay();
-        await this._audio.play();
+        if (this._audio.readyState >= 2) {
+          // Данные уже загружены, можно воспроизводить сразу
+          await this._audio.play();
+          console.log('play: Воспроизведение начато без ожидания canplay');
+        } else {
+          // Данных недостаточно, ждем события canplay
+          await this.waitForCanPlay();
+          await this._audio.play();
+          console.log('play: Воспроизведение начато после canplay');
+        }
       } catch (err: unknown) {
         if (err instanceof Error && err.name === 'AbortError') {
-          console.warn('Воспроизведение прервано, повтор через 200мс...');
+          console.warn('play: Воспроизведение прервано, повтор через 200мс...');
           await new Promise((resolve) => setTimeout(resolve, 200));
-          await this.play();
+          await this.play(); // Повторная попытка
         } else {
-          console.error('Ошибка воспроизведения:', err);
+          console.error('play: Ошибка воспроизведения:', err);
           throw err;
         }
       }
@@ -190,10 +206,7 @@ class AudioManager {
       this.hls.loadSource(url);
       this.hls.attachMedia(this._audio);
       await new Promise<void>((resolve) => {
-        this.hls?.once(
-          Events.MANIFEST_PARSED,
-          (_event: Events.MANIFEST_PARSED, _data: ManifestParsedData) => resolve(),
-        );
+        this.hls?.once(Events.MANIFEST_PARSED, () => resolve());
       });
       this.checkBufferAndLoad();
     } else if (this._audio.canPlayType('application/vnd.apple.mpegurl')) {
@@ -309,10 +322,6 @@ class AudioManager {
     const currentTime = this.getCurrentTime() || 0;
     const loadedTime = this.getLoadedTime() || 0;
     const bufferLength = loadedTime - currentTime;
-
-    console.log(
-      `Проверка буфера: currentTime=${currentTime.toFixed(2)}s, loadedTime=${loadedTime.toFixed(2)}s, bufferLength=${bufferLength.toFixed(2)}s`,
-    );
 
     if (this.isSeeking) {
       if (!this.isLoading) {

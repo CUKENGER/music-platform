@@ -13,11 +13,11 @@ export const useTrackProgress = () => {
 
   useEffect(() => {
     audioManager.setSeekCompleteCallback((playing) => {
-			if(playing) {
-				setPlay()
-			} else {
-				setPause()
-			}
+      if (playing) {
+        setPlay();
+      } else {
+        setPause();
+      }
     });
 
     const updateProgress = () => {
@@ -37,7 +37,7 @@ export const useTrackProgress = () => {
       clearInterval(interval);
       audioManager.setSeekCompleteCallback(undefined); // Исправлено для ESLint
     };
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setPlay, setPause]);
 
   const changeCurrentTime = useCallback(

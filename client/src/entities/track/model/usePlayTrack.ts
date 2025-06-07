@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { ITrack } from '../types/Track';
 import audioManager from './AudioManager';
 import usePlayerStore from './PlayerStore';
@@ -19,7 +19,7 @@ export const usePlayTrack = (track: ITrack) => {
         setPlay();
       }
     } else {
-      audioManager.cleanup()
+      audioManager.cleanup();
       audioManager.loadHlsSource(`http://localhost:5000/${filename}/master.m3u8`);
       setActiveTrack(track);
       try {
@@ -29,26 +29,7 @@ export const usePlayTrack = (track: ITrack) => {
         setPause();
       }
     }
-  }, [filename, track, activeTrack,  setActiveTrack, setPlay, setPause, pause]);
-
-  useEffect(() => {
-    const audio = audioManager.getAudio();
-    if (!audio) return;
-
-    const handlePlay = () => setPlay();
-    const handlePause = () => setPause();
-    const handlePlaying = () => setPlay();
-
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('playing', handlePlaying);
-
-    return () => {
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('playing', handlePlaying);
-    };
-  }, [setPlay, setPause]);
+  }, [filename, track, activeTrack, setActiveTrack, setPlay, setPause, pause]);
 
   return { play, pause };
 };

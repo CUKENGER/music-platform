@@ -37,6 +37,8 @@ export const SwitchTrackBtns = ({ isNextBtn }: SwitchTrackBtnsProps) => {
   const btnBg = isNextBtn ? nextBtnBg : prevBtnBg;
   const btnClass = isNextBtn ? styles.nextBtnIcon : styles.prevBtnIcon;
 
+  console.log('SwitchTrackBtns рендерится:');
+
   return (
     <div className={styles.icon_container}>
       <img
