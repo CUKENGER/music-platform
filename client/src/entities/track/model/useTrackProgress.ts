@@ -1,47 +1,61 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import audioManager from './AudioManager';
+import usePlayerStore from './PlayerStore';
+import useTrackTimeStore from './TrackTimeStore';
 
 export const useTrackProgress = () => {
+  const { setPlay, setPause } = usePlayerStore();
+  const { setCurrentTime, currentTime } = useTrackTimeStore();
   const [x, setX] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [loadedTime, setLoadedTime] = useState(0);
   const [hoverTime, setHoverTime] = useState<string | null>(null);
 
-  console.log('currentTime', currentTime);
-  console.log('loadedTime', loadedTime);
-
   useEffect(() => {
-    audioManager.setTimeUpdateCallback((time) => {
-      setCurrentTime(time);
-    });
-    audioManager.setBufferUpdateCallback((time) => {
-      setLoadedTime(time);
+    audioManager.setSeekCompleteCallback((playing) => {
+			if(playing) {
+				setPlay()
+			} else {
+				setPause()
+			}
     });
 
-    const updateDuration = () => {
+    const updateProgress = () => {
+      const time = audioManager.getCurrentTime() || 0;
       const dur = audioManager.getDuration() || 0;
+      const loaded = audioManager.getLoadedTime() || 0;
+
+      setCurrentTime(time);
       setDuration(dur);
+      setLoadedTime(loaded);
     };
 
-    updateDuration();
-    const durationInterval = setInterval(updateDuration, 1000);
+    updateProgress();
+    const interval = setInterval(updateProgress, 1000);
 
     return () => {
-      clearInterval(durationInterval);
-      audioManager.setTimeUpdateCallback(() => {});
-      audioManager.setBufferUpdateCallback(() => {});
+      clearInterval(interval);
+      audioManager.setSeekCompleteCallback(undefined); // Исправлено для ESLint
     };
-  }, []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setPlay, setPause]);
 
-  const changeCurrentTime = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = Number(e.target.value);
-    audioManager.seekTo(newValue);
-  }, []);
+  const changeCurrentTime = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = Number(e.target.value);
+      if (newValue >= 0 && newValue <= duration) {
+        audioManager.seekTo(newValue);
+        setCurrentTime(newValue);
+      } else {
+        console.warn(`Invalid seek value: ${newValue}, duration: ${duration}`);
+      }
+    },
+    [duration, setCurrentTime],
+  );
 
   const hoverTimeStyle = { left: `${x - 13}px` };
   const inputDurationStyle = useMemo(
-    () => ({ '--value': `${(currentTime / duration) * 100}%` }),
+    () => ({ '--value': duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }),
     [currentTime, duration],
   );
 

@@ -1,12 +1,10 @@
-import { audioManager } from '@/shared/model';
 import styles from './PlayPauseBtn.module.scss';
 import pauseBtnBg from './pauseBtnBg.svg';
 import playBtnBg from './playBtnBg.svg';
-import React from 'react';
+import { memo } from 'react';
 import usePlayerStore from '../../model/PlayerStore';
 
-export const PlayPauseBtn: FC = React.memo(() => {
-  const audio = audioManager.getAudio();
+export const PlayPauseBtn = memo(() => {
 
   const pause = usePlayerStore((state) => state.pause);
   const setPlay = usePlayerStore((state) => state.setPlay);
@@ -15,13 +13,9 @@ export const PlayPauseBtn: FC = React.memo(() => {
   const playBtn = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
 
-    if (!audio) return;
-
     if (pause) {
-      audio.play();
       setPlay();
     } else {
-      audio.pause();
       setPause();
     }
   };

@@ -1,8 +1,6 @@
-import { audioManager } from '@/shared/model';
-import useActiveTrackListStore from '../../model/ActiveTrackListStore';
-import useAudioChunkStore from '../../model/AudioChunkStore';
-import usePlayerStore from '../../model/PlayerStore';
-import useTrackTimeStore from '../../model/TrackTimeStore';
+// import { audioManager } from '@/shared/model';
+// import useActiveTrackListStore from '../../model/ActiveTrackListStore';
+// import usePlayerStore from '../../model/PlayerStore';
 import styles from './SwitchTrackBtns.module.scss';
 import nextBtnBg from './nextBtnBg.svg';
 import prevBtnBg from './prevBtnBg.svg';
@@ -12,34 +10,28 @@ interface SwitchTrackBtnsProps {
 }
 
 export const SwitchTrackBtns = ({ isNextBtn }: SwitchTrackBtnsProps) => {
-  const chunkSize = 1000000;
-  const { activeTrack, setPlay, setActiveTrack } = usePlayerStore();
-  const { setStart, setEnd, setLoadedTime } = useAudioChunkStore();
-  const setCurrentTime = useTrackTimeStore((state) => state.setCurrentTime);
-  const activeTrackList = useActiveTrackListStore((state) => state.activeTrackList);
+  // const { activeTrack, setPlay, setActiveTrack } = usePlayerStore();
+  // const activeTrackList = useActiveTrackListStore((state) => state.activeTrackList);
 
-  const handleBtn = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleBtn = async (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
 
-    if (activeTrackList) {
-      const currentIndex = activeTrackList.findIndex((track) => track.id === activeTrack?.id);
-      const nextIndex =
-        isNextBtn ?
-          (currentIndex + 1) % activeTrackList.length
-        : (currentIndex - 1 + activeTrackList.length) % activeTrackList.length;
-
-      const nextTrack = activeTrackList[nextIndex];
-      if (nextTrack) {
-        audioManager.cleanup();
-        audioManager.seekTo(0);
-        setCurrentTime(0);
-        setStart(0);
-        setEnd(chunkSize - 1);
-        setLoadedTime(0);
-        setActiveTrack(nextTrack);
-        setPlay();
-      }
-    }
+    // if (activeTrackList) {
+    //   const currentIndex = activeTrackList.findIndex((track) => track.id === activeTrack?.id);
+    //   const nextIndex =
+    //     isNextBtn ?
+    //       (currentIndex + 1) % activeTrackList.length
+    //     : (currentIndex - 1 + activeTrackList.length) % activeTrackList.length;
+    //
+    //   const nextTrack = activeTrackList[nextIndex];
+    //   if (nextTrack) {
+    //     audioManager.cleanup();
+    //     setActiveTrack(nextTrack);
+    //     audioManager.loadHlsSource(`http://localhost:5000/${nextTrack.audio}/master.m3u8`);
+    //     await audioManager.play();
+    //     setPlay();
+    //   }
+    // }
   };
 
   const btnBg = isNextBtn ? nextBtnBg : prevBtnBg;

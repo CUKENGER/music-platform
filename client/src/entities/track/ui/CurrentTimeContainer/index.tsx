@@ -8,11 +8,12 @@ interface CurrentTimeContainerProps {
 
 export const CurrentTimeContainer = ({ duration }: CurrentTimeContainerProps) => {
   const currentTime = useTrackTimeStore((state) => state.currentTime);
+  const formattedTime = convertDurationToTimeString(currentTime);
 
   return (
     <div className={styles.duration_container}>
       <p>
-        {currentTime ? convertDurationToTimeString(currentTime) : '0:00'} / {duration}
+        {formattedTime || '0:00'} / {duration}
       </p>
     </div>
   );

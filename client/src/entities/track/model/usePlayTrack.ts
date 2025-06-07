@@ -1,57 +1,43 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { ITrack } from '../types/Track';
 import audioManager from './AudioManager';
 import usePlayerStore from './PlayerStore';
 
 export const usePlayTrack = (track: ITrack) => {
-  const { setActiveTrack, activeTrack, setPlay, setPause } = usePlayerStore();
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { setActiveTrack, activeTrack, setPlay, setPause, pause } = usePlayerStore();
   const filename = track.audio;
 
   const play = useCallback(async () => {
     const isSameTrack = activeTrack?.id === track.id;
 
     if (isSameTrack) {
-      if (isPlaying) {
+      if (!pause) {
         audioManager.pause();
         setPause();
-        setIsPlaying(false);
       } else {
-        audioManager.play();
+        await audioManager.play();
         setPlay();
-        setIsPlaying(true);
       }
     } else {
-      // audioManager.cleanup()
+      audioManager.cleanup()
       audioManager.loadHlsSource(`http://localhost:5000/${filename}/master.m3u8`);
       setActiveTrack(track);
       try {
-        audioManager.play();
+        await audioManager.play();
         setPlay();
-        setIsPlaying(true);
       } catch {
-        setIsPlaying(false);
         setPause();
       }
     }
-  }, [filename, track, activeTrack, isPlaying, setActiveTrack, setPlay, setPause]);
+  }, [filename, track, activeTrack,  setActiveTrack, setPlay, setPause, pause]);
 
   useEffect(() => {
     const audio = audioManager.getAudio();
     if (!audio) return;
 
-    const handlePlay = () => {
-      setIsPlaying(true);
-      setPlay();
-    };
-    const handlePause = () => {
-      setIsPlaying(false);
-      setPause();
-    };
-    const handlePlaying = () => {
-      setIsPlaying(true);
-      setPlay();
-    };
+    const handlePlay = () => setPlay();
+    const handlePause = () => setPause();
+    const handlePlaying = () => setPlay();
 
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
@@ -64,5 +50,5 @@ export const usePlayTrack = (track: ITrack) => {
     };
   }, [setPlay, setPause]);
 
-  return { play, isPlaying };
+  return { play, pause };
 };

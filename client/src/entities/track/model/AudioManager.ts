@@ -1,43 +1,46 @@
-import Hls, { ErrorData, Events, Level, FragBufferedData } from 'hls.js';
+import Hls, { ErrorData, Events, Level, FragBufferedData, ManifestParsedData } from 'hls.js';
 
 class AudioManager {
   private static instance: AudioManager;
   private _audio?: HTMLAudioElement;
   private hls?: Hls;
-  private onTimeUpdateCallback?: (currentTime: number) => void;
-  private onBufferUpdateCallback?: (loadedTime: number) => void;
-  private bufferLimit = 10; // Лимит буфера вперед в секундах (~5 сегментов)
-  private isLoading = false; // Флаг для загрузки
-  private isSeeking = false; // Флаг для перемотки
-  private lastBufferCheck = 0; // Для debounce
+  private onSeekCompleteCallback?: (playing: boolean) => void;
+  private bufferLimit = 10; // Как в старой версии
+  private isLoading = false;
+  private isSeeking = false;
+  private lastBufferCheck = 0;
 
   private constructor() {
     if (typeof window === 'undefined') {
-      console.warn('Окружение window недоступно');
+      console.warn('window недоступен');
       return;
     }
 
     this._audio = new Audio();
     this._audio.volume = 1;
-    this._audio.addEventListener('timeupdate', this.handleTimeUpdate);
+    this._audio.addEventListener('timeupdate', this.handleTimeUpdate); // Восстанавливаем timeupdate
 
     if (Hls.isSupported()) {
-      this.hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: true,
-        autoStartLoad: false,
-        maxBufferLength: 10,
-        maxMaxBufferLength: 20,
-        maxBufferSize: 320 * 1024,
-        liveSyncDurationCount: 3,
-        backBufferLength: 3600,
-        abrEwmaDefaultEstimate: 256000,
-      });
-      this.hls.on(Events.BUFFER_APPENDED, this.handleBufferAppended);
-      this.hls.on(Events.MANIFEST_PARSED, this.handleManifestParsed);
-      this.hls.on(Events.ERROR, this.handleError);
-      this.hls.on(Events.FRAG_BUFFERED, this.handleFragmentBuffered);
+      this.initHls();
     }
+  }
+
+  private initHls(): void {
+    this.hls = new Hls({
+      enableWorker: true,
+      lowLatencyMode: true,
+      autoStartLoad: false,
+      maxBufferLength: 10,
+      maxMaxBufferLength: 20,
+      maxBufferSize: 320 * 1024,
+      liveSyncDurationCount: 3,
+      backBufferLength: 3600,
+      abrEwmaDefaultEstimate: 256000,
+    });
+    this.hls.on(Events.MANIFEST_LOADED, this.handleManifestLoaded);
+    this.hls.on(Events.MANIFEST_PARSED, this.handleManifestParsed);
+    this.hls.on(Events.ERROR, this.handleError);
+    this.hls.on(Events.FRAG_BUFFERED, this.handleFragmentBuffered);
   }
 
   public static getInstance(): AudioManager {
@@ -68,38 +71,33 @@ class AudioManager {
     return this._audio.buffered.end(this._audio.buffered.length - 1);
   }
 
-  public setTimeUpdateCallback(callback: (currentTime: number) => void): void {
-    this.onTimeUpdateCallback = callback;
+  public setSeekCompleteCallback(callback?: (playing: boolean) => void): void {
+    this.onSeekCompleteCallback = callback;
   }
 
-  public setBufferUpdateCallback(callback: (loadedTime: number) => void): void {
-    this.onBufferUpdateCallback = callback;
-  }
-
-  public async seekTo(time: number, onSeekComplete?: (playing: boolean) => void): Promise<void> {
+  public async seekTo(time: number): Promise<void> {
     if (this._audio && this.hls) {
       const duration = this.getDuration() || 0;
       if (time >= 0 && time <= duration) {
         if (this.isSeeking) {
-          console.warn('Seek in progress, ignoring new seek request');
-          onSeekComplete?.(this._audio.paused === false);
+          console.warn('Перемотка уже выполняется, игнорирую');
+          this.onSeekCompleteCallback?.(this._audio.paused === false);
           return;
         }
 
         this.isSeeking = true;
         this._audio.currentTime = time;
 
-        // Проверяем, есть ли сегмент в буфере
-        const buffered = this._audio.buffered;
-        let segmentExists = false;
-        for (let i = 0; i < buffered.length; i++) {
-          if (buffered.start(i) <= time && time <= buffered.end(i)) {
-            segmentExists = true;
-            break;
-          }
-        }
-
         try {
+          const buffered = this._audio.buffered;
+          let segmentExists = false;
+          for (let i = 0; i < buffered.length; i++) {
+            if (buffered.start(i) <= time && time <= buffered.end(i)) {
+              segmentExists = true;
+              break;
+            }
+          }
+
           if (!segmentExists) {
             this.hls.stopLoad();
             this.isLoading = false;
@@ -112,63 +110,51 @@ class AudioManager {
               };
               this.hls?.on(Events.FRAG_BUFFERED, onFragBuffered);
               this.hls?.startLoad(time);
-
-              // Таймаут на случай, если сегмент не загрузится
-              setTimeout(() => reject(new Error('Seek timeout')), 5000);
+              setTimeout(() => reject(new Error('Таймаут перемотки')), 2000);
             });
           }
 
-          // Проверяем, был ли трек на паузе до перемотки
-          const wasPlaying = !this._audio.paused;
-          if (wasPlaying) {
-            await this._audio.play();
-          }
+          await this.waitForCanPlay();
+          await this._audio.play();
 
           this.isSeeking = false;
           this.checkBufferAndLoad();
-          onSeekComplete?.(wasPlaying);
+          this.onSeekCompleteCallback?.(true);
         } catch (err) {
-          console.error('Seek error:', err);
+          console.error('Ошибка перемотки:', err);
           this.isSeeking = false;
           this.checkBufferAndLoad();
-          onSeekComplete?.(false);
+          this.onSeekCompleteCallback?.(false);
         }
       } else {
-        console.error(`Invalid seek time: ${time}, duration: ${duration}`);
+        console.error(`Недопустимое время перемотки: ${time}, длительность: ${duration}`);
         this.isSeeking = false;
-        onSeekComplete?.(this._audio?.paused === false);
+        this.onSeekCompleteCallback?.(this._audio?.paused === false);
       }
     }
   }
 
-  public loadHlsSource(url: string): void {
-    if (!this._audio) {
-      console.error('Аудио элемент не инициализирован');
-      return;
-    }
-
-    this.cleanup();
-
-    if (this.hls && Hls.isSupported()) {
-      this.hls.loadSource(url);
-      this.hls.attachMedia(this._audio);
-    } else if (this._audio.canPlayType('application/vnd.apple.mpegurl')) {
-      this._audio.src = url;
-      this.play();
-    } else {
-      console.error('HLS не поддерживается ни через hls.js, ни нативно');
-    }
+  private async waitForCanPlay(): Promise<void> {
+    if (!this._audio) return;
+    return new Promise((resolve) => {
+      const onCanPlay = () => {
+        this._audio?.removeEventListener('canplay', onCanPlay);
+        resolve();
+      };
+      this._audio?.addEventListener('canplay', onCanPlay, { once: true });
+    });
   }
 
   public async play(): Promise<void> {
     if (this._audio) {
       this.checkBufferAndLoad();
       try {
+        await this.waitForCanPlay();
         await this._audio.play();
       } catch (err: unknown) {
         if (err instanceof Error && err.name === 'AbortError') {
-          console.warn('Play interrupted, retrying in 500ms...');
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          console.warn('Воспроизведение прервано, повтор через 200мс...');
+          await new Promise((resolve) => setTimeout(resolve, 200));
           await this.play();
         } else {
           console.error('Ошибка воспроизведения:', err);
@@ -192,6 +178,32 @@ class AudioManager {
     }
   }
 
+  public async loadHlsSource(url: string): Promise<void> {
+    if (!this._audio) {
+      console.error('Аудио элемент не инициализирован');
+      return;
+    }
+
+    this.cleanup();
+
+    if (this.hls && Hls.isSupported()) {
+      this.hls.loadSource(url);
+      this.hls.attachMedia(this._audio);
+      await new Promise<void>((resolve) => {
+        this.hls?.once(
+          Events.MANIFEST_PARSED,
+          (_event: Events.MANIFEST_PARSED, _data: ManifestParsedData) => resolve(),
+        );
+      });
+      this.checkBufferAndLoad();
+    } else if (this._audio.canPlayType('application/vnd.apple.mpegurl')) {
+      this._audio.src = url;
+      await this.play();
+    } else {
+      console.error('HLS не поддерживается');
+    }
+  }
+
   public cleanup(): void {
     if (this.hls) {
       this.hls.stopLoad();
@@ -199,23 +211,6 @@ class AudioManager {
       this.hls.detachMedia();
       this.hls.destroy();
       this.hls = undefined;
-      if (Hls.isSupported()) {
-        this.hls = new Hls({
-          enableWorker: true,
-          lowLatencyMode: true,
-          autoStartLoad: false,
-          maxBufferLength: 10,
-          maxMaxBufferLength: 20,
-          maxBufferSize: 320 * 1024,
-          liveSyncDurationCount: 3,
-          backBufferLength: 3600,
-          abrEwmaDefaultEstimate: 256000,
-        });
-        this.hls.on(Events.BUFFER_APPENDED, this.handleBufferAppended);
-        this.hls.on(Events.MANIFEST_PARSED, this.handleManifestParsed);
-        this.hls.on(Events.ERROR, this.handleError);
-        this.hls.on(Events.FRAG_BUFFERED, this.handleFragmentBuffered);
-      }
     }
     if (this._audio) {
       this._audio.pause();
@@ -226,20 +221,13 @@ class AudioManager {
       this._audio.volume = 1;
       this._audio.addEventListener('timeupdate', this.handleTimeUpdate);
     }
+    if (Hls.isSupported()) {
+      this.initHls();
+    }
   }
 
   private handleTimeUpdate = (): void => {
-    if (this.onTimeUpdateCallback && this._audio) {
-      this.onTimeUpdateCallback(this._audio.currentTime);
-      this.checkBufferAndLoad();
-    }
-  };
-
-  private handleBufferAppended = (): void => {
-    if (this.onBufferUpdateCallback && this._audio) {
-      const loadedTime = this.getLoadedTime() || 0;
-      this.onBufferUpdateCallback(loadedTime);
-    }
+    this.checkBufferAndLoad();
   };
 
   private handleFragmentBuffered = (_event: string, data: FragBufferedData): void => {
@@ -247,80 +235,106 @@ class AudioManager {
     this.checkBufferAndLoad();
   };
 
+  private handleManifestLoaded = (): void => {
+    if (this.hls) {
+      this.hls.startLoad();
+      this.isLoading = true;
+    }
+  };
+
   private handleManifestParsed = (): void => {
     if (this.hls) {
       console.log(
-        'Available qualities:',
+        'Доступные качества:',
         this.hls.levels.map((l: Level) => `${l.bitrate / 1024} kbps`),
       );
+      if (this.hls.levels.length > 0) {
+        this.hls.currentLevel = 0;
+      }
       this.play();
     }
   };
 
   private handleError = (_event: string, data: ErrorData): void => {
-    console.error(`HLS error: ${data.type}, details: ${data.details}, url: ${data.url || 'unknown'}`, data);
+    console.error(
+      `HLS ошибка: ${data.type}, детали: ${data.details}, url: ${data.url || 'unknown'}`,
+      data,
+    );
     if (data.fatal) {
       switch (data.type) {
         case Hls.ErrorTypes.NETWORK_ERROR:
-          console.warn('Network error, retrying in 2s...');
+          console.warn('Network error, повтор через 500мс...');
           setTimeout(() => {
             if (this.hls) {
               this.hls.startLoad();
               this.isLoading = true;
             }
-          }, 2000);
+          }, 500);
           break;
         case Hls.ErrorTypes.MEDIA_ERROR:
-          console.warn('Media error, attempting to recover in 500ms...');
+          console.warn('Media error, восстановление через 200мс...');
           setTimeout(() => {
             if (this.hls) {
               this.hls.recoverMediaError();
               if (!this.isLoading) {
-                this.hls.startLoad();
+                this.hls.startLoad(this.getCurrentTime() || 0);
                 this.isLoading = true;
               }
             }
-          }, 500);
+          }, 200);
           break;
         default:
-          console.error('Unrecoverable error, destroying HLS instance');
+          console.error('Unrecoverable error, уничтожаю HLS');
           this.cleanup();
           break;
+      }
+    } else if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
+      console.warn('Buffer stalled, немедленно загружаю следующий сегмент...');
+      if (this.hls && !this.isLoading) {
+        const currentTime = this.getCurrentTime() || 0;
+        this.hls.startLoad(currentTime);
+        this.isLoading = true;
+        this.checkBufferAndLoad();
       }
     }
   };
 
-  private checkBufferAndLoad = (): void => {
+  private checkBufferAndLoad(): void {
     if (!this.hls || !this._audio) return;
 
     const now = performance.now();
-    if (now - this.lastBufferCheck < 500) return; // Debounce 500 мс
+    if (now - this.lastBufferCheck < 500) return; // Как в старой версии
     this.lastBufferCheck = now;
 
     const currentTime = this.getCurrentTime() || 0;
     const loadedTime = this.getLoadedTime() || 0;
+    const bufferLength = loadedTime - currentTime;
+
+    console.log(
+      `Проверка буфера: currentTime=${currentTime.toFixed(2)}s, loadedTime=${loadedTime.toFixed(2)}s, bufferLength=${bufferLength.toFixed(2)}s`,
+    );
 
     if (this.isSeeking) {
       if (!this.isLoading) {
-        this.hls.startLoad();
+        this.hls.startLoad(currentTime);
         this.isLoading = true;
-        console.log(`Загрузка при перемотке: буфер ${loadedTime - currentTime}s`);
+        console.log(`Загрузка при перемотке: буфер ${bufferLength}s`);
       }
       return;
     }
 
-    if (loadedTime - currentTime > this.bufferLimit) {
+    if (bufferLength > this.bufferLimit) {
       if (this.isLoading) {
         this.hls.stopLoad();
         this.isLoading = false;
-        console.log(`Загрузка остановлена: буфер ${loadedTime - currentTime}s`);
+        console.log(`Загрузка остановлена: буфер ${bufferLength}s`);
       }
     } else if (!this.isLoading) {
-      this.hls.startLoad();
+      this.hls.startLoad(currentTime);
       this.isLoading = true;
-      console.log(`Загрузка возобновлена: буфер ${loadedTime - currentTime}s`);
+      console.log(`Загрузка возобновлена: буфер ${bufferLength}s`);
     }
-  };
+  }
 }
 
 export default AudioManager.getInstance();
