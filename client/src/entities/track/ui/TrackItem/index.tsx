@@ -18,13 +18,13 @@ const TrackItemComponent = (
   { item: track, needDeleteIcon = true, needClick = true }: TrackItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  const { play, handleDelete, isVisible, modal, hideModal } = useTrackItem(track);
+  const { play, handleDelete, modal, hideModal } = useTrackItem(track);
   const isAdmin = useUserStore((state) => state.isAdmin);
 
   return (
     <div
       ref={ref}
-      className={`${styles.container} ${isVisible && styles.visible}`}
+      className={`${styles.container} ${styles.visible}`}
       onClick={needClick ? play : undefined}
     >
       <div className={styles.main_container}>

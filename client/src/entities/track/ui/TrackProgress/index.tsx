@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useTrackProgress } from '../../model/useTrackProgress';
 import styles from './TrackProgress.module.scss';
 
@@ -16,11 +15,6 @@ export const TrackProgress = () => {
     loadedTime,
   } = useTrackProgress();
 
-  const onMouseOver = handleMouseOver;
-  const onMouseLeave = handleMouseLeave;
-  const onMouseMove = useCallback(handleMouseMove, [handleMouseMove]);
-  const onChangeTime = useCallback(changeCurrentTime, [changeCurrentTime, currentTime]);
-
   return (
     <div className={styles.input_duration_container}>
       {hoverTime && (
@@ -36,14 +30,14 @@ export const TrackProgress = () => {
         style={{ width: `${(currentTime / duration) * 100}%` }}
       ></div>
       <input
-        onMouseOver={onMouseOver}
-        onMouseLeave={onMouseLeave}
-        onMouseMove={onMouseMove}
+        onMouseOver={handleMouseOver}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
         type="range"
         min={0}
         max={duration}
         value={currentTime}
-        onChange={onChangeTime}
+        onChange={changeCurrentTime}
         className={styles.input_duration}
         style={inputDurationStyle}
       />

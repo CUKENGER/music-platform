@@ -25,6 +25,7 @@
     "hls.js": "^1.6.5",
     "hsl": "^0.1.1",
     "install": "^0.13.0",
+    "lodash": "^4.17.21",
     "react": "^19.1.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^19.1.0",
@@ -44,7 +45,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.28.0",
-    "@types/hls.js": "^1.0.0",
+    "@types/lodash": "^4.17.17",
     "@types/node": "^22.15.29",
     "@types/react": "^19.1.6",
     "@types/react-beautiful-dnd": "^13.1.8",

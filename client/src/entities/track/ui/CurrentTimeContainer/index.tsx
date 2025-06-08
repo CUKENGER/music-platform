@@ -13,7 +13,7 @@ export const CurrentTimeContainer = ({ duration }: CurrentTimeContainerProps) =>
   return (
     <div className={styles.duration_container}>
       <p>
-        {formattedTime || '0:00'} / {duration}
+        <span className={styles.current_time}>{formattedTime || '0:00'}</span> / {duration}
       </p>
     </div>
   );

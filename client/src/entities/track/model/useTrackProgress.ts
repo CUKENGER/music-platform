@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import audioManager from './AudioManager';
 import usePlayerStore from './PlayerStore';
 import useTrackTimeStore from './TrackTimeStore';
+import { throttle } from 'lodash';
 
 export const useTrackProgress = () => {
   const { setPlay, setPause } = usePlayerStore();
@@ -12,15 +13,10 @@ export const useTrackProgress = () => {
   const [hoverTime, setHoverTime] = useState<string | null>(null);
 
   useEffect(() => {
-    audioManager.setSeekCompleteCallback((playing) => {
-      if (playing) {
-        setPlay();
-      } else {
-        setPause();
-      }
-    });
+    const audio = audioManager.getAudio();
+    if (!audio) return;
 
-    const updateProgress = () => {
+    const updateProgress = throttle(() => {
       const time = audioManager.getCurrentTime() || 0;
       const dur = audioManager.getDuration() || 0;
       const loaded = audioManager.getLoadedTime() || 0;
@@ -28,17 +24,31 @@ export const useTrackProgress = () => {
       setCurrentTime(time);
       setDuration(dur);
       setLoadedTime(loaded);
+    }, 1000);
+
+    const handleLoadedMetadata = () => {
+      updateProgress();
     };
+
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
 
     updateProgress();
-    const interval = setInterval(updateProgress, 1000);
 
+    audioManager.setSeekCompleteCallback((playing) => {
+      if (playing) {
+        setPlay();
+      } else {
+        setPause();
+      }
+    });
     return () => {
-      clearInterval(interval);
-      audioManager.setSeekCompleteCallback(undefined); // Исправлено для ESLint
+      audio.removeEventListener('timeupdate', updateProgress);
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audioManager.setSeekCompleteCallback(undefined);
+      updateProgress.cancel();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setPlay, setPause]);
+  }, [setPlay, setPause, setCurrentTime]);
 
   const changeCurrentTime = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,13 +63,13 @@ export const useTrackProgress = () => {
     [duration, setCurrentTime],
   );
 
-  const hoverTimeStyle = { left: `${x - 13}px` };
+  const hoverTimeStyle = useMemo(() => ({ left: `${x - 13}px` }), [x]);
   const inputDurationStyle = useMemo(
     () => ({ '--value': duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }),
     [currentTime, duration],
   );
 
-  const handleMouseOver = useCallback((e: React.MouseEvent<HTMLInputElement>) => {
+  const updateHoverTime = (e: React.MouseEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     const offsetX = e.nativeEvent.offsetX;
     setX(offsetX);
@@ -68,20 +78,12 @@ export const useTrackProgress = () => {
     const time =
       Math.floor(value / 60) + ':' + (value % 60 < 10 ? '0' : '') + Math.floor(value % 60);
     setHoverTime(time);
-  }, []);
+  };
+
+  const handleMouseOver = updateHoverTime;
+  const handleMouseMove = updateHoverTime;
 
   const handleMouseLeave = useCallback(() => setHoverTime(''), []);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLInputElement>) => {
-    const target = e.target as HTMLInputElement;
-    const offsetX = e.nativeEvent.offsetX;
-    setX(offsetX);
-    const maxValue = parseInt(target.max, 10);
-    const value = (offsetX / target.offsetWidth) * maxValue;
-    const time =
-      Math.floor(value / 60) + ':' + (value % 60 < 10 ? '0' : '') + Math.floor(value % 60);
-    setHoverTime(time);
-  }, []);
 
   return {
     hoverTime,

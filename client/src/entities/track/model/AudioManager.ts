@@ -313,11 +313,11 @@ class AudioManager {
   };
 
   private checkBufferAndLoad(): void {
-    if (!this.hls || !this._audio) return;
+    if (!this.hls || !this._audio || this._audio.paused) return;
 
     const now = performance.now();
-    if (now - this.lastBufferCheck < 500) return; // Как в старой версии
-    this.lastBufferCheck = now;
+    if (now - this.lastBufferCheck < 1000) return;
+		this.lastBufferCheck = now;
 
     const currentTime = this.getCurrentTime() || 0;
     const loadedTime = this.getLoadedTime() || 0;

@@ -1,11 +1,10 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useCallback} from 'react';
 import { ITrack } from '../types/Track';
 import { useDeleteTrack } from '../api/useTrackApi';
 import { useModal } from '@/shared/hooks';
 import { usePlayTrack } from './usePlayTrack';
 
 export const useTrackItem = (track: ITrack) => {
-  const [isVisible, setIsVisible] = useState(false);
 
   const { showModal, modal, hideModal } = useModal();
 
@@ -24,18 +23,8 @@ export const useTrackItem = (track: ITrack) => {
     [deleteTrack, showModal, track.id],
   );
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!isVisible) {
-        setIsVisible(true);
-      }
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [isVisible]);
-
   return {
     play,
-    isVisible,
     handleDelete,
     modal,
     hideModal,

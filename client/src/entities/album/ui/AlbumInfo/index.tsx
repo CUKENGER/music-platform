@@ -172,7 +172,6 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
           </div>
           <Btn
             className={styles.albumLikes}
-            small={true}
             onClick={handleLike}
           >
             <LikeIcon

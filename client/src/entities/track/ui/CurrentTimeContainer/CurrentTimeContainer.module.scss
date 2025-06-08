@@ -1,10 +1,21 @@
 .duration_container {
   font-size: 12px;
   color: var(--gray);
+  font-weight: 500;
+  display: flex;
+}
+
+.current_time {
+  display: inline-block;
+  min-width: 40px;
+  text-align: right;
 }
 
 @media (max-width: 400px) {
   .duration_container {
     font-size: 10px;
+  }
+  .current_time {
+    min-width: 32px;
   }
 }
