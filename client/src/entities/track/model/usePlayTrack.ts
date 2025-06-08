@@ -20,7 +20,7 @@ export const usePlayTrack = (track: ITrack) => {
       }
     } else {
       audioManager.cleanup();
-      audioManager.loadHlsSource(`http://localhost:5000/${filename}/master.m3u8`);
+      audioManager.loadHlsSource(`/api/${filename}/master.m3u8`);
       setActiveTrack(track);
       try {
         await audioManager.play();

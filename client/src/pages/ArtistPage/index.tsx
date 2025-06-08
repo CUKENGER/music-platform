@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import { useDeleteArtist, useGetOneArtist } from '@/entities/artist';
 import { API_URL, PRIVATE_ROUTES } from '@/shared/consts';
-import { Btn, LikeIcon, ListensIcon, Loader } from '@/shared/ui';
+import { Btn, LikeIcon, ListensContainer, Loader } from '@/shared/ui';
 import { ChildrenTrack } from '@/entities/track';
 
 export const ArtistPage = () => {
@@ -85,7 +85,7 @@ export const ArtistPage = () => {
               </span>
             )}
           <div className={styles.listens_container}>
-            <ListensIcon
+            <ListensContainer
               className={styles.listens}
               listens={artist?.listens}
             />

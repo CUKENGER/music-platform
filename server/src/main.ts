@@ -1,3 +1,5 @@
+
+
 import { Logger as defaultLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -23,7 +25,7 @@ const start = async () => {
     const logger = app.get(Logger);
     app.enableCors({
       credentials: true,
-      origin: [process.env.CLIENT_URL || 'http://localhost:5173'],
+      origin: [process.env.CLIENT_URL || 'http://localhost:5173', 'http://mp-client:5173'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: [
         'Content-Type',

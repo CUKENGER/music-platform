@@ -3,7 +3,7 @@ import styles from './ArtistItem.module.scss';
 import { Link } from 'react-router-dom';
 import { IArtist } from '../../types/Artist';
 import { API_URL } from '@/shared/consts';
-import { LikeIcon, ListensIcon } from '@/shared/ui';
+import { LikeIcon, ListensContainer } from '@/shared/ui';
 
 interface ArtistItemProps {
   item: IArtist;
@@ -30,7 +30,7 @@ const ArtistItemComponent = (
         </div>
       </Link>
       <div className={styles.main_info}>
-        <ListensIcon listens={artist.listens} />
+        <ListensContainer listens={artist.listens} />
         <LikeIcon
           className={styles.likes}
           likes={artist?.likes}

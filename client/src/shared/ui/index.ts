@@ -18,6 +18,6 @@ export { ExclamIcon } from './assets/ExclamIcon/';
 export { ShowPassIcon } from './assets/ShowPassIcon/';
 export { MusicWaves } from './assets/MusicWaves/';
 export { LikeIcon } from './assets/LikeIcon/';
-export { ListensIcon } from './assets/ListensIcon/';
+export { ListensContainer } from './assets/ListensIcon/';
 export { CloseIcon } from './assets/CloseIcon/';
 export { AddTrackIcon } from './assets/AddTrackIcon/';

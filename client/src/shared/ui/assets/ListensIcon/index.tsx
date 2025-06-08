@@ -1,21 +1,17 @@
-import { FC } from 'react';
 import styles from './ListensIcon.module.scss';
-import listensIcon from './listens.svg';
 import classNames from 'classnames';
+import ListensIcon from './listens.svg?react'
 
 interface ListensIconProps {
   listens?: number;
   className?: string;
 }
 
-export const ListensIcon: FC<ListensIconProps> = ({ listens, className }) => {
+export const ListensContainer = ({ listens, className }: ListensIconProps) => {
   return (
     <div className={classNames(className, styles.ListensIcon)}>
-      <img
-        src={listensIcon}
-        alt="listens"
-      />
-      <p>{listens}</p>
+      <ListensIcon className={styles.icon}/>
+      <p className={styles.ListensText}>{listens}</p>
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import { apiRequest, axiosInstance } from '@/shared/api';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { CreateTrackDto, ITrack } from '../types/Track';
-import { ChunkData } from '../model/AudioChunkLoader';
 
 export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<ITrack[]> => {
   try {
@@ -65,43 +64,6 @@ export const create = async (trackInfo: CreateTrackDto): Promise<ITrack> => {
 
     return response.data;
   } catch (e) {
-    if (axios.isAxiosError(e)) {
-      throw e;
-    } else {
-      throw new Error('Неизвестная ошибка');
-    }
-  }
-};
-
-export const getAudioChunks = async (
-  filename: string,
-  start: number,
-  end: number,
-): Promise<ChunkData> => {
-  try {
-    const response = await axiosInstance.get(`/audio/${filename}`, {
-      headers: { Range: `bytes=${start}-${end}` },
-      responseType: 'arraybuffer',
-    });
-    const contentRange = response.headers['content-range'];
-    if (!contentRange) {
-      throw new Error('Content-Range header is missing');
-    }
-    const totalSize = contentRange.split('/')[1];
-    const fileSize = parseInt(totalSize, 10);
-    if ('x-chunk-duration' in response.headers && fileSize) {
-      const chunkDurationStr = response.headers['x-chunk-duration'];
-      const chunkDuration = chunkDurationStr ? parseInt(chunkDurationStr, 10) : 10; // Заглушка, если нет
-      return { data: response.data, chunkDuration, fileSize };
-    } else {
-      console.error('X-Chunk-Duration header missing');
-      return { data: response.data, chunkDuration: 10, fileSize };
-    }
-  } catch (e) {
-    console.log('error audioChunks get ', e);
-    if (e instanceof AxiosError && e.response?.status === 416) {
-      throw new Error('Range not satisfiable');
-    }
     if (axios.isAxiosError(e)) {
       throw e;
     } else {

@@ -2,7 +2,7 @@ import { ForwardedRef, forwardRef } from 'react';
 import styles from './TrackItem.module.scss';
 import { ITrack } from '../../types/Track';
 import { useTrackItem } from '../../model/useTrackItem';
-import { DeleteContainer, ListensIcon, ModalContainer } from '@/shared/ui';
+import { DeleteContainer, ModalContainer, ListensContainer} from '@/shared/ui';
 import { useUserStore } from '@/entities/user';
 import { CoverContainer } from '../CoverContainer';
 import { NameContainer } from '../NameContainer';
@@ -39,11 +39,10 @@ const TrackItemComponent = (
         />
       </div>
       <div className={styles.right_container}>
-        <ListensIcon
-          className={styles.listens}
-          listens={track.listens}
-        />
-        <div>
+        <div className={styles.meta_container}>
+          <ListensContainer
+            listens={track.listens}
+          />
           <div className={styles.duration_container}>
             <p>{track.duration}</p>
           </div>

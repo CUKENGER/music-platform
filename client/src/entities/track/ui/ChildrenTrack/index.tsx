@@ -7,7 +7,7 @@ import usePlayerStore from '../../model/PlayerStore';
 import { usePlayTrack } from '../../model/usePlayTrack';
 import { useUserStore } from '@/entities/user';
 import { useAddLikeTrack, useDeleteLikeTrack } from '../../api/useTrackApi';
-import { LikeIcon, ListensIcon } from '@/shared/ui';
+import { LikeIcon, ListensContainer } from '@/shared/ui';
 
 interface ChildrenTrackProps {
   track: ITrack;
@@ -69,7 +69,7 @@ export const ChildrenTrack = ({ track, trackIndex, trackList }: ChildrenTrackPro
           likes={localLikes}
           onClick={() => handleLike(track.id)}
         />
-        <ListensIcon listens={track.listens} />
+        <ListensContainer listens={track.listens} />
         <p className={styles.trackDuration}>{track.duration}</p>
       </div>
     </div>

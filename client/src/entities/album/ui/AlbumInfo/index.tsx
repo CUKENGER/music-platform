@@ -14,7 +14,7 @@ import {
   useGetOneAlbum,
 } from '../../api/useAlbumApi';
 import { API_URL, PRIVATE_ROUTES } from '@/shared/consts';
-import { Btn, LikeIcon, ListensIcon, Loader, Portal } from '@/shared/ui';
+import { Btn, LikeIcon, ListensContainer, Loader, Portal } from '@/shared/ui';
 import { ChildrenTrack } from '@/entities/track';
 import { AlbumComments } from '../AlbumComments';
 
@@ -161,7 +161,7 @@ export const AlbumInfo = ({ album }: AlbumInfoProps) => {
             )}
           <p className={styles.albumGenre}>{album?.genre}</p>
           <div className={styles.listensContainer}>
-            <ListensIcon
+            <ListensContainer
               className={styles.albumListens}
               listens={album?.listens}
             />
