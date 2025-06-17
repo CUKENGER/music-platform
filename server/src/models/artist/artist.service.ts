@@ -27,7 +27,7 @@ export class ArtistService {
     }
 
     const imageResult = await this.fileService.createFile(FileType.IMAGE, picture);
-		const imagePath = imageResult[0]
+    const imagePath = typeof imageResult === 'string' ? imageResult : imageResult.paths[0];
 
     return await this.artistRepository.create(dto, imagePath, this.prisma);
   }
@@ -73,10 +73,12 @@ export class ArtistService {
     return await this.artistRepository.getOne(id);
   }
 
-  async addComment(dto: CreateArtistCommentDto): Promise<Prisma.CommentGetPayload<{include: {parent: true, replies: true}}>> {
+  async addComment(
+    dto: CreateArtistCommentDto,
+  ): Promise<Prisma.CommentGetPayload<{ include: { parent: true; replies: true } }>> {
     const artist = await this.validateArtist(dto.artistId);
     this.logger.log('artist', artist);
-    return await this.commentPublicService.create(dto)
+    return await this.commentPublicService.create(dto);
   }
 
   async delete(id: number) {
@@ -95,11 +97,10 @@ export class ArtistService {
   }
 
   async updateArtist(id: number, newData: Partial<UpdateArtistDto>, picture: Express.Multer.File) {
-    let imagePath: string;
     if (picture) {
       this.logger.log('picture', picture);
-			const imageResult = await this.fileService.createFile(FileType.IMAGE, picture);
-			imagePath = imageResult[0]
+      const imageResult = await this.fileService.createFile(FileType.IMAGE, picture);
+      const imagePath = typeof imageResult === 'string' ? imageResult : imageResult.paths[0];
       newData.picture = imagePath;
     }
 

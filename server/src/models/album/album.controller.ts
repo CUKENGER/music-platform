@@ -1,22 +1,111 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
+  ParseIntPipe,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOperation,
+  ApiProperty,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AlbumService } from './album.service';
 import { AlbumType } from '@prisma/client';
+import { IsInt, IsString, IsEnum, IsArray } from 'class-validator';
+import { Logger } from 'nestjs-pino';
+
+class ArtistDto {
+  @ApiProperty({ description: 'ID артиста', example: 1 })
+  @IsInt()
+  id: number;
+
+  @ApiProperty({ description: 'Имя артиста', example: 'Yura Hoy' })
+  @IsString()
+  name: string;
+}
+
+class TrackDto {
+  @ApiProperty({ description: 'ID трека', example: 1 })
+  @IsInt()
+  id: number;
+
+  @ApiProperty({ description: 'Название трека', example: 'Hoy' })
+  @IsString()
+  name: string;
+
+  @ApiProperty({ description: 'Текст трека', example: 'Hoy singing Bomj' })
+  @IsString()
+  text: string;
+
+  @ApiProperty({ description: 'Путь к аудиофайлу', example: '/uploads/tracks/hoy.mp3' })
+  @IsString()
+  audio: string;
+}
+
+export class AlbumResponseDto {
+  @ApiProperty({ description: 'ID альбома', example: 1 })
+  @IsInt()
+  id: number;
+
+  @ApiProperty({ description: 'Название альбома', example: 'Album Yura' })
+  @IsString()
+  name: string;
+
+  @ApiProperty({ description: 'Описание альбома', example: 'Album description' })
+  @IsString()
+  description: string;
+
+  @ApiProperty({ description: 'Жанр альбома', example: 'Rock' })
+  @IsString()
+  genre: string;
+
+  @ApiProperty({ description: 'Дата релиза', example: '2023-01-19' })
+  @IsString()
+  releaseDate: string;
+
+  @ApiProperty({ description: 'Путь к обложке', example: '/uploads/images/album-yura-md.webp' })
+  @IsString()
+  picture: string;
+
+  @ApiProperty({ description: 'Длительность альбома', example: '45:30' })
+  @IsString()
+  duration: string;
+
+  @ApiProperty({ description: 'Тип альбома', enum: AlbumType, example: AlbumType.ALBUM })
+  @IsEnum(AlbumType)
+  type: AlbumType;
+
+  @ApiProperty({ description: 'Артист альбома', type: ArtistDto })
+  artist: ArtistDto;
+
+  @ApiProperty({ description: 'Треки альбома', type: [TrackDto] })
+  @IsArray()
+  tracks: TrackDto[];
+}
 
 @ApiTags('Albums')
 @ApiBearerAuth()
 @Controller('albums')
 export class AlbumController {
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(
+    private readonly albumService: AlbumService,
+    private readonly logger: Logger,
+  ) {}
 
   @Post()
   @ApiOperation({
@@ -43,7 +132,7 @@ export class AlbumController {
   })
   @ApiConsumes('multipart/form-data')
   @ApiCreatedResponse({
-    description: "Альбом успешно создан",
+    description: 'Альбом успешно создан',
     example: {
       id: 1,
       name: 'Album Yura',
@@ -84,6 +173,48 @@ export class AlbumController {
     return this.albumService.create(dto, pictureFile, tracksFiles);
   }
 
+  @Get()
+  @ApiOperation({
+    summary: 'Получение всех альбомов',
+    description: 'Возвращает список аольбомов с сортировкой и пагинацией',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Номер страницы (по умолчанию 0)',
+  })
+  @ApiQuery({
+    name: 'count',
+    required: false,
+    type: Number,
+    description: 'Количество альбомов на странице (по умолчанию 20)',
+  })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    type: String,
+    description: 'Тип сортировки (по умолчанию "Все")',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Список альбомов',
+    type: [AlbumResponseDto],
+  })
+  async getAll(
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 0,
+    @Query('count', new ParseIntPipe({ optional: true })) count: number = 20,
+    @Query('sortBy') sortBy: string = 'Все',
+  ) {
+    try {
+      const result = await this.albumService.getAll({ page, count, sortBy });
+      return result;
+    } catch (e) {
+      this.logger.error(`[AlbumController] Error in getAll: ${e?.message || e}`);
+      throw e;
+    }
+  }
+
   // @Get()
   // @ApiOperation({
   //   summary: 'Получение всех альбомов ',
@@ -119,8 +250,7 @@ export class AlbumController {
   //   summary: 'Получение популярных альбомов с ограничением',
   //   description: 'Возвращает список популярных альбомов с ограничение по количеству',
   // })
-  // getLimitPopular() {
-  // }
+  // getLimitPopular() {}
   //
   // @Get('all_popular')
   // @ApiOperation({

@@ -14,8 +14,8 @@ import { UserModule } from 'models/user/user.module';
 
 @Module({
   imports: [
-    FileModule, 
-    forwardRef(() => ArtistModule), 
+    FileModule,
+    forwardRef(() => ArtistModule),
     CommentModule,
     AudioModule,
     forwardRef(() => AlbumModule),
@@ -23,12 +23,7 @@ import { UserModule } from 'models/user/user.module';
     UserModule,
   ],
   controllers: [TrackController],
-  providers: [
-    TrackService,
-    TrackHelperService,
-    TrackPublicService,
-    TrackRepository
-  ],
+  providers: [TrackService, TrackHelperService, TrackPublicService, TrackRepository],
   exports: [TrackPublicService],
 })
 export class TrackModule {}

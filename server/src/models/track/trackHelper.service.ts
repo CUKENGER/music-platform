@@ -97,15 +97,23 @@ export class TrackHelperService {
     return await this.userPublicService.getByToken(token);
   }
 
-  async updateAlbumAndArtistListens(track, updateData) {
+  async updateAlbumAndArtistListens(
+    track: {
+      id: number;
+      listens: number;
+      album?: { id: number } | null;
+      artist?: { id: number } | null;
+    },
+    updateData: { listens: number },
+  ) {
     const listens = track.listens + 1;
-    if (track.album) {
+    if (track.album?.id) {
       await this.albumPublicService.addListen(track.album.id, listens, this.prisma);
     }
-    if (track.artist) {
+    if (track.artist?.id) {
       await this.artistPublicService.addListen(track.artist.id, listens, this.prisma);
     }
-    await this.trackRepository.update(track.id, updateData)
+    await this.trackRepository.update(track.id, updateData);
   }
 
   // to likes

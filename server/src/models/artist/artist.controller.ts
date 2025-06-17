@@ -29,7 +29,10 @@ export class ArtistController {
   @Post()
   @ApiCreatedResponse()
   @UseInterceptors(FileFieldsInterceptor([{ name: 'picture', maxCount: 1 }]))
-  async create(@UploadedFiles() files: {picture: Express.Multer.File}, @Body() dto: CreateArtistDto) {
+  async create(
+    @UploadedFiles() files: { picture: Express.Multer.File },
+    @Body() dto: CreateArtistDto,
+  ) {
     const { picture } = files;
     this.logger.log('files', files);
     return this.artistService.create(dto, picture);
@@ -94,8 +97,12 @@ export class ArtistController {
 
   @Put(':id')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'picture', maxCount: 1 }]))
-  async updateArtist(@Param('id', ParseIntPipe) id: number, @Body() newData: Partial<UpdateArtistDto>, @UploadedFiles() files: {picture: Express.Multer.File}) {
-    const picture = files?.picture ? files?.picture[0] : null;
+  async updateArtist(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() newData: Partial<UpdateArtistDto>,
+    @UploadedFiles() files: { picture: Express.Multer.File[] },
+  ) {
+    const picture = files.picture?.[0];
     return this.artistService.updateArtist(id, newData, picture);
   }
 }

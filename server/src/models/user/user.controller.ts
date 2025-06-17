@@ -64,8 +64,6 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Получение пользователя по id' })
-  @Roles('USER')
-  @UseGuards(RolesGuard)
   @Get(':id')
   getOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.getOne(id);

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AlbumController } from './album.controller';
 import { AlbumPublicService } from './album.public';
 import { AlbumService } from './album.service';
@@ -9,18 +9,9 @@ import { FileModule } from 'models/file/file.module';
 import { ArtistModule } from 'models/artist/artist.module';
 
 @Module({
-  imports: [
-    FeaturedArtistModule,
-    TrackModule,
-    FileModule,
-    ArtistModule
-  ],
+  imports: [FeaturedArtistModule, forwardRef(() => TrackModule), FileModule, ArtistModule],
   controllers: [AlbumController],
-  providers: [
-    AlbumService,
-    AlbumRepository,
-    AlbumPublicService,
-  ],
+  providers: [AlbumService, AlbumRepository, AlbumPublicService],
   exports: [AlbumPublicService],
 })
 export class AlbumModule {}

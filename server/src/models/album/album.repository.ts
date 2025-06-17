@@ -1,9 +1,17 @@
 import { Album, AlbumType, Artist, Prisma } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class AlbumRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {
+    console.log('AlbumRepository: PrismaService внедрён:', !!this.prisma);
+    if (!this.prisma) {
+      console.error('PrismaService не внедрён!');
+      throw new Error('PrismaService не внедрён в AlbumRepository');
+    }
+  }
 
   async create(
     dto: {
@@ -14,7 +22,7 @@ export class AlbumRepository {
     },
     imagePath: string,
     artistId: number,
-    albumType: string,
+    albumType: AlbumType,
     prisma: Prisma.TransactionClient,
   ): Promise<Album> {
     return await prisma.album.create({
@@ -55,5 +63,36 @@ export class AlbumRepository {
 
   async deleteAlbum(albumId: number) {
     return await this.prisma.album.delete({ where: { id: albumId } });
+  }
+
+  async getAll({
+    page = 0,
+    count = 20,
+    sortBy = 'Все',
+  }: {
+    page: number;
+    count: number;
+    sortBy: string;
+  }) {
+    try {
+      const where: Prisma.AlbumWhereInput = {};
+      if (sortBy !== 'Все') {
+        where.type = sortBy as AlbumType;
+      }
+      const albums = await this.prisma.album.findMany({
+        where,
+        skip: page * count,
+        take: count,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          artist: { select: { id: true, name: true } },
+          tracks: { select: { id: true, name: true, text: true, audio: true } },
+        },
+      });
+      return albums;
+    } catch (e) {
+      console.error('Error repository', e);
+      throw e;
+    }
   }
 }

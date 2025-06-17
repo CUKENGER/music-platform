@@ -5,9 +5,7 @@ import { CreateTrackDto } from './dto/create-track.dto';
 
 @Injectable()
 export class TrackRepository {
-  constructor(
-    private readonly prisma: PrismaService
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(
     dto: CreateTrackDto,

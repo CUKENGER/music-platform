@@ -1,5 +1,3 @@
-
-
 import { Logger as defaultLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -13,6 +11,7 @@ import { Logger } from 'nestjs-pino';
 import { ApiError } from 'exceptions/api.error';
 import { AllExceptionsFilter } from 'exceptions/allExceptionFilter';
 import { ERROR_CODES } from 'constants/errorCodes';
+import type { Request, Response, NextFunction } from 'express';
 
 dotenv.config();
 
@@ -38,7 +37,7 @@ const start = async () => {
       ],
       exposedHeaders: ['X-Chunk-Duration', 'Content-Range'],
     });
-    app.use((req, res, next) => {
+    app.use((req: Request, res: Response, next: NextFunction) => {
       logger.debug(`Request: ${req.method} ${req.url}`, 'RequestLogger');
       res.on('finish', () => {
         logger.debug(`Response: ${res.statusCode}`, 'ResponseLogger');

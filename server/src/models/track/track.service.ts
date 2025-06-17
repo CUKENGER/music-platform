@@ -44,7 +44,7 @@ export class TrackService {
       const imageResult = (await this.fileService.createFile(FileType.IMAGE, picture)) as {
         paths: string[];
       };
-			imagePath = imageResult.paths[0];
+      imagePath = imageResult.paths[0];
       this.logger.log(`audioPath: ${audioPath}\n imagePath: ${imagePath}`);
       const duration = await this.audioService.getAudioDuration(
         path.resolve(__dirname, '../../../static', audioPath),
@@ -161,10 +161,10 @@ export class TrackService {
     const entityToUpdate = await this.trackHelperService.findTrackById(id);
     if (picture) {
       const imageResult = await this.fileService.createFile(FileType.IMAGE, picture);
-			newData.picture = imageResult[0]
+      newData.picture = typeof imageResult === 'string' ? imageResult : imageResult.paths[0];
     }
     if (audio) {
-      const audioPath = await this.fileService.createFile(FileType.AUDIO, audio) as string;
+      const audioPath = (await this.fileService.createFile(FileType.AUDIO, audio)) as string;
       newData.audio = audioPath;
       newData.duration = await this.audioService.getAudioDuration(audioPath);
     }

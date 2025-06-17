@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Album, Prisma } from '@prisma/client';
+import { Album, AlbumType, Prisma } from '@prisma/client';
 import { AlbumRepository } from './album.repository';
 
 @Injectable()
 export class AlbumPublicService {
-  constructor(
-    private readonly albumRepository: AlbumRepository
-  ) {}
+  constructor(private readonly albumRepository: AlbumRepository) {}
 
   async createSingleAlbum(
     dto: {
@@ -19,7 +17,7 @@ export class AlbumPublicService {
     artistId: number,
     prisma: Prisma.TransactionClient,
   ): Promise<Album> {
-    return await this.albumRepository.create(dto, picture, artistId, 'SINLGE', prisma);
+    return await this.albumRepository.create(dto, picture, artistId, AlbumType.SINGLE, prisma);
   }
 
   async addListen(albumId: number, listens: number, prisma: Prisma.TransactionClient) {

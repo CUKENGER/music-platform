@@ -18,7 +18,17 @@ import { TrackService } from './track.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateTrackCommentDto } from './dto/create-trackComment-dto';
 import { CreateReplyTrackCommentDto } from './dto/create-trackReplyComment.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Track } from '@prisma/client';
 import { ApiError } from 'exceptions/api.error';
 
@@ -158,7 +168,7 @@ export class TrackController {
   @Post(':id/listen')
   @ApiOperation({ summary: 'Добавление прослушивания к треку по id' })
   async addListen(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    const authHeader = req.headers['authorization'];
+    const authHeader = req.headers.get('authorization');
 
     if (!authHeader) {
       throw ApiError.UnauthorizedError();
@@ -174,7 +184,7 @@ export class TrackController {
   @Post(':id/like')
   @ApiOperation({ summary: 'Добавление лайка к треку по id' })
   addLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    const authHeader = req.headers['authorization'];
+    const authHeader = req.headers.get('authorization');
 
     if (!authHeader) {
       throw ApiError.UnauthorizedError();
@@ -190,7 +200,7 @@ export class TrackController {
   @Delete(':id/like')
   @ApiOperation({ summary: 'Удаление лайка к треку по id' })
   deleteLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    const authHeader = req.headers['authorization'];
+    const authHeader = req.headers.get('authorization');
 
     if (!authHeader) {
       throw ApiError.UnauthorizedError();
@@ -205,6 +215,45 @@ export class TrackController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Обновление трека' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        picture: { type: 'string', format: 'binary' },
+        audio: { type: 'string', format: 'binary' },
+        name: { type: 'string' },
+        genre: { type: 'string' },
+        duration: { type: 'string' },
+        text: { type: 'string' },
+        artistId: { type: 'number' },
+        albumId: { type: 'number' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Трек успешно обновлён',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'number', example: 1 },
+        name: { type: 'string', example: 'My Song' },
+        genre: { type: 'string', example: 'Rock' },
+        duration: { type: 'string', example: '3:30' },
+        picture: { type: 'string', example: '/images/track.jpg' },
+        audio: { type: 'string', example: '/audio/track.mp3' },
+        text: { type: 'string', example: 'Lyrics...' },
+        artistId: { type: 'number', nullable: true, example: 1 },
+        albumId: { type: 'number', nullable: true, example: 1 },
+        updatedAt: { type: 'string', format: 'date-time', example: '2025-06-15T07:10:00.000Z' },
+        listens: { type: 'number', example: 100 },
+        likes: { type: 'number', example: 10 },
+        createdAt: { type: 'string', format: 'date-time', example: '2025-06-01T07:10:00.000Z' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Неверные данные' })
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'picture', maxCount: 1 },
@@ -212,11 +261,12 @@ export class TrackController {
     ]),
   )
   async updateTrack(
-    @Param('id') id,
+    @Param('id', ParseIntPipe) id: number,
     @Body() newData: Partial<Track>,
-    @UploadedFiles() files,
+    @UploadedFiles() files: { picture?: Express.Multer.File[]; audio?: Express.Multer.File[] },
   ): Promise<Track> {
-    const { picture, audio } = files;
+    const picture = files.picture?.[0];
+    const audio = files.audio?.[0];
     return this.trackService.updateTrack(id, newData, picture, audio);
   }
 }

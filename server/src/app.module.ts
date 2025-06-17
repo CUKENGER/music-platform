@@ -76,12 +76,12 @@ import { ImageController } from 'models/image/ImageController';
         },
         level: 'debug',
         customSuccessMessage: (req, res) => `✅ ${req.method} ${req.url} - ${res.statusCode}`,
-        customErrorMessage: (req, res, err) => `❌ ${req.method} ${req.url} - ${err.message}`,
-        customAttributeKeys: {
-          // req: 'req',
-          res: 'response',
-          err: 'error',
-        },
+        customErrorMessage: (req, _res, err) => `❌ ${req.method} ${req.url} - ${err.message}`,
+        // customAttributeKeys: {
+        //   // req: 'req',
+        //   res: 'response',
+        //   err: 'error',
+        // },
         // serializers: {
         //   req(req) {
         //     return {
@@ -102,6 +102,11 @@ import { ImageController } from 'models/image/ImageController';
           req: () => undefined, // Отключаем req
           res: () => undefined, // Отключаем res, так как statusCode уже в messageFormat
           request: () => undefined,
+          err: (err) => ({
+            type: err.name,
+            message: err.message,
+            stack: err.stack,
+          }),
         },
         redact: ['req.headers.authorization'],
       },

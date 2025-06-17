@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { ApiError } from 'exceptions/api.error';
@@ -50,7 +50,11 @@ export class AlbumService {
 
           const albumType = this.determineAlbumType(dto);
 
-          const artist = await this.artistPublicService.findOrCreateArtist(dto, mainImagePath, prisma);
+          const artist = await this.artistPublicService.findOrCreateArtist(
+            dto,
+            mainImagePath,
+            prisma,
+          );
           const newAlbum = await this.albumRepository.create(
             dto,
             mainImagePath,
@@ -97,6 +101,24 @@ export class AlbumService {
       .catch((e) => {
         throw ApiError.InternalServerError(`Transaction failed: ${e.message}`, e);
       });
+  }
+  async getAll({
+    page = 0,
+    count = 20,
+    sortBy = 'Все',
+  }: {
+    page: number;
+    count: number;
+    sortBy: string;
+  }) {
+    try {
+      console.log('get All in service');
+      const albums = await this.albumRepository.getAll({ page, count, sortBy });
+      return albums;
+    } catch (e) {
+      this.logger.error('Error service', e);
+      throw e;
+    }
   }
 
   private determineAlbumType(dto: CreateAlbumDto): AlbumType {
