@@ -5,7 +5,6 @@ export { default as useTrackTimeStore } from './model/TrackTimeStore';
 export { default as useActiveTrackListStore } from './model/ActiveTrackListStore';
 export { usePlayTrack } from './model/usePlayTrack';
 export { mixTracks } from './model/mixTracks';
-export { useTrackItem } from './model/useTrackItem';
 export { default as useAudioChunkStore } from './model/AudioChunkStore';
 
 export {

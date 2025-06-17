@@ -82,9 +82,11 @@ export const useGetUserById = (id: number) => {
 export const useGetByToken = () => {
   return useQuery({
     queryFn: () => getByToken(),
-    queryKey: ['user'],
-    // refetchOnWindowFocus: true,
-    // refetchOnMount: false,
+    queryKey: ['user', 'session'],
+		staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   });
 };
 

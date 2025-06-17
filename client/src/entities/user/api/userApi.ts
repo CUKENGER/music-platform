@@ -21,7 +21,7 @@ export const getByEmail = async (email: string): Promise<IUser> => {
 };
 
 export const getByid = async (id: number): Promise<IUser> => {
-  return apiRequest<IUser>('GET', `user/${id}`, { params: { id: id } });
+  return apiRequest<IUser>('GET', `user/${id}`, {});
 };
 
 export const getByToken = async (): Promise<IUser> => {

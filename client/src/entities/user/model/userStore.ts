@@ -16,5 +16,9 @@ export const useUserStore = create<UserState>((set) => ({
   isAuth: !!localStorage.getItem('token'),
   setIsAuth: (auth: boolean) => set({ isAuth: auth }),
   user: null,
-  setUser: (user: IUser | undefined) => set({ user: user }),
+  setUser: (user) =>
+    set({
+      user,
+      isAdmin: user ? user?.roles?.some((role) => role.role.value === 'ADMIN') : false,
+    }),
 }));
