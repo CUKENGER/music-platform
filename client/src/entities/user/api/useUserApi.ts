@@ -83,10 +83,10 @@ export const useGetByToken = () => {
   return useQuery({
     queryFn: () => getByToken(),
     queryKey: ['user', 'session'],
-		staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
-    refetchOnMount: false
+    refetchOnMount: false,
   });
 };
 

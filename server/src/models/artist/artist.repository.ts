@@ -9,7 +9,7 @@ import { ArtistWithAllPopularTracks, ArtistWithPopularTracks } from './types';
 export class ArtistRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findById (id: number, prisma: Prisma.TransactionClient) {
+  async findById(id: number, prisma: Prisma.TransactionClient) {
     return await prisma.artist.findUnique({
       where: { id },
       include: {
@@ -18,11 +18,17 @@ export class ArtistRepository {
         comments: true,
         featuredTracks: true,
         likedByUsers: true,
-      }
-    })
+      },
+    });
   }
 
-  async create(dto: CreateArtistDto, imagePath: string, prisma: Prisma.TransactionClient): Promise<Prisma.ArtistGetPayload<{ select: { [K in keyof Required<Prisma.ArtistSelect>]: true } }>> {
+  async create(
+    dto: CreateArtistDto,
+    imagePath: string,
+    prisma: Prisma.TransactionClient,
+  ): Promise<
+    Prisma.ArtistGetPayload<{ select: { [K in keyof Required<Prisma.ArtistSelect>]: true } }>
+  > {
     return await prisma.artist.create({
       data: {
         name: dto.name,
@@ -41,7 +47,12 @@ export class ArtistRepository {
     });
   }
 
-  async findByName(name: string, prisma: Prisma.TransactionClient): Promise<Prisma.ArtistGetPayload<{ select: { [K in keyof Required<Prisma.ArtistSelect>]: true } }> | null> {
+  async findByName(
+    name: string,
+    prisma: Prisma.TransactionClient,
+  ): Promise<Prisma.ArtistGetPayload<{
+    select: { [K in keyof Required<Prisma.ArtistSelect>]: true };
+  }> | null> {
     return await prisma.artist.findFirst({
       where: { name },
       include: {
@@ -50,7 +61,7 @@ export class ArtistRepository {
         comments: true,
         featuredTracks: true,
         likedByUsers: true,
-        _count: true
+        _count: true,
       },
     });
   }

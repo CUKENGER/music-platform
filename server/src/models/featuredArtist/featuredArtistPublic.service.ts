@@ -4,9 +4,7 @@ import { ArtistPublicService } from 'models/artist/artist.public';
 
 @Injectable()
 export class FeaturedArtistPublicService {
-  constructor(
-    private artistPublicService: ArtistPublicService,
-  ) {}
+  constructor(private artistPublicService: ArtistPublicService) {}
 
   async findOrCreateArtist(
     dto: {

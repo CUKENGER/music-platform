@@ -25,7 +25,9 @@ export class PlaylistService {
         order: dto.order || 0,
       },
     });
-    this.logger.log(`PlaylistService addTrackToPlaylist playlistTrack: ${playlistTrack}`, {playlistTrack: playlistTrack});
+    this.logger.log(`PlaylistService addTrackToPlaylist playlistTrack: ${playlistTrack}`, {
+      playlistTrack: playlistTrack,
+    });
     this.logger.log(`PlaylistService addTrackToPlaylist files: ${files}`);
   }
 

@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../model/userStore';
 import { useGetByToken, useLogoutUser } from '../../api/useUserApi';
 import { MenuItem } from '@/shared/types';
-import { PUBLIC_ROUTES, PRIVATE_ROUTES } from '@/shared/consts'; import { Menu } from '@/shared/ui';
+import { PUBLIC_ROUTES, PRIVATE_ROUTES } from '@/shared/consts';
+import { Menu } from '@/shared/ui';
 import { useCallback, useEffect } from 'react';
 
 export const UserAvatar = () => {

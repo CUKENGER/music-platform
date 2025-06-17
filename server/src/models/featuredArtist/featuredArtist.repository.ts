@@ -21,6 +21,6 @@ export class FeaturedArtistRepository {
   async find(id: number, prisma: Prisma.TransactionClient) {
     return await prisma.featuredArtist.findFirst({
       where: { id },
-    })
+    });
   }
 }

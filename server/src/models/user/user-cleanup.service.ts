@@ -5,11 +5,10 @@ import { Logger } from 'nestjs-pino';
 
 @Injectable()
 export class UserCleanupService {
-
   constructor(
     private readonly userPublicService: UserPublicService,
     private readonly logger: Logger,
-  ) { }
+  ) {}
 
   @Cron('0 0 * * *') // Запускаем каждый день в 00:00
   async deleteInactiveUsers() {

@@ -4,17 +4,9 @@ import { TokenRepository } from './token.repository';
 import { TokenPublicService } from './tokenPublic.service';
 
 @Module({
-  providers: [
-    JwtService, 
-    TokenRepository,
-    TokenPublicService,
-  ],
+  providers: [JwtService, TokenRepository, TokenPublicService],
   controllers: [],
-  imports: [
-    JwtModule
-  ],
-  exports: [
-    TokenPublicService
-  ],
+  imports: [JwtModule],
+  exports: [TokenPublicService],
 })
 export class TokenModule {}

@@ -31,24 +31,24 @@ export class TrackPublicService {
       const durationInNum = await this.audioService.getAudioDurationInNum(tracksPath[i]);
       totalDuration += durationInNum;
 
-      const trackText = dto.track_texts[i].trim() ? dto.track_texts[i] : 'Текст отсутствует'
+      const trackText = dto.track_texts[i].trim() ? dto.track_texts[i] : 'Текст отсутствует';
 
       const trackDto = {
         name: dto.track_names[i],
         text: trackText,
         genre: dto.genre,
         artist: '',
-      }
+      };
 
       await this.trackRepository.create(
         trackDto,
-        tracksPath[i], 
-        duration, 
-        imagePath, 
+        tracksPath[i],
+        duration,
+        imagePath,
         prisma,
         artistId,
-        albumId 
-      )
+        albumId,
+      );
     }
 
     return totalDuration;

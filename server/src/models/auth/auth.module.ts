@@ -9,23 +9,15 @@ import { PasswordService } from './password.service';
 import { TokenModule } from 'models/token/token.module';
 
 @Module({
-  providers: [
-    AuthService, 
-    MailService, 
-    PasswordService,
-  ],
-  controllers: [
-    AuthController
-  ],
+  providers: [AuthService, MailService, PasswordService],
+  controllers: [AuthController],
   imports: [
-    JwtModule, 
-    RoleModule, 
+    JwtModule,
+    RoleModule,
     UserModule,
     TokenModule,
     // forwardRef(() => UserModule)
   ],
-  exports: [
-    AuthService
-  ],
+  exports: [AuthService],
 })
 export class AuthModule {}

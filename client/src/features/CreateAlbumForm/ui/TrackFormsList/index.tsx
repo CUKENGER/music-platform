@@ -2,7 +2,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautif
 import { TrackFormData } from '../../model/useCreateAlbumForm';
 import { AddTrackIcon } from '@/shared/ui';
 import { TrackForm } from '../TrackForm';
-import styles from './index.module.scss'
+import styles from './index.module.scss';
 
 interface PropTypes {
   tracks: TrackFormData[];
@@ -20,12 +20,17 @@ export const TrackFormsList = ({ tracks, addTrack, reorderTracks }: PropTypes) =
     <div className={styles.tracksContainer}>
       <AddTrackIcon onClick={addTrack} />
       <DragDropContext onDragEnd={handleOnDragEnd}>
-        <Droppable droppableId="tracks" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false}>
+        <Droppable
+          droppableId="tracks"
+          isDropDisabled={false}
+          isCombineEnabled={false}
+          ignoreContainerClipping={false}
+        >
           {(provided) => (
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-							className={styles.droppable}
+              className={styles.droppable}
             >
               {tracks.map((track, index) => (
                 <Draggable
@@ -38,7 +43,7 @@ export const TrackFormsList = ({ tracks, addTrack, reorderTracks }: PropTypes) =
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-											className={styles.draggable}
+                      className={styles.draggable}
                     >
                       <TrackForm trackIndex={index} />
                     </div>

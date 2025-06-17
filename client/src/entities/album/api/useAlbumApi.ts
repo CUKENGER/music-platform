@@ -26,7 +26,7 @@ export const useGetAllAlbums = (sortBy: string) => {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5,
-		retry: 1
+    retry: 1,
   });
 };
 

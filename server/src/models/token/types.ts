@@ -1,4 +1,4 @@
-import { RegUserDto } from "models/user/dto/regUser.dto";
+import { RegUserDto } from 'models/user/dto/regUser.dto';
 
 export interface TokenData {
   accessToken: string;

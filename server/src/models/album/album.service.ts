@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { ApiError } from 'exceptions/api.error';

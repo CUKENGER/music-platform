@@ -10,17 +10,8 @@ import { UserRoleModule } from 'models/userRole/userRole.module';
 
 @Module({
   controllers: [UserController],
-  providers: [
-    UserService, 
-    UserPublicService, 
-    UserRepository
-  ],
-  imports: [
-    RoleModule, 
-    JwtModule, 
-    forwardRef(() => AuthModule),
-    UserRoleModule,
-  ],
+  providers: [UserService, UserPublicService, UserRepository],
+  imports: [RoleModule, JwtModule, forwardRef(() => AuthModule), UserRoleModule],
   exports: [UserPublicService],
 })
 export class UserModule {}

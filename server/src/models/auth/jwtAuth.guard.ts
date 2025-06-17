@@ -7,9 +7,9 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
-		private jwtService: JwtService,
-		private logger: Logger
-	) {}
+    private jwtService: JwtService,
+    private logger: Logger,
+  ) {}
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToHttp().getRequest();
@@ -26,7 +26,7 @@ export class JwtAuthGuard implements CanActivate {
       req.user = user;
       return true;
     } catch (e) {
-			this.logger.error(e)
+      this.logger.error(e);
       throw ApiError.UnauthorizedError();
     }
   }

@@ -17,15 +17,15 @@ export class RolesGuard implements CanActivate {
     private reflector: Reflector,
     private prisma: PrismaService,
     private readonly logger: Logger,
-  ) { }
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    this.logger.log(`RolesGuard start check`)
+    this.logger.log(`RolesGuard start check`);
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
-    this.logger.log(`RolesGuard requiredRoles`, { requiredRoles: requiredRoles })
+    this.logger.log(`RolesGuard requiredRoles`, { requiredRoles: requiredRoles });
 
     if (!requiredRoles) {
       return true;
@@ -62,16 +62,16 @@ export class RolesGuard implements CanActivate {
     });
 
     if (!user) {
-      this.logger.warn(`RolesGuard user not found`)
+      this.logger.warn(`RolesGuard user not found`);
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     if (!user.roles || user.roles.length === 0) {
-      this.logger.warn(`RolesGuard User does not have any roles`)
+      this.logger.warn(`RolesGuard User does not have any roles`);
       throw new HttpException('User does not have any roles', HttpStatus.FORBIDDEN);
     }
     const userRoles = user.roles.map((userRole) => userRole.role.value);
-    this.logger.log(`RolesGuard check end`)
+    this.logger.log(`RolesGuard check end`);
     this.logger.log('User roles:', { userRoles: userRoles });
     return requiredRoles.some((role) =>
       userRoles.map((r) => r.toLowerCase()).includes(role.toLowerCase()),

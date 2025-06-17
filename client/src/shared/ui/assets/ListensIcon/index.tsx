@@ -10,7 +10,7 @@ interface ListensIconProps {
 export const ListensContainer = ({ listens, className }: ListensIconProps) => {
   return (
     <div className={classNames(className, styles.ListensIcon)}>
-      <ListensIcon className={styles.icon}/>
+      <ListensIcon className={styles.icon} />
       <p className={styles.ListensText}>{listens}</p>
     </div>
   );

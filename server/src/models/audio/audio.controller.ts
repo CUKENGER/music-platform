@@ -36,7 +36,7 @@ export class AudioController {
         'Content-Type': 'audio/mpeg',
         'Accept-Ranges': 'bytes',
         'Cache-Control': 'public, max-age=86400', // Кэш на 24 часа
-        'ETag': eTag,
+        ETag: eTag,
       });
 
       res.status(HttpStatus.OK);
@@ -131,7 +131,7 @@ export class AudioController {
       res.set({
         'Content-Type': 'video/mp2t',
         'Cache-Control': 'public, max-age=86400', // Кэш на 24 часа
-        'ETag': eTag,
+        ETag: eTag,
         'Access-Control-Allow-Origin': '*',
       });
 
@@ -161,7 +161,7 @@ export class AudioController {
       res.set({
         'Content-Type': 'application/vnd.apple.mpegurl',
         'Cache-Control': 'no-cache', // Проверяем актуальность
-        'ETag': eTag,
+        ETag: eTag,
         'Access-Control-Allow-Origin': '*',
       });
 
@@ -191,7 +191,7 @@ export class AudioController {
       res.set({
         'Content-Type': 'application/vnd.apple.mpegurl',
         'Cache-Control': 'no-cache', // Проверяем актуальность
-        'ETag': eTag,
+        ETag: eTag,
         'Access-Control-Allow-Origin': '*',
       });
       res.sendFile(playlistPath);

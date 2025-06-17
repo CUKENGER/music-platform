@@ -9,16 +9,8 @@ import { UserModule } from 'models/user/user.module';
 
 @Module({
   controllers: [PlaylistController],
-  providers: [
-    PlaylistService, 
-    PrismaService, 
-    JwtService
-  ],
-  imports: [
-    forwardRef(() => RoleModule),  
-    AuthModule,
-    UserModule
-  ],
+  providers: [PlaylistService, PrismaService, JwtService],
+  imports: [forwardRef(() => RoleModule), AuthModule, UserModule],
   exports: [],
 })
 export class PlaylistModule {}

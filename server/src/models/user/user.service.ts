@@ -1,9 +1,4 @@
-import {
-    HttpException,
-    HttpStatus,
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { ApiError } from 'exceptions/api.error';
@@ -45,7 +40,7 @@ export class UserService {
   }
 
   async getOne(id: number): Promise<User> {
-    const user = await this.userRepository.findById(id)
+    const user = await this.userRepository.findById(id);
     if (!user) {
       throw new HttpException(`User with id:${id} not found`, HttpStatus.NOT_FOUND);
     }

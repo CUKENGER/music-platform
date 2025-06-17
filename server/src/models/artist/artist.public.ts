@@ -4,9 +4,7 @@ import { ArtistRepository } from './artist.repository';
 
 @Injectable()
 export class ArtistPublicService {
-  constructor(
-    private readonly artistRepository: ArtistRepository
-  ) {}
+  constructor(private readonly artistRepository: ArtistRepository) {}
 
   async findOrCreateArtist(
     dto: {
@@ -31,7 +29,7 @@ export class ArtistPublicService {
     return artist;
   }
 
-  async addListen(artistId: number,listens: number, prisma: Prisma.TransactionClient) {
+  async addListen(artistId: number, listens: number, prisma: Prisma.TransactionClient) {
     return await prisma.album.update({
       where: { id: artistId },
       data: { listens: listens },

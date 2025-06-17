@@ -27,8 +27,8 @@ export class UserController {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-    private readonly logger: Logger
-  ) { }
+    private readonly logger: Logger,
+  ) {}
 
   @ApiOperation({ summary: 'Создание пользователя' })
   @ApiBody({ type: UserDto })

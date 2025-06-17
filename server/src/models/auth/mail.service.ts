@@ -22,7 +22,7 @@ export class MailService {
     });
 
     this.transporter.verify((error, success) => {
-			this.logger.log('success mail', success)
+      this.logger.log('success mail', success);
       if (error) {
         console.error('Error connecting to email server:', error);
       } else {

@@ -40,7 +40,7 @@ export class CommentRepository {
       where: { id: parentId },
       include: {
         likedByUsers: true,
-      }
+      },
     });
   }
 
@@ -54,14 +54,14 @@ export class CommentRepository {
     return await this.prisma.comment.update({
       where: { id },
       data: { likes: newLikes },
-    })
+    });
   }
 
   async deleteManyForArtist(parentId: number) {
     return await this.prisma.comment.deleteMany({
       where: {
-        artistId: parentId
-      }
-    })
+        artistId: parentId,
+      },
+    });
   }
 }

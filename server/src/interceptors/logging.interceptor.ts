@@ -14,8 +14,8 @@ export class LoggingInterceptor implements NestInterceptor {
 
     this.logger.log(
       // {
-        // method: request.method,
-        // url: request.url,
+      // method: request.method,
+      // url: request.url,
       // },
       'Incoming request',
     );

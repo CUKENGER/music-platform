@@ -199,7 +199,7 @@ export class AuthController {
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
     res.cookie('refreshToken', refreshToken, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-			sameSite: 'strict',
+      sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
     });

@@ -9,7 +9,7 @@ export class LoginUserDto {
   readonly email: string;
 
   @ApiProperty({ example: 'qwerty', description: 'Пароль пользователя' })
-  @IsNotEmpty({message: 'Password is required'})
+  @IsNotEmpty({ message: 'Password is required' })
   @IsString({ message: 'Should be a string' })
   @Length(4, 16, { message: 'Should be from 4 to 16 symbols' })
   readonly password: string;

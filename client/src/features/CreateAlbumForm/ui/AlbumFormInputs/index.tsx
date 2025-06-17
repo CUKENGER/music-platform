@@ -4,7 +4,7 @@ import { SearchArtistInput } from '@/entities/artist';
 import { genres } from '@/shared/moks';
 import { InputImageFile, UITextField, UITextAreaField, Options } from '@/shared/ui';
 import Flatpickr from 'react-flatpickr';
-import styles from './index.module.scss'
+import styles from './index.module.scss';
 
 export const AlbumFormInputs = () => {
   const { control, setValue } = useFormContext<CreateAlbumFormData>();
@@ -41,7 +41,7 @@ export const AlbumFormInputs = () => {
         rules={{ required: 'Исполнитель обязателен' }}
         render={({ field }) => (
           <SearchArtistInput
-						setArtist={field.onChange}
+            setArtist={field.onChange}
             artist={field.value}
             onChange={field.onChange}
           />
@@ -87,7 +87,7 @@ export const AlbumFormInputs = () => {
         render={({ field }) => (
           <Options
             options={genres}
-						setOption={field.onChange}
+            setOption={field.onChange}
           />
         )}
       />
