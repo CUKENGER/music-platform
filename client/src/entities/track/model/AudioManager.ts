@@ -1,14 +1,19 @@
-import Hls, { ErrorData, Events, Level, FragBufferedData } from 'hls.js';
+import Hls, { ErrorData, Events, FragBufferedData } from 'hls.js';
+
+interface TrackSwitchCallback {
+  onTrackEnded: () => void;
+}
 
 class AudioManager {
   private static instance: AudioManager;
   private _audio?: HTMLAudioElement;
   private hls?: Hls;
-  private onSeekCompleteCallback?: (playing: boolean) => void;
-  private bufferLimit = 10; // Как в старой версии
+  private bufferLimit = 10;
   private isLoading = false;
   private isSeeking = false;
   private lastBufferCheck = 0;
+  private trackSwitchCallback?: TrackSwitchCallback;
+  private onSeekCompleteCallback?: (playing: boolean) => void;
 
   private constructor() {
     if (typeof window === 'undefined') {
@@ -16,14 +21,51 @@ class AudioManager {
       return;
     }
 
-    this._audio = new Audio();
-    this._audio.volume = 1;
-    this._audio.addEventListener('timeupdate', this.handleTimeUpdate); // Восстанавливаем timeupdate
-
+    this.initializeAudio();
     if (Hls.isSupported()) {
       this.initHls();
     }
   }
+
+  public static getInstance(): AudioManager {
+    if (!AudioManager.instance) {
+      AudioManager.instance = new AudioManager();
+    }
+    return AudioManager.instance;
+  }
+
+  private initializeAudio(): void {
+    this._audio = new Audio();
+    this._audio.volume = 1;
+    this._audio.addEventListener('timeupdate', this.handleTimeUpdate);
+    this._audio.addEventListener('ended', this.handleTrackEnded);
+    this._audio.addEventListener('canplay', this.handleCanPlay);
+    this._audio.addEventListener('playing', this.handlePlaying); // Добавляем обработчик playing
+  }
+
+  private handleCanPlay = (): void => {
+    console.log('handleCanPlay: Аудио готово к воспроизведению');
+    this.checkBufferAndLoad();
+    this._audio?.dispatchEvent(new Event('timeupdate')); // Принудительный вызов timeupdate
+  };
+
+  private handlePlaying = (): void => {
+    console.log('handlePlaying: Воспроизведение началось');
+    this._audio?.dispatchEvent(new Event('timeupdate')); // Принудительный вызов timeupdate
+  };
+
+  public setTrackSwitchCallback(callback: TrackSwitchCallback): void {
+    this.trackSwitchCallback = callback;
+  }
+
+  public setSeekCompleteCallback(callback?: (playing: boolean) => void): void {
+    this.onSeekCompleteCallback = callback;
+  }
+
+  private handleTrackEnded = () => {
+    console.log('handleTrackEnded: Трек завершился');
+    this.trackSwitchCallback?.onTrackEnded();
+  };
 
   private initHls(): void {
     this.hls = new Hls({
@@ -43,102 +85,104 @@ class AudioManager {
     this.hls.on(Events.FRAG_BUFFERED, this.handleFragmentBuffered);
   }
 
-  public static getInstance(): AudioManager {
-    if (!AudioManager.instance) {
-      AudioManager.instance = new AudioManager();
-    }
-    return AudioManager.instance;
-  }
-
   public getAudio(): HTMLAudioElement | undefined {
     return this._audio;
   }
 
-  public isAudioExist(): boolean {
-    return Boolean(this._audio);
-  }
-
   public getCurrentTime(): number | undefined {
-    return this._audio?.currentTime;
+    const time = this._audio?.currentTime;
+    console.log('getCurrentTime:', time);
+    return time;
   }
 
   public getDuration(): number | undefined {
-    return this._audio?.duration;
+    const duration = this._audio?.duration;
+    console.log('getDuration:', duration);
+    return duration;
   }
 
   public getLoadedTime(): number | undefined {
-    if (!this._audio || !this._audio.buffered.length) return 0;
-    return this._audio.buffered.end(this._audio.buffered.length - 1);
-  }
-
-  public setSeekCompleteCallback(callback?: (playing: boolean) => void): void {
-    this.onSeekCompleteCallback = callback;
+    if (!this._audio || !this._audio.buffered.length) {
+      console.log('getLoadedTime: Буфер пуст');
+      return 0;
+    }
+    const loaded = this._audio.buffered.end(this._audio.buffered.length - 1);
+    console.log('getLoadedTime:', loaded);
+    return loaded;
   }
 
   public async seekTo(time: number): Promise<void> {
-    if (this._audio && this.hls) {
-      const duration = this.getDuration() || 0;
-      if (time >= 0 && time <= duration) {
-        if (this.isSeeking) {
-          console.warn('Перемотка уже выполняется, игнорирую');
-          this.onSeekCompleteCallback?.(this._audio.paused === false);
-          return;
+    if (!this._audio || !this.hls) {
+      console.warn('seekTo: Аудио или HLS не инициализированы');
+      this.onSeekCompleteCallback?.(false);
+      return;
+    }
+
+    const duration = this.getDuration() || 0;
+    if (time < 0 || time > duration) {
+      console.error(`seekTo: Недопустимое время ${time}, длительность: ${duration}`);
+      this.onSeekCompleteCallback?.(false);
+      return;
+    }
+
+    this.isSeeking = true;
+    this._audio.currentTime = time;
+    console.log('seekTo: Установлено время', time);
+
+    try {
+      const buffered = this._audio.buffered;
+      let segmentExists = false;
+      for (let i = 0; i < buffered.length; i++) {
+        if (buffered.start(i) <= time && time <= buffered.end(i)) {
+          segmentExists = true;
+          break;
         }
-
-        this.isSeeking = true;
-        this._audio.currentTime = time;
-
-        try {
-          const buffered = this._audio.buffered;
-          let segmentExists = false;
-          for (let i = 0; i < buffered.length; i++) {
-            if (buffered.start(i) <= time && time <= buffered.end(i)) {
-              segmentExists = true;
-              break;
-            }
-          }
-
-          if (!segmentExists) {
-            this.hls.stopLoad();
-            this.isLoading = false;
-            await new Promise<void>((resolve, reject) => {
-              const onFragBuffered = (_event: string, data: FragBufferedData) => {
-                if (data.frag.start <= time && time <= data.frag.start + data.frag.duration) {
-                  this.hls?.off(Events.FRAG_BUFFERED, onFragBuffered);
-                  resolve();
-                }
-              };
-              this.hls?.on(Events.FRAG_BUFFERED, onFragBuffered);
-              this.hls?.startLoad(time);
-              setTimeout(() => reject(new Error('Таймаут перемотки')), 2000);
-            });
-          }
-
-          await this.waitForCanPlay();
-          await this._audio.play();
-
-          this.isSeeking = false;
-          this.checkBufferAndLoad();
-          this.onSeekCompleteCallback?.(true);
-        } catch (err) {
-          console.error('Ошибка перемотки:', err);
-          this.isSeeking = false;
-          this.checkBufferAndLoad();
-          this.onSeekCompleteCallback?.(false);
-        }
-      } else {
-        console.error(`Недопустимое время перемотки: ${time}, длительность: ${duration}`);
-        this.isSeeking = false;
-        this.onSeekCompleteCallback?.(this._audio?.paused === false);
       }
+
+      if (!segmentExists) {
+        console.log('seekTo: Сегмент не буферизирован, начинаю загрузку');
+        this.hls.stopLoad();
+        this.isLoading = false;
+        await new Promise<void>((resolve, reject) => {
+          const onFragBuffered = (_event: string, data: FragBufferedData) => {
+            if (data.frag.start <= time && time <= data.frag.start + data.frag.duration) {
+              this.hls?.off(Events.FRAG_BUFFERED, onFragBuffered);
+              console.log('seekTo: Сегмент загружен');
+              resolve();
+            }
+          };
+          this.hls?.on(Events.FRAG_BUFFERED, onFragBuffered);
+          this.hls?.startLoad(time);
+          setTimeout(() => reject(new Error('Таймаут перемотки')), 5000); // 5 сек
+        });
+      }
+
+      await this.waitForCanPlay();
+      if (this._audio.paused) {
+        console.log('seekTo: Аудио на паузе, начинаю воспроизведение');
+        await this._audio.play();
+        this.onSeekCompleteCallback?.(true);
+      } else {
+        this.onSeekCompleteCallback?.(true);
+      }
+      this.isSeeking = false;
+      this.checkBufferAndLoad();
+      this._audio.dispatchEvent(new Event('timeupdate')); // Принудительный вызов timeupdate
+    } catch (err) {
+      console.error('seekTo: Ошибка перемотки:', err);
+      this.isSeeking = false;
+      this.checkBufferAndLoad();
+      this.onSeekCompleteCallback?.(false);
     }
   }
 
   private async waitForCanPlay(): Promise<void> {
     if (!this._audio) return;
+    console.log('waitForCanPlay: Ожидаю готовности аудио');
     return new Promise((resolve) => {
       const onCanPlay = () => {
         this._audio?.removeEventListener('canplay', onCanPlay);
+        console.log('waitForCanPlay: Аудио готово');
         resolve();
       };
       this._audio?.addEventListener('canplay', onCanPlay, { once: true });
@@ -146,42 +190,41 @@ class AudioManager {
   }
 
   public async play(): Promise<void> {
-    if (this._audio) {
-      console.log(
-        'play: Начало воспроизведения, src=',
-        this._audio.src,
-        'paused=',
-        this._audio.paused,
-        'readyState=',
-        this._audio.readyState,
-      );
-      this.checkBufferAndLoad(); // Проверка буфера и загрузка сегментов, если нужно
-      try {
-        if (this._audio.readyState >= 2) {
-          // Данные уже загружены, можно воспроизводить сразу
-          await this._audio.play();
-          console.log('play: Воспроизведение начато без ожидания canplay');
-        } else {
-          // Данных недостаточно, ждем события canplay
-          await this.waitForCanPlay();
-          await this._audio.play();
-          console.log('play: Воспроизведение начато после canplay');
-        }
-      } catch (err: unknown) {
-        if (err instanceof Error && err.name === 'AbortError') {
-          console.warn('play: Воспроизведение прервано, повтор через 200мс...');
-          await new Promise((resolve) => setTimeout(resolve, 200));
-          await this.play(); // Повторная попытка
-        } else {
-          console.error('play: Ошибка воспроизведения:', err);
-          throw err;
-        }
+    if (!this._audio) {
+      console.error('play: Аудио не инициализировано');
+      return;
+    }
+
+    console.log('play: Попытка воспроизведения');
+    this.checkBufferAndLoad();
+    try {
+      if (this._audio.readyState >= 2) {
+        console.log('play: readyState >= 2, воспроизвожу');
+        await this._audio.play();
+      } else {
+        console.log('play: Ожидаю canplay');
+        await this.waitForCanPlay();
+        await this._audio.play();
+      }
+      console.log('play: Воспроизведение успешно начато');
+      this._audio.dispatchEvent(new Event('timeupdate')); // Принудительный вызов timeupdate
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        console.warn('play: Воспроизведение прервано, повтор через 200мс...');
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        await this.play();
+      } else {
+        console.error('play: Ошибка воспроизведения:', err);
+        throw err;
       }
     }
   }
 
   public pause(): void {
-    this._audio?.pause();
+    if (this._audio) {
+      console.log('pause: Приостановка воспроизведения');
+      this._audio.pause();
+    }
     if (this.hls) {
       this.hls.stopLoad();
       this.isLoading = false;
@@ -190,34 +233,48 @@ class AudioManager {
 
   public setVolume(volume: number): void {
     if (this._audio) {
-      this._audio.volume = volume;
+      this._audio.volume = Math.max(0, Math.min(1, volume));
+      console.log('setVolume:', volume);
     }
   }
 
   public async loadHlsSource(url: string): Promise<void> {
     if (!this._audio) {
-      console.error('Аудио элемент не инициализирован');
+      console.error('loadHlsSource: Аудио элемент не инициализирован');
       return;
     }
 
+    console.log('loadHlsSource: Очистка перед загрузкой нового трека', url);
     this.cleanup();
 
     if (this.hls && Hls.isSupported()) {
+      console.log('loadHlsSource: Загружаю HLS источник', url);
       this.hls.loadSource(url);
       this.hls.attachMedia(this._audio);
       await new Promise<void>((resolve) => {
-        this.hls?.once(Events.MANIFEST_PARSED, () => resolve());
+        this.hls?.once(Events.MANIFEST_PARSED, () => {
+          console.log('loadHlsSource: Манифест загружен');
+          resolve();
+        });
       });
+
+      await this.waitForCanPlay();
+      await this.seekTo(0);
+      await this.play();
       this.checkBufferAndLoad();
+      this._audio.dispatchEvent(new Event('timeupdate')); // Принудительный вызов timeupdate
     } else if (this._audio.canPlayType('application/vnd.apple.mpegurl')) {
+      console.log('loadHlsSource: Использую нативный HLS', url);
       this._audio.src = url;
       await this.play();
+      this._audio.dispatchEvent(new Event('timeupdate')); // Принудительный вызов timeupdate
     } else {
-      console.error('HLS не поддерживается');
+      console.error('loadHlsSource: HLS не поддерживается');
     }
   }
 
   public cleanup(): void {
+    console.log('cleanup: Очистка аудио и HLS');
     if (this.hls) {
       this.hls.stopLoad();
       this.isLoading = false;
@@ -229,27 +286,32 @@ class AudioManager {
       this._audio.pause();
       this._audio.src = '';
       this._audio.load();
+      this._audio.currentTime = 0;
       this._audio.removeEventListener('timeupdate', this.handleTimeUpdate);
-      this._audio = new Audio();
-      this._audio.volume = 1;
-      this._audio.addEventListener('timeupdate', this.handleTimeUpdate);
+      this._audio.removeEventListener('ended', this.handleTrackEnded);
+      this._audio.removeEventListener('canplay', this.handleCanPlay);
+      this._audio.removeEventListener('playing', this.handlePlaying);
     }
+    this.initializeAudio();
     if (Hls.isSupported()) {
       this.initHls();
     }
   }
 
   private handleTimeUpdate = (): void => {
+    console.log('handleTimeUpdate: Обновление времени');
     this.checkBufferAndLoad();
   };
 
-  private handleFragmentBuffered = (_event: string, data: FragBufferedData): void => {
-    console.log(`Сегмент забуферизирован: ${data.frag.url}, длительность: ${data.frag.duration}s`);
+  private handleFragmentBuffered = (_event: string, _data: FragBufferedData): void => {
+    console.log('handleFragmentBuffered: Фрагмент загружен');
     this.checkBufferAndLoad();
+    this._audio?.dispatchEvent(new Event('timeupdate')); // Принудительный вызов timeupdate
   };
 
   private handleManifestLoaded = (): void => {
     if (this.hls) {
+      console.log('handleManifestLoaded: Манифест загружен, начинаю загрузку');
       this.hls.startLoad();
       this.isLoading = true;
     }
@@ -257,10 +319,7 @@ class AudioManager {
 
   private handleManifestParsed = (): void => {
     if (this.hls) {
-      console.log(
-        'Доступные качества:',
-        this.hls.levels.map((l: Level) => `${l.bitrate / 1024} kbps`),
-      );
+      console.log('handleManifestParsed: Манифест обработан');
       if (this.hls.levels.length > 0) {
         this.hls.currentLevel = 0;
       }
@@ -276,16 +335,17 @@ class AudioManager {
     if (data.fatal) {
       switch (data.type) {
         case Hls.ErrorTypes.NETWORK_ERROR:
-          console.warn('Network error, повтор через 500мс...');
+          console.warn('handleError: Network error, повтор через 500мс...');
           setTimeout(() => {
             if (this.hls) {
               this.hls.startLoad();
               this.isLoading = true;
+              this._audio?.dispatchEvent(new Event('timeupdate')); // Принудительный вызов
             }
           }, 500);
           break;
         case Hls.ErrorTypes.MEDIA_ERROR:
-          console.warn('Media error, восстановление через 200мс...');
+          console.warn('handleError: Media error, восстановление через 200мс...');
           setTimeout(() => {
             if (this.hls) {
               this.hls.recoverMediaError();
@@ -293,55 +353,66 @@ class AudioManager {
                 this.hls.startLoad(this.getCurrentTime() || 0);
                 this.isLoading = true;
               }
+              this._audio?.dispatchEvent(new Event('timeupdate')); // Принудительный вызов
             }
           }, 200);
           break;
         default:
-          console.error('Unrecoverable error, уничтожаю HLS');
+          console.error('handleError: Unrecoverable error, уничтожаю HLS');
           this.cleanup();
           break;
       }
     } else if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
-      console.warn('Buffer stalled, немедленно загружаю следующий сегмент...');
+      console.warn('handleError: Buffer stalled, немедленно загружаю следующий сегмент...');
       if (this.hls && !this.isLoading) {
         const currentTime = this.getCurrentTime() || 0;
         this.hls.startLoad(currentTime);
         this.isLoading = true;
         this.checkBufferAndLoad();
+        this._audio?.dispatchEvent(new Event('timeupdate')); // Принудительный вызов
       }
     }
   };
 
   private checkBufferAndLoad(): void {
-    if (!this.hls || !this._audio || this._audio.paused) return;
+    if (!this.hls || !this._audio || this._audio.paused) {
+      console.log('checkBufferAndLoad: Пропуск, аудио на паузе или не инициализировано');
+      return;
+    }
 
     const now = performance.now();
     if (now - this.lastBufferCheck < 1000) return;
-		this.lastBufferCheck = now;
+    this.lastBufferCheck = now;
 
     const currentTime = this.getCurrentTime() || 0;
     const loadedTime = this.getLoadedTime() || 0;
     const bufferLength = loadedTime - currentTime;
+    console.log('checkBufferAndLoad:', {
+      currentTime,
+      loadedTime,
+      bufferLength,
+      isLoading: this.isLoading,
+    });
 
     if (this.isSeeking) {
       if (!this.isLoading) {
+        console.log('checkBufferAndLoad: Начинаю загрузку для перемотки');
         this.hls.startLoad(currentTime);
         this.isLoading = true;
-        console.log(`Загрузка при перемотке: буфер ${bufferLength}s`);
       }
       return;
     }
 
     if (bufferLength > this.bufferLimit) {
       if (this.isLoading) {
+        console.log('checkBufferAndLoad: Буфер полон, останавливаю загрузку');
         this.hls.stopLoad();
         this.isLoading = false;
-        console.log(`Загрузка остановлена: буфер ${bufferLength}s`);
       }
     } else if (!this.isLoading) {
+      console.log('checkBufferAndLoad: Буфер мал, начинаю загрузку');
       this.hls.startLoad(currentTime);
       this.isLoading = true;
-      console.log(`Загрузка возобновлена: буфер ${bufferLength}s`);
     }
   }
 }
