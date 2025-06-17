@@ -22,6 +22,11 @@ export const PlayerDetailed = () => {
     setIsOpen(false);
   };
 
+  const baseImagePath =
+    activeTrack?.picture ?
+      `${API_URL}${activeTrack.picture.replace(/-(sm|md|lg|sm-2x|md-2x)\.webp$/, '')}`
+    : '';
+
   return (
     <div className={styles.main_container}>
       <div>
@@ -32,13 +37,23 @@ export const PlayerDetailed = () => {
       </div>
       <div className={styles.player_detailed}>
         <div className={styles.cover_container}>
-          <div className={styles.cover_inner_container}>
+          <picture>
+            <source
+              srcSet={`${baseImagePath}-lg.webp 2x`}
+              media="(min-width: 651px)"
+              type="image/webp"
+            />
+            <source
+              srcSet={`${baseImagePath}-lg.webp`}
+              media="(min-width: 651px)"
+              type="image/webp"
+            />
             <img
               className={styles.cover}
-              src={API_URL + activeTrack?.picture}
-              alt="cover"
+              src={`${baseImagePath}-md.webp`}
+              alt="cover icon"
             />
-          </div>
+          </picture>
         </div>
         <div className={styles.main_nav_container}>
           <NavItems

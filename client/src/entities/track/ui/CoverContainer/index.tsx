@@ -22,6 +22,7 @@ export const CoverContainer = ({ track, handlePlay }: CoverContainerProps) => {
       className={styles.cover_container}
       onMouseEnter={() => setShowPlayIcon(true)}
       onMouseLeave={() => setShowPlayIcon(false)}
+      onTouchStart={() => setShowPlayIcon(true)}
     >
       <img
         className={styles.cover}

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import styles from './NavItems.module.scss';
 
 interface NavItemsProps {
@@ -5,7 +6,7 @@ interface NavItemsProps {
   onNavChange: (nav: 'text' | 'next' | 'related') => void;
 }
 
-export const NavItems = ({ onNavChange, selectedNav }: NavItemsProps) => {
+export const NavItems = memo(({ onNavChange, selectedNav }: NavItemsProps) => {
   return (
     <div className={styles.nav_bar}>
       <p
@@ -28,4 +29,6 @@ export const NavItems = ({ onNavChange, selectedNav }: NavItemsProps) => {
       </p>
     </div>
   );
-};
+});
+
+NavItems.displayName = 'NavItems';

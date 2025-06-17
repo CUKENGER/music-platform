@@ -21,7 +21,6 @@
 
 html {
   scroll-behavior: smooth;
-  font-size: calc(100vw / 1920 * 10);
   font-family: 'Inter', 'Roboto', sans-serif;
   font-weight: 500;
   color: var(--white);
@@ -124,15 +123,3 @@ input {
 //   color: var(--white) !important;
 //   background-color: var(--black-lt) !important;
 // }
-
-@media (max-width: 800px) {
-  body {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 600px) {
-  body {
-    font-size: 10px;
-  }
-}

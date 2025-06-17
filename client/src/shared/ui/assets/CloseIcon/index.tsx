@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { memo, useState } from 'react';
 import styles from './CloseIcon.module.scss';
 import classNames from 'classnames';
 import closeIcon from './close_icon.svg';
@@ -9,7 +9,7 @@ interface CloseIconProps {
   className?: string;
 }
 
-export const CloseIcon: FC<CloseIconProps> = ({ onClick, className }) => {
+export const CloseIcon = memo(({ onClick, className }: CloseIconProps) => {
   const [isHover, setIsHover] = useState(false);
 
   return (
@@ -25,4 +25,6 @@ export const CloseIcon: FC<CloseIconProps> = ({ onClick, className }) => {
       />
     </div>
   );
-};
+});
+
+CloseIcon.displayName = 'CloseIcon';

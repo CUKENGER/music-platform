@@ -2,17 +2,17 @@
   display: flex;
   flex-direction: column;
   row-gap: 5px;
-  height: 738px;
   overflow: hidden;
   overflow-y: auto;
+  width: 100%;
 }
 
-@media (max-width: 730px) {
-  .navNextTracks_container {
-    max-height: calc(100vh - 492px);
-    width: 100%;
-  }
-}
+// @media (max-width: 730px) {
+//   .navNextTracks_container {
+//     max-height: calc(100vh - 492px);
+//     width: 100%;
+//   }
+// }
 
 // @media(max-width: 550px) {
 //   .navNextTracks_container{

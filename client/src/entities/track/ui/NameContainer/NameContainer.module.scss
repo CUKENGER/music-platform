@@ -16,6 +16,7 @@
 .artist {
   color: var(--gray);
   cursor: pointer;
+  transition: color 0.3s ease-in-out;
 
   &:hover {
     color: var(--white);
@@ -26,6 +27,8 @@
   cursor: pointer;
   height: 18px;
   white-space: nowrap;
+  border-bottom: 1px solid transparent;
+  transition: border-bottom-color 0.3s ease-in-out;
 
   &:hover {
     border-bottom: 1px solid var(--prm);
