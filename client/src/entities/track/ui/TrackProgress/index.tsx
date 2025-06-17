@@ -1,5 +1,6 @@
 import { useTrackProgress } from '../../model/useTrackProgress';
 import styles from './TrackProgress.module.scss';
+import cn from 'classnames';
 
 export const TrackProgress = () => {
   const {
@@ -13,6 +14,7 @@ export const TrackProgress = () => {
     inputDurationStyle,
     hoverTimeStyle,
     loadedTime,
+    isSeeking,
   } = useTrackProgress();
 
   return (
@@ -26,7 +28,7 @@ export const TrackProgress = () => {
         </div>
       )}
       <div
-        className={styles.input_duration_fill}
+        className={cn(styles.input_duration_fill, { [styles.no_transition]: isSeeking })}
         style={{ width: `${(currentTime / duration) * 100}%` }}
       ></div>
       <input

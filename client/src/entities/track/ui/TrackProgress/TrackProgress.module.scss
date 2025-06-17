@@ -29,7 +29,7 @@
   opacity: 0;
 }
 
-.input_duration[type="range"]{
+.input_duration[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
@@ -37,7 +37,7 @@
   background: transparent;
   outline: none;
   position: relative;
-  transition: background 1s ease;
+  // transition: background 1s ease;
 }
 
 .input_duration_fill {
@@ -46,7 +46,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  transition: width 1s linear;
+  transition: width .5s linear;
   z-index: 2;
   pointer-events: none;
 }
@@ -68,8 +68,12 @@
   height: 5px;
   bottom: 0;
   z-index: 1;
-  transition: width 1s ease;
+  transition: width .2s ease;
   pointer-events: none;
+}
+
+.no_transition {
+  transition: none !important;
 }
 
 @media (max-width: 500px) {

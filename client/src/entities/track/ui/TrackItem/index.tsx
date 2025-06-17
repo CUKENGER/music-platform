@@ -1,11 +1,13 @@
-import { ForwardedRef, forwardRef } from 'react';
+import { ForwardedRef, forwardRef, useCallback } from 'react';
 import styles from './TrackItem.module.scss';
 import { ITrack } from '../../types/Track';
-import { useTrackItem } from '../../model/useTrackItem';
-import { DeleteContainer, ModalContainer, ListensContainer} from '@/shared/ui';
+import { DeleteContainer, ModalContainer, ListensContainer } from '@/shared/ui';
 import { useUserStore } from '@/entities/user';
 import { CoverContainer } from '../CoverContainer';
 import { NameContainer } from '../NameContainer';
+import { usePlayTrack } from '../../model/usePlayTrack';
+import { useModal } from '@/shared/hooks';
+import { useDeleteTrack } from '../../api/useTrackApi';
 
 interface TrackItemProps {
   item: ITrack;
@@ -15,10 +17,25 @@ interface TrackItemProps {
 }
 
 const TrackItemComponent = (
-  { item: track, needDeleteIcon = true, needClick = true }: TrackItemProps,
+  { item: track, itemList: trackList, needDeleteIcon = true, needClick = true }: TrackItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  const { play, handleDelete, modal, hideModal } = useTrackItem(track);
+  const { showModal, modal, hideModal } = useModal();
+
+  const { mutate: deleteTrack } = useDeleteTrack();
+
+  const { play } = usePlayTrack(track, trackList);
+
+  const handleDelete = useCallback(
+    async (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      deleteTrack(track.id, {
+        onSuccess: (res) => showModal(`Трек ${res.name} успешно удален`),
+        onError: (error) => showModal(`Произошла ошибка при удалении: ${error}`),
+      });
+    },
+    [deleteTrack, showModal, track.id],
+  );
   const isAdmin = useUserStore((state) => state.isAdmin);
 
   return (
@@ -40,9 +57,7 @@ const TrackItemComponent = (
       </div>
       <div className={styles.right_container}>
         <div className={styles.meta_container}>
-          <ListensContainer
-            listens={track.listens}
-          />
+          <ListensContainer listens={track.listens} />
           <div className={styles.duration_container}>
             <p>{track.duration}</p>
           </div>

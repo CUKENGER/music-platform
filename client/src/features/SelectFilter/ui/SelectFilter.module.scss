@@ -25,6 +25,7 @@
 .btn,
 .btn_active {
   background-color: var(--prm);
+  font-size: 14px;
   line-height: 40px;
   display: flex;
   align-items: center;
@@ -35,6 +36,8 @@
   padding: 0 20px;
   z-index: 1;
   border: none;
+  font-weight: 500;
+  transition: border-radius .05s ease-in-out;
 }
 
 .btn_active {
@@ -75,6 +78,7 @@
   color: var(--white);
   font-size: 14px;
   z-index: 1;
+  transition: background-color .1s ease-in-out;
 
   &:last-child {
     border-bottom-left-radius: 20px;

@@ -28,7 +28,7 @@ export const EntityList = <T extends { id: number }>({
 }: EntityListProps<T>) => {
   const selectedSort = useSelectFilterStore((state) => state.selectedSort);
 
-  const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isLoading } =
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isLoading } =
     getAll(selectedSort);
 
   const observer = useRef<IntersectionObserver | null>(null);
@@ -46,8 +46,6 @@ export const EntityList = <T extends { id: number }>({
     [isFetchingNextPage, fetchNextPage, hasNextPage],
   );
 
-  if (error) return 'An error has occurred: ' + error;
-
   if (isLoading) {
     return <Loader />;
   }
@@ -58,30 +56,34 @@ export const EntityList = <T extends { id: number }>({
     <div className={styles.EntityList}>
       <PageHeader toCreate={toCreate} />
       <div className={className}>
-        {data?.pages.map((page, index) => (
-          <React.Fragment key={index}>
-            {page.map((item, i) => {
-              if (page.length === i + 1) {
-                return (
-                  <EntityItem
-                    ref={lastItemRef}
-                    item={item}
-                    itemList={allItems}
-                    key={item.id}
-                  />
-                );
-              } else {
-                return (
-                  <EntityItem
-                    item={item}
-                    itemList={allItems}
-                    key={item.id}
-                  />
-                );
-              }
-            })}
-          </React.Fragment>
-        ))}
+        {data ?
+          data?.pages.map((page, index) => (
+            <React.Fragment key={index}>
+              {page ?
+                page.map((item, i) => {
+                  if (page.length === i + 1) {
+                    return (
+                      <EntityItem
+                        ref={lastItemRef}
+                        item={item}
+                        itemList={allItems}
+                        key={item.id}
+                      />
+                    );
+                  } else {
+                    return (
+                      <EntityItem
+                        item={item}
+                        itemList={allItems}
+                        key={item.id}
+                      />
+                    );
+                  }
+                })
+              : <p className={styles.NotFound}>Ничего не найдено</p>}
+            </React.Fragment>
+          ))
+        : <p className={styles.NotFound}>Ничего не найдено</p>}
         <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>
       </div>
     </div>
