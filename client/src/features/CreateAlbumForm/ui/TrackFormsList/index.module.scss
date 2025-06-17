@@ -1,0 +1,17 @@
+.tracksContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.droppable {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.draggable {
+  display: flex;
+  align-items: center;
+}

@@ -1,61 +1,53 @@
-import {
-  AlbumCommonForm,
-  AlbumCoverInput,
-  MainInfoInputs,
-  MultipleInputAudio,
-  TrackFormList,
-} from '@/entities/album';
-import { useCreateAlbumForm } from '../model/useCreateAlbumForm';
-import styles from './CreateAlbumForm.module.scss';
+// src/features/album/components/CreateAlbumForm.tsx
+import { FormProvider } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+import styles from './index.module.scss';
+import { Btn, ModalContainer } from '@/shared/ui';
 import { PRIVATE_ROUTES } from '@/shared/consts';
+import { AlbumFormInputs } from './AlbumFormInputs';
+import { TrackFormsList } from './TrackFormsList';
+import { useCreateAlbumForm } from '../model/useCreateAlbumForm';
 
 export const CreateAlbumForm = () => {
   const {
-    handleSubmit,
-    onSubmit,
+    methods,
     isPending,
+    isValid,
+    onSubmit,
     modal,
     hideModal,
-    handleFileChange,
-    hasData,
-    debouncedArtist,
-    addTrackForm,
+    fields,
+    addTrack,
+    reorderTracks,
   } = useCreateAlbumForm();
 
   return (
-    <AlbumCommonForm
-      backLink={PRIVATE_ROUTES.ALBUMS}
-      onSubmit={handleSubmit(onSubmit)}
-      hasData={hasData}
-      isPending={isPending}
-    >
-      <div className={styles.album_inputs}>
-        <MainInfoInputs
-          name={name}
-          artist={artist}
-          description={description}
-          releaseDate={releaseDate}
-          setReleaseDate={setReleaseDate}
-          options={options}
-          setOptions={setOptions}
-          genre={genre}
+    <FormProvider {...methods}>
+      <form
+        className={styles.Form}
+        onSubmit={onSubmit}
+      >
+        <Link to={PRIVATE_ROUTES.ALBUMS}>
+          <Btn>Назад</Btn>
+        </Link>
+        <AlbumFormInputs />
+        <TrackFormsList
+          tracks={fields}
+          addTrack={addTrack}
+          reorderTracks={reorderTracks}
         />
-        <AlbumCoverInput
-          cover={cover}
-          setCover={setCover}
+        <Btn
+          isLoading={isPending}
+          type="submit"
+          disabled={!isValid}
+        >
+          Загрузить
+        </Btn>
+        <ModalContainer
+          modal={modal}
+          hideModal={hideModal}
         />
-      </div>
-      <MultipleInputAudio onChange={handleFileChange} />
-      <TrackFormList
-        tracks={tracks}
-        setTracks={setTracks}
-        debouncedArtist={debouncedArtist}
-      />
-      <AddTrackIcon onClick={addTrackForm} />
-      <ModalContainer
-        modal={modal}
-        hideModal={hideModal}
-      />
-    </AlbumCommonForm>
+      </form>
+    </FormProvider>
   );
 };

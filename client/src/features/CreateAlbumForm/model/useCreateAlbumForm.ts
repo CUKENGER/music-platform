@@ -1,110 +1,114 @@
 import { CreateAlbumDto, useCreateAlbum } from '@/entities/album';
-import { TrackState } from '@/entities/track';
 import { PRIVATE_ROUTES } from '@/shared/consts';
-import { useDebounce, useModal } from '@/shared/hooks';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useModal } from '@/shared/hooks';
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-export type CreateAlbumInputs = {
+export interface TrackFormData {
+  id?: string;
+  name: string;
+  text: string;
+  audio: File | null;
+}
+
+export interface CreateAlbumFormData {
   name: string;
   artist: string;
   genre: string;
   description: string;
-  cover?: File | null;
-  releaseDate: Date | string | undefined;
-  tracks?: TrackState[];
-};
+  cover: File | null;
+  releaseDate: Date | string;
+  tracks: TrackFormData[];
+}
 
 export const useCreateAlbumForm = () => {
   const navigate = useNavigate();
-
-  const { modal, showModal, hideModal } = useModal();
-
-  const { handleSubmit, setValue, getValues } = useForm<CreateAlbumInputs>({});
-  const values = getValues();
-
-  const debouncedArtist = useDebounce(values.artist, 500);
-
+  const { modal, hideModal, showModal } = useModal();
   const { isPending, mutate: createAlbum } = useCreateAlbum();
 
-  const hasData = !!(
-    values.name &&
-    values.artist &&
-    values.genre &&
-    values.releaseDate &&
-    values.cover &&
-    values.tracks?.length &&
-    values.tracks?.length > 0 &&
-    values.tracks.every((track) => track.name.trim() && track.audio)
-  );
+  const methods = useForm<CreateAlbumFormData>({
+    defaultValues: {
+      name: '',
+      artist: '',
+      genre: '',
+      description: '',
+      cover: null,
+      releaseDate: '',
+      tracks: [],
+    },
+  });
 
-  const onSubmit: SubmitHandler<CreateAlbumInputs> = () => {
-    if (!hasData) {
-      showModal('Заполните все данные, пожалуйста');
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = methods;
+  const { fields, append, remove, move } = useFieldArray({
+    name: 'tracks',
+    control,
+  });
+
+  const addTrack = () => {
+    append({
+      name: '',
+      text: '',
+      audio: null,
+    });
+  };
+
+  const removeTrack = (index: number) => {
+    remove(index);
+  };
+
+  const reorderTracks = (from: number, to: number) => {
+    move(from, to);
+  };
+
+  const onSubmit: SubmitHandler<CreateAlbumFormData> = (data) => {
+    if (!isValid || data.tracks.length < 1) {
+      showModal('Заполните все обязательные поля');
       return;
     }
 
-    const track_names = values.tracks?.map((track) => track.name) || [];
-    const track_texts = values.tracks?.map((track) => track.text) || [];
+    const trackNames = data.tracks.map((track) => track.name);
+    const trackTexts = data.tracks.map((track) => track.text);
 
     const albumData: CreateAlbumDto = {
-      name: values.name,
-      artist: values.artist,
-      genre: values.genre,
-      description: values.description,
-      picture: values.cover as File,
-      tracks: values.tracks || [],
-      track_names: track_names,
-      track_texts: track_texts,
+      name: data.name,
+      artist: data.artist,
+      genre: data.genre,
+      description: data.description,
+      picture: data.cover as File,
+      tracks: data.tracks,
+      track_names: trackNames,
+      track_texts: trackTexts,
       releaseDate:
-        values.releaseDate instanceof Date ?
-          values.releaseDate.toISOString()
-        : (values.releaseDate as string),
+        data.releaseDate instanceof Date ? data.releaseDate.toISOString() : data.releaseDate,
     };
 
     createAlbum(albumData, {
       onSuccess: (res) => {
-        showModal(`Альбом ${res.name} успешно загружен`, () => navigate(PRIVATE_ROUTES.ALBUMS));
+        showModal(`Альбом ${res.name} успешно создан`, () => {
+          navigate(PRIVATE_ROUTES.ALBUMS);
+        });
       },
-      onError: (e) => {
-        showModal(`Произошла ошибка при создании альбома ${e}`);
+      onError: (error) => {
+        showModal(`Ошибка при создании альбома: ${error.message || 'Неизвестная ошибка'}`);
       },
     });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files;
-    if (selectedFiles && selectedFiles.length > 0) {
-      const newTracks = Array.from(selectedFiles).map((file) => ({
-        name: file.name
-          .split('.')
-          .slice(0, -1)
-          .join('.')
-          .replace(/^[\d\s\-.,_]+/g, '')
-          .trim()
-          .replace(/^\w/, (c) => c.toUpperCase()),
-        text: '',
-        audio: file,
-      }));
-      setValue('tracks', newTracks);
-    }
-  };
-
-  const addTrackForm = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const prevTracks = getValues('tracks') || [];
-    setValue('tracks', [...prevTracks, { name: '', text: '', audio: null }]);
-  };
-
   return {
-    handleSubmit,
-    onSubmit,
+    methods,
     isPending,
+    isValid,
+    fields,
+    addTrack,
+    removeTrack,
+    reorderTracks,
+    onSubmit: handleSubmit(onSubmit),
     modal,
+    showModal,
     hideModal,
-    handleFileChange,
-    hasData,
-    debouncedArtist,
-    addTrackForm,
   };
 };
