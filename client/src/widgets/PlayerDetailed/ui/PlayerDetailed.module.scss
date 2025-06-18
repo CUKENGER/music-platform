@@ -1,3 +1,5 @@
+@import '../../../app/index.scss';
+
 /* CSS-переменные для размеров и отступов */
 :root {
   --cover-size: 500px;
@@ -13,11 +15,12 @@
   inset: 0 0 0 var(--sidebar-width);
   width: calc(100vw - var(--sidebar-width));
   height: var(--player-height);
-  background-color: var(--bg);
   padding: var(--padding);
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  @extend .main-gradient;
 }
 
 .player_detailed {
@@ -39,10 +42,14 @@
 }
 
 .cover_container {
-  flex: 1;
+  flex: 0 0 auto;
   aspect-ratio: 1 / 1;
   width: 50%;
   overflow: hidden;
+  max-height: 82vh;
+  max-width: 82vh;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px var(--shadow);
 }
 
 .cover {
@@ -50,6 +57,11 @@
   height: 100%;
   border-radius: 10px;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.cover:hover {
+  transform: scale(1.02); /* Лёгкий зум при ховере */
 }
 
 .main_nav_container {
@@ -82,11 +94,16 @@
     height: 300px;
     flex: 0 0 auto;
     justify-content: center;
+    max-height: 100%;
+    max-width: 100%;
+    box-shadow: none;
   }
 
   .cover {
     object-fit: contain;
     border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 4px 12px var(--shadow);
   }
 
   .main_nav_container {

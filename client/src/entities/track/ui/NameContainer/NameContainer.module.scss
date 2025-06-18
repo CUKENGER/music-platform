@@ -3,11 +3,14 @@
   flex-direction: column;
   row-gap: 5px;
   font-size: 14px;
+  // width: 100%;
+  flex: 1;
+  min-width: 0;
 }
 
 .name,
 .artist {
-  max-width: 200px;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -42,11 +45,6 @@
 }
 
 @media (max-width: 400px) {
-  .name,
-  .artist {
-    width: 88px;
-  }
-
   .name_container {
     font-size: 10px;
   }

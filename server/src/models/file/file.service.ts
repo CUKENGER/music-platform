@@ -8,6 +8,7 @@ import { Logger } from 'nestjs-pino';
 import { ApiError } from 'exceptions/api.error';
 import { FileType } from './types';
 import { PassThrough } from 'stream';
+import { Vibrant } from 'node-vibrant/node';
 
 interface FileBodyType {
   originalname: string;
@@ -30,7 +31,7 @@ export class FileService {
   async createFile(
     type: FileType,
     file: Express.Multer.File,
-  ): Promise<string | { paths: string[] }> {
+  ): Promise<string | { paths: string[]; coverColor: string }> {
     try {
       file = Array.isArray(file) ? file[0] : file;
       this.logger.log('Creating file', { originalname: file.originalname });
@@ -52,9 +53,20 @@ export class FileService {
     }
   }
 
-  private async createImageFiles(file: Express.Multer.File): Promise<{ paths: string[] }> {
+  private async createImageFiles(
+    file: Express.Multer.File,
+  ): Promise<{ paths: string[]; coverColor: string }> {
     const paths: string[] = [];
     const baseFileName = uuid.v4();
+
+    let coverColor = '#000000';
+    try {
+      const palette = await Vibrant.from(file.buffer).getPalette();
+      coverColor = palette.Vibrant?.hex || '#000000'; // Используем Vibrant или fallback
+      this.logger.log('Extracted cover color', { coverColor });
+    } catch (e) {
+      this.logger.error(`Error extracting cover color: ${e.message}`);
+    }
 
     for (const { size, suffix } of this.imageSizes) {
       const fileName = `${baseFileName}-${suffix}.webp`;
@@ -74,7 +86,7 @@ export class FileService {
       paths.push(`image/${fileName}`);
     }
 
-    return { paths };
+    return { paths, coverColor };
   }
 
   private async createAudioFile(file: Express.Multer.File): Promise<string> {

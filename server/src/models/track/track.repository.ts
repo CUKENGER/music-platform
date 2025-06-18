@@ -15,6 +15,7 @@ export class TrackRepository {
     prisma: Prisma.TransactionClient,
     artistId?: number,
     albumId?: number,
+    coverColor?: string,
   ): Promise<Track> {
     return await prisma.track.create({
       data: {
@@ -25,6 +26,7 @@ export class TrackRepository {
         picture: imagePath,
         artist: { connect: { id: artistId } },
         album: { connect: { id: albumId } },
+        coverColor,
       },
     });
   }

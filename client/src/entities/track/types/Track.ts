@@ -13,6 +13,7 @@ export interface ITrack {
   comments: string[];
   duration: string;
   genre: string;
+  coverColor: string | null;
   likedByUsers: IUser[] | [];
 }
 

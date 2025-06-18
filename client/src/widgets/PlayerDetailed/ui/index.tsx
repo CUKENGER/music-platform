@@ -37,23 +37,11 @@ export const PlayerDetailed = () => {
       </div>
       <div className={styles.player_detailed}>
         <div className={styles.cover_container}>
-          <picture>
-            <source
-              srcSet={`${baseImagePath}-lg.webp 2x`}
-              media="(min-width: 651px)"
-              type="image/webp"
-            />
-            <source
-              srcSet={`${baseImagePath}-lg.webp`}
-              media="(min-width: 651px)"
-              type="image/webp"
-            />
-            <img
-              className={styles.cover}
-              src={`${baseImagePath}-md.webp`}
-              alt="cover icon"
-            />
-          </picture>
+          <img
+            className={styles.cover}
+            src={`${baseImagePath}-lg.webp`}
+            alt="cover icon"
+          />
         </div>
         <div className={styles.main_nav_container}>
           <NavItems

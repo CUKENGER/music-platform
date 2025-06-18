@@ -38,13 +38,16 @@ export class TrackService {
 
     let audioPath: string = '';
     let imagePath: string = '';
+    let coverColor: string = '#000000';
     try {
       this.logger.log(`create track dto:`, { dto: dto });
       audioPath = (await this.fileService.createFile(FileType.AUDIO, audio)) as string;
       const imageResult = (await this.fileService.createFile(FileType.IMAGE, picture)) as {
         paths: string[];
+        coverColor: string;
       };
       imagePath = imageResult.paths[0];
+      coverColor = imageResult.coverColor;
       this.logger.log(`audioPath: ${audioPath}\n imagePath: ${imagePath}`);
       const duration = await this.audioService.getAudioDuration(
         path.resolve(__dirname, '../../../static', audioPath),
@@ -74,6 +77,7 @@ export class TrackService {
         this.prisma,
         artist.id,
         album.id,
+        coverColor,
       );
       if (dto.featArtists && dto.featArtists.length > 0) {
         for (const featArtistName of dto.featArtists) {

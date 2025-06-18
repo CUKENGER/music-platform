@@ -1,10 +1,12 @@
+@import '../../../app/index.scss';
+
 .wrapper {
   display: flex;
   justify-content: flex-end;
 }
 
 .container {
-  background-color: var(--prm);
+  // background-color: var(--prm);
   width: calc(100vw - 200px);
   height: 60px;
   display: flex;
@@ -12,6 +14,8 @@
   align-items: center;
   position: relative;
   padding: 0 20px;
+
+  @extend .main-gradient;
 }
 
 .search_container {

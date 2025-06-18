@@ -43,6 +43,28 @@ export const Player = () => {
     };
   }, [activeTrack?.id, hasListen, addListen]);
 
+  // Convert hex color to RGB for gradient transparency
+  const hexToRgb = (hex: string) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `${r}, ${g}, ${b}`;
+  };
+
+  // Установка глобальных CSS-переменных
+  useEffect(() => {
+    if (activeTrack?.coverColor) {
+      document.documentElement.style.setProperty('--track-color', activeTrack.coverColor);
+      document.documentElement.style.setProperty(
+        '--track-color-rgb',
+        hexToRgb(activeTrack.coverColor),
+      );
+    } else {
+      document.documentElement.style.setProperty('--track-color', 'var(--prm)');
+      document.documentElement.style.setProperty('--track-color-rgb', 'var(--prm-rgb)');
+    }
+  }, [activeTrack?.coverColor]);
+
   if (!activeTrack) return null;
 
   return (

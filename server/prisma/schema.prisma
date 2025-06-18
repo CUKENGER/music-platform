@@ -180,6 +180,7 @@ model Track {
   genre           String
   duration        String
   picture         String
+	coverColor			String?
   audio           String
   text            String
   artistId        Int?

@@ -12,11 +12,14 @@
 
 :root {
   --prm: #880000;
+  --prm-rgb: 136, 0, 0;
   --bg: #202020;
   --white: #ffffff;
   --gray: #c9c8c8;
   --black-lt: #333333;
   --black-dk: #252525;
+  --track-color-rgb: 136, 0, 0;
+  --shadow: rgba(0, 0, 0, 0.5);
 }
 
 html {
@@ -75,22 +78,6 @@ input {
   border: none;
 }
 
-//
-// textarea {
-//   resize: none;
-//   padding: 0;
-//   margin: 0;
-// }
-//
-// textarea:focus-visible {
-//   border: none;
-//   outline: none;
-// }
-//
-// input:-internal-autofill-selected {
-//   background-color: black;
-// }
-
 *::-webkit-scrollbar {
   width: 12px;
   height: 12px;
@@ -109,17 +96,23 @@ input {
   background: var(--gray);
 }
 
-// input:-webkit-autofill,
-// input:-webkit-autofill:hover,
-// input:-webkit-autofill:focus,
-// input:-webkit-autofill:active {
-//   -webkit-text-fill-color: var(--white) !important;
-//   background-color: var(--black-lt) !important;
-//   box-shadow: 0 0 0 1000px var(--black-lt) inset !important;
-//   transition: background-color 5000s ease-in-out 0s;
-// }
-
-// input[autocomplete] {
-//   color: var(--white) !important;
-//   background-color: var(--black-lt) !important;
-// }
+.main-gradient {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--track-color-rgb, var(--prm-rgb)), 0.08) 0%,
+      transparent 100%
+    ),
+    linear-gradient(45deg, rgba(30, 30, 30, 0.85) 0%, rgba(30, 30, 30, 0.9) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  @supports not (backdrop-filter: blur(22px)) {
+    background:
+      linear-gradient(
+        135deg,
+        rgba(var(--track-color-rgb, var(--prm-rgb)), 0.1) 0%,
+        transparent 100%
+      ),
+      linear-gradient(45deg, rgba(30, 30, 30, 0.9) 0%, rgba(30, 30, 30, 0.95) 100%);
+  }
+}

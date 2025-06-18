@@ -4,9 +4,11 @@ import {
   CoverContainer,
   ITrack,
   NameContainer,
+  useActiveTrackListStore,
   usePlayerStore,
   usePlayTrack,
 } from '@/entities/track';
+import { DragItemIcon } from '../icons/DragItemIcon';
 
 interface NavNextTrackItemProps {
   track: ITrack;
@@ -14,8 +16,9 @@ interface NavNextTrackItemProps {
 
 export const NavNextTrackItem = ({ track }: NavNextTrackItemProps) => {
   const activeTrack = usePlayerStore((state) => state.activeTrack);
+  const activeTrackList = useActiveTrackListStore((state) => state.activeTrackList);
 
-  const { play } = usePlayTrack(track);
+  const { play } = usePlayTrack(track, activeTrackList || []);
 
   return (
     <Reorder.Item
@@ -39,6 +42,7 @@ export const NavNextTrackItem = ({ track }: NavNextTrackItemProps) => {
           />
         </div>
         <div className={styles.right_container}>
+          <DragItemIcon className={styles.DragIcon} />
           <div className={styles.duration_container}>
             <p>{track.duration}</p>
           </div>

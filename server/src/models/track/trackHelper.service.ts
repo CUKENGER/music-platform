@@ -50,6 +50,7 @@ export class TrackHelperService {
     prisma: Prisma.TransactionClient,
     artistId?: number,
     albumId?: number,
+    coverColor?: string,
   ): Promise<Track> {
     return await this.trackRepository.create(
       dto,
@@ -59,6 +60,7 @@ export class TrackHelperService {
       prisma,
       artistId,
       albumId,
+      coverColor,
     );
   }
 
