@@ -25,11 +25,12 @@ export const useTrackProgress = () => {
       const dur = audioManager.getDuration() || 0;
       const loaded = audioManager.getLoadedTime() || 0;
 
-      console.log('updateProgress:', { time, dur, loaded, paused: audio.paused });
       setCurrentTime(time);
-      setDuration(dur);
-      setLoadedTime(loaded);
-    }, 200);
+      // setDuration(dur);
+      // setLoadedTime(loaded);
+      if (dur !== duration) setDuration(dur);
+      if (loaded !== loadedTime) setLoadedTime(loaded);
+    }, 900);
 
     // Периодический опрос
     const interval = setInterval(() => {
@@ -82,7 +83,7 @@ export const useTrackProgress = () => {
       updateProgress.cancel();
       clearInterval(interval); // Очищаем интервал
     };
-  }, [setPlay, setPause, setCurrentTime]);
+  }, [setPlay, setPause, setCurrentTime, duration, loadedTime]);
 
   const changeCurrentTime = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

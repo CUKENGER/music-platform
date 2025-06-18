@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import useActiveTrackListStore from '../../model/ActiveTrackListStore';
 import usePlayerStore from '../../model/PlayerStore';
 import TrackSwitchManager from '../../model/TrackSwitchManager';
@@ -9,11 +10,12 @@ interface SwitchTrackBtnsProps {
   isNextBtn: boolean;
 }
 
-export const SwitchTrackBtns = ({ isNextBtn }: SwitchTrackBtnsProps) => {
-  const { activeTrack, setPlay, setActiveTrack } = usePlayerStore();
-  const activeTrackList = useActiveTrackListStore((state) => state.activeTrackList);
+export const SwitchTrackBtns = memo(({ isNextBtn }: SwitchTrackBtnsProps) => {
+  const activeTrack = usePlayerStore((state) => state.activeTrack);
+  const setPlay = usePlayerStore((state) => state.setPlay);
+  const setActiveTrack = usePlayerStore((state) => state.setActiveTrack);
 
-  console.log('activeTrack', activeTrack);
+  const activeTrackList = useActiveTrackListStore((state) => state.activeTrackList);
 
   const handleBtn = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -38,4 +40,6 @@ export const SwitchTrackBtns = ({ isNextBtn }: SwitchTrackBtnsProps) => {
       />
     </div>
   );
-};
+});
+
+SwitchTrackBtns.displayName = 'SwitchTrackBtns';

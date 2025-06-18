@@ -8,6 +8,8 @@ import { NameContainer } from '../NameContainer';
 import { usePlayTrack } from '../../model/usePlayTrack';
 import { useModal } from '@/shared/hooks';
 import { useDeleteTrack } from '../../api/useTrackApi';
+import usePlayerStore from '../../model/PlayerStore';
+import cn from 'classnames';
 
 interface TrackItemProps {
   item: ITrack;
@@ -20,6 +22,7 @@ const TrackItemComponent = (
   { item: track, itemList: trackList, needDeleteIcon = true, needClick = true }: TrackItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
+  const activeTrack = usePlayerStore((state) => state.activeTrack);
   const { showModal, modal, hideModal } = useModal();
 
   const { mutate: deleteTrack } = useDeleteTrack();
@@ -37,11 +40,12 @@ const TrackItemComponent = (
     [deleteTrack, showModal, track.id],
   );
   const isAdmin = useUserStore((state) => state.isAdmin);
+  const isActive = track.id === activeTrack?.id;
 
   return (
     <div
       ref={ref}
-      className={`${styles.container} ${styles.visible}`}
+      className={cn(styles.container, styles.visible, isActive && styles.container_active)}
       onClick={needClick ? play : undefined}
     >
       <div className={styles.main_container}>

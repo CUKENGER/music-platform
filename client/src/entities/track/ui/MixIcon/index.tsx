@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import styles from './MixIcon.module.scss';
 import mixIcon from './assets/mixIcon.svg';
 import mixFillIcon from './assets/mixFillIcon.svg';
@@ -6,7 +6,7 @@ import useActiveTrackListStore from '../../model/ActiveTrackListStore';
 import { ITrack } from '../../types/Track';
 import { mixTracks } from '../../model/mixTracks';
 
-export const MixIcon = () => {
+export const MixIcon = memo(() => {
   const activeTrackList = useActiveTrackListStore((state) => state.activeTrackList);
   const setActiveTrackList = useActiveTrackListStore((state) => state.setActiveTrackList);
 
@@ -55,4 +55,6 @@ export const MixIcon = () => {
       />
     </div>
   );
-};
+});
+
+MixIcon.displayName = 'MixIcon';

@@ -2,8 +2,9 @@ import muteIcon from './muteIcon.svg';
 import volumeIcon from './volumeIcon.svg';
 import styles from './VolumeBar.module.scss';
 import { useVolumeBar } from '../../model/useVolumeBar';
+import { memo } from 'react';
 
-export const VolumeBar = () => {
+export const VolumeBar = memo(() => {
   const { handleMute, isMute, volume, changeVolume } = useVolumeBar();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -32,4 +33,6 @@ export const VolumeBar = () => {
       />
     </div>
   );
-};
+});
+
+VolumeBar.displayName = 'VolumeBar';

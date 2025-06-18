@@ -1,8 +1,9 @@
+import { memo } from 'react';
 import { useTrackProgress } from '../../model/useTrackProgress';
 import styles from './TrackProgress.module.scss';
 import cn from 'classnames';
 
-export const TrackProgress = () => {
+export const TrackProgress = memo(() => {
   const {
     hoverTime,
     handleMouseLeave,
@@ -49,4 +50,6 @@ export const TrackProgress = () => {
       ></div>
     </div>
   );
-};
+});
+
+TrackProgress.displayName = 'TrackProgress';
