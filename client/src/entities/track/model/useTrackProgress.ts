@@ -5,7 +5,8 @@ import useTrackTimeStore from './TrackTimeStore';
 import { throttle } from 'lodash';
 
 export const useTrackProgress = () => {
-  const { setPlay, setPause } = usePlayerStore();
+  const setPlay = usePlayerStore((state) => state.setPlay);
+  const setPause = usePlayerStore((state) => state.setPause);
   const { setCurrentTime, currentTime } = useTrackTimeStore();
   const [x, setX] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -34,24 +35,20 @@ export const useTrackProgress = () => {
 
     // Периодический опрос
     const interval = setInterval(() => {
-      console.log('Interval updateProgress');
       updateProgress();
     }, 500);
 
     const handleLoadedMetadata = () => {
-      console.log('handleLoadedMetadata: Метаданные загружены');
       updateProgress();
       audio.dispatchEvent(new Event('timeupdate'));
     };
 
     const handlePlaying = () => {
-      console.log('handlePlaying: Воспроизведение началось');
       updateProgress();
       audio.dispatchEvent(new Event('timeupdate'));
     };
 
     const handleTimeUpdate = () => {
-      console.log('RAW timeupdate event:', audio.currentTime);
       updateProgress();
     };
 
@@ -64,7 +61,6 @@ export const useTrackProgress = () => {
     audio.dispatchEvent(new Event('timeupdate'));
 
     audioManager.setSeekCompleteCallback((playing) => {
-      console.log('seekCompleteCallback:', { playing });
       setIsSeeking(false);
       if (playing) {
         setPlay();
@@ -74,7 +70,6 @@ export const useTrackProgress = () => {
     });
 
     return () => {
-      console.log('useTrackProgress: Очистка слушателей');
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('progress', updateProgress);
@@ -90,7 +85,6 @@ export const useTrackProgress = () => {
       setIsSeeking(true);
       const newValue = Number(e.target.value);
       if (newValue >= 0 && newValue <= duration) {
-        console.log('changeCurrentTime: Перемотка на', newValue);
         audioManager.seekTo(newValue).catch((err) => {
           console.error('changeCurrentTime: Seek error:', err);
           setIsSeeking(false);

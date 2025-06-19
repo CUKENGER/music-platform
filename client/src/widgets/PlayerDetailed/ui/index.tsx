@@ -1,5 +1,5 @@
 import styles from './PlayerDetailed.module.scss';
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { NavItems } from './NavItems';
 import { NavText } from './NavText';
 import { NavNextTracks } from './NavNextTracks';
@@ -7,8 +7,9 @@ import { useOpenPlayerStore } from '@/widgets/Player/model/openPlayerStore';
 import { usePlayerStore } from '@/entities/track';
 import { CloseIcon } from '@/shared/ui';
 import { API_URL } from '@/shared/consts';
+import ReactDOM from 'react-dom';
 
-export const PlayerDetailed = () => {
+export const PlayerDetailed = forwardRef<HTMLDivElement>((props, ref) => {
   const activeTrack = usePlayerStore((state) => state.activeTrack);
   const { setIsOpen } = useOpenPlayerStore();
 
@@ -22,13 +23,18 @@ export const PlayerDetailed = () => {
     setIsOpen(false);
   };
 
+  console.log('PlayerDetailed rendered');
+
   const baseImagePath =
     activeTrack?.picture ?
       `${API_URL}${activeTrack.picture.replace(/-(sm|md|lg|sm-2x|md-2x)\.webp$/, '')}`
     : '';
 
-  return (
-    <div className={styles.main_container}>
+  const content = (
+    <div
+      ref={ref}
+      className={styles.main_container}
+    >
       <div>
         <CloseIcon
           className={styles.closeIcon}
@@ -69,4 +75,12 @@ export const PlayerDetailed = () => {
       </div>
     </div>
   );
-};
+
+  const portalRoot = document.getElementById('portal-root');
+  if (!portalRoot) {
+    console.warn('Portal root not found');
+    return null;
+  }
+
+  return ReactDOM.createPortal(content, portalRoot);
+});

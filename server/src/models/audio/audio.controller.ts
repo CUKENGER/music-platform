@@ -160,7 +160,7 @@ export class AudioController {
 
       res.set({
         'Content-Type': 'application/vnd.apple.mpegurl',
-        'Cache-Control': 'no-cache', // Проверяем актуальность
+        'Cache-Control': 'public, max-age=3600',
         ETag: eTag,
         'Access-Control-Allow-Origin': '*',
       });
@@ -190,7 +190,7 @@ export class AudioController {
 
       res.set({
         'Content-Type': 'application/vnd.apple.mpegurl',
-        'Cache-Control': 'no-cache', // Проверяем актуальность
+        'Cache-Control': 'public, max-age=3600',
         ETag: eTag,
         'Access-Control-Allow-Origin': '*',
       });

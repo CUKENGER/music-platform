@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import ReactDOM from 'react-dom';
 
 interface PortalProps {
@@ -8,33 +8,19 @@ interface PortalProps {
 }
 
 export const Portal: React.FC<PortalProps> = ({ children, isOpen, selector = '#portal-root' }) => {
-  const [el] = useState(document.createElement('div'));
+  console.log('Portal: isOpen =', isOpen);
 
-  useEffect(() => {
-    const body = document.body;
+  if (!isOpen) {
+    console.log('Portal: Not rendering, isOpen = false');
+    return null;
+  }
 
-    if (isOpen) {
-      body.style.overflow = 'hidden';
-      const mount = document.querySelector(selector);
-      if (mount) {
-        mount.appendChild(el);
-      }
-    } else {
-      body.style.overflow = '';
-      const mount = document.querySelector(selector);
-      if (mount) {
-        mount.removeChild(el);
-      }
-    }
+  const mount = document.querySelector(selector);
+  if (!mount) {
+    console.warn(`Portal: Element with selector ${selector} not found`);
+    return null;
+  }
 
-    return () => {
-      body.style.overflow = '';
-      const mount = document.querySelector(selector);
-      if (mount) {
-        mount.removeChild(el);
-      }
-    };
-  }, [isOpen, el, selector]);
-
-  return isOpen ? ReactDOM.createPortal(children, el) : null;
+  console.log('Portal: Rendering to', selector);
+  return ReactDOM.createPortal(children, mount);
 };

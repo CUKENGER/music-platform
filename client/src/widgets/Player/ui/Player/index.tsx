@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { CSSTransition } from 'react-transition-group';
 import { useOpenPlayerStore } from '../../model/openPlayerStore';
 import {
   CurrentTimeContainer,
@@ -13,23 +14,26 @@ import {
 import { API_URL } from '@/shared/consts';
 import { PlayerNameContainer } from '../PlayerNameContainer';
 import { Portal } from '@/shared/ui';
-import { PlayerDetailed } from '@/widgets/PlayerDetailed';
 import openPlayerBtn from './assets/openPlayerBtn.svg';
 import { TrackLikeContainer } from '@/features/TrackLikeContainer';
 import styles from './Player.module.scss';
+import { PlayerDetailed } from '@/widgets/PlayerDetailed';
 
 export const Player = () => {
+  const playerDetailedRef = useRef<HTMLDivElement>(null);
   const [hasListen, setHasListen] = useState(false);
   const activeTrack = usePlayerStore((state) => state.activeTrack);
   const { isOpen: isOpenPlayer, setIsOpen: setIsOpenPlayer } = useOpenPlayerStore();
   const { mutate: addListen } = useAddListenTrack();
 
   const handleOpen = () => {
+    console.log('Before toggle, isOpenPlayer:', isOpenPlayer);
     setIsOpenPlayer(!isOpenPlayer);
+    console.log('After toggle, isOpenPlayer:', !isOpenPlayer);
   };
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     if (activeTrack?.id && !hasListen) {
       timeoutId = setTimeout(() => {
@@ -43,7 +47,6 @@ export const Player = () => {
     };
   }, [activeTrack?.id, hasListen, addListen]);
 
-  // Convert hex color to RGB for gradient transparency
   const hexToRgb = (hex: string) => {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -51,7 +54,6 @@ export const Player = () => {
     return `${r}, ${g}, ${b}`;
   };
 
-  // Установка глобальных CSS-переменных
   useEffect(() => {
     if (activeTrack?.coverColor) {
       document.documentElement.style.setProperty('--track-color', activeTrack.coverColor);
@@ -65,16 +67,15 @@ export const Player = () => {
     }
   }, [activeTrack?.coverColor]);
 
+  console.log('Player rendered, isOpenPlayer:', isOpenPlayer);
+
   if (!activeTrack) return null;
 
   return (
     <>
       <div className={styles.container}>
         <TrackProgress />
-        <div
-          className={styles.main_container}
-          onClick={handleOpen}
-        >
+        <div className={styles.main_container}>
           <div className={styles.main_info_container}>
             <div className={styles.cover_container}>
               <img
@@ -102,7 +103,12 @@ export const Player = () => {
           <div className={styles.right_container}>
             <MixIcon />
             <VolumeBar />
-            <div onClick={handleOpen}>
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpen();
+              }}
+            >
               <img
                 className={styles.openBtn}
                 src={openPlayerBtn}
@@ -111,15 +117,28 @@ export const Player = () => {
             </div>
           </div>
         </div>
+        <button onClick={handleOpen}>Toggle PlayerDetailed</button>
       </div>
-      {isOpenPlayer && (
-        <Portal
-          selector="#portal-root"
-          isOpen={isOpenPlayer}
-        >
-          <PlayerDetailed />
-        </Portal>
-      )}
+      <CSSTransition
+        nodeRef={playerDetailedRef}
+        in={isOpenPlayer}
+        timeout={300}
+        classNames={{
+          enter: styles['player-detailed-enter'],
+          enterActive: styles['player-detailed-enter-active'],
+          exit: styles['player-detailed-exit'],
+          exitActive: styles['player-detailed-exit-active'],
+        }}
+        unmountOnExit
+        onEnter={() => console.log('CSSTransition: onEnter')}
+        onEntering={() => console.log('CSSTransition: onEntering')}
+        onEntered={() => console.log('CSSTransition: onEntered')}
+        onExit={() => console.log('CSSTransition: onExit')}
+        onExiting={() => console.log('CSSTransition: onExiting')}
+        onExited={() => console.log('CSSTransition: onExited')}
+      >
+        <PlayerDetailed ref={playerDetailedRef} />
+      </CSSTransition>
     </>
   );
 };

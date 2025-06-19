@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, useCallback } from 'react';
+import { ForwardedRef, forwardRef, memo, useCallback } from 'react';
 import styles from './TrackItem.module.scss';
 import { ITrack } from '../../types/Track';
 import { DeleteContainer, ModalContainer, ListensContainer } from '@/shared/ui';
@@ -22,7 +22,7 @@ const TrackItemComponent = (
   { item: track, itemList: trackList, needDeleteIcon = true, needClick = true }: TrackItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  const activeTrack = usePlayerStore((state) => state.activeTrack);
+  const activeTrackId = usePlayerStore((state) => state.activeTrack?.id);
   const { showModal, modal, hideModal } = useModal();
 
   const { mutate: deleteTrack } = useDeleteTrack();
@@ -40,7 +40,7 @@ const TrackItemComponent = (
     [deleteTrack, showModal, track.id],
   );
   const isAdmin = useUserStore((state) => state.isAdmin);
-  const isActive = track.id === activeTrack?.id;
+  const isActive = track.id === activeTrackId;
 
   return (
     <div
@@ -80,4 +80,4 @@ const TrackItemComponent = (
   );
 };
 
-export const TrackItem = forwardRef(TrackItemComponent);
+export const TrackItem = memo(forwardRef(TrackItemComponent));

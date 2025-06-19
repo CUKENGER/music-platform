@@ -158,3 +158,28 @@
     height: 35px;
   }
 }
+
+.player-detailed-enter {
+  opacity: 0;
+  transform: scale(0.8); // Начальное состояние: уменьшенный и прозрачный
+}
+
+.player-detailed-enter-active {
+  opacity: 1;
+  transform: scale(1); // Конечное состояние: нормальный размер и видимый
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+  will-change: opacity, transform; // Оптимизация для производительности
+}
+
+.player-detailed-exit {
+  opacity: 1;
+  transform: scale(1); // Начальное состояние при исчезновении
+}
+
+.player-detailed-exit-active {
+  opacity: 0;
+  transform: scale(0.8); // Конечное состояние: уменьшенный и прозрачный
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+  will-change: opacity, transform;
+}
+
