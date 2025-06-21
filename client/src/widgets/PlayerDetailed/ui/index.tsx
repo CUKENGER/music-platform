@@ -9,7 +9,7 @@ import { CloseIcon } from '@/shared/ui';
 import { API_URL } from '@/shared/consts';
 import ReactDOM from 'react-dom';
 
-export const PlayerDetailed = forwardRef<HTMLDivElement>((props, ref) => {
+export const PlayerDetailed = forwardRef<HTMLDivElement>((_props, ref) => {
   const activeTrack = usePlayerStore((state) => state.activeTrack);
   const { setIsOpen } = useOpenPlayerStore();
 
@@ -22,8 +22,6 @@ export const PlayerDetailed = forwardRef<HTMLDivElement>((props, ref) => {
   const handleClose = () => {
     setIsOpen(false);
   };
-
-  console.log('PlayerDetailed rendered');
 
   const baseImagePath =
     activeTrack?.picture ?

@@ -13,7 +13,6 @@ import {
 } from '@/entities/track';
 import { API_URL } from '@/shared/consts';
 import { PlayerNameContainer } from '../PlayerNameContainer';
-import { Portal } from '@/shared/ui';
 import openPlayerBtn from './assets/openPlayerBtn.svg';
 import { TrackLikeContainer } from '@/features/TrackLikeContainer';
 import styles from './Player.module.scss';
@@ -27,9 +26,7 @@ export const Player = () => {
   const { mutate: addListen } = useAddListenTrack();
 
   const handleOpen = () => {
-    console.log('Before toggle, isOpenPlayer:', isOpenPlayer);
     setIsOpenPlayer(!isOpenPlayer);
-    console.log('After toggle, isOpenPlayer:', !isOpenPlayer);
   };
 
   useEffect(() => {
@@ -67,13 +64,14 @@ export const Player = () => {
     }
   }, [activeTrack?.coverColor]);
 
-  console.log('Player rendered, isOpenPlayer:', isOpenPlayer);
-
   if (!activeTrack) return null;
 
   return (
     <>
-      <div className={styles.container}>
+      <div
+        className={styles.container}
+        onClick={handleOpen}
+      >
         <TrackProgress />
         <div className={styles.main_container}>
           <div className={styles.main_info_container}>
@@ -117,7 +115,6 @@ export const Player = () => {
             </div>
           </div>
         </div>
-        <button onClick={handleOpen}>Toggle PlayerDetailed</button>
       </div>
       <CSSTransition
         nodeRef={playerDetailedRef}
@@ -130,12 +127,6 @@ export const Player = () => {
           exitActive: styles['player-detailed-exit-active'],
         }}
         unmountOnExit
-        onEnter={() => console.log('CSSTransition: onEnter')}
-        onEntering={() => console.log('CSSTransition: onEntering')}
-        onEntered={() => console.log('CSSTransition: onEntered')}
-        onExit={() => console.log('CSSTransition: onExit')}
-        onExiting={() => console.log('CSSTransition: onExiting')}
-        onExited={() => console.log('CSSTransition: onExited')}
       >
         <PlayerDetailed ref={playerDetailedRef} />
       </CSSTransition>

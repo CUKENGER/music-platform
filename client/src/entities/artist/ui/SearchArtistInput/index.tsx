@@ -34,9 +34,8 @@ export const SearchArtistInput = ({
   };
 
   return (
-    <div>
+    <div className={styles.container}>
       {label && <UILabel>{label}</UILabel>}
-
       <UIInput
         value={artist}
         onChange={handleArtistChange}

@@ -1,23 +1,45 @@
-import { ForwardedRef, forwardRef } from 'react';
+import { ForwardedRef, forwardRef, useEffect, useRef, useState } from 'react';
 import styles from './ArtistItem.module.scss';
 import { Link } from 'react-router-dom';
 import { IArtist } from '../../types/Artist';
 import { API_URL } from '@/shared/consts';
 import { LikeIcon, ListensContainer } from '@/shared/ui';
+import cn from 'classnames';
 
 interface ArtistItemProps {
   item: IArtist;
   itemList: IArtist[];
+  index?: number;
+  style?: React.CSSProperties;
 }
 
 const ArtistItemComponent = (
-  { item: artist }: ArtistItemProps,
+  { item: artist, index, style }: ArtistItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(
+      () => {
+        setIsVisible(true);
+      },
+      (index || 0) * 50,
+    );
+    return () => clearTimeout(timer);
+  }, [index]);
   return (
     <div
-      ref={ref}
-      className={styles.ArtistItem}
+      ref={(node) => {
+        containerRef.current = node;
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+      }}
+      className={cn(styles.ArtistItem, isVisible && styles.visible)}
+      style={style}
     >
       <Link to={`${artist.id}`}>
         <div className={styles.cover}>

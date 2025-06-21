@@ -55,7 +55,7 @@ export class ArtistService {
         orderBy = { id: 'asc' };
     }
 
-    await this.artistRepository.getByPageCountOrder(offset, limit, orderBy);
+    return await this.artistRepository.getByPageCountOrder(offset, limit, orderBy);
   }
 
   async listen(id: number) {

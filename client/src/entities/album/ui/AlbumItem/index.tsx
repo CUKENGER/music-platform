@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, useState } from 'react';
+import { ForwardedRef, forwardRef, useEffect, useRef, useState } from 'react';
 import styles from './AlbumItem.module.scss';
 import { Link } from 'react-router-dom';
 import { useDeleteAlbum } from '../../api/useAlbumApi';
@@ -8,17 +8,25 @@ import { API_URL } from '@/shared/consts';
 import { useModal } from '@/shared/hooks';
 import { MenuItem } from '@/shared/types';
 import { Menu, ModalContainer } from '@/shared/ui';
+import cn from 'classnames';
 
 interface AlbumItemProps {
   item: IAlbum;
   itemList: IAlbum[];
+  index?: number;
+  style?: React.CSSProperties;
 }
 
-const AlbumItemComponent = ({ item: album }: AlbumItemProps, ref: ForwardedRef<HTMLDivElement>) => {
+const AlbumItemComponent = (
+  { item: album, index, style }: AlbumItemProps,
+  ref: ForwardedRef<HTMLDivElement>,
+) => {
   const [isHover, setIsHover] = useState(false);
   const { hideModal, modal, showModal } = useModal();
   const { isAdmin } = useUserStore();
   const { mutate: deleteAlbum } = useDeleteAlbum();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   const handleDelete = () => {
     deleteAlbum(album.id, {
@@ -30,15 +38,32 @@ const AlbumItemComponent = ({ item: album }: AlbumItemProps, ref: ForwardedRef<H
       },
     });
   };
-
   const items: MenuItem[] = [{ text: 'Удалить', onClick: handleDelete }];
+
+  useEffect(() => {
+    const timer = setTimeout(
+      () => {
+        setIsVisible(true);
+      },
+      (index || 0) * 50,
+    );
+    return () => clearTimeout(timer);
+  }, [index]);
 
   return (
     <div
-      ref={ref}
+      ref={(node) => {
+        containerRef.current = node;
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+      }}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      className={styles.AlbumItem}
+      className={cn(styles.AlbumItem, isVisible && styles.visible)}
+      style={style}
     >
       <Link to={`/albums/${album.id}`}>
         <div className={styles.cover}>

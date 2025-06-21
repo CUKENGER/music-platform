@@ -1,5 +1,5 @@
 import styles from './EntityList.module.scss';
-import { useCallback, useRef } from 'react';
+import { CSSProperties, useCallback, useRef } from 'react';
 import React from 'react';
 import { InfiniteData, UseInfiniteQueryResult } from '@tanstack/react-query';
 import { useSelectFilterStore } from '@/shared/model';
@@ -9,6 +9,8 @@ import { PageHeader } from '@/widgets/PageHeader';
 interface EntityItemProps<T> {
   item: T;
   itemList: T[];
+  index?: number;
+  style?: CSSProperties;
 }
 
 interface EntityListProps<T> {
@@ -57,32 +59,29 @@ export const EntityList = <T extends { id: number }>({
       <PageHeader toCreate={toCreate} />
       <div className={className}>
         {data ?
-          data?.pages.map((page, index) => (
-            <React.Fragment key={index}>
-              {page ?
-                page.map((item, i) => {
-                  if (page.length === i + 1) {
-                    return (
-                      <EntityItem
-                        ref={lastItemRef}
-                        item={item}
-                        itemList={allItems}
-                        key={item.id}
-                      />
-                    );
-                  } else {
-                    return (
-                      <EntityItem
-                        item={item}
-                        itemList={allItems}
-                        key={item.id}
-                      />
-                    );
-                  }
-                })
-              : <p className={styles.NotFound}>Ничего не найдено</p>}
-            </React.Fragment>
-          ))
+          data.pages.map((page, pageIndex) =>
+            page ?
+              <React.Fragment key={pageIndex}>
+                {page.map((item, itemIndex) => {
+                  const globalIndex =
+                    data.pages.slice(0, pageIndex).reduce((acc, p) => acc + (p ? p.length : 0), 0) +
+                    itemIndex;
+                  return (
+                    <EntityItem
+                      ref={page.length === itemIndex + 1 ? lastItemRef : null}
+                      item={item}
+                      itemList={allItems}
+                      key={item.id}
+                      index={globalIndex}
+                      style={
+                        { '--animation-delay': `${globalIndex * 0.01}s` } as React.CSSProperties
+                      }
+                    />
+                  );
+                })}
+              </React.Fragment>
+            : <p className={styles.NotFound}>Ничего не найдено</p>,
+          )
         : <p className={styles.NotFound}>Ничего не найдено</p>}
         <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>
       </div>

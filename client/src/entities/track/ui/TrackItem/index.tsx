@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo, useCallback } from 'react';
+import { ForwardedRef, forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react';
 import styles from './TrackItem.module.scss';
 import { ITrack } from '../../types/Track';
 import { DeleteContainer, ModalContainer, ListensContainer } from '@/shared/ui';
@@ -16,18 +16,27 @@ interface TrackItemProps {
   itemList: ITrack[];
   needDeleteIcon?: boolean;
   needClick?: boolean;
+  index?: number;
+  style?: React.CSSProperties;
 }
 
 const TrackItemComponent = (
-  { item: track, itemList: trackList, needDeleteIcon = true, needClick = true }: TrackItemProps,
+  {
+    item: track,
+    itemList: trackList,
+    needDeleteIcon = true,
+    needClick = true,
+    style,
+    index,
+  }: TrackItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
   const activeTrackId = usePlayerStore((state) => state.activeTrack?.id);
   const { showModal, modal, hideModal } = useModal();
-
   const { mutate: deleteTrack } = useDeleteTrack();
-
   const { play } = usePlayTrack(track, trackList);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   const handleDelete = useCallback(
     async (e: React.MouseEvent<HTMLDivElement>) => {
@@ -39,14 +48,37 @@ const TrackItemComponent = (
     },
     [deleteTrack, showModal, track.id],
   );
+
   const isAdmin = useUserStore((state) => state.isAdmin);
   const isActive = track.id === activeTrackId;
 
+  useEffect(() => {
+    const timer = setTimeout(
+      () => {
+        setIsVisible(true);
+      },
+      (index || 0) * 50,
+    );
+    return () => clearTimeout(timer);
+  }, [index]);
+
   return (
     <div
-      ref={ref}
-      className={cn(styles.container, styles.visible, isActive && styles.container_active)}
+      ref={(node) => {
+        containerRef.current = node;
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+      }}
+      className={cn(
+        styles.container,
+        isVisible && styles.visible,
+        isActive && styles.container_active,
+      )}
       onClick={needClick ? play : undefined}
+      style={style}
     >
       <div className={styles.main_container}>
         <CoverContainer
