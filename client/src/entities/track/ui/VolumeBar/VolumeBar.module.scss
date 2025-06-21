@@ -1,6 +1,7 @@
-.input_volume {
-  cursor: pointer;
-  padding: 0;
+:root {
+  --height: 20px;
+  --white: #ffffff;
+  --black-lt: #333333;
 }
 
 .input_volume_container {
@@ -10,6 +11,7 @@
   column-gap: 10px;
   border-radius: 10px;
   width: 200px;
+  overflow: hidden; /* Предотвращаем артефакты */
 }
 
 .volume_icon {
@@ -21,24 +23,31 @@
   }
 }
 
-.input_volume:hover {
+.input_volume {
   cursor: pointer;
+  padding: 0;
+  width: 100%;
+  height: var(--height);
+  background: transparent;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  z-index: 1;
 }
 
 .input_volume[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 20px;
+  height: var(--height);
   background: transparent;
   outline: none;
-  position: relative;
-  transition: background 0.3s ease;
 }
 
 .input_volume[type='range']::-webkit-slider-runnable-track {
   width: 100%;
-  height: 20px;
+  height: var(--height);
   background: linear-gradient(
     to right,
     var(--black-lt) 0%,
@@ -47,50 +56,47 @@
     var(--white) 100%
   );
   border-radius: 10px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  transition: background 0.3s ease;
+  border: none;
+  position: relative;
+  box-sizing: border-box; /* Устраняем возможные отступы */
 }
 
 .input_volume[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 0;
   opacity: 0;
-  transition: background 0.1s ease;
-}
-
-.input_volume[type='range']::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(
-    to right,
-    var(--black-lt) 0%,
-    var(--black-lt) var(--value, 0%),
-    var(--white) var(--value, 0%),
-    var(--white) 100%
-  );
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-  transition: background 0.3s ease;
 }
 
 .input_volume[type='range']::-moz-range-track {
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(
-    to right,
-    var(--black-lt) 0%,
-    var(--black-lt) var(--value, 0%),
-    var(--white) var(--value, 0%),
-    var(--white) 100%
-  );
-  position: absolute;
+  width: 98%;
+  height: var(--height);
+  background: var(--white);
+  border-radius: 10px;
+  border: none;
+  box-sizing: border-box;
+}
+
+.input_volume[type='range']::-moz-range-progress {
+  background: var(--black-lt);
+  height: var(--height); /* Гарантируем ту же высоту */
+  border-radius: 10px;
+  border: none;
+  box-sizing: border-box;
+  position: relative;
   top: 0;
   left: 0;
-  z-index: 0;
-  transition: background 0.3s ease;
+  width: 100%; /* Убедимся, что прогресс заполняет трек */
+}
+
+.input_volume[type='range']::-moz-range-thumb {
+  width: 0;
+  height: 0;
+  border: none;
+  background: transparent;
+  visibility: hidden;
+  display: none;
 }
 
 @media (max-width: 700px) {

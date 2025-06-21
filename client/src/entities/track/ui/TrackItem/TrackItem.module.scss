@@ -1,11 +1,11 @@
 @keyframes slideUp {
   0% {
-    transform: translateY(10px);
+    transform: translateY(10px) translateZ(0);
     opacity: 0;
     visibility: hidden;
   }
   100% {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
     opacity: 1;
     visibility: visible;
   }
@@ -20,10 +20,13 @@
   padding: 0 10px;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(10px);
+  transform: translateY(10px) translateZ(0);
   border: 2px solid transparent;
   transition: background-color 0.3s ease-in-out;
   will-change: transform, opacity, visibility;
+  backface-visibility: hidden; /* Устраняем размытие */
+  -webkit-font-smoothing: antialiased; /* Улучшаем рендеринг текста */
+  filter: none;
 }
 
 .container_active {
