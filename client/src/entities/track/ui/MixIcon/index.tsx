@@ -5,10 +5,13 @@ import mixFillIcon from './assets/mixFillIcon.svg';
 import useActiveTrackListStore from '../../model/ActiveTrackListStore';
 import { ITrack } from '../../types/Track';
 import { mixTracks } from '../../model/mixTracks';
+import TrackSwitchManager from '../../model/TrackSwitchManager';
+import usePlayerStore from '../../model/PlayerStore';
 
 export const MixIcon = memo(() => {
   const activeTrackList = useActiveTrackListStore((state) => state.activeTrackList);
   const setActiveTrackList = useActiveTrackListStore((state) => state.setActiveTrackList);
+  const { activeTrack, setActiveTrack, setPlay } = usePlayerStore();
 
   const [state, setState] = useState({
     prevTrackList: null as ITrack[] | null,
@@ -24,11 +27,27 @@ export const MixIcon = memo(() => {
           const { isMix, prevTrackList } = prevState;
 
           if (isMix && prevTrackList) {
-            setTimeout(() => setActiveTrackList(prevTrackList), 0);
+            setTimeout(() => {
+              setActiveTrackList(prevTrackList);
+              TrackSwitchManager.setProps({
+                activeTrack,
+                activeTrackList: prevTrackList,
+                setActiveTrack,
+                setPlay,
+              });
+            }, 0);
             return { prevTrackList: null, isMix: false };
           } else {
             const mixedTrackList = !prevTrackList ? mixTracks(activeTrackList) : activeTrackList;
-            setTimeout(() => setActiveTrackList(mixedTrackList), 0);
+            setTimeout(() => {
+              setActiveTrackList(mixedTrackList);
+              TrackSwitchManager.setProps({
+                activeTrack,
+                activeTrackList: mixedTrackList,
+                setActiveTrack,
+                setPlay,
+              });
+            }, 0);
 
             return {
               prevTrackList: prevTrackList || activeTrackList,
@@ -38,7 +57,7 @@ export const MixIcon = memo(() => {
         });
       }
     },
-    [activeTrackList, setActiveTrackList],
+    [activeTrack, activeTrackList, setActiveTrack, setActiveTrackList, setPlay],
   );
 
   const currentIcon = useMemo(() => (state.isMix ? mixFillIcon : mixIcon), [state.isMix]);

@@ -1,8 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CSSProperties, useCallback, useEffect, useMemo, useState } from 'react';
 import audioManager from './AudioManager';
 import usePlayerStore from './PlayerStore';
 import useTrackTimeStore from './TrackTimeStore';
 import { throttle } from 'lodash';
+
+interface CustomCSSProperties extends CSSProperties {
+  '--value'?: string;
+}
 
 export const useTrackProgress = () => {
   const setPlay = usePlayerStore((state) => state.setPlay);
@@ -82,6 +86,7 @@ export const useTrackProgress = () => {
 
   const changeCurrentTime = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.stopPropagation();
       setIsSeeking(true);
       const newValue = Number(e.target.value);
       if (newValue >= 0 && newValue <= duration) {
@@ -99,8 +104,10 @@ export const useTrackProgress = () => {
   );
 
   const hoverTimeStyle = useMemo(() => ({ left: `${x - 13}px` }), [x]);
-  const inputDurationStyle = useMemo(
-    () => ({ '--value': duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }),
+  const inputDurationStyle = useMemo<CustomCSSProperties>(
+    () => ({
+      '--value': duration > 0 ? `${(currentTime / duration) * 100}%` : '0%',
+    }),
     [currentTime, duration],
   );
 

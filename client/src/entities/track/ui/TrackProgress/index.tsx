@@ -33,9 +33,19 @@ export const TrackProgress = memo(() => {
         style={{ width: `${(currentTime / duration) * 100}%` }}
       ></div>
       <input
-        onMouseOver={handleMouseOver}
-        onMouseLeave={handleMouseLeave}
-        onMouseMove={handleMouseMove}
+        onMouseOver={(e) => {
+          e.stopPropagation();
+          handleMouseOver(e);
+        }}
+        onMouseLeave={(e) => {
+          e.stopPropagation();
+          handleMouseLeave();
+        }}
+        onMouseMove={(e) => {
+          e.stopPropagation();
+          handleMouseMove(e);
+        }}
+        onClick={(e) => e.stopPropagation()}
         type="range"
         min={0}
         max={duration}

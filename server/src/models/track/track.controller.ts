@@ -31,6 +31,7 @@ import {
 } from '@nestjs/swagger';
 import { Track } from '@prisma/client';
 import { ApiError } from 'exceptions/api.error';
+import { Headers } from '@nestjs/common';
 
 @ApiTags('Tracks')
 @Controller('tracks')
@@ -167,9 +168,11 @@ export class TrackController {
 
   @Post(':id/listen')
   @ApiOperation({ summary: 'Добавление прослушивания к треку по id' })
-  async addListen(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    const authHeader = req.headers.get('authorization');
-
+  async addListen(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Headers('authorization') authHeader: string | undefined,
+  ) {
     if (!authHeader) {
       throw ApiError.UnauthorizedError();
     }
@@ -183,9 +186,11 @@ export class TrackController {
 
   @Post(':id/like')
   @ApiOperation({ summary: 'Добавление лайка к треку по id' })
-  addLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    const authHeader = req.headers.get('authorization');
-
+  addLike(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Headers('authorization') authHeader: string | undefined,
+  ) {
     if (!authHeader) {
       throw ApiError.UnauthorizedError();
     }
@@ -199,9 +204,11 @@ export class TrackController {
 
   @Delete(':id/like')
   @ApiOperation({ summary: 'Удаление лайка к треку по id' })
-  deleteLike(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    const authHeader = req.headers.get('authorization');
-
+  deleteLike(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Headers('authorization') authHeader: string | undefined,
+  ) {
     if (!authHeader) {
       throw ApiError.UnauthorizedError();
     }

@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import styles from './NavItems.module.scss';
+import classNames from 'classnames';
 
 interface NavItemsProps {
   selectedNav: 'text' | 'next' | 'related';
@@ -11,19 +12,25 @@ export const NavItems = memo(({ onNavChange, selectedNav }: NavItemsProps) => {
     <div className={styles.nav_bar}>
       <p
         onClick={() => onNavChange('next')}
-        className={`${styles.nav_item} ${selectedNav === 'next' && styles.nav_item_active}`}
+        className={classNames(styles.nav_item, {
+          [styles.nav_item_active]: selectedNav === 'next',
+        })}
       >
         Далее
       </p>
       <p
         onClick={() => onNavChange('text')}
-        className={`${styles.nav_item} ${selectedNav === 'text' && styles.nav_item_active}`}
+        className={classNames(styles.nav_item, {
+          [styles.nav_item_active]: selectedNav === 'text',
+        })}
       >
         Текст
       </p>
       <p
         onClick={() => onNavChange('related')}
-        className={`${styles.nav_item} ${selectedNav === 'related' && styles.nav_item_active}`}
+        className={classNames(styles.nav_item, {
+          [styles.nav_item_active]: selectedNav === 'related',
+        })}
       >
         Похожие
       </p>

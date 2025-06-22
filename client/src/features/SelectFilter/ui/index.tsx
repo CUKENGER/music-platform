@@ -14,13 +14,14 @@ export const SelectFilter = ({ options, className }: SelectFilterProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { selectedSort, setSelectedSort } = useSelectFilterStore();
   const ref = useRef<HTMLDivElement>(null);
-  const nodeRef = useRef<HTMLUListElement>(null); // Для CSSTransition
+  const nodeRef = useRef<HTMLUListElement>(null);
 
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);
   };
 
-  const handleSort = (sortType: string) => {
+  const handleSort = (event: React.MouseEvent<HTMLLIElement>, sortType: string) => {
+    event.stopPropagation();
     setSelectedSort(sortType);
     setIsOpen(false);
   };
@@ -70,7 +71,7 @@ export const SelectFilter = ({ options, className }: SelectFilterProps) => {
             <li
               key={option}
               className={styles.list_item}
-              onClick={() => handleSort(option)}
+              onClick={(event) => handleSort(event, option)}
             >
               {option}
             </li>

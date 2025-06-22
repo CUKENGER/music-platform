@@ -31,12 +31,15 @@ const TrackItemComponent = (
   }: TrackItemProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  const activeTrackId = usePlayerStore((state) => state.activeTrack?.id);
-  const { showModal, modal, hideModal } = useModal();
-  const { mutate: deleteTrack } = useDeleteTrack();
-  const { play } = usePlayTrack(track, trackList);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  const activeTrackId = usePlayerStore((state) => state.activeTrack?.id);
+
+  const { mutate: deleteTrack } = useDeleteTrack();
+
+  const { showModal, modal, hideModal } = useModal();
+  const { play } = usePlayTrack(track, trackList);
 
   const handleDelete = useCallback(
     async (e: React.MouseEvent<HTMLDivElement>) => {

@@ -1,9 +1,9 @@
 :root {
-  --height: 15px;
+  --progress-height: 15px;
 }
 
 .input_duration_container {
-  height: var(--height);
+  height: var(--progress-height);
   width: 100%;
   position: relative;
   background-color: var(--white);
@@ -13,10 +13,9 @@
   cursor: pointer;
   padding: 0;
   width: 100%;
-  height: var(--height);
+  height: var(--progress-height);
   background: transparent;
   outline: none;
-  /* position: relative; */
   -webkit-appearance: none;
   appearance: none;
   z-index: 3;
@@ -33,11 +32,10 @@
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: var(--height);
+  height: var(--progress-height);
   background: transparent;
   outline: none;
   position: relative;
-  // transition: background 1s ease;
 }
 
 .input_duration_fill {
@@ -58,7 +56,7 @@
   padding: 5px;
   border-radius: 5px;
   font-size: 12px;
-  bottom: var(--height);
+  bottom: var(--progress-height);
   pointer-events: none;
 }
 
@@ -78,6 +76,6 @@
 
 @media (max-width: 500px) {
   :root {
-    --height: 13px;
+    --progress-height: 13px;
   }
 }

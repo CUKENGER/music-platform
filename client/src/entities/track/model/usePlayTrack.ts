@@ -3,6 +3,7 @@ import { ITrack } from '../types/Track';
 import audioManager from './AudioManager';
 import usePlayerStore from './PlayerStore';
 import useActiveTrackListStore from './ActiveTrackListStore';
+import TrackSwitchManager from './TrackSwitchManager';
 
 export const usePlayTrack = (track: ITrack, trackList: ITrack[]) => {
   const { setActiveTrack, activeTrack, setPlay, setPause, pause } = usePlayerStore();
@@ -11,6 +12,13 @@ export const usePlayTrack = (track: ITrack, trackList: ITrack[]) => {
 
   const play = useCallback(async () => {
     const isSameTrack = activeTrack?.id === track.id;
+
+    TrackSwitchManager.setProps({
+      activeTrack: track,
+      activeTrackList: trackList,
+      setActiveTrack,
+      setPlay,
+    });
 
     if (isSameTrack) {
       if (!pause) {

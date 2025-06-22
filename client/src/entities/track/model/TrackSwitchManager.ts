@@ -26,12 +26,7 @@ class TrackSwitchManager {
   }
 
   private handleTrackEnded = () => {
-    console.log('TrackSwitchManager: Автоматическое переключение на следующий трек');
     if (this.props) {
-      console.log('TrackSwitchManager: Используемые props для переключения', {
-        activeTrack: this.props.activeTrack?.name,
-        activeTrackList: this.props.activeTrackList?.map((t) => t.name),
-      });
       this.switchTrack(true, this.props);
     } else {
       console.warn('TrackSwitchManager: Нет props для автоматического переключения');
@@ -39,15 +34,10 @@ class TrackSwitchManager {
   };
 
   public setProps(props: TrackSwitchManagerProps) {
-    console.log('TrackSwitchManager: Обновление props', {
-      activeTrack: props.activeTrack?.name,
-      activeTrackList: props.activeTrackList?.map((t) => t.name),
-    });
     this.props = { ...props };
   }
 
   public async switchTrack(isNext: boolean, props: TrackSwitchManagerProps): Promise<void> {
-    // Обновляем this.props перед переключением
     this.setProps(props);
 
     const { activeTrack, activeTrackList, setActiveTrack, setPlay } = props;
@@ -65,15 +55,16 @@ class TrackSwitchManager {
 
     const nextTrack = activeTrackList[nextIndex];
     if (nextTrack) {
-      console.log(
-        `TrackSwitchManager: Переключаем на трек ${nextTrack.name} (индекс: ${nextIndex})`,
-      );
       setActiveTrack(nextTrack);
+      this.setProps({
+        activeTrack: nextTrack,
+        activeTrackList,
+        setActiveTrack,
+        setPlay,
+      });
       try {
         const url = `/api/${nextTrack.audio}/master.m3u8`;
-        console.log(`TrackSwitchManager: Загружаем URL: ${url}`);
         await audioManager.loadHlsSource(url);
-        console.log(`TrackSwitchManager: Трек ${nextTrack.name} успешно загружен`);
         setPlay();
       } catch (err) {
         console.error('TrackSwitchManager: Ошибка воспроизведения:', err);

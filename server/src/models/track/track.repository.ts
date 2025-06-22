@@ -26,7 +26,7 @@ export class TrackRepository {
         picture: imagePath,
         artist: { connect: { id: artistId } },
         album: { connect: { id: albumId } },
-        coverColor,
+        coverColor: coverColor,
       },
     });
   }

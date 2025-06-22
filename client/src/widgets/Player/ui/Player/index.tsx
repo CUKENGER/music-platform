@@ -20,29 +20,30 @@ import { PlayerDetailed } from '@/widgets/PlayerDetailed';
 
 export const Player = () => {
   const playerDetailedRef = useRef<HTMLDivElement>(null);
-  const [hasListen, setHasListen] = useState(false);
+  const [listenedTracks, setListenedTracks] = useState<Map<number, boolean>>(new Map());
   const activeTrack = usePlayerStore((state) => state.activeTrack);
   const { isOpen: isOpenPlayer, setIsOpen: setIsOpenPlayer } = useOpenPlayerStore();
   const { mutate: addListen } = useAddListenTrack();
 
-  const handleOpen = () => {
+  const handleOpen = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
     setIsOpenPlayer(!isOpenPlayer);
   };
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>;
 
-    if (activeTrack?.id && !hasListen) {
+    if (activeTrack?.id && !listenedTracks.get(activeTrack.id)) {
       timeoutId = setTimeout(() => {
         addListen(activeTrack.id);
-        setHasListen(true);
+        setListenedTracks((prev) => new Map(prev).set(activeTrack.id, true));
       }, 30000);
     }
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [activeTrack?.id, hasListen, addListen]);
+  }, [activeTrack?.id, listenedTracks, addListen]);
 
   const hexToRgb = (hex: string) => {
     const r = parseInt(hex.slice(1, 3), 16);
@@ -104,7 +105,7 @@ export const Player = () => {
             <div
               onClick={(e) => {
                 e.stopPropagation();
-                handleOpen();
+                handleOpen(e);
               }}
             >
               <img
