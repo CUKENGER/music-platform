@@ -40,11 +40,13 @@ export const UserAvatar = () => {
   return (
     <div className={styles.user_container}>
       <div className={styles.main_container}>
-        <div className={styles.user_avatar}></div>
-        <div className={styles.name_container}>
-          <p onClick={() => navigate(PRIVATE_ROUTES.PROFILE + `/${user?.id}`)}>
-            {isLoading ? 'Loading...' : user?.username}
-          </p>
+        <div className={styles.main_name_container}>
+          <div className={styles.user_avatar}></div>
+          <div className={styles.name_container}>
+            <p onClick={() => navigate(PRIVATE_ROUTES.PROFILE + `/${user?.id}`)}>
+              {isLoading ? 'Loading...' : user?.username}
+            </p>
+          </div>
         </div>
         <div className={styles.menu}>
           <Menu items={items} />

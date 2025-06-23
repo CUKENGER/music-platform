@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './Menu.module.scss';
-import dots from './dots_gray.svg';
-import dots_active from './dots_active.svg';
 import { MenuItem } from '@/shared/types';
+import { MenuIcon } from './MenuIcon';
+import cn from 'classnames';
 
 interface MenuProps {
   items: MenuItem[];
@@ -10,7 +10,6 @@ interface MenuProps {
 
 export const Menu = ({ items }: MenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isHover, setIsHover] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = () => {
@@ -46,13 +45,12 @@ export const Menu = ({ items }: MenuProps) => {
       className={styles.menu}
       ref={menuRef}
     >
-      <img
-        src={isHover ? dots_active : dots}
-        onMouseEnter={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
+      <div
         onClick={toggleMenu}
-        className={styles.menu_btn}
-      />
+        className={cn(styles.menu_btn, isOpen && styles.menu_btn_active)}
+      >
+        <MenuIcon className={styles.menu_icon} />
+      </div>
       {isOpen && (
         <ul className={styles.menu_list}>
           {items.map((item, index) => (

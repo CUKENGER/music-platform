@@ -6,6 +6,29 @@
 .menu_btn {
   cursor: pointer;
   user-select: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: var(--black-lt);
+
+    .menu_icon {
+      color: #dddddd;
+    }
+  }
+}
+
+.menu_btn_active {
+  .menu_icon {
+    color: #dddddd;
+  }
+  background-color: var(--black-lt);
+}
+
+.menu_icon {
+  color: #737272;
+  transition: color 0.3s ease-in-out;
 }
 
 .menu_list {

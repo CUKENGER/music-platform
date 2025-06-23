@@ -5,8 +5,11 @@
   align-items: center;
   column-gap: 5px;
   padding-bottom: 5px;
-  border-bottom: 1px solid gray;
+  border: 1px solid gray;
+  border-radius: 10px;
   justify-content: space-between;
+  background-color: #313030;
+  padding: 10px;
   width: 100%;
 }
 
@@ -23,10 +26,16 @@
 }
 
 .main_container {
-  display: grid;
+  display: flex;
+  justify-content: space-between;
   width: 100%;
-  grid-template-columns: 30px 1fr 30px;
   align-items: center;
+}
+
+.main_name_container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .name_container {
@@ -37,6 +46,7 @@
   display: flex;
   justify-content: center;
   max-width: 125px;
+  transition: color 0.3s ease-in-out;
 
   p {
     overflow: hidden;
