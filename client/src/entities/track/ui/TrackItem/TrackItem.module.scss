@@ -45,6 +45,8 @@
   align-items: center;
   column-gap: 15px;
   padding: 5px 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .name_container {
