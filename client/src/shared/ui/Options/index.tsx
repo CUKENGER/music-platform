@@ -5,16 +5,22 @@ interface OptionsProps {
   options: string[];
   currentOption?: string;
   setOption: (option: string) => void;
+  label?: string;
 }
 
-export const Options = memo(({ options, currentOption, setOption }: OptionsProps) => {
+export const Options = memo(({ options, currentOption, setOption, label }: OptionsProps) => {
   const [fields, setFields] = useState(options);
   const [selectedOption, setSelectedOption] = useState<string | null>(currentOption ?? null);
+  const [isExiting, setIsExiting] = useState(false);
 
   const handleOptionClick = (option: string) => {
     if (selectedOption === option) {
-      setFields((prevOptions) => prevOptions.filter((item) => item !== option));
-      setSelectedOption(null);
+      setIsExiting(true);
+      setTimeout(() => {
+        setFields(options);
+        setSelectedOption(null);
+        setIsExiting(false);
+      }, 300);
     } else {
       if (selectedOption) {
         setFields((prevOptions) => [...prevOptions, selectedOption]);
@@ -27,12 +33,13 @@ export const Options = memo(({ options, currentOption, setOption }: OptionsProps
 
   return (
     <div className={styles.checkInput}>
+      {label && <p className={styles.label}>{label}</p>}
       <div className={styles.selectedOptions}>
         {selectedOption && (
           <div
             key={selectedOption}
             onClick={() => handleOptionClick(selectedOption)}
-            className={styles.selectedOption}
+            className={`${styles.selectedOption} ${isExiting ? styles.exiting : ''}`}
           >
             <span className={styles.option_text}>{selectedOption}</span>
           </div>
@@ -42,7 +49,7 @@ export const Options = memo(({ options, currentOption, setOption }: OptionsProps
         {fields.map((option, i) => (
           <li
             key={option + i}
-            className={styles.option}
+            className={`${styles.option} ${selectedOption === option ? styles.selected : ''}`}
             onClick={() => handleOptionClick(option)}
           >
             {option}

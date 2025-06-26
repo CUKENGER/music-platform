@@ -19,6 +19,7 @@ export const CreateAlbumForm = () => {
     fields,
     addTrack,
     reorderTracks,
+    removeTrack,
   } = useCreateAlbumForm();
 
   return (
@@ -27,7 +28,10 @@ export const CreateAlbumForm = () => {
         className={styles.Form}
         onSubmit={onSubmit}
       >
-        <Link to={PRIVATE_ROUTES.ALBUMS}>
+        <Link
+          to={PRIVATE_ROUTES.ALBUMS}
+          className={styles.link}
+        >
           <Btn>Назад</Btn>
         </Link>
         <AlbumFormInputs />
@@ -35,6 +39,7 @@ export const CreateAlbumForm = () => {
           tracks={fields}
           addTrack={addTrack}
           reorderTracks={reorderTracks}
+          removeTrack={removeTrack}
         />
         <Btn
           isLoading={isPending}

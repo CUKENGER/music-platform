@@ -3,15 +3,63 @@
   flex-direction: column;
   gap: 10px;
   margin-top: 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .droppable {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  min-height: 100px;
 }
 
 .draggable {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: grab;
+  position: relative;
+}
+
+.draggable:active {
+  cursor: grabbing;
+}
+
+.draggableItem {
+  width: 100%;
+  cursor: grab;
+  transition: none;
+}
+
+.draggableItem:active {
+  cursor: grabbing;
+}
+
+.adding {
+  animation: slideIn 0.3s ease forwards;
+}
+
+.removing {
+  animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

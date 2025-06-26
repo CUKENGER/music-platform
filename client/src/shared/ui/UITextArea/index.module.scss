@@ -11,6 +11,7 @@
   width: 100%;
   height: 100%;
   padding: 15px;
+  padding-left: 10px;
   padding-right: 50px;
   border-radius: 10px;
   outline: none;
@@ -18,16 +19,40 @@
   border: none;
   outline: none;
   color: var(--text);
-  max-height: 300px;
+  max-height: 200px;
   field-sizing: content;
   min-height: 5lh;
   background-color: var(--black-lt);
-  font-family: 'Roboto', sans-serif;
-    font-size: 14px;
+  font-family: 'Inter';
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  pointer-events: auto;
+  transition: all 0.3s ease-in-out;
 
   &::placeholder {
-    font-family: 'Roboto';
+    font-family: 'Inter';
     font-size: 14px;
+    font-weight: 600;
+    color: var(--gray);
+  }
+
+  &:focus {
+    outline: none;
+    border: 1px solid var(--prm);
+    box-shadow: 0 0 5px rgb(255, 27, 47, 0.5);
+  }
+
+  &.error {
+    border-color: var(--prm);
+  }
+
+  &:hover {
+    background-color: #474747;
+  }
+
+  &:invalid {
+    border-color: var(--prm);
   }
 }
 

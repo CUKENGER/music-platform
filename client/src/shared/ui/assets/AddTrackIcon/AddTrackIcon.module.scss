@@ -4,4 +4,21 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+
+  &:hover {
+    .plusBtn_icon {
+      color: var(--prm);
+    }
+  }
+}
+
+.plusBtn_icon {
+  width: 35px;
+  height: 35px;
+  color: #3e3e3e;
+  transition: color 0.3s ease-in-out;
+
+  &:hover {
+    color: var(--prm);
+  }
 }

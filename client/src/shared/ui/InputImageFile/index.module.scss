@@ -22,6 +22,11 @@
   width: 100%;
   height: 100%;
   position: relative;
+  transition: box-shadow 0.3s ease-in-out;
+
+  &:hover{
+    box-shadow: 0 4px 8px rgba(61, 0, 0, 0.33); 
+  }
 }
 
 .uploadPicture {

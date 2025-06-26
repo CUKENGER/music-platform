@@ -1,19 +1,32 @@
-
 .TrackForm {
   width: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background-color: var(--black-lt);
+  background-color: var(--black-dk);
   border-radius: 10px;
   padding: 5px;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.inputs_container {
+  display: flex;
+  row-gap: 5px;
+  align-items: center;
+  width: 100%;
+}
+
+.audio_container {
+  display: flex;
+  row-gap: 5px;
+  width: 100%;
 }
 
 .textInputContainer {
   display: flex;
   flex-direction: column;
   row-gap: 5px;
-  width: 50%;
+  width: 100%;
 }
 
 .InputAudio {
@@ -21,7 +34,7 @@
 }
 
 .inputAudio_container {
-  width: 50%;
+  width: 100%;
   display: flex;
   justify-content: center;
 }
@@ -40,26 +53,40 @@
   height: 100%;
   position: relative;
   word-wrap: break-word;
-  word-break: break-all;
   overflow-wrap: break-word;
   white-space: normal;
   flex-wrap: wrap;
-}
+  transition: box-shadow 0.3s ease-in-out;
 
-.invalid {
-  background-color: var(--black-lt);
-  border: 2px solid var(--prm);
+  &:hover {
+    box-shadow: 0 10px 20px rgba(128, 0, 0, 0.33);
+  }
 }
 
 .minusBtn {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
 
-  img {
-    width: 100%;
-    height: 100%;
+.minusBtn_icon {
+  width: 100%;
+  height: 100%;
+  color: #3e3e3e;
+  transition: color 0.3s ease-in-out;
+
+  &:hover {
+    color: var(--prm);
   }
+}
+
+.empty_minusBtn {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  margin-right: 10px;
 }
 
 .textarea {
@@ -82,6 +109,36 @@
   padding-right: 20px;
 }
 
+@media (max-width: 900px) {
+  .TrackForm {
+    justify-content: baseline;
+    align-items: baseline;
+    flex-direction: column;
+    row-gap: 8px;
+  }
+
+  .inputs_container {
+    justify-content: start;
+  }
+
+  .audio_container {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .LabelAudio {
+    width: 100%;
+  }
+
+  .empty_minusBtn {
+    width: 0;
+    height: 0;
+    flex-shrink: 0;
+  }
+}
+
 @media (max-width: 700px) {
   .LabelAudio,
   .label_input {
@@ -93,34 +150,5 @@
   .LabelAudio,
   .label_input {
     font-size: 11px;
-  }
-
-  .LabelAudio {
-    width: 90%;
-  }
-
-  .index {
-    padding: 5px;
-  }
-}
-
-@media (max-width: 430px) {
-  .TrackForm {
-    justify-content: baseline;
-    align-items: baseline;
-    flex-direction: column;
-    row-gap: 8px;
-  }
-
-  .index {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .textInputContainer,
-  .inputAudio_container {
-    width: 100%;
   }
 }

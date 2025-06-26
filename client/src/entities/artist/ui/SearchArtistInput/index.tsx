@@ -42,6 +42,7 @@ export const SearchArtistInput = ({
         className={`${styles.input} ${searchArtists && searchArtists.length > 0 && showResults ? styles.input_active : ''}`}
         {...inputProps}
       />
+      <div></div>
       {showResults && searchArtists && searchArtists.length > 0 && (
         <div className={styles.existing_artists}>
           {searchArtists.map((artist) => (

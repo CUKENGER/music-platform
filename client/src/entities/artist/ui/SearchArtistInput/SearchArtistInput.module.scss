@@ -5,14 +5,19 @@
 }
 
 .input {
-  border: none;
+  border: 1px solid transparent;
 
   &:focus-within,
   &:focus-visible,
   &:focus,
   &:hover {
-    border: none;
     outline: none;
+  }
+
+  &:focus {
+    outline: none;
+    border: 1px solid var(--prm);
+    box-shadow: 0 0 5px rgb(255, 27, 47, 0.5);
   }
 }
 

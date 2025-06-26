@@ -1,5 +1,4 @@
 import styles from './MainInfoInputs.module.scss';
-import Flatpickr from 'react-flatpickr';
 import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 import { IAlbum } from '../../types/Album';
 import { InputFile, Options, UITextAreaField, UITextField } from '@/shared/ui';

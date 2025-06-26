@@ -1,6 +1,6 @@
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import styles from './AddTrackIcon.module.scss';
-import plusBtn from './plusBtnBg.svg';
+import { PlusBtnIcon } from './PlusBtnIcon';
 
 interface AddTrackIconProps {
   onClick: (e: React.MouseEvent) => void;
@@ -13,7 +13,7 @@ export const AddTrackIcon = ({ onClick }: AddTrackIconProps) => {
       onClick={onClick}
       data-tooltip-id="addTrackFormButton"
     >
-      <img src={plusBtn} />
+      <PlusBtnIcon className={styles.plusBtn_icon} />
       <ReactTooltip
         id="addTrackFormButton"
         place="top"
