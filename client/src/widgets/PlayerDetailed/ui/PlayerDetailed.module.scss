@@ -1,4 +1,4 @@
-@import '../../../app/index.scss';
+@use '../../../app/index.scss' as *;
 
 /* CSS-переменные для размеров и отступов */
 :root {
