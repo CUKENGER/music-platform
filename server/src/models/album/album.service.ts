@@ -113,8 +113,7 @@ export class AlbumService {
   }) {
     try {
       console.log('get All in service');
-      const albums = await this.albumRepository.getAll({ page, count, sortBy });
-      return albums;
+      return await this.albumRepository.getAll({ page, count, sortBy });
     } catch (e) {
       this.logger.error('Error service', e);
       throw e;

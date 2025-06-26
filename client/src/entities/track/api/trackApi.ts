@@ -2,7 +2,12 @@ import { apiRequest, axiosInstance } from '@/shared/api';
 import axios from 'axios';
 import { CreateTrackDto, ITrack } from '../types/Track';
 
-export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<ITrack[]> => {
+interface GetAllTrackResponse {
+  data: ITrack[];
+  hasNextPage: boolean;
+}
+
+export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<GetAllTrackResponse> => {
   try {
     const response = await axiosInstance.get('tracks', {
       params: {
@@ -11,7 +16,10 @@ export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<ITra
         sortBy: sortBy,
       },
     });
-    return response.data;
+    return {
+      data: response.data.data,
+      hasNextPage: response.data.hasNextPage,
+    };
   } catch (e) {
     if (axios.isAxiosError(e)) {
       throw e;

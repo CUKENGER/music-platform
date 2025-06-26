@@ -15,11 +15,16 @@ export const useGetAllArtists = (sortBy: string) => {
     queryKey: ['artists', sortBy],
     queryFn: ({ pageParam }) => getAll({ pageParam, sortBy }),
     getNextPageParam: (lastPage, pages) => {
-      return lastPage.length ? pages.length : undefined;
+      if (lastPage.hasNextPage) {
+        return pages.length;
+      }
+      return undefined;
     },
     initialPageParam: 0,
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 };
 

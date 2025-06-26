@@ -20,7 +20,10 @@ export const useGetAllAlbums = (sortBy: string) => {
     queryKey: ['albums', sortBy],
     queryFn: ({ pageParam }) => getAll({ pageParam, sortBy }),
     getNextPageParam: (lastPage, pages) => {
-      return lastPage.length ? pages.length : undefined;
+      if (lastPage.hasNextPage) {
+        return pages.length;
+      }
+      return undefined;
     },
     initialPageParam: 0,
     placeholderData: (prev) => prev,

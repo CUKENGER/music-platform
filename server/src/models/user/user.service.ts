@@ -64,6 +64,9 @@ export class UserService {
       if (error.name === 'TokenExpiredError' || error.name === 'JsonWebTokenError') {
         throw ApiError.UnauthorizedError();
       }
+      if (error instanceof NotFoundException) {
+        throw error; // 404
+      }
       throw ApiError.InternalServerError('Ошибка при поиске пользователя', error);
     }
   }

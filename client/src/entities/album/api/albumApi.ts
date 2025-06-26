@@ -3,16 +3,25 @@ import { CreateCommentDto, IComment } from '@/entities/comment/types/Comment';
 import { apiRequest, axiosInstance } from '@/shared/api';
 import axios from 'axios';
 
-export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<IAlbum[]> => {
+interface GetAllAlbumResponse {
+  data: IAlbum[];
+  hasNextPage: boolean;
+}
+
+export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<GetAllAlbumResponse> => {
   try {
-    const response = await axiosInstance.get('albums', {
+    const response = await axiosInstance.get<GetAllAlbumResponse>('albums', {
       params: {
         page: pageParam,
         count: 20,
         sortBy: sortBy,
       },
     });
-    return response.data;
+    console.log('response.data', response.data);
+    return {
+      data: response.data.data,
+      hasNextPage: response.data.hasNextPage,
+    };
   } catch (e) {
     if (axios.isAxiosError(e)) {
       throw e;
@@ -132,7 +141,7 @@ export const updateAlbum = async (
     fd.append('description', albumInfo.description);
     fd.append('releaseDate', albumInfo.releaseDate);
 
-    albumInfo.tracks.forEach((track, index) => {
+    albumInfo.tracks?.forEach((track, index) => {
       fd.append(`tracks[${index}][name]`, track.name);
       fd.append(`tracks[${index}][text]`, track.text);
       fd.append(`tracks[${index}][isNew]`, String(track?.isNew));

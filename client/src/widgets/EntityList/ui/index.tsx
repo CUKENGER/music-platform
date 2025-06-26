@@ -17,7 +17,9 @@ interface EntityListProps<T> {
   EntityItem: React.ForwardRefExoticComponent<
     React.RefAttributes<HTMLDivElement> & EntityItemProps<T>
   >;
-  getAll: (sortBy: string) => UseInfiniteQueryResult<InfiniteData<T[]>, unknown>;
+  getAll: (
+    sortBy: string,
+  ) => UseInfiniteQueryResult<InfiniteData<{ data: T[]; hasNextPage: boolean }>, unknown>;
   toCreate: string;
   className: string;
 }
@@ -52,7 +54,7 @@ export const EntityList = <T extends { id: number }>({
     return <Loader />;
   }
 
-  const allItems = data?.pages.flat() || [];
+  const allItems = data?.pages.flatMap((page) => page.data) || [];
 
   return (
     <div className={styles.EntityList}>
@@ -60,15 +62,16 @@ export const EntityList = <T extends { id: number }>({
       <div className={className}>
         {data ?
           data.pages.map((page, pageIndex) =>
-            page ?
+            page.data ?
               <React.Fragment key={pageIndex}>
-                {page.map((item, itemIndex) => {
+                {page.data.map((item, itemIndex) => {
                   const globalIndex =
-                    data.pages.slice(0, pageIndex).reduce((acc, p) => acc + (p ? p.length : 0), 0) +
-                    itemIndex;
+                    data.pages
+                      .slice(0, pageIndex)
+                      .reduce((acc, p) => acc + (p ? p.data.length : 0), 0) + itemIndex;
                   return (
                     <EntityItem
-                      ref={page.length === itemIndex + 1 ? lastItemRef : null}
+                      ref={page.data.length === itemIndex + 1 ? lastItemRef : null}
                       item={item}
                       itemList={allItems}
                       key={item.id}
@@ -80,7 +83,12 @@ export const EntityList = <T extends { id: number }>({
                   );
                 })}
               </React.Fragment>
-            : <p className={styles.NotFound}>Ничего не найдено</p>,
+            : <p
+                key={pageIndex}
+                className={styles.NotFound}
+              >
+                Ничего не найдено
+              </p>,
           )
         : <p className={styles.NotFound}>Ничего не найдено</p>}
         <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>

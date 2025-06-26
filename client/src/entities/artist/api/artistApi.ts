@@ -2,7 +2,12 @@ import { axiosInstance } from '@/shared/api';
 import { CreateArtistDto, IArtist } from '../types/Artist';
 import axios from 'axios';
 
-export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<IArtist[]> => {
+interface GetAllArtistResponse {
+  data: IArtist[];
+  hasNextPage: boolean;
+}
+
+export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<GetAllArtistResponse> => {
   try {
     const response = await axiosInstance.get('artists', {
       params: {
@@ -11,7 +16,10 @@ export const getAll = async ({ pageParam = 0, sortBy = 'Все' }): Promise<IArt
         sortBy: sortBy,
       },
     });
-    return response.data;
+    return {
+      data: response.data.data,
+      hasNextPage: response.data.hasNextPage,
+    };
   } catch (e) {
     if (axios.isAxiosError(e)) {
       throw e;

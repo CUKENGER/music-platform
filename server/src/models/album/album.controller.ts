@@ -207,8 +207,7 @@ export class AlbumController {
     @Query('sortBy') sortBy: string = 'Все',
   ) {
     try {
-      const result = await this.albumService.getAll({ page, count, sortBy });
-      return result;
+      return await this.albumService.getAll({ page, count, sortBy });
     } catch (e) {
       this.logger.error(`[AlbumController] Error in getAll: ${e?.message || e}`);
       throw e;

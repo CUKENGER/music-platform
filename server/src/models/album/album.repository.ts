@@ -75,21 +75,35 @@ export class AlbumRepository {
     sortBy: string;
   }) {
     try {
-      const where: Prisma.AlbumWhereInput = {};
-      if (sortBy !== 'Все') {
-        where.type = sortBy as AlbumType;
+      let orderBy: Record<string, 'asc' | 'desc'> = {};
+      switch (sortBy) {
+        case 'Все':
+          orderBy = { id: 'desc' };
+          break;
+        case 'По алфавиту':
+          orderBy = { name: 'asc' };
+          break;
+        case 'Популярные':
+          orderBy = { listens: 'desc' };
+          break;
+        default:
+          orderBy = { id: 'asc' };
       }
       const albums = await this.prisma.album.findMany({
-        where,
         skip: page * count,
-        take: count,
-        orderBy: { createdAt: 'desc' },
+        take: count + 1,
+        orderBy: orderBy,
         include: {
           artist: { select: { id: true, name: true } },
           tracks: { select: { id: true, name: true, text: true, audio: true } },
         },
       });
-      return albums;
+
+      const hasNextPage = albums.length > count;
+      return {
+        data: albums.slice(0, count),
+        hasNextPage,
+      };
     } catch (e) {
       console.error('Error repository', e);
       throw e;

@@ -83,7 +83,7 @@ export class ArtistRepository {
     limit: number,
     orderBy: Record<string, 'asc' | 'desc'>,
   ) {
-    return await this.prisma.artist.findMany({
+    const artists = await this.prisma.artist.findMany({
       skip: offset,
       take: limit,
       orderBy: orderBy,
@@ -95,6 +95,11 @@ export class ArtistRepository {
         featuredTracks: true,
       },
     });
+    const hasNextPage = artists.length > limit;
+    return {
+      data: artists.slice(0, limit),
+      hasNextPage,
+    };
   }
 
   async updateListen(id: number, artist: Artist): Promise<Artist> {

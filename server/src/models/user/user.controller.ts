@@ -20,6 +20,7 @@ import { Roles } from 'models/auth/rolesAuth.decorator';
 import { Logger } from 'nestjs-pino';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
+import { ApiError } from 'exceptions/api.error';
 
 @ApiTags('Users')
 @Controller('user')
@@ -52,6 +53,9 @@ export class UserController {
   })
   getByToken(@Headers('Authorization') authHeader: string) {
     const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw ApiError.UnauthorizedError();
+    }
     return this.userService.getByToken(token);
   }
 

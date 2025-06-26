@@ -188,7 +188,6 @@ export class TrackController {
   @ApiOperation({ summary: 'Добавление лайка к треку по id' })
   addLike(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: Request,
     @Headers('authorization') authHeader: string | undefined,
   ) {
     if (!authHeader) {
@@ -206,7 +205,6 @@ export class TrackController {
   @ApiOperation({ summary: 'Удаление лайка к треку по id' })
   deleteLike(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: Request,
     @Headers('authorization') authHeader: string | undefined,
   ) {
     if (!authHeader) {

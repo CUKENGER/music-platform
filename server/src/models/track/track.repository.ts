@@ -46,9 +46,9 @@ export class TrackRepository {
   }
 
   async getByPageCountSort(offset: number, limit: number, orderBy: Record<string, 'asc' | 'desc'>) {
-    return await this.prisma.track.findMany({
+    const tracks = await this.prisma.track.findMany({
       skip: offset,
-      take: limit,
+      take: limit + 1,
       orderBy: orderBy,
       include: {
         artist: true,
@@ -58,6 +58,12 @@ export class TrackRepository {
         listenedByUsers: true,
       },
     });
+
+    const hasNextPage = tracks.length > limit;
+    return {
+      data: tracks.slice(0, limit),
+      hasNextPage,
+    };
   }
 
   async delete(trackId: number) {
