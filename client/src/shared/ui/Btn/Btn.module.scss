@@ -11,21 +11,18 @@
   }
 
   &.s {
-    padding: 8px 12px; 
+    padding: 6px 12px; // итого ~24–28px по высоте
     font-size: 12px;
-    min-height: 32px; 
   }
 
   &.m {
-    padding: 10px 16px;
-    font-size: 14px; 
-    min-height: 40px;
+    padding: 10px 16px; // ~36px
+    font-size: 14px;
   }
 
   &.l {
-    padding: 12px 20px; 
-    font-size: 16px; 
-    min-height: 48px;
+    padding: 12px 20px; // ~44px
+    font-size: 16px;
   }
 
   &.filled {
@@ -39,16 +36,6 @@
   &.outlined {
     background-color: transparent;
     border: 2px solid var(--prm);
-    
-    &.s {
-      padding: 4px 6px; 
-    }
-    &.m {
-      padding: 6px 8px; 
-    }
-    &.l {
-      padding: 8px 10px; 
-    }
 
     &:hover {
       background-color: var(--prm);
@@ -62,6 +49,14 @@
 
   &:disabled {
     background-color: var(--black-lt);
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:disabled:hover {
+    background-color: var(--black-lt);
+    color: var(--gray);
   }
 }
 
