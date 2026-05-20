@@ -6,8 +6,11 @@ up:
 down:
 	$(COMPOSE) down
 
-logs:
-	$(COMPOSE) logs -f
+logs-server:
+	$(COMPOSE) logs -f server
+
+logs-client:
+	$(COMPOSE) logs -f client
 
 restart:
 	$(COMPOSE) down && $(COMPOSE) up -d --build
